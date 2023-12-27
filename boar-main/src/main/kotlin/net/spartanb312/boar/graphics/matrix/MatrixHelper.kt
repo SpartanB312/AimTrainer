@@ -16,23 +16,22 @@ fun Matrix4f.mulLookAt(
     upX: Float,
     upY: Float,
     upZ: Float,
-): Matrix4f = mul(lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ))
+): Matrix4f = mul(lookAtf(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ))
 
 fun Matrix4f.mulOrtho(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4f =
-    mul(ortho(left, right, bottom, top, near, far))
+    mul(orthof(left, right, bottom, top, near, far))
 
 fun Matrix4f.mulPerspective(fov: Float, aspect: Float, zNear: Float, zFar: Float): Matrix4f =
-    mul(perspective((fov * PI / 180f).toFloat(), aspect, zNear, zFar))
+    mul(perspectivef(fov, aspect, zNear, zFar))
 
-fun Matrix4f.mulTranslate(x: Float, y: Float, z: Float): Matrix4f =
-    mul(Matrix4f().translate(x, y, z))
+fun Matrix4f.mulTranslate(x: Float, y: Float, z: Float): Matrix4f = mul(translatef(x, y, z))
 
-fun Matrix4f.mulScale(x: Float, y: Float, z: Float): Matrix4f = mul(scale(x, y, z))
+fun Matrix4f.mulScale(x: Float, y: Float, z: Float): Matrix4f = mul(scalef(x, y, z))
 
 fun Matrix4f.mulRotate(angleDegree: Float, axis: Vec3f): Matrix4f =
-    mul(rotate((angleDegree / (180f / PI)).toFloat(), Vector3f(axis.x, axis.y, axis.z)))
+    mul(rotatef(angleDegree, axis))
 
-fun lookAt(
+fun lookAtf(
     eyeX: Float,
     eyeY: Float,
     eyeZ: Float,
@@ -44,20 +43,20 @@ fun lookAt(
     upZ: Float,
 ): Matrix4f = Matrix4f().lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ)
 
-fun ortho(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4f =
+fun orthof(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): Matrix4f =
     Matrix4f().ortho(left, right, bottom, top, near, far)
 
-fun perspective(fov: Float, aspect: Float, zNear: Float, zFar: Float): Matrix4f =
+fun perspectivef(fov: Float, aspect: Float, zNear: Float, zFar: Float): Matrix4f =
     Matrix4f().perspective((fov * PI / 180f).toFloat(), aspect, zNear, zFar)
 
-fun translate(x: Float, y: Float, z: Float): Matrix4f =
+fun translatef(x: Float, y: Float, z: Float): Matrix4f =
     Matrix4f().translate(x, y, z)
 
-fun scale(x: Float, y: Float, z: Float): Matrix4f =
+fun scalef(x: Float, y: Float, z: Float): Matrix4f =
     Matrix4f().scale(x, y, z)
 
-fun rotate(angleDegree: Float, axis: Vector3f): Matrix4f =
-    Matrix4f().rotate((angleDegree / (180f / PI)).toFloat(), axis)
+fun rotatef(angleDegree: Float, axis: Vec3f): Matrix4f =
+    Matrix4f().rotate((angleDegree / (180f / PI)).toFloat(), Vector3f(axis.x, axis.y, axis.z))
 
 fun applyLookAt(
     eyeX: Float,
@@ -98,7 +97,7 @@ fun Matrix4f.applyToGL(): Matrix4f = apply { GL11.glLoadMatrixf(getFloatArray())
 fun Matrix4f.mulToGL(): Matrix4f = apply { GL11.glMultMatrixf(getFloatArray()) }
 
 // Stack
-fun MatrixStack.lookAt(
+fun MatrixStack.lookAtf(
     eyeX: Float,
     eyeY: Float,
     eyeZ: Float,
@@ -113,27 +112,27 @@ fun MatrixStack.lookAt(
     return this
 }
 
-fun MatrixStack.ortho(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): MatrixStack {
+fun MatrixStack.orthof(left: Float, right: Float, bottom: Float, top: Float, near: Float, far: Float): MatrixStack {
     current().mulOrtho(left, right, bottom, top, near, far)
     return this
 }
 
-fun MatrixStack.perspective(fov: Float, aspect: Float, zNear: Float, zFar: Float): MatrixStack {
+fun MatrixStack.perspectivef(fov: Float, aspect: Float, zNear: Float, zFar: Float): MatrixStack {
     current().mulPerspective(fov, aspect, zNear, zFar)
     return this
 }
 
-fun MatrixStack.translate(x: Float, y: Float, z: Float): MatrixStack {
+fun MatrixStack.translatef(x: Float, y: Float, z: Float): MatrixStack {
     current().mulTranslate(x, y, z)
     return this
 }
 
-fun MatrixStack.scale(x: Float, y: Float, z: Float): MatrixStack {
+fun MatrixStack.scalef(x: Float, y: Float, z: Float): MatrixStack {
     current().mulScale(x, y, z)
     return this
 }
 
-fun MatrixStack.rotate(angleDegree: Float, axis: Vec3f): MatrixStack {
+fun MatrixStack.rotatef(angleDegree: Float, axis: Vec3f): MatrixStack {
     current().mulRotate(angleDegree, axis)
     return this
 }

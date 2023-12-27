@@ -1,4 +1,4 @@
-package net.spartanb312.boar.render
+package net.spartanb312.boar.game.render
 
 import net.spartanb312.boar.graphics.OpenGL
 import net.spartanb312.boar.graphics.texture.Texture

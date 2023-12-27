@@ -1,13 +1,20 @@
 package net.spartanb312.boar
 
-import net.spartanb312.boar.graphics.*
+import net.spartanb312.boar.game.input.InputManager
+import net.spartanb312.boar.game.render.FontCacheManager
+import net.spartanb312.boar.game.render.InfoRenderer
+import net.spartanb312.boar.game.render.TextureManager
+import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.boar.game.render.gui.Render2DManager
+import net.spartanb312.boar.game.render.scene.SceneManager
+import net.spartanb312.boar.graphics.Camera
+import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
+import net.spartanb312.boar.graphics.GameGraphics
 import net.spartanb312.boar.graphics.OpenGL.GL_COLOR_BUFFER_BIT
 import net.spartanb312.boar.graphics.OpenGL.glClear
+import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.graphics.matrix.applyOrtho
-import net.spartanb312.boar.render.*
-import net.spartanb312.boar.render.gui.Render2DManager
-import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11.*
 
@@ -27,39 +34,18 @@ object Boar : GameGraphics {
         })
     }
 
-    private val skybox = Skybox(
-        -200.0,
-        -200.0,
-        -200.0,
-        200.0,
-        200.0,
-        200.0,
-        TextureManager.down,
-        TextureManager.up,
-        TextureManager.left,
-        TextureManager.front,
-        TextureManager.right,
-        TextureManager.back
-    )
-
-    private var angle = 0f
-    private val timer = Timer()
-
     override fun onLoop() {
         TextureManager.renderThreadHook(5)
-        timer.passedAndRun(16, reset = true) {
-            angle += 0.1f
-        }
         // Start rendering
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
-        glViewport(0, 0, RenderSystem.displayWidth, RenderSystem.displayHeight)
+        glViewport(0, 0, RenderSystem.width, RenderSystem.height)
 
         // Render3D
         glMatrixScope {
             GLHelper.depth = true
             GLHelper.cull = true
-            Camera.Default.project(fov = 119f) {
-                skybox.onRender3D()
+            Camera.Default.project(fov = 119f, updateCamera = Render2DManager.updateCamera) {
+                SceneManager.onRender()
             }
             GLHelper.cull = false
             GLHelper.depth = false
@@ -67,24 +53,31 @@ object Boar : GameGraphics {
 
         // Render2D
         glMatrixScope {
-            applyOrtho(0.0f, RenderSystem.displayWidthF, RenderSystem.displayHeightF, 0.0f, -1.0f, 1.0f)
-            Render2DManager.onRender(RenderSystem.mouseX, RenderSystem.mouseY)
+            applyOrtho(0.0f, RenderSystem.widthF, RenderSystem.heightF, 0.0f, -1.0f, 1.0f)
+            Render2DManager.onRender(RenderSystem.mouseXD, RenderSystem.mouseYD)
             InfoRenderer.render()
-            CrosshairRenderer.onRender(120f)
-            SF.drawString(200f, 200f)
+            CrosshairRenderer.onRender(119f)
+            //SF.drawString(100f,100f)
         }
     }
 
     override fun onKeyCallback(key: Int, action: Int, modifier: Int) {
-
+        when (action) {
+            GLFW.GLFW_PRESS -> InputManager.onKeyTyped(key, modifier)
+            GLFW.GLFW_REPEAT -> InputManager.onKeyRepeating(key, modifier)
+            GLFW.GLFW_RELEASE -> InputManager.onKeyReleased(key, modifier)
+        }
     }
 
-    override fun onMouseClicked(key: Int, action: Int, modifier: Int) {
-
+    override fun onMouseClicked(button: Int, action: Int, modifier: Int) {
+        when (action) {
+            GLFW.GLFW_PRESS -> InputManager.onMouseClicked(RenderSystem.mouseX, RenderSystem.mouseY, button)
+            GLFW.GLFW_RELEASE -> InputManager.onMouseReleased(RenderSystem.mouseX, RenderSystem.mouseY, button)
+        }
     }
 
     override fun onScrollCallback(direction: Int) {
-
+        InputManager.updateScroll(direction)
     }
 
 }

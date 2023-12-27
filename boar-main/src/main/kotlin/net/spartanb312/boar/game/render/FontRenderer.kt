@@ -1,4 +1,4 @@
-package net.spartanb312.boar.render
+package net.spartanb312.boar.game.render
 
 import net.spartanb312.boar.graphics.cache.CacheManager
 import net.spartanb312.boar.graphics.font.CustomFont
@@ -27,4 +27,4 @@ object FontMain : StaticFont by CustomFont.fromPath(
     textureLoader = TextureManager
 )
 
-object SF : SFR by FontMain.create("我日你先人")
+object SF : SFR by FontMain.create("Bandit Evo")

@@ -9,5 +9,5 @@ interface GameGraphics {
 
     fun onScrollCallback(direction: Int) {}
 
-    fun onMouseClicked(key: Int, action: Int, modifier: Int) {}
+    fun onMouseClicked(button: Int, action: Int, modifier: Int) {}
 }

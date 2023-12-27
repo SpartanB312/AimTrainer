@@ -1,8 +1,9 @@
 package net.spartanb312.boar.graphics
 
+import net.spartanb312.boar.graphics.RenderSystem.initialMouseValue
 import net.spartanb312.boar.graphics.matrix.mulCameraProject
 import net.spartanb312.boar.graphics.matrix.mulToGL
-import net.spartanb312.boar.graphics.matrix.perspective
+import net.spartanb312.boar.graphics.matrix.perspectivef
 import net.spartanb312.boar.utils.math.vector.Vec3f
 
 abstract class Camera(
@@ -13,7 +14,7 @@ abstract class Camera(
     open var cameraPos: Vec3f = Vec3f()
 ) {
 
-    abstract fun onUpdate(sensitivity: Float = 2.2f)
+    abstract fun onUpdate(sensitivity: Float = 2.2f, updateCamera: Boolean = false)
 
     fun project(
         yaw: Float = this.yaw,
@@ -26,32 +27,46 @@ abstract class Camera(
         updateCamera: Boolean = true,
         block: Camera.() -> Unit
     ) {
-        if (updateCamera) onUpdate(sensitivity)
-        perspective(fov, RenderSystem.displayWidthF / RenderSystem.displayHeightF, zNear, zFar)
+        onUpdate(sensitivity, updateCamera)
+        perspectivef(fov, RenderSystem.widthF / RenderSystem.heightF, zNear, zFar)
             .mulCameraProject(yaw, pitch, position)
             .mulToGL()
         block.invoke(this)
     }
 
     object Default : Camera() {
-        private var lastMouseX = RenderSystem.mouseX
-        private var lastMouseY = RenderSystem.mouseY
-        override fun onUpdate(sensitivity: Float) {
-            val mouseX = RenderSystem.mouseX
-            val mouseY = RenderSystem.mouseY
-            if (mouseX != lastMouseX || mouseY != lastMouseY) {
-                val diffX = RenderSystem.mouseX - lastMouseX
-                val diffY = RenderSystem.mouseY - lastMouseY
-                lastMouseX = RenderSystem.mouseX
-                lastMouseY = RenderSystem.mouseY
-                yaw += (diffX * 0.0371248537 * sensitivity).toFloat()
-                pitch -= (diffY * 0.0371248537 * sensitivity).toFloat()
-                while (true) {
-                    if (yaw > 360f) yaw -= 360f
-                    else if (yaw < 0f) yaw += 360f
-                    else break
+        private var lastMouseX = RenderSystem.mouseXD
+        private var lastMouseY = RenderSystem.mouseYD
+        override fun onUpdate(sensitivity: Float, updateCamera: Boolean) {
+            val mouseX = RenderSystem.mouseXD
+            val mouseY = RenderSystem.mouseYD
+            if (updateCamera) {
+                if (lastMouseX == initialMouseValue || lastMouseY == initialMouseValue) {
+                    lastMouseX = mouseX
+                    lastMouseY = mouseY
                 }
-                pitch = pitch.coerceIn(-89.5f..89.5f)
+                if (mouseX != lastMouseX || mouseY != lastMouseY) {
+                    val diffX = RenderSystem.mouseXD - lastMouseX
+                    val diffY = RenderSystem.mouseYD - lastMouseY
+                    if (diffX > 1000 || diffY > 1000) {
+                        println("${RenderSystem.mouseXD} - $lastMouseX")
+                        println(diffX)
+                        println(diffY)
+                    }
+                    lastMouseX = RenderSystem.mouseXD
+                    lastMouseY = RenderSystem.mouseYD
+                    yaw += (diffX * 0.0371248537 * sensitivity).toFloat()
+                    pitch -= (diffY * 0.0371248537 * sensitivity).toFloat()
+                    while (true) {
+                        if (yaw > 360f) yaw -= 360f
+                        else if (yaw < 0f) yaw += 360f
+                        else break
+                    }
+                    pitch = pitch.coerceIn(-89.5f..89.5f)
+                }
+            } else {
+                lastMouseX = mouseX
+                lastMouseY = mouseY
             }
         }
     }
@@ -66,7 +81,7 @@ abstract class Camera(
             zFar: Float = 1000f,
             block: () -> Unit
         ) {
-            perspective(fov, RenderSystem.displayWidthF / RenderSystem.displayHeightF, zNear, zFar)
+            perspectivef(fov, RenderSystem.widthF / RenderSystem.heightF, zNear, zFar)
                 .mulCameraProject(yaw, pitch, position)
                 .mulToGL()
             block.invoke()

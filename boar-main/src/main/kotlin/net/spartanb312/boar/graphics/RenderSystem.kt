@@ -3,17 +3,18 @@ package net.spartanb312.boar.graphics
 import net.spartanb312.boar.graphics.OpenGL.*
 import net.spartanb312.boar.graphics.compat.GLCompatibility
 import net.spartanb312.boar.utils.Logger
+import net.spartanb312.boar.utils.collection.CircularArray
 import net.spartanb312.boar.utils.misc.Counter
 import net.spartanb312.boar.utils.misc.NULL
 import net.spartanb312.boar.utils.misc.instance
 import net.spartanb312.boar.utils.misc.mallocInt
+import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
 
-// Requires GL320 & Core Profile
 object RenderSystem : Thread() {
 
     init {
@@ -21,19 +22,29 @@ object RenderSystem : Thread() {
     }
 
     private val counter = Counter(1000)
-    var fps = 0; private set
+    private val countArray = CircularArray<Float>(8)
+    private val countTimer = Timer()
+    var rawFPS = 0; private set
+    var averageFPS = 0F; private set
 
     var window = 0L; private set
     var monitor = 0L; private set
-    var displayWidth = 0; private set
-    var displayHeight = 0; private set
-    inline val displayWidthF get() = displayWidth.toFloat()
-    inline val displayHeightF get() = displayHeight.toFloat()
-    inline val displayWidthD get() = displayWidth.toDouble()
-    inline val displayHeightD get() = displayHeight.toDouble()
+    var width = 0; private set
+    var height = 0; private set
+    inline val widthF get() = width.toFloat()
+    inline val heightF get() = height.toFloat()
+    inline val widthD get() = width.toDouble()
+    inline val heightD get() = height.toDouble()
+    inline val centerX get() = width / 2
+    inline val centerY get() = height / 2
+    inline val centerXF get() = widthF / 2f
+    inline val centerYF get() = heightF / 2f
+    inline val centerXD get() = widthD / 2.0
+    inline val centerYD get() = heightD / 2.0
 
-    var mouseXD = 0.0; private set
-    var mouseYD = 0.0; private set
+    const val initialMouseValue = Int.MIN_VALUE.toDouble()
+    var mouseXD = initialMouseValue; private set
+    var mouseYD = initialMouseValue; private set
     inline val mouseXF get() = mouseXD.toFloat()
     inline val mouseYF get() = mouseYD.toFloat()
     inline val mouseX get() = mouseXD.toInt()
@@ -41,6 +52,9 @@ object RenderSystem : Thread() {
 
     var actualRenderThread: Thread = this; private set
     fun isRenderThread(): Boolean = currentThread() == actualRenderThread
+    fun checkRenderThread() {
+        if (!isRenderThread()) throw RuntimeException("Should be called in RenderThread!")
+    }
 
     private object DummyGraphics : GameGraphics
 
@@ -53,6 +67,11 @@ object RenderSystem : Thread() {
     private var initHeight = 900
     private var title = "Boar3D"
     private var graphics: Class<out GameGraphics>? = null
+
+    private val memoryCheckUpdateTimer = Timer()
+    var totalMemory = 0L; private set
+    var freeMemory = 0L; private set
+    val usedMemory get() = totalMemory - freeMemory
 
     fun <T : GameGraphics> launch(
         graphics: Class<T>,
@@ -139,8 +158,13 @@ object RenderSystem : Thread() {
         gameGraphics.onInit()
 
         while (!glfwWindowShouldClose(window)) {
-            counter.invoke { fps = it }
+            counter.invoke {
+                rawFPS = it
+                averageFPS = countArray.toList().sum() / 8f
+            }
+            countTimer.passedAndReset(125) { countArray.add(rawFPS) }
             updateResolution()
+            updateMemory()
             glfwPollEvents()
             gameGraphics.onLoop()
             glfwSwapBuffers(window)
@@ -157,12 +181,19 @@ object RenderSystem : Thread() {
         glfwSetWindowTitle(window, title)
     }
 
-    fun updateResolution() {
+    private fun updateResolution() {
         val widthArray = IntArray(1)
         val heightArray = IntArray(1)
         glfwGetFramebufferSize(window, widthArray, heightArray)
-        displayWidth = widthArray[0]
-        displayHeight = heightArray[0]
+        width = widthArray[0]
+        height = heightArray[0]
+    }
+
+    private fun updateMemory() {
+        memoryCheckUpdateTimer.passedAndReset(1000) {
+            totalMemory = Runtime.getRuntime().totalMemory() / 1048576
+            freeMemory = Runtime.getRuntime().freeMemory() / 1048576
+        }
     }
 
 }

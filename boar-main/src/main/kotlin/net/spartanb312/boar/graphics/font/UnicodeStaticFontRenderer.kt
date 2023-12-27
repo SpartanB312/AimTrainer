@@ -2,6 +2,7 @@ package net.spartanb312.boar.graphics.font
 
 import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.OpenGL.*
+import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.graphics.drawing.VertexBuffer.buffer
 import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.graphics.texture.MipmapTexture
@@ -187,6 +188,7 @@ class UnicodeStaticFontRenderer(
 
     override fun saveCache(savePath: String): Boolean {
         // Create img file, invoke image to update
+        if (image0 == null && !RenderSystem.isRenderThread()) return false
         try {
             createFile(savePath + "img.png").let {
                 ImageIO.write(image, "png", it)

@@ -57,10 +57,15 @@ object GLHelper : CompatContext,
         }
     }
 
-    fun mouseMode(window: Long, mode: Int) {
+    fun mouseMode(mode: Int) {
         if (mode != mouseMode) {
             mouseMode = mode
-            GLFW.glfwSetInputMode(window, GLFW.GLFW_CURSOR, mode)
+            GLFW.glfwSetInputMode(RenderSystem.window, GLFW.GLFW_CURSOR, mode)
+            if (mode == GLFW.GLFW_CURSOR_NORMAL) GLFW.glfwSetCursorPos(
+                RenderSystem.window,
+                RenderSystem.widthD / 2.0,
+                RenderSystem.heightD / 2.0
+            )
         }
     }
 

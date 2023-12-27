@@ -99,7 +99,7 @@ fun cameraProject(
     val cameraDirection = cameraPos - cameraTarget
     val cameraUp = cameraDirection cross (Vec3f(0f, 1f, 0f) cross cameraDirection)
     val eyePos = cameraPos + cameraFront
-    return lookAt(
+    return lookAtf(
         cameraPos.x,
         cameraPos.y,
         cameraPos.z,

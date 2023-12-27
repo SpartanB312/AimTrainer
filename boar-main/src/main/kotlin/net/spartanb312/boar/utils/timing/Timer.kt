@@ -21,6 +21,15 @@ class Timer(val timeUnit: Duration = Duration.Millisecond) {
         return result
     }
 
+    inline fun passedAndReset(interval: Int, timeUnit: Duration = this.timeUnit, block: () -> Unit): Boolean {
+        val result = passed(interval, timeUnit)
+        if (result) {
+            reset()
+            block()
+        }
+        return result
+    }
+
     inline fun passedAndRun(
         interval: Int,
         timeUnit: Duration = this.timeUnit,

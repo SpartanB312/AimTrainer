@@ -2,7 +2,7 @@ package net.spartanb312.boar.launch;
 
 import java.util.function.Predicate;
 
-public class Platform {
+public final class Platform {
 
     enum OS {
         Linux,
@@ -10,7 +10,7 @@ public class Platform {
         Windows
     }
 
-    enum Platforms {
+    public enum Platforms {
         Linux("Linux 64 Bit", "linux", OS.Linux),
         LinuxARM32("Linux 32 Bit ARM", "linux-arm32", OS.Linux),
         LinuxARM64("Linux 64 Bit ARM", "linux-arm64", OS.Linux),
@@ -20,14 +20,26 @@ public class Platform {
         Mac("MacOS 64 Bit", "macos", OS.MacOS),
         MacARM64("MacOS 64 Bit ARM", "macos-arm64", OS.MacOS);
 
-        public final String name;
-        public final String classifier;
-        public final OS os;
+        private final String name;
+        private final String classifier;
+        private final OS os;
 
         Platforms(String name, String classifier, OS os) {
             this.name = name;
             this.classifier = classifier;
             this.os = os;
+        }
+
+        public String getName() {
+            return name;
+        }
+
+        public String getClassifier() {
+            return classifier;
+        }
+
+        public OS getOS() {
+            return os;
         }
     }
 

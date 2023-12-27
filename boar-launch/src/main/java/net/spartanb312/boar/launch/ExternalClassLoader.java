@@ -132,7 +132,7 @@ public class ExternalClassLoader extends URLClassLoader {
             } else {
                 URL resourceURL = new URL(
                         "jar:file:"
-                                + (Platform.getPlatform().os == Platform.OS.Linux ? "" : "/")
+                                + (Platform.getPlatform().getOS() == Platform.OS.Linux ? "" : "/")
                                 + file.getAbsolutePath().replace("\\", "/")
                                 + "!/" + entry.getName()
                 );

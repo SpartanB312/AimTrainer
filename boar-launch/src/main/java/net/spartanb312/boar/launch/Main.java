@@ -9,7 +9,7 @@ public class Main {
         LaunchLogger.info("Initializing launch wrapper...");
 
         // Detect system
-        LaunchLogger.info("Running on platform: " + Platform.getPlatform().name);
+        LaunchLogger.info("Running on platform: " + Platform.getPlatform().getName());
 
         // Check DevMode
         boolean devMode = Arrays.stream(args).toList().contains("-DevMode");
@@ -19,7 +19,7 @@ public class Main {
             LaunchLogger.info("Loading dependencies...");
             readFiles("libs/", ".jar", true, file -> {
                 if (file.getName().startsWith("lwjgl") && file.getName().contains("natives")) {
-                    if (file.getName().endsWith("-natives-" + Platform.getPlatform().classifier + ".jar")) {
+                    if (file.getName().endsWith("-natives-" + Platform.getPlatform().getClassifier() + ".jar")) {
                         LaunchLogger.info(" - " + file.getName());
                         LaunchClassLoader.loadJarFile(file);
                     }

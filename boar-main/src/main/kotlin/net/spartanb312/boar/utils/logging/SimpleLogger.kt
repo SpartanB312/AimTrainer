@@ -33,7 +33,7 @@ class SimpleLogger(
     }
 
     override fun debug(msg: String) {
-         raw(msg, "DEBUG")
+        if (debug.invoke()) raw(msg, "DEBUG")
     }
 
     override fun info(msg: String) = raw(msg, "INFO")
