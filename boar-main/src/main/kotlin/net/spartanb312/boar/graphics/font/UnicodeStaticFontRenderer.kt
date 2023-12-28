@@ -53,12 +53,9 @@ class UnicodeStaticFontRenderer(
         if (imgSupplier != null) {
             val texture: Texture = if (!instantLoad && textureLoader != null) {
                 val texture = LazyTextureContainer(
-                    MipmapTexture.lateUpload(GL_RGBA, useMipmap = useMipmap)
-                ) {
-                    val img = imgSupplier.invoke()
-                    image0 = img
-                    img
-                }.useTexture {
+                    MipmapTexture.lateUpload(GL_RGBA, useMipmap = useMipmap),
+                    imgSupplier
+                ).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 }
                 textureLoader.add(texture)
@@ -255,7 +252,11 @@ class UnicodeStaticFontRenderer(
         }
         val imgFile = File(readPath + "img.png")
         if (!imgFile.exists()) return false
-        imgSupplier = { ImageIO.read(imgFile.inputStream()) }
+        imgSupplier = {
+            val img = ImageIO.read(imgFile.inputStream())
+            image0 = img
+            img
+        }
         return true
     }
 
