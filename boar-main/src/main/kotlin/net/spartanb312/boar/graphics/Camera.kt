@@ -48,11 +48,11 @@ abstract class Camera(
                 if (mouseX != lastMouseX || mouseY != lastMouseY) {
                     val diffX = RenderSystem.mouseXD - lastMouseX
                     val diffY = RenderSystem.mouseYD - lastMouseY
-                    if (diffX > 1000 || diffY > 1000) {
-                        println("${RenderSystem.mouseXD} - $lastMouseX")
-                        println(diffX)
-                        println(diffY)
-                    }
+                    //if (diffX > 1000 || diffY > 1000) {
+                    //    println("${RenderSystem.mouseXD} - $lastMouseX")
+                    //    println(diffX)
+                    //    println(diffY)
+                    //}
                     lastMouseX = RenderSystem.mouseXD
                     lastMouseY = RenderSystem.mouseYD
                     yaw += (diffX * 0.0371248537 * sensitivity).toFloat()

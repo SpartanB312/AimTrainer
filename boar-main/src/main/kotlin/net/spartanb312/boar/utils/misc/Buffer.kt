@@ -1,12 +1,7 @@
 package net.spartanb312.boar.utils.misc
 
 import org.lwjgl.system.MemoryStack
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.nio.DoubleBuffer
-import java.nio.FloatBuffer
-import java.nio.IntBuffer
-import java.nio.LongBuffer
+import java.nio.*
 
 /**
  * Created on 2/11/2023 by B312

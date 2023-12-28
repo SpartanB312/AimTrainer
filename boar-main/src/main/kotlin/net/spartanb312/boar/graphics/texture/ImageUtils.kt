@@ -1,9 +1,9 @@
 package net.spartanb312.boar.graphics.texture
 
+import net.spartanb312.boar.graphics.OpenGL.*
 import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import net.spartanb312.boar.utils.timing.Timer
-import net.spartanb312.boar.graphics.OpenGL.*
 import java.awt.image.BufferedImage
 import java.nio.IntBuffer
 

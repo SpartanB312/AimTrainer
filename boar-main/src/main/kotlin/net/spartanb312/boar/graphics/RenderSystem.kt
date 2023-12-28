@@ -181,9 +181,10 @@ object RenderSystem : Thread() {
         glfwSetWindowTitle(window, title)
     }
 
+    private val widthArray = IntArray(1)
+    private val heightArray = IntArray(1)
+
     private fun updateResolution() {
-        val widthArray = IntArray(1)
-        val heightArray = IntArray(1)
         glfwGetFramebufferSize(window, widthArray, heightArray)
         width = widthArray[0]
         height = heightArray[0]

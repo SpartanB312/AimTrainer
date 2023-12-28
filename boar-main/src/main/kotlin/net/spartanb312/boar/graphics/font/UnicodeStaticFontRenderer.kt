@@ -38,6 +38,7 @@ class UnicodeStaticFontRenderer(
 ) : StaticFontRenderer {
 
     private val shadowColor = ColorRGB.BLACK.alpha(128)
+    private var imgSupplier: (() -> BufferedImage)? = null
     override var absoluteWidth = 0
     override var absoluteHeight = 0
 
@@ -48,6 +49,29 @@ class UnicodeStaticFontRenderer(
 
     private fun initTexture(instantLoad: Boolean = false): Texture {
         Logger.debug("Init static texture")
+        val imgSupplier = imgSupplier
+        if (imgSupplier != null) {
+            val texture: Texture = if (!instantLoad && textureLoader != null) {
+                val texture = LazyTextureContainer(
+                    MipmapTexture.lateUpload(GL_RGBA, useMipmap = useMipmap)
+                ) {
+                    val img = imgSupplier.invoke()
+                    image0 = img
+                    img
+                }.useTexture {
+                    if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                }
+                textureLoader.add(texture)
+                texture
+            } else {
+                val img = imgSupplier.invoke()
+                MipmapTexture(img, GL_RGBA, useMipmap = useMipmap).useTexture {
+                    if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                }
+            }
+            texture0 = texture
+            return texture
+        }
         val asyncJob: () -> BufferedImage = {
             val img = BufferedImage(imgWidth, imgHeight, BufferedImage.TYPE_INT_ARGB)
             (img.createGraphics()).let {
@@ -231,13 +255,7 @@ class UnicodeStaticFontRenderer(
         }
         val imgFile = File(readPath + "img.png")
         if (!imgFile.exists()) return false
-        val img = ImageIO.read(imgFile.inputStream())
-        image0 = img
-        texture0 = MipmapTexture(img, GL_RGBA, useMipmap = useMipmap).useTexture {
-            if (!linearMag) {
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
-            }
-        }
+        imgSupplier = { ImageIO.read(imgFile.inputStream()) }
         return true
     }
 

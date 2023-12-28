@@ -53,7 +53,7 @@ object CrosshairMA40 : Crosshair(1.3f / 16f) {
 
         // Cross 120 to 5.0 65 to 12.0
         val fromRadius = 5f + 7f * (120f - fov) / 55f
-        val length = 11f
+        val length = 10.5f //11f
         RenderUtils.drawLine(
             RenderSystem.centerXF,
             RenderSystem.centerYF - fromRadius,

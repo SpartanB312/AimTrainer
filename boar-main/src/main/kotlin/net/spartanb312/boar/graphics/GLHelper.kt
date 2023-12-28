@@ -44,7 +44,7 @@ object GLHelper : CompatContext,
     var pointSmooth by GLState(false) { if (it) glEnable(GL_POINT_SMOOTH) else glDisable(GL_POINT_SMOOTH) }
     var lineSmooth by GLState(false) { if (it) glEnable(GL_LINE_SMOOTH) else glDisable(GL_LINE_SMOOTH) }
     var polygonSmooth by GLState(false) { if (it) glEnable(GL_POLYGON_SMOOTH) else glDisable(GL_POLYGON_SMOOTH) }
-    var vSync by GLState(false) { if (it) GLFW.glfwSwapInterval(1) else GLFW.glfwSwapInterval(0) }
+    var vSync by GLState(true) { if (it) GLFW.glfwSwapInterval(1) else GLFW.glfwSwapInterval(0) }
     var shadeModel by GLState(GL_FLAT) { glShadeModel(it) }
 
     var bindProgram = 0; private set
@@ -63,8 +63,8 @@ object GLHelper : CompatContext,
             GLFW.glfwSetInputMode(RenderSystem.window, GLFW.GLFW_CURSOR, mode)
             if (mode == GLFW.GLFW_CURSOR_NORMAL) GLFW.glfwSetCursorPos(
                 RenderSystem.window,
-                RenderSystem.widthD / 2.0,
-                RenderSystem.heightD / 2.0
+                RenderSystem.centerXD,
+                RenderSystem.centerYD
             )
         }
     }

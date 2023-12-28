@@ -1,5 +1,8 @@
 package net.spartanb312.boar.game.render
 
+import com.soywiz.kds.iterators.fastForEachReverse
+import net.spartanb312.boar.Boar
+import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.boar.graphics.Camera
 import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.launch.Platform
@@ -9,9 +12,8 @@ import java.util.*
 object InfoRenderer {
 
     private val leftUpInfo = mutableListOf(
-        { "FPS:&f ${RenderSystem.averageFPS}" },
-        { "OpenGL:&f ${RenderSystem.compat.openGLVersion}" },
-        { "Yaw:&f ${Camera.Default.yaw}"}
+        { "Boar Engine &f${Boar.VERSION}" },
+        { "FPS:&f ${RenderSystem.averageFPS}" }
     )
 
     private val leftDownInfo = mutableListOf(
@@ -37,8 +39,14 @@ object InfoRenderer {
     )
 
     private val rightUpInfo = mutableListOf(
+        { "GPU:&f ${RenderSystem.compat.gpuName}" },
         { "Platform:&f ${Platform.getPlatform().getName()}" },
-        { "Memory:&f ${RenderSystem.usedMemory}/${RenderSystem.totalMemory} MB" }
+        { "Memory:&f ${RenderSystem.usedMemory}/${RenderSystem.totalMemory} MB" },
+        { "OpenGL:&f ${RenderSystem.compat.openGLVersion}" }
+    )
+
+    private val rightDownInfo = mutableListOf(
+        { CrosshairRenderer.currentCrosshair.nameString }
     )
 
     fun render() {
@@ -55,6 +63,19 @@ object InfoRenderer {
             val width = FontRendererMain.getWidth(str)
             FontRendererMain.drawStringWithShadow(str, RenderSystem.widthF - width, startY, color)
             startY += FontRendererMain.getHeight()
+        }
+        startY = RenderSystem.heightF
+        leftDownInfo.fastForEachReverse {
+            val str = it.invoke()
+            startY -= FontRendererMain.getHeight()
+            FontRendererMain.drawStringWithShadow(str, 0f, startY, color)
+        }
+        startY = RenderSystem.heightF
+        rightDownInfo.fastForEachReverse {
+            val str = it.invoke()
+            val width = FontRendererMain.getWidth(str)
+            startY -= FontRendererMain.getHeight()
+            FontRendererMain.drawStringWithShadow(str, RenderSystem.widthF - width, startY, color)
         }
     }
     /*

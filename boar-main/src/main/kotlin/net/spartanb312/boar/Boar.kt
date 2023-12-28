@@ -15,6 +15,7 @@ import net.spartanb312.boar.graphics.OpenGL.GL_COLOR_BUFFER_BIT
 import net.spartanb312.boar.graphics.OpenGL.glClear
 import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.graphics.matrix.applyOrtho
+import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11.*
 
@@ -24,15 +25,19 @@ import org.lwjgl.opengl.GL11.*
  */
 object Boar : GameGraphics {
 
+    const val VERSION = "1.0"
+
     override fun onInit() {
         RenderSystem.setTitle("Boar")
-        GLFW.glfwSwapInterval(0)
+        GLHelper.vSync = false
         TextureManager.resume()
         FontCacheManager.readCache()
         Runtime.getRuntime().addShutdownHook(Thread {
             FontCacheManager.saveCache()
         })
     }
+
+    private val timer = Timer()
 
     override fun onLoop() {
         TextureManager.renderThreadHook(5)
@@ -57,7 +62,6 @@ object Boar : GameGraphics {
             Render2DManager.onRender(RenderSystem.mouseXD, RenderSystem.mouseYD)
             InfoRenderer.render()
             CrosshairRenderer.onRender(119f)
-            //SF.drawString(100f,100f)
         }
     }
 

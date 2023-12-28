@@ -1,4 +1,4 @@
-@file:Suppress("NOTHING_TO_INLINE", "JAVA_MODULE_DOES_NOT_EXPORT_PACKAGE")
+@file:Suppress("NOTHING_TO_INLINE")
 
 package net.spartanb312.boar.graphics.drawing
 
@@ -7,7 +7,6 @@ import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL13.GL_TEXTURE0
 import org.lwjgl.opengl.GL13.glClientActiveTexture
-import sun.nio.ch.DirectBuffer
 import java.nio.ByteBuffer
 
 object VertexBuffer {
@@ -35,15 +34,32 @@ object VertexBuffer {
     class BufferBuilder(private val format: VertexFormat, size: Int) {
 
         companion object {
-            private var directBuffer = createDirectByteBuffer(1024)
-            private var currentSize = 1024
+            private var directBuffer = createDirectByteBuffer(2048)
+            private val buffers = arrayOf(
+                createDirectByteBuffer(64),
+                createDirectByteBuffer(128),
+                createDirectByteBuffer(256),
+                createDirectByteBuffer(512),
+                createDirectByteBuffer(1024)
+            )
+            private var currentSize = 2048
             private fun getDirectBuffer(size: Int): ByteBuffer {
-                if (size > currentSize) {
-                    (directBuffer as DirectBuffer).cleaner().clean()
-                    currentSize = size
-                    directBuffer = createDirectByteBuffer(size)
-                } else directBuffer.clear()
-                return directBuffer
+                val buffer = when {
+                    size < 65 -> buffers[0]
+                    size < 129 -> buffers[1]
+                    size < 257 -> buffers[2]
+                    size < 513 -> buffers[3]
+                    size < 1025 -> buffers[4]
+                    else -> {
+                        if (size > currentSize) {
+                            directBuffer = createDirectByteBuffer(currentSize)
+                            currentSize = size
+                        }
+                        directBuffer
+                    }
+                }
+                buffer.clear()
+                return buffer
             }
         }
 

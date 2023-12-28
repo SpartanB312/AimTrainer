@@ -66,8 +66,8 @@ class UnicodeFontRenderer(
             return textures[chunk]!!
         }
 
-        val chunkImg = readChunkImgFromCache(chunk)
-        if (chunkImg == null) {
+        val chunkImgSupplier = readChunkImgFromCache(chunk)
+        if (chunkImgSupplier == null) {
             val asyncJob: () -> BufferedImage = {
                 val img = BufferedImage(imgSize, imgSize, BufferedImage.TYPE_INT_ARGB)
                 (img.createGraphics()).let {
@@ -147,11 +147,26 @@ class UnicodeFontRenderer(
             return texture
         } else {
             Logger.debug("Init chunk $chunk from cache")
-            val texture = MipmapTexture(chunkImg, GL_RGBA, useMipmap = useMipmap).useTexture {
-                if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+            val texture = if (!instantLoad && textureLoader != null) {
+                val texture = LazyTextureContainer(
+                    MipmapTexture.lateUpload(GL_RGBA, useMipmap = useMipmap)
+                ) {
+                    val img = chunkImgSupplier.invoke()
+                    loadedChunk[chunk] = img
+                    img
+                }.useTexture {
+                    if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                }
+                textureLoader.add(texture)
+                texture
+            } else {
+                val img = chunkImgSupplier.invoke()
+                loadedChunk[chunk] = img
+                MipmapTexture(img, GL_RGBA, useMipmap = useMipmap).useTexture {
+                    if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                }
             }
             textures[chunk] = texture
-            loadedChunk[chunk] = chunkImg
             return texture
         }
     }
@@ -571,12 +586,12 @@ class UnicodeFontRenderer(
         return true
     }
 
-    private fun readChunkImgFromCache(chunk: Int): BufferedImage? {
+    private fun readChunkImgFromCache(chunk: Int): (() -> BufferedImage)? {
         val chunkCache = chunkCaches[chunk] ?: return null
         chunkCache.charDataSupplier.invoke().forEach { (charIndex, charData) ->
             charDataArray[charIndex] = charData
         }
-        return chunkCache.imgSupplier.invoke()
+        return chunkCache.imgSupplier
     }
 
     // For read
