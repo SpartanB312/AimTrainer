@@ -160,19 +160,21 @@ fun FontRenderer.drawColoredString(
     startX: Float = x,
     circleWidth: Float = getWidth(str, scale),
     timeGap: Int = 5000,
-    shadowDepth: Float = 0f
+    shadowDepth: Float = 0f,
+    saturation: Float = 1f,
+    brightness: Float = 1f
 ): Float {
     val colors = mutableListOf<ColorRGB>()
     var currentX = x
     str.forEach {
         val offset = (currentX - startX) % circleWidth / circleWidth
         val hue = ((System.currentTimeMillis() - startTime) % timeGap) / timeGap.toFloat()
-        colors.add(ColorHSB(hue - offset, 1f, 1f).toRGB())
+        colors.add(ColorHSB(hue - offset, saturation, brightness).toRGB())
         currentX += getWidth(it.toString(), scale)
     }
     val offset = (currentX - startX) % circleWidth / circleWidth
     val hue = ((System.currentTimeMillis() - startTime) % timeGap) / timeGap.toFloat()
-    colors.add(ColorHSB(hue - offset, 1f, 1f).toRGB())
+    colors.add(ColorHSB(hue - offset, saturation, brightness).toRGB())
     if (shadowDepth != 0f) {
         drawGradientStringWithShadow(str, x, y, colors.toTypedArray(), scale, sliceMode = true)
     } else drawGradientString(str, x, y, colors.toTypedArray(), scale, sliceMode = true)

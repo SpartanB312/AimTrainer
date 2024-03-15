@@ -2,6 +2,8 @@ package net.spartanb312.boar.game.render
 
 import com.soywiz.kds.iterators.fastForEachReverse
 import net.spartanb312.boar.Boar
+import net.spartanb312.boar.game.option.impls.ControlOption
+import net.spartanb312.boar.game.option.impls.VideoOption
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.boar.graphics.Camera
 import net.spartanb312.boar.graphics.RenderSystem
@@ -13,7 +15,9 @@ object InfoRenderer {
 
     private val leftUpInfo = mutableListOf(
         { "Boar Engine &f${Boar.VERSION}" },
-        { "FPS:&f ${RenderSystem.averageFPS}" }
+        { "FPS:&f ${RenderSystem.averageFPS}" },
+        { "${VideoOption.fovType}:&f ${VideoOption.fov}" },
+        { "Sens:&f ${ControlOption.sensitivity}" },
     )
 
     private val leftDownInfo = mutableListOf(
@@ -42,6 +46,7 @@ object InfoRenderer {
         { "GPU:&f ${RenderSystem.compat.gpuName}" },
         { "Platform:&f ${Platform.getPlatform().getName()}" },
         { "Memory:&f ${RenderSystem.usedMemory}/${RenderSystem.totalMemory} MB" },
+        { "TextureQueue:&f ${TextureManager.activeThread}/${TextureManager.totalThread}" },
         { "OpenGL:&f ${RenderSystem.compat.openGLVersion}" }
     )
 

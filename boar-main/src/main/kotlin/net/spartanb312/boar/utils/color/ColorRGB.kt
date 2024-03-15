@@ -1,5 +1,7 @@
 package net.spartanb312.boar.utils.color
 
+import net.spartanb312.boar.utils.math.floorToInt
+
 @JvmInline
 value class ColorRGB(val rgba: Int) {
 
@@ -97,6 +99,14 @@ value class ColorRGB(val rgba: Int) {
             (b * rate).toInt().coerceIn(0..255),
             (if (alpha) a * rate else a).toInt().coerceIn(0..255)
         )
+
+    fun circle(other: ColorRGB, hue: Float): ColorRGB {
+        val h = hue.keepDecimal()
+        return if (h < 0.5f) mix(other, h * 2.0f)
+        else mix(other, (1.0f - h) * 2.0f)
+    }
+
+    private fun Float.keepDecimal(): Float = this - this.floorToInt()
 
     // Misc
     fun mix(other: ColorRGB, ratio: Float): ColorRGB {

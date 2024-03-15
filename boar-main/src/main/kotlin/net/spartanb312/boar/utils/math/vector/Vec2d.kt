@@ -16,6 +16,7 @@ data class Vec2d(val x: Double = 0.0, val y: Double = 0.0) {
     inline val yLong get() = y.toLong()
     inline val xFloat get() = x.toFloat()
     inline val yFloat get() = y.toFloat()
+    inline val length get() = sqrt(x * x + y * y)
 
     // Divide
     operator fun div(vec2d: Vec2d) = div(vec2d.x, vec2d.y)
@@ -61,6 +62,16 @@ data class Vec2d(val x: Double = 0.0, val y: Double = 0.0) {
 
     override fun toString(): String {
         return "Vec2d[${this.x}, ${this.y}]"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is Vec2d && other.x == x && other.y == y
+    }
+
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        return result
     }
 
     companion object {

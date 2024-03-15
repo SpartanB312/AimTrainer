@@ -1,5 +1,7 @@
 package net.spartanb312.boar.utils.math.vector
 
+import kotlin.math.sqrt
+
 @JvmInline
 value class Vec2i private constructor(val bits: Long) {
 
@@ -17,6 +19,7 @@ value class Vec2i private constructor(val bits: Long) {
     inline val yDouble get() = y.toDouble()
     inline val xFloat get() = x.toFloat()
     inline val yFloat get() = y.toFloat()
+    inline val length get() = sqrt((x * x + y * y).toDouble())
 
     // Divide
     operator fun div(vec2i: Vec2i) = div(vec2i.x, vec2i.y)

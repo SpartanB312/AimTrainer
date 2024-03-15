@@ -2,8 +2,6 @@
 
 package net.spartanb312.boar.utils.math.vector
 
-import net.spartanb312.boar.utils.math.vector.*
-
 // Conversion
 inline fun Vec2f.toVec2d(): Vec2d = Vec2d(x, y)
 
@@ -85,7 +83,7 @@ inline fun Vec2i.distanceTo(vec2d: Vec2d): Double = distance(xDouble, yDouble, v
 inline fun Vec2i.distanceTo(vec2i: Vec2i): Double = distance(x, y, vec2i.x, vec2i.y)
 
 // Spatial distance
-inline fun Vec3f.distanceTo(t: Vec3f): Double = distance(x, y, z, t.z, t.y, t.z)
+inline fun Vec3f.distanceTo(t: Vec3f): Double = distance(x, y, z, t.x, t.y, t.z)
 
 inline fun Vec3f.distanceTo(t: Vec3d): Double = distance(xDouble, yDouble, zDouble, t.x, t.y, t.z)
 

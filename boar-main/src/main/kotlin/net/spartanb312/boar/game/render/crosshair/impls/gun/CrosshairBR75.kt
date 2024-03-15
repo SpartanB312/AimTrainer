@@ -1,91 +1,114 @@
 package net.spartanb312.boar.game.render.crosshair.impls.gun
 
+import net.spartanb312.boar.game.config.setting.alias
+import net.spartanb312.boar.game.config.setting.whenFalse
 import net.spartanb312.boar.game.render.crosshair.Crosshair
-import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer.transparentColor
-import net.spartanb312.boar.graphics.RenderSystem
+import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer.transparentAlphaRate
+import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
+import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
+import net.spartanb312.boar.graphics.matrix.mulScale
+import net.spartanb312.boar.graphics.matrix.mulToGL
+import net.spartanb312.boar.graphics.matrix.mulTranslate
+import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.utils.color.ColorRGB
+import kotlin.math.min
 
-object CrosshairBR75 : Crosshair(1.55f / 4f) {
+object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
 
+    private val followFOV = setting("BR75-Follow FOV", true).alias("Follow FOV")
+    private val size by setting("BR78-Specified FOV", 78f, 60f..120f).alias("Specified FOV").whenFalse(followFOV)
+
+    override val syncFOV get() = followFOV.value
     override var clickTime = System.currentTimeMillis()
 
-    override fun onRender(fov: Float) {
-        // Outer circle 120 to 14.5 65 to 22.0
-        val outerRadius = 14.5f + 7.5f * (120f - fov) / 55f
-        val gap = 11f
-        RenderUtils.drawArcOutline(
-            RenderSystem.centerXF,
-            RenderSystem.centerYF,
-            outerRadius,
-            gap..90f - gap,
-            0,
-            2.5f,
-            transparentColor
-        )
-        RenderUtils.drawArcOutline(
-            RenderSystem.centerXF,
-            RenderSystem.centerYF,
-            outerRadius,
-            90f + gap..180f - gap,
-            0,
-            2.5f,
-            transparentColor
-        )
-        RenderUtils.drawArcOutline(
-            RenderSystem.centerXF,
-            RenderSystem.centerYF,
-            outerRadius,
-            180f + gap..270f - gap,
-            0,
-            2.5f,
-            transparentColor
-        )
-        RenderUtils.drawArcOutline(
-            RenderSystem.centerXF,
-            RenderSystem.centerYF,
-            outerRadius,
-            270f + gap..360f - gap,
-            0,
-            2.5f,
-            transparentColor
-        )
+    override fun onRender(fov: Float, test: Boolean, colorRGB: ColorRGB) {
+        val centerX = if (test) 0f else RS.centerXF
+        val centerY = if (test) 0f else RS.centerYF
+        val scale = min(RS.widthF / 2560f, RS.heightF / 1369f)
+        glMatrixScope {
+            translatef(centerX, centerY, 0.0f)
+                .mulScale(scale, scale, 1.0f)
+                .mulTranslate(-centerX, -centerY, 0.0f)
+                .mulToGL()
+            val transparentColor = colorRGB.alpha((colorRGB.a * transparentAlphaRate).toInt())
+            val actualFOV = if (followFOV.value) fov else size.inDFov
+            // Outer circle 120 to 14.5 65 to 22.0
+            val outerRadius = 14.5f + 7.5f * (120f - actualFOV) / 55f
+            val gap = 11f
+            RenderUtils.drawArcOutline(
+                centerX,
+                centerY,
+                outerRadius,
+                gap..90f - gap,
+                0,
+                2.5f * scale,
+                transparentColor
+            )
+            RenderUtils.drawArcOutline(
+                centerX,
+                centerY,
+                outerRadius,
+                90f + gap..180f - gap,
+                0,
+                2.5f * scale,
+                transparentColor
+            )
+            RenderUtils.drawArcOutline(
+                centerX,
+                centerY,
+                outerRadius,
+                180f + gap..270f - gap,
+                0,
+                2.5f * scale,
+                transparentColor
+            )
+            RenderUtils.drawArcOutline(
+                centerX,
+                centerY,
+                outerRadius,
+                270f + gap..360f - gap,
+                0,
+                2.5f * scale,
+                transparentColor
+            )
 
-        // Cross
-        val fromRadius = 7.5f
-        val length = 20f
-        RenderUtils.drawLine(
-            RenderSystem.centerXF,
-            RenderSystem.centerYF - fromRadius,
-            RenderSystem.centerXF,
-            RenderSystem.centerYF - fromRadius - length,
-            3f,
-            ColorRGB.WHITE
-        )
-        RenderUtils.drawLine(
-            RenderSystem.centerXF,
-            RenderSystem.centerYF + fromRadius,
-            RenderSystem.centerXF,
-            RenderSystem.centerYF + fromRadius + length,
-            3f,
-            ColorRGB.WHITE
-        )
-        RenderUtils.drawLine(
-            RenderSystem.centerXF - fromRadius,
-            RenderSystem.centerYF,
-            RenderSystem.centerXF - fromRadius - length,
-            RenderSystem.centerYF,
-            3f,
-            ColorRGB.WHITE
-        )
-        RenderUtils.drawLine(
-            RenderSystem.centerXF + fromRadius,
-            RenderSystem.centerYF,
-            RenderSystem.centerXF + fromRadius + length,
-            RenderSystem.centerYF,
-            3f,
-            ColorRGB.WHITE
-        )
+            // Cross
+            val fromRadius = 7.5f
+            val length = 20f
+            RenderUtils.drawLine(
+                centerX,
+                centerY - fromRadius,
+                centerX,
+                centerY - fromRadius - length,
+                3f * scale,
+                colorRGB
+            )
+            RenderUtils.drawLine(
+                centerX,
+                centerY + fromRadius,
+                centerX,
+                centerY + fromRadius + length,
+                3f * scale,
+                colorRGB
+            )
+            RenderUtils.drawLine(
+                centerX - fromRadius,
+                centerY,
+                centerX - fromRadius - length,
+                centerY,
+                3f * scale,
+                colorRGB
+            )
+            RenderUtils.drawLine(
+                centerX + fromRadius,
+                centerY,
+                centerX + fromRadius + length,
+                centerY,
+                3f * scale,
+                colorRGB
+            )
+        }
     }
 
 }

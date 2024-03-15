@@ -27,10 +27,12 @@ class LazyTextureContainer(
     val state get() = texture.state
 
     // Return a RenderThread Job
-    fun asyncLoad(): () -> LateUploadTexture {
+    fun asyncLoad(callback: (() -> Unit)? = null): () -> LateUploadTexture {
         val image = ioJob.invoke()
         return {
-            texture.apply { upload(image) }
+            texture.apply {
+                upload(image).also { callback?.invoke() }
+            }
         }
     }
 

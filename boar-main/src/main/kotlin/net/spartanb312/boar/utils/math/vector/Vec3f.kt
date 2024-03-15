@@ -19,6 +19,7 @@ data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
     inline val xDouble get() = x.toDouble()
     inline val yDouble get() = y.toDouble()
     inline val zDouble get() = z.toDouble()
+    inline val length get() = sqrt(x * x + y * y + z * z)
 
     // Divide
     operator fun div(vec3f: Vec3f) = div(vec3f.x, vec3f.y, vec3f.z)
@@ -64,6 +65,17 @@ data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
 
     override fun toString(): String {
         return "Vec3f[${this.x}, ${this.y}, ${this.z}]"
+    }
+
+    override fun equals(other: Any?): Boolean {
+        return other is Vec3f && other.x == x && other.y == y && other.z == z
+    }
+
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        result = 31 * result + z.hashCode()
+        return result
     }
 
     companion object {

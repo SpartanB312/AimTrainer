@@ -95,4 +95,85 @@ object MathUtils {
         return max(segments.roundToInt(), 16)
     }
 
+    @JvmStatic
+    inline fun diagonalFOVToVerticalFOV(fovd: Double, aspect: Double): Double {
+        val f = 1000.0
+        val l = 2 * f * tan(fovd / 360.0 * PI)
+        val h = sqrt(l.pow(2) / (1 + aspect.pow(2)))
+        return 2 * (atan2(h / 2.0, f) / PI * 180.0)
+    }
+
+    @JvmStatic
+    inline fun diagonalFOVToHorizontalFOV(fovd: Double, aspect: Double): Double {
+        val f = 1000.0
+        val l = 2 * f * tan(fovd / 360.0 * PI)
+        val h = sqrt(l.pow(2) / (1 + aspect.pow(2)))
+        val w = h * aspect
+        return 2 * (atan2(w / 2.0, f) / PI * 180.0)
+    }
+
+    @JvmStatic
+    inline fun horizontalFOVToVerticalFOV(fovx: Double, aspect: Double): Double {
+        val f = 1000.0
+        val w = 2 * f * tan(fovx / 360.0 * PI)
+        val h = w / aspect
+        return 2 * (atan2(h / 2.0, f) / PI * 180.0)
+    }
+
+    @JvmStatic
+    inline fun horizontalFOVToDiagonalFOV(fovx: Double, aspect: Double): Double {
+        val f = 1000.0
+        val w = 2 * f * tan(fovx / 360.0 * PI)
+        val h = w / aspect
+        val l = sqrt(w * w + h * h)
+        return 2 * (atan2(l / 2.0, f) / PI * 180.0)
+    }
+
+    @JvmStatic
+    inline fun verticalFOVToDiagonalFOV(fovv: Double, aspect: Double): Double {
+        val f = 1000.0
+        val h = 2 * f * tan(fovv / 360.0 * PI)
+        val w = h * aspect
+        val l = sqrt(w * w + h * h)
+        return 2 * (atan2(l / 2.0, f) / PI * 180.0)
+    }
+
+    @JvmStatic
+    inline fun verticalFOVToHorizontalFOV(fovv: Double, aspect: Double): Double {
+        val f = 1000.0
+        val h = 2 * f * tan(fovv / 360.0 * PI)
+        val w = h * aspect
+        return 2 * (atan2(w / 2.0, f) / PI * 180.0)
+    }
+
+    @JvmStatic
+    inline fun Float.d2vFOV(aspect: Double): Float {
+        return diagonalFOVToVerticalFOV(this.toDouble(), aspect).toFloat()
+    }
+
+    @JvmStatic
+    inline fun Float.d2hFOV(aspect: Double): Float {
+        return diagonalFOVToHorizontalFOV(this.toDouble(), aspect).toFloat()
+    }
+
+    @JvmStatic
+    inline fun Float.h2vFOV(aspect: Double): Float {
+        return horizontalFOVToVerticalFOV(this.toDouble(), aspect).toFloat()
+    }
+
+    @JvmStatic
+    inline fun Float.h2dFOV(aspect: Double): Float {
+        return horizontalFOVToDiagonalFOV(this.toDouble(), aspect).toFloat()
+    }
+
+    @JvmStatic
+    inline fun Float.v2dFOV(aspect: Double): Float {
+        return verticalFOVToDiagonalFOV(this.toDouble(), aspect).toFloat()
+    }
+
+    @JvmStatic
+    inline fun Float.v2fFOV(aspect: Double): Float {
+        return verticalFOVToHorizontalFOV(this.toDouble(), aspect).toFloat()
+    }
+
 }

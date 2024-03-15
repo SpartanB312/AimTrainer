@@ -23,4 +23,7 @@ object TextureManager : TextureLoader by AsyncTextureLoader(Runtime.getRuntime()
     val right = lazyTexture("assets/texture/skybox/5.png")
     val back = lazyTexture("assets/texture/skybox/6.png")
 
+    // Menu
+    val bg = lazyTexture("assets/texture/menu/halo_infinite_background.png")
+
 }

@@ -52,8 +52,8 @@ object VertexBuffer {
                     size < 1025 -> buffers[4]
                     else -> {
                         if (size > currentSize) {
-                            directBuffer = createDirectByteBuffer(currentSize)
                             currentSize = size
+                            directBuffer = createDirectByteBuffer(currentSize)
                         }
                         directBuffer
                     }

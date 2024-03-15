@@ -314,7 +314,7 @@ class UnicodeFontRenderer(
                     if (missingLastColor && index == text.length - 1) colors[0]
                     else colors[index + 1]
                 } else {
-                    val ratio = ((endX - x) / width).coerceAtMost(colors.size - 1f)
+                    val ratio = ((endX - x) / width).coerceAtMost(colors.size - 1f).coerceAtLeast(0f)
                     colors[ratio.floorToInt()].mix(colors[ratio.ceilToInt()], ratio - ratio.floorToInt())
                 }
             } else currentColor

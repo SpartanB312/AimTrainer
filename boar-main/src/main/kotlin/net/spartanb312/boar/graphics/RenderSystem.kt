@@ -4,16 +4,16 @@ import net.spartanb312.boar.graphics.OpenGL.*
 import net.spartanb312.boar.graphics.compat.GLCompatibility
 import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.collection.CircularArray
-import net.spartanb312.boar.utils.misc.Counter
-import net.spartanb312.boar.utils.misc.NULL
-import net.spartanb312.boar.utils.misc.instance
-import net.spartanb312.boar.utils.misc.mallocInt
+import net.spartanb312.boar.utils.misc.*
 import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
+import java.util.concurrent.LinkedBlockingQueue
+
+typealias RS = RenderSystem
 
 object RenderSystem : Thread() {
 
@@ -35,6 +35,8 @@ object RenderSystem : Thread() {
     inline val heightF get() = height.toFloat()
     inline val widthD get() = width.toDouble()
     inline val heightD get() = height.toDouble()
+    inline val aspect get() = widthF / heightF
+    inline val aspectD get() = widthD / heightD
     inline val centerX get() = width / 2
     inline val centerY get() = height / 2
     inline val centerXF get() = widthF / 2f
@@ -49,6 +51,12 @@ object RenderSystem : Thread() {
     inline val mouseYF get() = mouseYD.toFloat()
     inline val mouseX get() = mouseXD.toInt()
     inline val mouseY get() = mouseYD.toInt()
+
+    val widthScale get() = widthF / 1920f
+    val heightScale get() = heightF / 1080f
+
+    private val renderThreadJob = LinkedBlockingQueue<Runnable>()
+    fun addRenderThreadJob(runnable: Runnable) = renderThreadJob.add(runnable)
 
     var actualRenderThread: Thread = this; private set
     fun isRenderThread(): Boolean = currentThread() == actualRenderThread
@@ -69,6 +77,9 @@ object RenderSystem : Thread() {
     private var graphics: Class<out GameGraphics>? = null
 
     private val memoryCheckUpdateTimer = Timer()
+    private val profilerResultUpdateTimer = Timer()
+    private val profiler = Profiler()
+    var lastProfilingResults: MutableMap<String, Long> = mutableMapOf(); private set
     var totalMemory = 0L; private set
     var freeMemory = 0L; private set
     val usedMemory get() = totalMemory - freeMemory
@@ -158,6 +169,10 @@ object RenderSystem : Thread() {
         gameGraphics.onInit()
 
         while (!glfwWindowShouldClose(window)) {
+            gameGraphics.onSync()
+            profiler.start()
+
+            // Pre-render
             counter.invoke {
                 rawFPS = it
                 averageFPS = countArray.toList().sum() / 8f
@@ -165,9 +180,24 @@ object RenderSystem : Thread() {
             countTimer.passedAndReset(125) { countArray.add(rawFPS) }
             updateResolution()
             updateMemory()
+            while (true) {
+                val task = renderThreadJob.poll()
+                if (task != null) task.run()
+                else break
+            }
             glfwPollEvents()
-            gameGraphics.onLoop()
+            profiler.profiler("Pre Render")
+
+            // On Loop
+            with(gameGraphics) {
+                profiler.onLoop()
+            }
             glfwSwapBuffers(window)
+            profiler.profiler("Swap Buffer")
+            if (profilerResultUpdateTimer.passed(1000)) {
+                profilerResultUpdateTimer.reset()
+                lastProfilingResults = profiler.endWithResult()
+            }
         }
 
         Callbacks.glfwFreeCallbacks(window)

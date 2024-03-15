@@ -20,7 +20,7 @@ object InputManager {
     fun onKeyTyped(key: Int, modifier: Int) {
         if (Render2DManager.onKeyTyped(key, modifier)) return
         keyTypedListeners.forEach { if (it.onKeyTyped(key, modifier)) return }
-        if (key == GLFW.GLFW_KEY_ESCAPE) Render2DManager.displayScreen(OptionScreen)
+        if (key == GLFW.GLFW_KEY_F2) Render2DManager.displayScreen(OptionScreen)
     }
 
     fun onKeyRepeating(key: Int, modifier: Int) {
@@ -53,6 +53,11 @@ object InputManager {
     fun registerKeyRelease(listener: KeyReleaseListener) = keyReleaseListeners.add(listener)
     fun unregisterKeyRelease(listener: KeyReleaseListener) = keyReleaseListeners.remove(listener)
 
+    fun registerMouseClick(listener: MouseClickListener) = mouseClickListener.add(listener)
+    fun unregisterMouseClick(listener: MouseClickListener) = mouseClickListener.remove(listener)
+
+    fun registerMouseRelease(listener: MouseReleaseListener) = mouseReleaseListener.add(listener)
+    fun unregisterMouseRelease(listener: MouseReleaseListener) = mouseReleaseListener.remove(listener)
 
     private var scrollValue = 0
     private val scrollTimer = Timer()

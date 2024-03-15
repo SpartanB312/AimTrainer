@@ -3,13 +3,11 @@ package net.spartanb312.boar.game.render
 import net.spartanb312.boar.graphics.cache.CacheManager
 import net.spartanb312.boar.graphics.font.CustomFont
 import net.spartanb312.boar.graphics.font.FontRenderer
-import net.spartanb312.boar.graphics.font.SFR
 import net.spartanb312.boar.graphics.font.StaticFont
 
 object FontCacheManager : CacheManager() {
     init {
         register(FontRendererMain)
-        register(SF)
     }
 }
 
@@ -21,10 +19,25 @@ object FontRendererMain : FontRenderer by FontRenderer(
     textureLoader = TextureManager
 )
 
+object FontRendererBig : FontRenderer by FontRenderer(
+    "assets/font/Microsoft YaHei UI.ttc",
+    50f,
+    scaleFactor = 1f,
+    chunkSize = 49,
+    textureLoader = TextureManager
+)
+
+object FontRendererROG : FontRenderer by FontRenderer(
+    "assets/font/ROG.otf",
+    100f,
+    scaleFactor = 1f,
+    imgSize = 1024,
+    chunkSize = 49,
+    textureLoader = TextureManager
+)
+
 object FontMain : StaticFont by CustomFont.fromPath(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,
     textureLoader = TextureManager
 )
-
-object SF : SFR by FontMain.create("Bandit Evo")

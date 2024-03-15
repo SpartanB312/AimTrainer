@@ -2,7 +2,6 @@ package net.spartanb312.boar.graphics.compat
 
 import net.spartanb312.boar.graphics.OpenGL.*
 import org.lwjgl.opengl.GLCapabilities
-import java.lang.Exception
 
 class GLCompatibility(context: GLCapabilities) {
 
@@ -41,7 +40,7 @@ class GLCompatibility(context: GLCapabilities) {
     // OpenGL version
     val glVersion = glGetString(GL_VERSION) ?: ""
     val gpuManufacturer = glGetString(GL_VENDOR) ?: ""
-    val gpuName = glGetString(GL_RENDERER) ?: ""
+    val gpuName = glGetString(GL_RENDERER)?.substringBefore("/")?: ""
     val intelGraphics = glVersion.lowercase().contains("intel")
             || gpuManufacturer.lowercase().contains("intel")
             || gpuName.lowercase().contains("intel")

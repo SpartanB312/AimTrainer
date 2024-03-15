@@ -1,5 +1,7 @@
 package net.spartanb312.boar.utils.math.vector
 
+import kotlin.math.sqrt
+
 data class Vec3i(val x: Int = 0, val y: Int = 0, val z: Int = 0) {
 
     constructor(x: Number, y: Number, z: Number) : this(x.toInt(), y.toInt(), z.toInt())
@@ -17,6 +19,7 @@ data class Vec3i(val x: Int = 0, val y: Int = 0, val z: Int = 0) {
     inline val xFloat get() = x.toFloat()
     inline val yFloat get() = y.toFloat()
     inline val zFloat get() = z.toFloat()
+    inline val length get() = sqrt((x * x + y * y + z * z).toDouble())
 
     // Divide
     operator fun div(vec3i: Vec3i) = div(vec3i.x, vec3i.y, vec3i.z)
@@ -58,6 +61,16 @@ data class Vec3i(val x: Int = 0, val y: Int = 0, val z: Int = 0) {
         return "Vec3i[${this.x}, ${this.y}, ${this.z}]"
     }
 
+    override fun equals(other: Any?): Boolean {
+        return other is Vec3i && other.x == x && other.y == y && other.z == z
+    }
+
+    override fun hashCode(): Int {
+        var result = x.hashCode()
+        result = 31 * result + y.hashCode()
+        result = 31 * result + z.hashCode()
+        return result
+    }
     companion object {
         @JvmField
         val ZERO = Vec3i(0, 0, 0)

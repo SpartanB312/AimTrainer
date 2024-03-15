@@ -10,6 +10,7 @@ abstract class GuiScreen :
     MouseReleaseListener {
     abstract fun onRender(mouseX: Double, mouseY: Double)
     open fun onInit() {}
+    open fun onClosed() {}
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean = false
     override fun onMouseReleased(mouseX: Int, mouseY: Int, button: Int) {}
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean = false

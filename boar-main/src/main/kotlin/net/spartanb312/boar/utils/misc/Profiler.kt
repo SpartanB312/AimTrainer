@@ -7,23 +7,27 @@ class Profiler {
     private var currentIndex = 0
     private var startTime = 0L
 
-    fun start() {
+    fun start(): Profiler {
         startTime = System.nanoTime()
         currentIndex = 0
+        return this
     }
 
-    fun profiler(name: String) {
-        durations[currentIndex] = System.nanoTime()
+    fun profiler(name: String): Profiler {
+        val currentTime = System.nanoTime()
+        durations[currentIndex] = currentTime - startTime
         names[currentIndex] = name
+        startTime = currentTime
         currentIndex++
+        return this
     }
 
-    fun endWithResult(): Map<String, Long> {
-        currentIndex = 0
+    fun endWithResult(): MutableMap<String, Long> {
         val map = mutableMapOf<String, Long>()
         for (i in 0 until currentIndex) {
             map[names[i]] = durations[i]
         }
+        currentIndex = 0
         return map
     }
 

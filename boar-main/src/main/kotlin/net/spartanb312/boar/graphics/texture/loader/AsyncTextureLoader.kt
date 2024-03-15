@@ -7,10 +7,17 @@ import net.spartanb312.boar.graphics.texture.delegate.LateUploadTexture
 import net.spartanb312.boar.utils.thread.ConcurrentTaskManager
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.math.max
 
-class AsyncTextureLoader(threadsCount: Int) : TextureLoader {
+class AsyncTextureLoader(private val threadsCount: Int) : TextureLoader {
 
+    private val workingThread = AtomicInteger()
+    private val ioThread = AtomicInteger()
     private val id = Companion.id.getAndIncrement()
+    private val loadCount = AtomicInteger()
+    override val totalThread get() = max(threadsCount, activeThread)
+    override val activeThread get() = workingThread.get()
+    override val loadedCount get() = loadCount.get()
     override val queue = LinkedBlockingQueue<LazyTextureContainer>()
     private val renderThreadJobs = LinkedBlockingQueue<() -> LateUploadTexture>()
     private val finishedTextures = mutableListOf<LateUploadTexture>()
@@ -20,8 +27,14 @@ class AsyncTextureLoader(threadsCount: Int) : TextureLoader {
             val container = queue.poll()
             if (container != null) {
                 taskManager.launch(Dispatchers.IO) {
+                    workingThread.incrementAndGet()
+                    ioThread.incrementAndGet()
                     if (container.state.get() == AbstractTexture.State.CREATED) {
-                        val job = container.asyncLoad()
+                        val job = container.asyncLoad {
+                            workingThread.decrementAndGet()
+                            loadCount.incrementAndGet()
+                        }
+                        ioThread.decrementAndGet()
                         renderThreadJobs.put(job)
                     }
                 }
@@ -50,6 +63,10 @@ class AsyncTextureLoader(threadsCount: Int) : TextureLoader {
     override fun suspend() = repeatTask.suspend()
 
     override fun stop() = taskManager.shutdown()
+
+    override fun remaining(): Int {
+        return queue.size + ioThread.get()
+    }
 
     companion object {
         private val id = AtomicInteger(0)

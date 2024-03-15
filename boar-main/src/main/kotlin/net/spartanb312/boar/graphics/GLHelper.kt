@@ -131,6 +131,35 @@ object GLHelper : CompatContext,
         else throw Exception("OpenGL 1.4 and upper is required to enable mipmap texture")
     }
 
+    inline fun scissor(
+        x: Int,
+        y: Int,
+        x1: Int,
+        y1: Int,
+        block: () -> Unit,
+    ) {
+        glScissor(x, RS.height - y1, x1 - x, y1 - y)
+        glEnable(GL_SCISSOR_TEST)
+        block()
+        glDisable(GL_SCISSOR_TEST)
+    }
+
+    inline fun scissor(
+        x: Float,
+        y: Float,
+        x1: Float,
+        y1: Float,
+        block: () -> Unit,
+    ) = scissor(x.toInt(), y.toInt(), x1.toInt(), y1.toInt(), block)
+
+    inline fun scissor(
+        x: Double,
+        y: Double,
+        x1: Double,
+        y1: Double,
+        block: () -> Unit,
+    ) = scissor(x.toInt(), y.toInt(), x1.toInt(), y1.toInt(), block)
+
 }
 
 class GLState<T>(valueIn: T, private val action: (T) -> Unit) : ReadWriteProperty<Any?, T> {

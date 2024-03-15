@@ -14,7 +14,12 @@ abstract class Camera(
     open var cameraPos: Vec3f = Vec3f()
 ) {
 
-    abstract fun onUpdate(sensitivity: Float = 2.2f, updateCamera: Boolean = false)
+    abstract fun onUpdate(
+        sensitivity: Double = 2.2,
+        vRate: Float = 1.0f,
+        hRate: Float = 1.0f,
+        updateCamera: Boolean = false
+    )
 
     fun project(
         yaw: Float = this.yaw,
@@ -23,11 +28,13 @@ abstract class Camera(
         fov: Float = this.fov,
         zNear: Float = this.zRange.start,
         zFar: Float = this.zRange.endInclusive,
-        sensitivity: Float = 2.2f,
+        sensitivity: Double = 2.2,
+        vRate: Float = 1.0f,
+        hRate: Float = 1.0f,
         updateCamera: Boolean = true,
         block: Camera.() -> Unit
     ) {
-        onUpdate(sensitivity, updateCamera)
+        onUpdate(sensitivity, vRate, hRate, updateCamera)
         perspectivef(fov, RenderSystem.widthF / RenderSystem.heightF, zNear, zFar)
             .mulCameraProject(yaw, pitch, position)
             .mulToGL()
@@ -37,7 +44,7 @@ abstract class Camera(
     object Default : Camera() {
         private var lastMouseX = RenderSystem.mouseXD
         private var lastMouseY = RenderSystem.mouseYD
-        override fun onUpdate(sensitivity: Float, updateCamera: Boolean) {
+        override fun onUpdate(sensitivity: Double, vRate: Float, hRate: Float, updateCamera: Boolean) {
             val mouseX = RenderSystem.mouseXD
             val mouseY = RenderSystem.mouseYD
             if (updateCamera) {
@@ -48,15 +55,10 @@ abstract class Camera(
                 if (mouseX != lastMouseX || mouseY != lastMouseY) {
                     val diffX = RenderSystem.mouseXD - lastMouseX
                     val diffY = RenderSystem.mouseYD - lastMouseY
-                    //if (diffX > 1000 || diffY > 1000) {
-                    //    println("${RenderSystem.mouseXD} - $lastMouseX")
-                    //    println(diffX)
-                    //    println(diffY)
-                    //}
                     lastMouseX = RenderSystem.mouseXD
                     lastMouseY = RenderSystem.mouseYD
-                    yaw += (diffX * 0.0371248537 * sensitivity).toFloat()
-                    pitch -= (diffY * 0.0371248537 * sensitivity).toFloat()
+                    yaw += (diffX * 0.0371248537 * sensitivity * hRate).toFloat()
+                    pitch -= (diffY * 0.0371248537 * sensitivity * vRate).toFloat()
                     while (true) {
                         if (yaw > 360f) yaw -= 360f
                         else if (yaw < 0f) yaw += 360f

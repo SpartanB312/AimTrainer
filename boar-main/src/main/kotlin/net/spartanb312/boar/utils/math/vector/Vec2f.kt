@@ -21,6 +21,7 @@ value class Vec2f private constructor(val bits: Long) {
     inline val yLong get() = y.toLong()
     inline val xDouble get() = x.toDouble()
     inline val yDouble get() = y.toDouble()
+    inline val length get() = sqrt(x * x + y * y)
 
     // Divide
     operator fun div(vec2f: Vec2f) = div(vec2f.x, vec2f.y)
