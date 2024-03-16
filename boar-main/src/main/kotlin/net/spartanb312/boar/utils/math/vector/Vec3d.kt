@@ -1,5 +1,6 @@
 package net.spartanb312.boar.utils.math.vector
 
+import kotlin.math.acos
 import kotlin.math.sqrt
 
 data class Vec3d(val x: Double = 0.0, val y: Double = 0.0, val z: Double = 0.0) {
@@ -58,9 +59,13 @@ data class Vec3d(val x: Double = 0.0, val y: Double = 0.0, val z: Double = 0.0) 
     )
 
     fun normalize(): Vec3d {
-        val r = sqrt(x * x + y * y + z * z)
+        val r = length
         if (r == 0.0) return this
         return Vec3d(x / r, y / r, z / r)
+    }
+
+    fun angle(other: Vec3d): Double {
+        return acos((this dot other) / (length * other.length))
     }
 
     override fun toString(): String {

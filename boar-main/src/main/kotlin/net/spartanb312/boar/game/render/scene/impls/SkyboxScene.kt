@@ -21,6 +21,6 @@ object SkyboxScene : Scene() {
         TextureManager.back
     )
 
-    override fun onRender() = skybox.onRender3D()
+    override fun render3D() = skybox.onRender3D()
 
 }

@@ -1,5 +1,6 @@
 package net.spartanb312.boar.game
 
+import net.spartanb312.boar.game.aimassist.HaloInfiniteAA
 import net.spartanb312.boar.game.entity.Entity
 import net.spartanb312.boar.game.entity.EntityPlayer
 import net.spartanb312.boar.game.option.impls.AimAssistOption
@@ -25,6 +26,16 @@ object Player : EntityPlayer() {
     val sens get() = sensK / 1000.0
     val raytraced get() = lastRayTracedTarget != null
 
+    val hi = HaloInfiniteAA()
+
+    fun setPosition(position: Vec3f) {
+        pos = position
+    }
+
+    fun move(x: Float, y: Float, z: Float) {
+        pos = pos.plus(x, y, z)
+    }
+
     fun project(
         yaw: Float = camera.yaw,
         pitch: Float = camera.pitch,
@@ -42,20 +53,20 @@ object Player : EntityPlayer() {
         aaTimer.passedAndReset(5) {
             sensK = if (sensK == -1.0) sensitivity * 1000.0
             else {
-                val firing = Render2DManager.currentScreen == null
+                val firing = !Render2DManager.displaying
                         && (SceneManager.currentScene == AimTrainingScene || SceneManager.currentScene is Academy.AcademyScene)
                         && GLFW.glfwGetMouseButton(RS.window, GLFW.GLFW_MOUSE_BUTTON_1) == GLFW.GLFW_PRESS
                 val targetAA = when {
                     raytraced && firing -> AimAssistOption.firingCoefficient
                     raytraced && !firing -> AimAssistOption.raytraceCoefficient
-                    !raytraced && firing -> AimAssistOption.raytraceCoefficient
                     else -> 1.0
                 }
                 if (targetAA == 1.0) sensK.converge(sensitivity * 1000.0, 0.3)
                 else sensK.converge(sensitivity * targetAA * 1000.0, 0.5)
             }
         }
-        camera.project(yaw, pitch, position, fov, zNear, zFar, sens, vRate, hRate, updateCamera, block)
+        camera.project(yaw, pitch, pos, fov, zNear, zFar, sens, vRate, hRate, updateCamera, block)
+        hi.onTick()
     }
 
     override var pitch: Float

@@ -1,6 +1,7 @@
 package net.spartanb312.boar.utils.math.vector
 
-import kotlin.math.sqrt
+import net.spartanb312.boar.utils.math.toDegree
+import kotlin.math.*
 
 data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
 
@@ -19,7 +20,11 @@ data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
     inline val xDouble get() = x.toDouble()
     inline val yDouble get() = y.toDouble()
     inline val zDouble get() = z.toDouble()
-    inline val length get() = sqrt(x * x + y * y + z * z)
+    inline val length get() = sqrt((x * x + y * y + z * z).toDouble()).toFloat()
+
+    val yaw get() = atan(z / x)
+    val pitch get() = atan(y / sqrt(x * x + z * z))
+    val roll get() = atan(x / y)
 
     // Divide
     operator fun div(vec3f: Vec3f) = div(vec3f.x, vec3f.y, vec3f.z)
@@ -58,9 +63,41 @@ data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
     )
 
     fun normalize(): Vec3f {
-        val r = sqrt((x * x + y * y + z * z).toDouble())
-        if (r == 0.0) return this
+        val r = length
+        if (r == 0f) return this
         return Vec3f(x / r, y / r, z / r)
+    }
+
+    fun angle(other: Vec3f): Float {
+        return acos((this dot other) / (length * other.length))
+    }
+
+    fun toEuler(): Triple<Float, Float, Float> {
+        val normalized = normalize()
+        val reference = Vec3f(0, 0, 10)
+        val cosTheta = normalized.angle(reference)
+        val theta = acos(cosTheta)
+        val axis = reference cross normalized
+
+        val k = axis.normalize()
+        val c = cos(theta / 2)
+        val s = sin(theta / 2)
+        val w = c
+        val x = k.x * s
+        val y = k.y * s
+        val z = k.z * s
+
+        val t0 = 2.0 * (w * x + y * z)
+        val t1 = 1.0 - 2.0 * (x * x + y * y)
+        val roll = atan2(t0, t1)
+
+        val t2 = (2.0 * (w * y - z * x)).coerceIn(-1.0..1.0)
+        val pitch = asin(t2)
+
+        val t3 = 2.0 * (w * z + x * y)
+        val t4 = 1.0 - 2.0 * (y * y + z * z)
+        val yaw = atan2(t3, t4)
+        return Triple(yaw.toDegree().toFloat(), pitch.toDegree().toFloat(), roll.toDegree().toFloat())
     }
 
     override fun toString(): String {

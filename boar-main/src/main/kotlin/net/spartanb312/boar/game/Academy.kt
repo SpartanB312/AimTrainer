@@ -67,7 +67,11 @@ object Academy {
         )
         private val training = SixShot(scoreboardScreen, this)
 
-        override fun onRender() {
+        override fun onTick() {
+            // HaloInfiniteAA
+        }
+
+        override fun render3D() {
             skybox.onRender3D()
             training.render()
         }

@@ -1,15 +1,22 @@
 package net.spartanb312.boar.game.render.scene
 
+import net.spartanb312.boar.game.Academy
 import net.spartanb312.boar.game.input.InputManager
 import net.spartanb312.boar.game.render.gui.Render2DManager
+import net.spartanb312.boar.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.boar.game.render.scene.impls.DummyScene
 
 object SceneManager {
 
     var currentScene: Scene = DummyScene
+    val inTraining get() = currentScene == AimTrainingScene || currentScene is Academy.AcademyScene
 
     fun onRender() {
-        currentScene.onRender()
+        currentScene.render3D()
+    }
+
+    fun onTick() {
+        currentScene.onTick()
     }
 
     private fun registerScene(scene: Scene) {

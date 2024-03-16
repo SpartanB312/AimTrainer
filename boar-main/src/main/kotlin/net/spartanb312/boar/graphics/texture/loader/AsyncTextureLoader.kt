@@ -14,10 +14,12 @@ class AsyncTextureLoader(private val threadsCount: Int) : TextureLoader {
     private val workingThread = AtomicInteger()
     private val ioThread = AtomicInteger()
     private val id = Companion.id.getAndIncrement()
-    private val loadCount = AtomicInteger()
+    private val loadedTextures = AtomicInteger()
+    private val totalTextures = AtomicInteger()
     override val totalThread get() = max(threadsCount, activeThread)
     override val activeThread get() = workingThread.get()
-    override val loadedCount get() = loadCount.get()
+    override val loadedCount get() = loadedTextures.get()
+    override val totalCount get() = totalTextures.get()
     override val queue = LinkedBlockingQueue<LazyTextureContainer>()
     private val renderThreadJobs = LinkedBlockingQueue<() -> LateUploadTexture>()
     private val finishedTextures = mutableListOf<LateUploadTexture>()
@@ -32,7 +34,7 @@ class AsyncTextureLoader(private val threadsCount: Int) : TextureLoader {
                     if (container.state.get() == AbstractTexture.State.CREATED) {
                         val job = container.asyncLoad {
                             workingThread.decrementAndGet()
-                            loadCount.incrementAndGet()
+                            loadedTextures.incrementAndGet()
                         }
                         ioThread.decrementAndGet()
                         renderThreadJobs.put(job)
@@ -55,6 +57,7 @@ class AsyncTextureLoader(private val threadsCount: Int) : TextureLoader {
     override fun add(texture: LazyTextureContainer) {
         if (taskManager.available()) {
             queue.add(texture)
+            totalTextures.incrementAndGet()
         } else throw Exception("This texture loader has been shut down!")
     }
 

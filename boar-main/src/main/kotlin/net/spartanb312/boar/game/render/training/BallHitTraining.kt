@@ -28,12 +28,12 @@ abstract class BallHitTraining(
     private val horizontalOffset: Float = 0f,
     private val verticalOffset: Float = 0f,
     private val distance: Float = 50f,
-    private val fadeTime: Int = 100,
+    private val fadeTime: Int = 0,
 ) : Training(name) {
 
     private val entities get() = scene.entities
     private val fadeBalls = mutableMapOf<Ball, Long>()
-    private val color = ColorRGB(0, 220, 200, 192)
+    private val color = ColorRGB(255,31,63) //ColorRGB(0, 220, 200, 192)
     private val outlineC = color.alpha(224)
     protected open val errorOffset = { distance: Double, radius: Float ->
         if (distance < radius + 0.3f) true
@@ -133,7 +133,7 @@ abstract class BallHitTraining(
     }
 
     override fun onClick() {
-        if (stage != Stage.Training || Render2DManager.currentScreen != null) return
+        if (stage != Stage.Training || Render2DManager.displaying) return
         var hit = false
         scene.getRayTracedResult(Player.offsetPos,
             Player.camera.front,

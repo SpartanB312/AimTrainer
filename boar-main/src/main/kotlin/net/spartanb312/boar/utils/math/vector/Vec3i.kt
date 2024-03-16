@@ -1,5 +1,6 @@
 package net.spartanb312.boar.utils.math.vector
 
+import kotlin.math.acos
 import kotlin.math.sqrt
 
 data class Vec3i(val x: Int = 0, val y: Int = 0, val z: Int = 0) {
@@ -19,7 +20,7 @@ data class Vec3i(val x: Int = 0, val y: Int = 0, val z: Int = 0) {
     inline val xFloat get() = x.toFloat()
     inline val yFloat get() = y.toFloat()
     inline val zFloat get() = z.toFloat()
-    inline val length get() = sqrt((x * x + y * y + z * z).toDouble())
+    inline val length get() = sqrt((x * x + y * y + z * z).toDouble()).toFloat()
 
     // Divide
     operator fun div(vec3i: Vec3i) = div(vec3i.x, vec3i.y, vec3i.z)
@@ -56,6 +57,10 @@ data class Vec3i(val x: Int = 0, val y: Int = 0, val z: Int = 0) {
         z * target.x - x * target.z,
         x * target.y - y * target.x
     )
+
+    fun angle(other: Vec3i): Float {
+        return acos((this dot other) / (length * other.length))
+    }
 
     override fun toString(): String {
         return "Vec3i[${this.x}, ${this.y}, ${this.z}]"

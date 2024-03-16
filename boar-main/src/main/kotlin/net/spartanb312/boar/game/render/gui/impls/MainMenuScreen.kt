@@ -1,6 +1,6 @@
 package net.spartanb312.boar.game.render.gui.impls
 
-import net.spartanb312.boar.Boar.AIM_TRAINER_VERSION
+import net.spartanb312.boar.AimTrainer.AIM_TRAINER_VERSION
 import net.spartanb312.boar.game.Academy
 import net.spartanb312.boar.game.render.Background
 import net.spartanb312.boar.game.render.FontRendererMain
@@ -21,8 +21,8 @@ object MainMenuScreen : GuiScreen() {
     private val sideButtons = listOf(
         SideBar.SideButton("Academy") { Academy.start() },
         SideBar.SideButton("Training") { Render2DManager.displayScreen(TrainingScreen) },
-        SideBar.SideButton("Options") { Render2DManager.displayScreen(OptionScreen) },
         SideBar.SideButton("Module") { Render2DManager.displayScreen(ModuleScreen) },
+        SideBar.SideButton("Option") { Render2DManager.displayScreen(OptionScreen) },
         SideBar.SideButton("Exit") { exitProcess(0) }
     )
 

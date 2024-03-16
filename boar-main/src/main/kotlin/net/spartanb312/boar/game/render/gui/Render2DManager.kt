@@ -1,6 +1,5 @@
 package net.spartanb312.boar.game.render.gui
 
-import net.spartanb312.boar.game.render.gui.impls.MainMenuScreen
 import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.RenderSystem
 import org.lwjgl.glfw.GLFW
@@ -14,10 +13,7 @@ object Render2DManager {
     val currentScreen: GuiScreen? get() = if (screenStack.isEmpty()) null else screenStack.peek()
     val updateCamera get() = screenStack.isEmpty()
     val size get() = screenStack.size
-
-    init {
-        displayScreen(MainMenuScreen)
-    }
+    val displaying get() = screenStack.isNotEmpty()
 
     fun displayScreen(screen: GuiScreen) {
         RenderSystem.checkRenderThread()

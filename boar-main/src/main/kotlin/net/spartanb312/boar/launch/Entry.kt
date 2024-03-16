@@ -1,6 +1,6 @@
 package net.spartanb312.boar.launch
 
-import net.spartanb312.boar.Boar
+import net.spartanb312.boar.AimTrainer
 import net.spartanb312.boar.graphics.RenderSystem
 
 // Only for debug
@@ -11,6 +11,6 @@ fun main() = Main.main(arrayOf("-DevMode"))
  */
 object Entry {
     init {
-        RenderSystem.launch(Boar::class.java, 1920, 1080, "Test")
+        RenderSystem.launch(AimTrainer::class.java, 1920, 1080, "Test")
     }
 }

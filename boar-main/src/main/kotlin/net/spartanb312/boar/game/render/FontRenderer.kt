@@ -8,6 +8,8 @@ import net.spartanb312.boar.graphics.font.StaticFont
 object FontCacheManager : CacheManager() {
     init {
         register(FontRendererMain)
+        register(FontRendererBig)
+        register(FontRendererROG)
     }
 }
 
@@ -34,6 +36,13 @@ object FontRendererROG : FontRenderer by FontRenderer(
     imgSize = 1024,
     chunkSize = 49,
     textureLoader = TextureManager
+)
+
+object FontRendererASCII : FontRenderer by FontRenderer(
+    "assets/font/Microsoft YaHei UI.ttc",
+    25f,
+    imgSize = 256,
+    chunkSize = 49
 )
 
 object FontMain : StaticFont by CustomFont.fromPath(

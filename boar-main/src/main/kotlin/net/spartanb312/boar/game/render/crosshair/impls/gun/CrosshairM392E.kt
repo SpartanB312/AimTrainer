@@ -5,6 +5,7 @@ import net.spartanb312.boar.game.config.setting.alias
 import net.spartanb312.boar.game.config.setting.whenFalse
 import net.spartanb312.boar.game.render.crosshair.Crosshair
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
@@ -33,7 +34,7 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.1f) {
         val scale = min(RS.widthF / 2560f, RS.heightF / 1369f)
         val progress = if (animation) ((System.currentTimeMillis() - clickTime) / resetTime.toFloat()).coerceIn(0f..1f) else 0f
         colorTimer.passedAndReset(10) {
-            colorRate = colorRate.converge(if (Player.raytraced) 100f else 0f, 0.25f)
+            colorRate = colorRate.converge(if (Player.raytraced && SceneManager.inTraining) 100f else 0f, 0.25f)
         }
         val color = colorRGB.mix(ColorRGB(255, 50, 60), colorRate / 100f)
         GLHelper.glMatrixScope {

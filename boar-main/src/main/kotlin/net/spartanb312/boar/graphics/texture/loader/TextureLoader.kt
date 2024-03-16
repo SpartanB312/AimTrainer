@@ -7,6 +7,7 @@ interface TextureLoader {
     val activeThread: Int
     val totalThread: Int
     val loadedCount: Int
+    val totalCount: Int
     fun renderThreadHook(timeLimit: Int = -1)
     fun add(texture: LazyTextureContainer)
     fun resume()

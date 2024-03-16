@@ -1,7 +1,6 @@
 package net.spartanb312.boar.game.render
 
 import com.soywiz.kds.iterators.fastForEachReverse
-import net.spartanb312.boar.Boar
 import net.spartanb312.boar.game.option.impls.ControlOption
 import net.spartanb312.boar.game.option.impls.VideoOption
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
@@ -14,7 +13,7 @@ import java.util.*
 object InfoRenderer {
 
     private val leftUpInfo = mutableListOf(
-        { "Boar Engine &f${Boar.ENGINE_VERSION}" },
+        { "Boar Engine &f${RenderSystem.ENGINE_VERSION}" },
         { "FPS:&f ${RenderSystem.averageFPS}" },
         { "${VideoOption.fovType}:&f ${VideoOption.fov}" },
         { "Sens:&f ${ControlOption.sensitivity}" },

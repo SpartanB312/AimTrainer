@@ -15,7 +15,8 @@ abstract class Scene :
     MouseReleaseListener,
     SubscribedRenderer {
     val entities: MutableList<Entity> = mutableListOf()
-    abstract fun onRender()
+    abstract fun render3D()
+    open fun onTick() {}
     open fun onInit() {}
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean = false
     override fun onMouseReleased(mouseX: Int, mouseY: Int, button: Int) {}

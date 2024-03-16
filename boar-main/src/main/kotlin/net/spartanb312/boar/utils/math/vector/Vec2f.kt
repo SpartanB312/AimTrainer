@@ -1,5 +1,6 @@
 package net.spartanb312.boar.utils.math.vector
 
+import kotlin.math.acos
 import kotlin.math.sqrt
 
 @JvmInline
@@ -64,9 +65,13 @@ value class Vec2f private constructor(val bits: Long) {
     )
 
     fun normalize(): Vec2f {
-        val r = sqrt((x * x + y * y).toDouble())
-        if (r == 0.0) return this
+        val r = length
+        if (r == 0f) return this
         return Vec2f(x / r, y / r)
+    }
+
+    fun angle(other: Vec2f): Float {
+        return acos((this dot other) / (length * other.length))
     }
 
     override fun toString(): String {

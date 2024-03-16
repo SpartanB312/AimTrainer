@@ -2,6 +2,7 @@ package net.spartanb312.boar.graphics
 
 import net.spartanb312.boar.graphics.OpenGL.*
 import net.spartanb312.boar.graphics.compat.GLCompatibility
+import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.collection.CircularArray
 import net.spartanb312.boar.utils.misc.*
@@ -15,7 +16,15 @@ import java.util.concurrent.LinkedBlockingQueue
 
 typealias RS = RenderSystem
 
+@Module(
+    name = "Boar Engine",
+    version = RenderSystem.ENGINE_VERSION,
+    description = "Core graphics and physics engine",
+    author = "B_312"
+)
 object RenderSystem : Thread() {
+
+    const val ENGINE_VERSION = "1.0.4"
 
     init {
         name = "RenderThread"
@@ -156,7 +165,6 @@ object RenderSystem : Thread() {
             gameGraphics.onMouseClicked(button, action, mods)
         }
 
-        glfwShowWindow(window)
         // Preparing depth test
         glClearDepth(1.0)
         glDepthFunc(GL11.GL_LEQUAL)
@@ -167,6 +175,8 @@ object RenderSystem : Thread() {
         updateResolution()
 
         gameGraphics.onInit()
+
+        glfwShowWindow(window)
 
         while (!glfwWindowShouldClose(window)) {
             gameGraphics.onSync()

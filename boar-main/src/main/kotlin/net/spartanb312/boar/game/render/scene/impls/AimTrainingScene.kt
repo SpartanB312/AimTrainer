@@ -24,7 +24,7 @@ object AimTrainingScene : Scene() {
 
     private var currentTraining: Training? = null
 
-    override fun onRender() {
+    override fun render3D() {
         skybox.onRender3D()
         currentTraining?.render()
     }

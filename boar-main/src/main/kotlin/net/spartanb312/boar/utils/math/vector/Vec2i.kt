@@ -1,5 +1,6 @@
 package net.spartanb312.boar.utils.math.vector
 
+import kotlin.math.acos
 import kotlin.math.sqrt
 
 @JvmInline
@@ -19,7 +20,7 @@ value class Vec2i private constructor(val bits: Long) {
     inline val yDouble get() = y.toDouble()
     inline val xFloat get() = x.toFloat()
     inline val yFloat get() = y.toFloat()
-    inline val length get() = sqrt((x * x + y * y).toDouble())
+    inline val length get() = sqrt((x * x + y * y).toDouble()).toFloat()
 
     // Divide
     operator fun div(vec2i: Vec2i) = div(vec2i.x, vec2i.y)
@@ -60,6 +61,10 @@ value class Vec2i private constructor(val bits: Long) {
         0,
         x * target.y - y * target.x
     )
+
+    fun angle(other: Vec2i): Float {
+        return acos((this dot other) / (length * other.length))
+    }
 
     override fun toString(): String {
         return "Vec2i[${this.x}, ${this.y}]"
