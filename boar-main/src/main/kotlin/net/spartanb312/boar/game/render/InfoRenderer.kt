@@ -14,7 +14,7 @@ import java.util.*
 object InfoRenderer {
 
     private val leftUpInfo = mutableListOf(
-        { "Boar Engine &f${Boar.VERSION}" },
+        { "Boar Engine &f${Boar.ENGINE_VERSION}" },
         { "FPS:&f ${RenderSystem.averageFPS}" },
         { "${VideoOption.fovType}:&f ${VideoOption.fov}" },
         { "Sens:&f ${ControlOption.sensitivity}" },

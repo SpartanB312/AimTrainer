@@ -1,6 +1,7 @@
 package net.spartanb312.boar.game.config
 
 import com.google.gson.*
+import net.spartanb312.boar.game.option.impls.AimAssistOption
 import net.spartanb312.boar.game.option.impls.ControlOption
 import net.spartanb312.boar.game.option.impls.CrosshairOption
 import net.spartanb312.boar.game.option.impls.VideoOption
@@ -15,6 +16,7 @@ object Configs {
         configs.add(ControlOption)
         configs.add(CrosshairOption)
         configs.add(VideoOption)
+        configs.add(AimAssistOption)
     }
 
     fun loadConfig(path: String) {

@@ -1,5 +1,6 @@
 package net.spartanb312.boar
 
+import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.config.Configs
 import net.spartanb312.boar.game.input.InputManager
 import net.spartanb312.boar.game.option.impls.ControlOption
@@ -9,7 +10,6 @@ import net.spartanb312.boar.game.render.TextureManager
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.game.render.scene.SceneManager
-import net.spartanb312.boar.graphics.Camera
 import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.GameGraphics
@@ -28,16 +28,17 @@ import org.lwjgl.opengl.GL11.*
  */
 object Boar : GameGraphics {
 
-    const val VERSION = "1.0"
-    const val AIM_TRAINER_VERSION = "1.0.0.240312"
+    const val ENGINE_VERSION = "1.0"
+    const val AIM_TRAINER_VERSION = "1.0.0.240316"
 
     override fun onInit() {
-        RS.setTitle("Boar")
+        RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
         try {
             Configs.loadConfig("configs.json")
             Configs.saveConfig("configs.json")
         } catch (ignore: Exception) {
             Configs.saveConfig("configs.json")
+            ignore.printStackTrace()
         }
         GLHelper.vSync = false
         TextureManager.resume()
@@ -59,7 +60,7 @@ object Boar : GameGraphics {
             val lockCamera = !Render2DManager.updateCamera
             GLHelper.depth = true
             GLHelper.cull = true
-            Camera.Default.project(
+            Player.project(
                 fov = VideoOption.fov,
                 updateCamera = !lockCamera,
                 sensitivity = ControlOption.sensitivity

@@ -10,7 +10,7 @@ import net.spartanb312.boar.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.boar.game.render.scene.Scene
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.game.render.scene.impls.DummyScene
-import net.spartanb312.boar.game.render.training.impls.Grid
+import net.spartanb312.boar.game.render.training.impls.SixShot
 import net.spartanb312.boar.graphics.Skybox
 import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
@@ -65,7 +65,7 @@ object Academy {
             TextureManager.right,
             TextureManager.back
         )
-        private val training = Grid(scoreboardScreen)
+        private val training = SixShot(scoreboardScreen, this)
 
         override fun onRender() {
             skybox.onRender3D()

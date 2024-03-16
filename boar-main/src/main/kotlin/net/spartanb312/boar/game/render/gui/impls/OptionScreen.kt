@@ -1,6 +1,7 @@
 package net.spartanb312.boar.game.render.gui.impls
 
 import net.spartanb312.boar.game.config.Configs
+import net.spartanb312.boar.game.option.impls.AimAssistOption
 import net.spartanb312.boar.game.option.impls.ControlOption
 import net.spartanb312.boar.game.option.impls.CrosshairOption
 import net.spartanb312.boar.game.option.impls.VideoOption
@@ -158,7 +159,8 @@ object OptionScreen : GuiScreen() {
     private enum class SubTitle(val selectButton: SelectButton) {
         Control(SelectButton("Control", OptionsRenderer(ControlOption))),
         Video(SelectButton("Video", OptionsRenderer(VideoOption))),
-        Crosshair(SelectButton("Crosshair", OptionsRenderer(CrosshairOption)))
+        Crosshair(SelectButton("Crosshair", OptionsRenderer(CrosshairOption))),
+        AimAssist(SelectButton("AimAssist", OptionsRenderer(AimAssistOption))),
     }
 
 }

@@ -1,25 +1,20 @@
 package net.spartanb312.boar.game.entity
 
+import net.spartanb312.boar.game.entity.part.Sphere
 import net.spartanb312.boar.utils.math.vector.Vec3f
-import net.spartanb312.boar.utils.math.vector.distanceTo
-import kotlin.math.sqrt
 
-class Ball(pos: Vec3f, val size: Float) : Entity(pos) {
+class Ball(pos: Vec3f, var size: Float) : Entity(pos) {
 
-    override fun intersects(
+    private val body = Sphere(this, size)
+
+    override fun raytrace(
         origin: Vec3f,
         ray: Vec3f,
-        offset: (Double, Float) -> Boolean // DistanceToCenter, Radius
-    ): Boolean {
-        val distance = origin.distanceTo(pos)
-        if (distance < size) return true
-        val direct = pos - origin
-        val cos = (direct dot ray) / (ray.length * direct.length)
-        val s = cos * distance
-        val l = sqrt(distance * distance - s * s)
-        return if (l < size) true
-        else offset.invoke(l, size)
-    }
+        sphereOffset: (Double, Float) -> Boolean // DistanceToCenter, Radius
+    ): Boolean = body.raytrace(origin, ray, sphereOffset)
+
+    override fun raytraceRate(origin: Vec3f, ray: Vec3f, sphereOffsetR: (Double, Float) -> Float): Float =
+        body.raytraceRate(origin, ray, sphereOffsetR)
 
     override fun equals(other: Any?): Boolean {
         return other is Ball && other.pos == pos && other.size == size

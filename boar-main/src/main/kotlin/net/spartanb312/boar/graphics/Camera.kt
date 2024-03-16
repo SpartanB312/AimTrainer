@@ -4,7 +4,10 @@ import net.spartanb312.boar.graphics.RenderSystem.initialMouseValue
 import net.spartanb312.boar.graphics.matrix.mulCameraProject
 import net.spartanb312.boar.graphics.matrix.mulToGL
 import net.spartanb312.boar.graphics.matrix.perspectivef
+import net.spartanb312.boar.utils.math.toRadian
 import net.spartanb312.boar.utils.math.vector.Vec3f
+import kotlin.math.cos
+import kotlin.math.sin
 
 abstract class Camera(
     open var fov: Float = 70f,
@@ -13,6 +16,13 @@ abstract class Camera(
     open var pitch: Float = 0f,
     open var cameraPos: Vec3f = Vec3f()
 ) {
+
+    val front
+        get() = Vec3f(
+            cos(pitch.toRadian()) * cos(yaw.toRadian()),
+            sin(pitch.toRadian()),
+            cos(pitch.toRadian()) * sin(yaw.toRadian())
+        )
 
     abstract fun onUpdate(
         sensitivity: Double = 2.2,

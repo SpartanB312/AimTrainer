@@ -1,5 +1,6 @@
 package net.spartanb312.boar.game.render.crosshair.impls.gun
 
+import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.config.setting.alias
 import net.spartanb312.boar.game.config.setting.whenFalse
 import net.spartanb312.boar.game.render.crosshair.Crosshair
@@ -12,6 +13,8 @@ import net.spartanb312.boar.graphics.matrix.mulToGL
 import net.spartanb312.boar.graphics.matrix.mulTranslate
 import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.utils.color.ColorRGB
+import net.spartanb312.boar.utils.math.ConvergeUtil.converge
+import net.spartanb312.boar.utils.timing.Timer
 import kotlin.math.min
 
 object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
@@ -22,16 +25,23 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
     override val syncFOV get() = followFOV.value
     override var clickTime = System.currentTimeMillis()
 
+    private val colorTimer = Timer()
+    private var colorRate = 0F
+
     override fun onRender(fov: Float, test: Boolean, colorRGB: ColorRGB) {
         val centerX = if (test) 0f else RS.centerXF
         val centerY = if (test) 0f else RS.centerYF
         val scale = min(RS.widthF / 2560f, RS.heightF / 1369f)
+        colorTimer.passedAndReset(10) {
+            colorRate = colorRate.converge(if (Player.raytraced) 100f else 0f, 0.25f)
+        }
+        val color = colorRGB.mix(ColorRGB(255, 50, 60), colorRate / 100f)
         glMatrixScope {
             translatef(centerX, centerY, 0.0f)
                 .mulScale(scale, scale, 1.0f)
                 .mulTranslate(-centerX, -centerY, 0.0f)
                 .mulToGL()
-            val transparentColor = colorRGB.alpha((colorRGB.a * transparentAlphaRate).toInt())
+            val transparentColor = color.alpha((color.a * transparentAlphaRate).toInt())
             val actualFOV = if (followFOV.value) fov else size.inDFov
             // Outer circle 120 to 14.5 65 to 22.0
             val outerRadius = 14.5f + 7.5f * (120f - actualFOV) / 55f
@@ -82,7 +92,7 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
                 centerX,
                 centerY - fromRadius - length,
                 3f * scale,
-                colorRGB
+                color
             )
             RenderUtils.drawLine(
                 centerX,
@@ -90,7 +100,7 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
                 centerX,
                 centerY + fromRadius + length,
                 3f * scale,
-                colorRGB
+                color
             )
             RenderUtils.drawLine(
                 centerX - fromRadius,
@@ -98,7 +108,7 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
                 centerX - fromRadius - length,
                 centerY,
                 3f * scale,
-                colorRGB
+                color
             )
             RenderUtils.drawLine(
                 centerX + fromRadius,
@@ -106,7 +116,7 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
                 centerX + fromRadius + length,
                 centerY,
                 3f * scale,
-                colorRGB
+                color
             )
         }
     }
