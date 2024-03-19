@@ -17,6 +17,7 @@ object Sphere {
         var x: Float
         var y: Float
         var z: Float
+        var count = 0
         for (zStep in 0 until zSegments) {
             for (xStep in 0 until xSegments) {
                 z = cos(zStep * zAngle)
@@ -49,11 +50,14 @@ object Sphere {
                 val a3 = Vec3f(a1.y * a2.z - a2.y * a1.z, a1.z * a2.x - a2.z * a1.x, a1.x * a2.y - a2.x * a1.y)
                 val a = 1f / sqrt(a3.x * a3.x + a3.y * a3.y + a3.z * a3.z)
 
-                normals.add(Vec3f(a3.x * a, a3.y * a, a3.z * a))
-                vertices.add(vec1)
-                vertices.add(vec2)
-                vertices.add(vec3)
-                vertices.add(vec4)
+                if (count % xSegments != 0) {
+                    normals.add(Vec3f(a3.x * a, a3.y * a, a3.z * a))
+                    vertices.add(vec1)
+                    vertices.add(vec2)
+                    vertices.add(vec3)
+                    vertices.add(vec4)
+                }
+                count++
             }
         }
         return Pair(vertices, normals)

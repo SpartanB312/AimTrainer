@@ -7,11 +7,11 @@ open class EntityPlayer : Entity(Vec3f.ZERO) {
     open var yaw: Float = 0f
     open var pitch: Float = 0f
 
-    override fun raytrace(origin: Vec3f, ray: Vec3f, sphereOffset: (Double, Float) -> Boolean): Boolean {
+    override fun raytrace(origin: Vec3f, ray: Vec3f, errorAngle: Float): Boolean {
         return false
     }
 
-    override fun raytraceRate(origin: Vec3f, ray: Vec3f, sphereOffsetR: (Double, Float) -> Float): Float {
+    override fun raytraceRate(origin: Vec3f, ray: Vec3f, errorAngle: Float): Float {
         return 0f
     }
 

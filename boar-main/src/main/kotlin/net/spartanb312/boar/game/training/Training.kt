@@ -1,4 +1,4 @@
-package net.spartanb312.boar.game.render.training
+package net.spartanb312.boar.game.training
 
 import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.render.gui.SubscribedRenderer

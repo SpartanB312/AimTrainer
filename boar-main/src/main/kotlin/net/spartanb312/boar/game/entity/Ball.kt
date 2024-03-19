@@ -10,11 +10,11 @@ class Ball(pos: Vec3f, var size: Float) : Entity(pos) {
     override fun raytrace(
         origin: Vec3f,
         ray: Vec3f,
-        sphereOffset: (Double, Float) -> Boolean // DistanceToCenter, Radius
-    ): Boolean = body.raytrace(origin, ray, sphereOffset)
+        errorAngle:Float // DistanceToCenter, Radius
+    ): Boolean = body.raytrace(origin, ray, errorAngle)
 
-    override fun raytraceRate(origin: Vec3f, ray: Vec3f, sphereOffsetR: (Double, Float) -> Float): Float =
-        body.raytraceRate(origin, ray, sphereOffsetR)
+    override fun raytraceRate(origin: Vec3f, ray: Vec3f, errorAngle:Float): Float =
+        body.raytraceRate(origin, ray, errorAngle)
 
     override fun equals(other: Any?): Boolean {
         return other is Ball && other.pos == pos && other.size == size

@@ -1,23 +1,23 @@
-package net.spartanb312.boar.game.render.training.impls
+package net.spartanb312.boar.game.training.impls
 
 import net.spartanb312.boar.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.boar.game.render.scene.Scene
-import net.spartanb312.boar.game.render.training.BallHitTraining
+import net.spartanb312.boar.game.training.BallHitTraining
 
-class Grid(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
-    "Grid",
+class SixShot(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
+    "SixShot",
     scoreboardScreen,
     scene,
-    4,
-    2f,
+    6,
+    0.5f,
     5f,
     5,
     5,
+    1f,
+    1f,
     0f,
     0.5f
 ) {
-
-    override val errorOffset = { distance: Double, radius: Float -> distance < radius + 0.7f }
 
     override fun onHit(timeLapse: Int): Int {
         return (10000f / timeLapse.coerceIn(50..2000)).toInt()

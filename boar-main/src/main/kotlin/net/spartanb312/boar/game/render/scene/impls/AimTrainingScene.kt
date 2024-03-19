@@ -2,7 +2,7 @@ package net.spartanb312.boar.game.render.scene.impls
 
 import net.spartanb312.boar.game.render.TextureManager
 import net.spartanb312.boar.game.render.scene.Scene
-import net.spartanb312.boar.game.render.training.Training
+import net.spartanb312.boar.game.training.Training
 import net.spartanb312.boar.graphics.Skybox
 
 object AimTrainingScene : Scene() {

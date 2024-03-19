@@ -59,7 +59,7 @@ data class Vec3i(val x: Int = 0, val y: Int = 0, val z: Int = 0) {
     )
 
     fun angle(other: Vec3i): Float {
-        return acos((this dot other) / (length * other.length))
+        return acos((this dot other) / (length * other.length).toDouble()).toFloat()
     }
 
     override fun toString(): String {

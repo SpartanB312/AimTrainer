@@ -1,4 +1,4 @@
-package net.spartanb312.boar.game.render.training
+package net.spartanb312.boar.game.training
 
 import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.entity.Ball
@@ -14,7 +14,6 @@ import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.vector.Vec3f
 import kotlin.math.roundToInt
-import kotlin.random.Random
 
 abstract class BallHitTraining(
     name: String,
@@ -25,29 +24,18 @@ abstract class BallHitTraining(
     private val gap: Float,
     private val width: Int,
     private val height: Int,
+    private val errorAngle: Float,
+    private val renderAngle: Float = errorAngle,
     private val horizontalOffset: Float = 0f,
     private val verticalOffset: Float = 0f,
     private val distance: Float = 50f,
-    private val fadeTime: Int = 0,
+    private val fadeTime: Int = 100,
 ) : Training(name) {
 
     private val entities get() = scene.entities
     private val fadeBalls = mutableMapOf<Ball, Long>()
-    private val color = ColorRGB(255,31,63) //ColorRGB(0, 220, 200, 192)
+    private val color = ColorRGB(255, 31, 63,200) //ColorRGB(0, 220, 200, 192)
     private val outlineC = color.alpha(224)
-    protected open val errorOffset = { distance: Double, radius: Float ->
-        if (distance < radius + 0.3f) true
-        else if (distance < radius + 0.7f) {
-            Random.nextDouble(0.0, 1.0) < 1 - (distance - radius - 0.3) / 0.4
-        } else false
-    }
-    protected open val errorOffsetR = { distance: Double, radius: Float ->
-        if (distance < radius) 1f
-        else if (distance < radius + 0.7f) {
-            (1f - (distance - radius) / 0.7f).toFloat()
-        } else 0f
-    }
-    protected open val adsorptionOffset = { distance: Double, radius: Float -> distance < radius + 0.7f }
 
     override var shots = 0
     override var hits = 0
@@ -91,9 +79,8 @@ abstract class BallHitTraining(
         scene.getRayTracedResult(
             Player.offsetPos,
             Player.camera.front,
-            if (bulletAdsorption) adsorptionOffset else { _, _ -> false },
-            //if (bulletAdsorption) errorOffsetR else { _, _ -> 0f }
-        )
+            if (bulletAdsorption) renderAngle else 0f
+        ) // Cache raytraced target
         var startY = 0f
         val color = ColorRGB.AQUA
         leftUpInfo.forEach {
@@ -135,10 +122,11 @@ abstract class BallHitTraining(
     override fun onClick() {
         if (stage != Stage.Training || Render2DManager.displaying) return
         var hit = false
-        scene.getRayTracedResult(Player.offsetPos,
+        scene.getRayTracedResult(
+            Player.offsetPos,
             Player.camera.front,
-            if (bulletAdsorption) errorOffset else { _, _ -> false },
-            if (bulletAdsorption) errorOffsetR else { _, _ -> 0f })?.let {
+            if (bulletAdsorption) errorAngle else 0f
+        )?.let {
             if (it is Ball) {
                 hit = true
                 entities.add(generateBall(it))

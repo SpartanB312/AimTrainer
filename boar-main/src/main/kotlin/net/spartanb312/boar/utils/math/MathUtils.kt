@@ -1,5 +1,11 @@
 package net.spartanb312.boar.utils.math
 
+import net.spartanb312.boar.utils.math.vector.Vec3d
+import net.spartanb312.boar.utils.math.vector.Vec3f
+import org.joml.Matrix4d
+import org.joml.Matrix4f
+import org.joml.Vector4d
+import org.joml.Vector4f
 import kotlin.math.*
 
 @Suppress("NOTHING_TO_INLINE")
@@ -174,6 +180,21 @@ object MathUtils {
     @JvmStatic
     inline fun Float.v2fFOV(aspect: Double): Float {
         return verticalFOVToHorizontalFOV(this.toDouble(), aspect).toFloat()
+    }
+
+    fun Vec3f.mul(mat: Matrix4f): Vec3f {
+        val vec = Vector4f(x, y, z, 0f).mul(mat)
+        return Vec3f(vec.x, vec.y, vec.z)
+    }
+
+    fun Vec3f.mul(mat: Matrix4d): Vec3f {
+        val vec = Vector4d(x.toDouble(), y.toDouble(), z.toDouble(), 0.0).mul(mat)
+        return Vec3f(vec.x, vec.y, vec.z)
+    }
+
+    fun Vec3d.mul(mat: Matrix4d): Vec3f {
+        val vec = Vector4d(x, y, z, 0.0).mul(mat)
+        return Vec3f(vec.x, vec.y, vec.z)
     }
 
 }

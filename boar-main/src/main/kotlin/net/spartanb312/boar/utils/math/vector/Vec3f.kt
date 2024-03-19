@@ -69,7 +69,7 @@ data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
     }
 
     fun angle(other: Vec3f): Float {
-        return acos((this dot other) / (length * other.length))
+        return acos((this dot other) / (length * other.length).toDouble()).toFloat()
     }
 
     fun toEuler(): Triple<Float, Float, Float> {

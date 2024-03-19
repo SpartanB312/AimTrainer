@@ -26,13 +26,12 @@ abstract class Scene :
     fun getRayTracedResults(
         origin: Vec3f,
         ray: Vec3f,
-        sphereOffset: (Double, Float) -> Boolean = { _, _ -> false }, // Only for sphere TODO: Make Offset class
-        sphereOffsetR: (Double, Float) -> Float = { _, _ -> 0f }
+        errorAngle:Float
     ): List<Entity> {
         val results = mutableListOf<Pair<Entity, Float>>()
         entities.forEach {
-            if (it.raytrace(origin, ray, sphereOffset)) {
-                results.add(Pair(it, it.raytraceRate(origin, ray, sphereOffsetR)))
+            if (it.raytrace(origin, ray, errorAngle)) {
+                results.add(Pair(it, it.raytraceRate(origin, ray, errorAngle)))
             }
         }
         results.sortBy { origin.distanceTo(it.first.pos) }
@@ -46,7 +45,6 @@ abstract class Scene :
     fun getRayTracedResult(
         origin: Vec3f,
         ray: Vec3f,
-        sphereOffset: (Double, Float) -> Boolean = { _, _ -> false },
-        sphereOffsetR: (Double, Float) -> Float = { _, _ -> 0f }
-    ): Entity? = getRayTracedResults(origin, ray, sphereOffset, sphereOffsetR).firstOrNull()
+        errorAngle:Float
+    ): Entity? = getRayTracedResults(origin, ray, errorAngle).firstOrNull()
 }

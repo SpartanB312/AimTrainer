@@ -25,7 +25,7 @@ object BallRenderer {
         outline: Boolean = false,
         outlineColor: ColorRGB = color.alpha(255),
         outlineWidth: Float = 1f,
-        level: Int = 12
+        level: Int = 13
     ) {
         val vertices = getVertices(level)
         glMatrixScope {
@@ -40,9 +40,12 @@ object BallRenderer {
                     }
                 }
             }
+            var count = 0
             GL11.GL_QUADS.buffer(VertexFormat.Pos3fColor, vertices.size * 4) {
                 vertices.forEach {
-                    v3fc(it.x, it.y, it.z, color)
+                    //if (count !in (12 * 4)..(12 * 4 + 3))
+                        v3fc(it.x, it.y, it.z, color)
+                    count++
                 }
             }
         }
