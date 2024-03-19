@@ -11,16 +11,16 @@ import net.spartanb312.boar.game.training.TrainingInfoContainer
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.misc.asRange
 
-class OneShotTest(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
+class DMRTest(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
     scoreboardScreen,
     scene,
     1,
-    0.5f.asRange,
+    1.0f.asRange,
     5f,
     5,
     5,
-    1.5f,
-    1.5f,
+    1f,
+    1f,
     0f,
     0.5f,
     ballHP = 5
@@ -28,7 +28,7 @@ class OneShotTest(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTra
 
     companion object : TrainingInfo("DMR", "") {
         override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
-            return OneShotTest(scoreboardScreen, scene)
+            return DMRTest(scoreboardScreen, scene)
         }
     }
 
@@ -47,6 +47,13 @@ class OneShotTest(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTra
                 false,
                 outlineC
             ) else fadeBalls.remove(it)
+        }
+    }
+
+    override fun onTick() {
+        super.onTick()
+        entities.forEach {
+            if (it is Ball) it.randomMove()
         }
     }
 

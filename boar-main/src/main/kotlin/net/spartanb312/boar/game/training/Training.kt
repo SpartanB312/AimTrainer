@@ -16,6 +16,7 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     val timeLapsed get() = System.currentTimeMillis() - startTime
     var startTime = System.currentTimeMillis()
     var stage = Stage.Prepare
+    abstract val errorAngle:Float
     abstract fun render()
     abstract fun onClick()
     open fun onTick() {

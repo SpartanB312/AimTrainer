@@ -10,6 +10,12 @@ object SceneManager {
 
     var currentScene: Scene = DummyScene
     val inTraining get() = currentScene == AimTrainingScene || currentScene is Academy.AcademyScene
+    val errorAngle
+        get() = when (currentScene) {
+            AimTrainingScene -> AimTrainingScene.currentTraining?.errorAngle ?: 0f
+            is Academy.AcademyScene -> (currentScene as Academy.AcademyScene).errorAngle
+            else -> 0f
+        }
 
     fun onRender() {
         currentScene.render3D()

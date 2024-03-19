@@ -19,13 +19,13 @@ import kotlin.math.roundToInt
 
 abstract class BallHitTraining(
     private val scoreboardScreen: ScoreboardScreen,
-    private val scene: Scene,
+    protected val scene: Scene,
     private val amount: Int,
     private val sizeRange: ClosedFloatingPointRange<Float>,
     private val gap: Float,
     private val width: Int,
     private val height: Int,
-    private val errorAngle: Float,
+    override val errorAngle: Float,
     private val renderAngle: Float = errorAngle,
     private val horizontalOffset: Float = 0f,
     private val verticalOffset: Float = 0f,
@@ -42,9 +42,9 @@ abstract class BallHitTraining(
     override var shots = 0
     override var hits = 0
     override var score = 0
-    private val hitTime = mutableListOf<Long>()
-    private var lastShotTime = 0L
-    private val reactionTimes = mutableListOf<Int>()
+    protected val hitTime = mutableListOf<Long>()
+    protected var lastShotTime = 0L
+    protected val reactionTimes = mutableListOf<Int>()
     override val showingScore get() = if (score > 0) (score * accuracy).roundToInt() else score
 
     init {
@@ -85,7 +85,7 @@ abstract class BallHitTraining(
         scene.getRayTracedResult(
             Player.offsetPos,
             Player.camera.front,
-            if (bulletAdsorption) renderAngle else 0f
+            if (bulletAdsorption.value) renderAngle else 0f
         ) // Cache raytraced target
         var startY = 0f
         val color = ColorRGB.AQUA
@@ -131,7 +131,7 @@ abstract class BallHitTraining(
         scene.getRayTracedResult(
             Player.offsetPos,
             Player.camera.front,
-            if (bulletAdsorption) errorAngle else 0f
+            if (bulletAdsorption.value) errorAngle else 0f
         )?.let {
             if (it is Ball) {
                 hit = true
@@ -157,7 +157,7 @@ abstract class BallHitTraining(
         lastShotTime = currentTime
     }
 
-    private fun generateBall(hitOn: Ball? = null): Ball {
+    fun generateBall(hitOn: Ball? = null): Ball {
         val zRange = 1..width
         val yRange = 1..height
         val zOffset = width * gap / 2f - horizontalOffset * gap

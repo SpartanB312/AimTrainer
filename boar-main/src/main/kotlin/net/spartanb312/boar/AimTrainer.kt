@@ -60,7 +60,6 @@ object AimTrainer : GameGraphics {
         Runtime.getRuntime().addShutdownHook(Thread {
             FontCacheManager.saveCache()
         })
-        //FontRendererMain.initAllChunks()
         Render2DManager.displayScreen(LoadingScreen)
     }
 
@@ -96,6 +95,11 @@ object AimTrainer : GameGraphics {
             CrosshairRenderer.onRender(VideoOption.dfov)
         }
         profiler("Render 2D")
+
+        val vec = Vec3f(1f, 1f, 4f)
+        val vec2 = Vec3f(5f, 1f, 4f)
+
+        vec + vec2
 
         // Tick
         tickTimer.passedAndReset(16) {

@@ -3,6 +3,7 @@ package net.spartanb312.boar.game.render.scene
 import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.entity.Entity
 import net.spartanb312.boar.game.input.interfaces.*
+import net.spartanb312.boar.game.option.impls.AimAssistOption
 import net.spartanb312.boar.game.render.gui.SubscribedRenderer
 import net.spartanb312.boar.utils.math.vector.Vec3f
 import net.spartanb312.boar.utils.math.vector.distanceTo
@@ -26,12 +27,12 @@ abstract class Scene :
     fun getRayTracedResults(
         origin: Vec3f,
         ray: Vec3f,
-        errorAngle:Float
+        errorAngle: Float
     ): List<Entity> {
         val results = mutableListOf<Pair<Entity, Float>>()
         entities.forEach {
-            if (it.raytrace(origin, ray, errorAngle)) {
-                results.add(Pair(it, it.raytraceRate(origin, ray, errorAngle)))
+            if (it.raytrace(origin, ray, errorAngle * AimAssistOption.errorAngleRate)) {
+                results.add(Pair(it, it.raytraceRate(origin, ray, errorAngle * AimAssistOption.errorAngleRate)))
             }
         }
         results.sortBy { origin.distanceTo(it.first.pos) }
@@ -45,6 +46,6 @@ abstract class Scene :
     fun getRayTracedResult(
         origin: Vec3f,
         ray: Vec3f,
-        errorAngle:Float
-    ): Entity? = getRayTracedResults(origin, ray, errorAngle).firstOrNull()
+        errorAngle: Float
+    ): Entity? = getRayTracedResults(origin, ray, errorAngle * AimAssistOption.errorAngleRate).firstOrNull()
 }

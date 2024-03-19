@@ -63,6 +63,7 @@ object Academy {
             TextureManager.back
         )
         private val training = TrainingScreen.trainings[defaultTraining].new(scoreboardScreen, this)
+        val errorAngle = training.errorAngle
 
         override fun onTick() {
             // HaloInfiniteAA

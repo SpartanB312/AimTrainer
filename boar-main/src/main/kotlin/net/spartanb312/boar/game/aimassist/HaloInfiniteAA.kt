@@ -4,16 +4,15 @@ import net.spartanb312.boar.game.Academy
 import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.entity.Entity
 import net.spartanb312.boar.game.option.impls.AimAssistOption
+import net.spartanb312.boar.game.option.impls.AimAssistOption.zeroAngleFrictionRate
 import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.math.MathUtils.mul
-import net.spartanb312.boar.utils.math.toDegree
 import net.spartanb312.boar.utils.math.toRadian
 import net.spartanb312.boar.utils.math.vector.Vec3f
-import net.spartanb312.boar.utils.math.vector.distanceTo
 import net.spartanb312.boar.utils.timing.Timer
 import org.joml.Matrix4d
 import org.joml.Vector3f
@@ -38,7 +37,7 @@ class HaloInfiniteAA {
                 RS.window,
                 GLFW.GLFW_MOUSE_BUTTON_1
             ) == GLFW.GLFW_PRESS
-        ) AimAssistOption.firingComposition else AimAssistOption.moveComposition
+        ) AimAssistOption.firingCompensation else AimAssistOption.moveCompensation
 
     fun aimComposite(sensitivity: Double) {
         aaTimer.passedAndReset(5) {
@@ -58,13 +57,15 @@ class HaloInfiniteAA {
         }
     }
 
+    var max = 0f
+
     fun moveComposite() {
         if (!AimAssistOption.mcEnabled) return
         val locked = locked
         val result = SceneManager.currentScene.getRayTracedResult(
             Player.offsetPos,
             Player.camera.front,
-            if (AimAssistOption.bulletAdsorption) 1f else 0f,
+            if (AimAssistOption.bulletAdsorption.value) AimAssistOption.errorAngle else 0f,
         )
         if (locked != null && result != null && locked.entity == result) {
             val facing = Vec3f(cos(Player.yaw.toRadian()), 0, sin(Player.yaw.toRadian()))
@@ -79,55 +80,16 @@ class HaloInfiniteAA {
             val angle = vec.angle(preVec)
             val zeroAngle = vec == preVec
             if (!angle.isNaN() && (AimAssistOption.zeroAngleFriction || !zeroAngle)) {
-                val feedbackAngle = angle * feedbackRate * if (zeroAngle) 0.5f else 1.0f
+                val feedbackAngle = angle * feedbackRate * if (zeroAngle) 0.5f * zeroAngleFrictionRate else 1.0f
                 val normal = preVec cross vec
                 val mat = Matrix4d().rotate(feedbackAngle.toDouble(), Vector3f(normal.x, normal.y, normal.z))
                 val feedbackVec = preVec.mul(mat)
-                val yawOffset = feedbackVec.yaw - vec.yaw
-                val pitchOffset = feedbackVec.pitch - vec.pitch
+                //println("Feedback Angle${feedbackVec.angle(vec).toDegree()}, Angle ${feedbackAngle.toDegree()}")
+                val clampRange = -(feedbackRate / 10f)..(feedbackRate / 10f)
+                val yawOffset = (feedbackVec.yaw - preVec.yaw).coerceIn(clampRange)
+                val pitchOffset = (feedbackVec.pitch - preVec.pitch).coerceIn(clampRange)
                 Player.yaw = locked.yaw + yawOffset * cos(Player.pitch.toRadian())
                 Player.pitch = locked.pitch + pitchOffset
-            }
-        }
-        if (result != null) lockEntity(result)
-        else this.locked = null
-    }
-
-    fun aimBot() {
-        val locked = locked
-        val result = SceneManager.currentScene.entities.minByOrNull { it.pos.distanceTo(Player.pos) }
-        if (locked != null && result != null && locked.entity == result) {
-            val vec = result.pos - Player.pos
-            Player.yaw = vec.yaw.toDegree()
-            Player.pitch = vec.pitch.toDegree() + 0.1f
-        }
-        if (result != null) lockEntity(result)
-        else this.locked = null
-    }
-
-    // Maybe faster
-    fun composite2() {
-        val locked = locked
-        val result = SceneManager.currentScene.getRayTracedResult(
-            Player.offsetPos,
-            Player.camera.front,
-            if (AimAssistOption.bulletAdsorption) 1f else 0f,
-        )
-        if (locked != null && result != null && locked.entity == result) {
-            val lastPlayerPos = locked.playerPos
-            val lastEntityPos = locked.entityPos
-            val preVec = lastEntityPos - lastPlayerPos
-            val vec = result.pos - Player.pos
-            val angle = vec.angle(preVec)
-            if (!angle.isNaN()) {
-                val feedbackAngle = angle * feedbackRate
-                val normal = preVec cross vec
-                val mat = Matrix4d().rotate(feedbackAngle.toDouble(), Vector3f(normal.x, normal.y, normal.z))
-                val feedbackVec = preVec.mul(mat)
-                val yawOffset = feedbackVec.yaw - vec.yaw
-                val pitchOffset = feedbackVec.pitch - vec.pitch
-                Player.yaw += yawOffset
-                Player.pitch += pitchOffset
             }
         }
         if (result != null) lockEntity(result)

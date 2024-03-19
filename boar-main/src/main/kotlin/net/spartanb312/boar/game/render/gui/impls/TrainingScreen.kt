@@ -23,9 +23,10 @@ object TrainingScreen : GuiScreen() {
     val trainings: List<TrainingInfo> = listOf(
         Grid,
         OneShot,
-        OneShotTest,
+        DMRTest,
         SixShot,
-        Random6Ball
+        Random6Ball,
+        BallFollowing
     )
     private var clickArea = mutableListOf<Pair<ClosedFloatingPointRange<Float>, ClosedFloatingPointRange<Float>>>()
 

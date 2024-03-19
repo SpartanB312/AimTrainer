@@ -15,9 +15,9 @@ object VideoOption : Option("Video") {
     val fpsLimit by setting("FPS Limit", 120, 30..2000,10).atMode(videoMode, VideoMode.Custom)
 
     val fovMode = setting("FOV Mode", FOVMode.DFOV)
-    private val dFOV by setting("Diagonal FOV", 78f, 60f..120f, 0.1f).atMode(fovMode, FOVMode.DFOV)
-    private val hFOV by setting("Horizontal FOV", 78f, 60f..120f, 0.1f).atMode(fovMode, FOVMode.HFOV)
-    private val vFOV by setting("Vertical FOV", 78f, 60f..120f, 0.1f).atMode(fovMode, FOVMode.VFOV)
+    private val dFOV by setting("Diagonal FOV", 78f, 60f..150f, 0.5f).atMode(fovMode, FOVMode.DFOV)
+    private val hFOV by setting("Horizontal FOV", 78f, 60f..150f, 0.5f).atMode(fovMode, FOVMode.HFOV)
+    private val vFOV by setting("Vertical FOV", 78f, 60f..150f, 0.5f).atMode(fovMode, FOVMode.VFOV)
     val fov
         get() = when (fovMode.value) {
             FOVMode.DFOV -> dFOV.d2vFOV(RS.aspectD)

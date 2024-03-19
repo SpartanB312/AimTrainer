@@ -31,11 +31,7 @@ object Player : EntityPlayer() {
     }
 
     fun project(
-        yaw: Float = camera.yaw,
-        pitch: Float = camera.pitch,
         fov: Float = camera.fov,
-        zNear: Float = camera.zRange.start,
-        zFar: Float = camera.zRange.endInclusive,
         sensitivity: Double = 2.2,
         vRate: Float = 1.0f,
         hRate: Float = 1.0f,
@@ -46,7 +42,19 @@ object Player : EntityPlayer() {
             composition.aimComposite(sensitivity)
             composition.moveComposite()
         }
-        camera.project(yaw, pitch, pos, fov, zNear, zFar, sens, vRate, hRate, updateCamera, block)
+        camera.project(
+            yaw,
+            pitch,
+            pos,
+            fov,
+            camera.zRange.start,
+            camera.zRange.endInclusive,
+            sens,
+            vRate,
+            hRate,
+            updateCamera,
+            block
+        )
     }
 
     override var pitch: Float

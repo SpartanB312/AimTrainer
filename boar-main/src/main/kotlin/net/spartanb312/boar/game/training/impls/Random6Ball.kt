@@ -8,7 +8,7 @@ import net.spartanb312.boar.game.training.TrainingInfo
 import net.spartanb312.boar.game.training.TrainingInfoContainer
 import net.spartanb312.boar.utils.misc.asRange
 
-class Random6Ball(scoreboardScreen: ScoreboardScreen, private val scene: Scene) : BallHitTraining(
+class Random6Ball(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
     scoreboardScreen,
     scene,
     6,

@@ -22,9 +22,9 @@ data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
     inline val zDouble get() = z.toDouble()
     inline val length get() = sqrt((x * x + y * y + z * z).toDouble()).toFloat()
 
-    val yaw get() = atan(z / x)
-    val pitch get() = atan(y / sqrt(x * x + z * z))
-    val roll get() = atan(x / y)
+    inline val yaw get() = atan(z / x)
+    inline val pitch get() = atan(y / sqrt(x * x + z * z))
+    inline val roll get() = atan(x / y)
 
     // Divide
     operator fun div(vec3f: Vec3f) = div(vec3f.x, vec3f.y, vec3f.z)
