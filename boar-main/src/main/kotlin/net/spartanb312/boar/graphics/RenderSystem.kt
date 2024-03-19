@@ -19,7 +19,7 @@ typealias RS = RenderSystem
 @Module(
     name = "Boar Engine",
     version = RenderSystem.ENGINE_VERSION,
-    description = "Core graphics and physics engine",
+    description = "Core game engine",
     author = "B_312"
 )
 object RenderSystem : Thread() {

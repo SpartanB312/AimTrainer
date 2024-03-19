@@ -1,16 +1,13 @@
 package net.spartanb312.boar.game
 
+import net.spartanb312.boar.game.option.impls.ControlOption.defaultTraining
 import net.spartanb312.boar.game.render.TextureManager
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.boar.game.render.gui.Render2DManager
-import net.spartanb312.boar.game.render.gui.impls.MainMenuScreen
-import net.spartanb312.boar.game.render.gui.impls.OptionScreen
-import net.spartanb312.boar.game.render.gui.impls.PauseScreen
-import net.spartanb312.boar.game.render.gui.impls.ScoreboardScreen
+import net.spartanb312.boar.game.render.gui.impls.*
 import net.spartanb312.boar.game.render.scene.Scene
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.game.render.scene.impls.DummyScene
-import net.spartanb312.boar.game.training.impls.Grid
 import net.spartanb312.boar.graphics.Skybox
 import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
@@ -65,7 +62,7 @@ object Academy {
             TextureManager.right,
             TextureManager.back
         )
-        private val training = Grid(scoreboardScreen, this)
+        private val training = TrainingScreen.trainings[defaultTraining].new(scoreboardScreen, this)
 
         override fun onTick() {
             // HaloInfiniteAA

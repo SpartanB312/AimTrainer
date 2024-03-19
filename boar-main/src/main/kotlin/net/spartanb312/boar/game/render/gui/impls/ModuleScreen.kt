@@ -1,7 +1,6 @@
 package net.spartanb312.boar.game.render.gui.impls
 
 import net.spartanb312.boar.AimTrainer
-import net.spartanb312.boar.game.mod.ModLoader
 import net.spartanb312.boar.game.render.Background
 import net.spartanb312.boar.game.render.FontRendererMain
 import net.spartanb312.boar.game.render.FontRendererROG
@@ -25,7 +24,6 @@ object ModuleScreen : GuiScreen() {
         modules.add(Main::class.java.getAnnotation(Module::class.java))
         modules.add(RenderSystem.javaClass.getAnnotation(Module::class.java))
         modules.add(AimTrainer.javaClass.getAnnotation(Module::class.java))
-        modules.add(ModLoader.javaClass.getAnnotation(Module::class.java))
     }
 
     override fun onRender(mouseX: Double, mouseY: Double) {

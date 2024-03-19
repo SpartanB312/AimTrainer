@@ -30,7 +30,7 @@ import kotlin.math.cos
 import kotlin.math.sin
 
 /**
- * Based on Boar Engine
+ * OpenGL 2.1 is Required
  * Everett, You'll always be mine
  */
 @Module(
@@ -41,7 +41,7 @@ import kotlin.math.sin
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240316"
+    const val AIM_TRAINER_VERSION = "1.0.0.240319"
 
     private val tickTimer = Timer()
 

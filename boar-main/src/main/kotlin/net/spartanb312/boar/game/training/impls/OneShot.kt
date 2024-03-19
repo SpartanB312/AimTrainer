@@ -8,23 +8,23 @@ import net.spartanb312.boar.game.training.TrainingInfo
 import net.spartanb312.boar.game.training.TrainingInfoContainer
 import net.spartanb312.boar.utils.misc.asRange
 
-class SixShot(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
+class OneShot(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
     scoreboardScreen,
     scene,
-    6,
+    1,
     0.5f.asRange,
     5f,
     5,
     5,
-    1f,
-    1f,
+    1.5f,
+    1.5f,
     0f,
     0.5f
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("SixShot", "") {
+    companion object : TrainingInfo("OneShot", "") {
         override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
-            return SixShot(scoreboardScreen, scene)
+            return OneShot(scoreboardScreen, scene)
         }
     }
 

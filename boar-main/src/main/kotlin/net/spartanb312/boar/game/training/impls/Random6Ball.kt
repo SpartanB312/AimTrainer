@@ -8,24 +8,36 @@ import net.spartanb312.boar.game.training.TrainingInfo
 import net.spartanb312.boar.game.training.TrainingInfoContainer
 import net.spartanb312.boar.utils.misc.asRange
 
-class SixShot(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
+class Random6Ball(scoreboardScreen: ScoreboardScreen, private val scene: Scene) : BallHitTraining(
     scoreboardScreen,
     scene,
     6,
-    0.5f.asRange,
+    2f.asRange,
     5f,
-    5,
-    5,
+    19,
+    19,
     1f,
     1f,
     0f,
-    0.5f
+    0.5f,
+    -100f..100f
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("SixShot", "") {
+    companion object : TrainingInfo("Random 6 Balls", "") {
         override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
-            return SixShot(scoreboardScreen, scene)
+            return Random6Ball(scoreboardScreen, scene)
         }
+    }
+
+    override fun render() {
+        super.render()
+        //scene.entities.forEach {
+        //    val direct = it.pos - Player.offsetPos
+        //    val distance = direct.length
+        //    val ray = Player.camera.front
+        //
+        //    //BallRenderer.render(refPos.x, refPos.y, refPos.z, 1f,ColorRGB.WHITE)
+        //}
     }
 
     override fun onHit(timeLapse: Int): Int {

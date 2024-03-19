@@ -3,14 +3,16 @@ package net.spartanb312.boar.game.training
 import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.render.gui.SubscribedRenderer
 import net.spartanb312.boar.graphics.RenderSystem
+import net.spartanb312.boar.graphics.texture.Texture
 
-abstract class Training(val name: String) : SubscribedRenderer {
+abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     protected val leftUpInfo = mutableListOf(
         { "FPS:&f ${RenderSystem.averageFPS}" },
         { "Acc:&f ${String.format("%.2f", accuracy * 100)}% ($hits/$shots)" },
         { "Score:&f $showingScore" },
         { "Sens:&f ${String.format("%.3f", Player.sens)}" }
     )
+    open val icon: Texture? = null
     val timeLapsed get() = System.currentTimeMillis() - startTime
     var startTime = System.currentTimeMillis()
     var stage = Stage.Prepare

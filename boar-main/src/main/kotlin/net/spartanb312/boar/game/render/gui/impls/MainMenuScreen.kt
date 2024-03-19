@@ -19,10 +19,10 @@ import kotlin.system.exitProcess
 object MainMenuScreen : GuiScreen() {
 
     private val sideButtons = listOf(
-        SideBar.SideButton("Academy") { Academy.start() },
-        SideBar.SideButton("Training") { Render2DManager.displayScreen(TrainingScreen) },
-        SideBar.SideButton("Module") { Render2DManager.displayScreen(ModuleScreen) },
-        SideBar.SideButton("Option") { Render2DManager.displayScreen(OptionScreen) },
+        SideBar.SideButton("Quick Play") { Academy.start() },
+        SideBar.SideButton("Trainings") { Render2DManager.displayScreen(TrainingScreen) },
+        SideBar.SideButton("Modules") { Render2DManager.displayScreen(ModuleScreen) },
+        SideBar.SideButton("Options") { Render2DManager.displayScreen(OptionScreen) },
         SideBar.SideButton("Exit") { exitProcess(0) }
     )
 

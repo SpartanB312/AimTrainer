@@ -13,14 +13,15 @@ import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.vector.Vec3f
+import net.spartanb312.boar.utils.misc.asRange
+import net.spartanb312.boar.utils.misc.random
 import kotlin.math.roundToInt
 
 abstract class BallHitTraining(
-    name: String,
     private val scoreboardScreen: ScoreboardScreen,
     private val scene: Scene,
-    amount: Int,
-    private val size: Float,
+    private val amount: Int,
+    private val sizeRange: ClosedFloatingPointRange<Float>,
     private val gap: Float,
     private val width: Int,
     private val height: Int,
@@ -28,14 +29,15 @@ abstract class BallHitTraining(
     private val renderAngle: Float = errorAngle,
     private val horizontalOffset: Float = 0f,
     private val verticalOffset: Float = 0f,
-    private val distance: Float = 50f,
-    private val fadeTime: Int = 100,
-) : Training(name) {
+    private val distanceRange: ClosedFloatingPointRange<Float> = 50f.asRange,
+    protected val ballHP: Int = 1,
+    protected val fadeTime: Int = 100,
+) : Training() {
 
-    private val entities get() = scene.entities
-    private val fadeBalls = mutableMapOf<Ball, Long>()
-    private val color = ColorRGB(255, 31, 63,200) //ColorRGB(0, 220, 200, 192)
-    private val outlineC = color.alpha(224)
+    protected val entities get() = scene.entities
+    protected val fadeBalls = mutableMapOf<Ball, Long>()
+    protected val color = ColorRGB(255, 31, 63, 200) //ColorRGB(0, 220, 200, 192)
+    protected val outlineC = color.alpha(224)
 
     override var shots = 0
     override var hits = 0
@@ -55,6 +57,10 @@ abstract class BallHitTraining(
         super.reset()
         hitTime.clear()
         reactionTimes.clear()
+        entities.clear()
+        repeat(amount) {
+            entities.add(generateBall())
+        }
     }
 
     override fun render() {
@@ -129,9 +135,12 @@ abstract class BallHitTraining(
         )?.let {
             if (it is Ball) {
                 hit = true
-                entities.add(generateBall(it))
-                entities.remove(it)
-                fadeBalls[it] = System.currentTimeMillis()
+                it.hp -= 1
+                if (it.hp == 0) {
+                    entities.add(generateBall(it))
+                    entities.remove(it)
+                    fadeBalls[it] = System.currentTimeMillis()
+                }
             }
         }
         shots++
@@ -155,10 +164,11 @@ abstract class BallHitTraining(
         val yOffset = height * gap / 2f - verticalOffset * gap
         val ball = Ball(
             Vec3f(
-                distance,
+                distanceRange.random(),
                 -yOffset + yRange.random() * gap - gap / 2f,
                 -zOffset + zRange.random() * gap - gap / 2f
-            ), size
+            ), sizeRange.random(),
+            ballHP
         )
         return if (ball == hitOn || entities.contains(ball) || fadeBalls.keys.contains(ball)) generateBall(hitOn)
         else ball
