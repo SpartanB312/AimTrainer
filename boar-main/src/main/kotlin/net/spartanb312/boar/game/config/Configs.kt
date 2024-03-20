@@ -1,10 +1,8 @@
 package net.spartanb312.boar.game.config
 
 import com.google.gson.*
-import net.spartanb312.boar.game.option.impls.AimAssistOption
-import net.spartanb312.boar.game.option.impls.ControlOption
-import net.spartanb312.boar.game.option.impls.CrosshairOption
-import net.spartanb312.boar.game.option.impls.VideoOption
+import net.spartanb312.boar.game.option.impls.*
+import net.spartanb312.boar.game.render.FontCacheManager
 import java.io.*
 
 object Configs {
@@ -17,6 +15,8 @@ object Configs {
         configs.add(CrosshairOption)
         configs.add(VideoOption)
         configs.add(AimAssistOption)
+        configs.add(AccessibilityOption)
+        configs.add(FontCacheManager)
     }
 
     fun loadConfig(path: String) {
@@ -26,12 +26,13 @@ object Configs {
         }
     }
 
-    fun saveConfig(path: String) {
+    fun saveConfig(path: String, syncChunks: Boolean = true) {
         val configFile = File(path)
         if (!configFile.exists()) {
             configFile.parentFile?.mkdirs()
             configFile.createNewFile()
         }
+        if (syncChunks) FontCacheManager.syncChunks()
         JsonObject().apply {
             configs.forEach {
                 add(it.name, it.saveValue())

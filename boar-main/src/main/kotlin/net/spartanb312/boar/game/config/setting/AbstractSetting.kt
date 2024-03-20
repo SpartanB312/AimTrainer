@@ -1,6 +1,7 @@
 package net.spartanb312.boar.game.config.setting
 
 import com.google.gson.JsonObject
+import net.spartanb312.boar.language.MultiText
 import net.spartanb312.boar.utils.misc.AliasNameable
 import net.spartanb312.boar.utils.misc.Nameable
 import kotlin.properties.ReadWriteProperty
@@ -12,6 +13,8 @@ abstract class AbstractSetting<T> : Nameable, AliasNameable, ReadWriteProperty<A
     abstract val defaultValue: T
     abstract var description: String
     abstract var value: T
+    abstract val multiText: MultiText
+    abstract val displayName: String
 
     val visibilities = mutableListOf<() -> Boolean>()
     val isVisible get() = visibilities.all { it.invoke() }

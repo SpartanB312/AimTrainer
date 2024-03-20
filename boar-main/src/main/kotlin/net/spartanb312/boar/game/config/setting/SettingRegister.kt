@@ -7,6 +7,7 @@ import net.spartanb312.boar.game.config.setting.number.LongSetting
 import net.spartanb312.boar.game.config.setting.primitive.BooleanSetting
 import net.spartanb312.boar.game.config.setting.primitive.EnumSetting
 import net.spartanb312.boar.game.config.setting.primitive.StringSetting
+import net.spartanb312.boar.language.Languages
 
 interface SettingRegister<T> {
 
@@ -67,6 +68,13 @@ interface SettingRegister<T> {
         visibility: () -> Boolean = { true },
     ) = setting(StringSetting(name, value, description, visibility))
 
+    fun T.setting(
+        name: String,
+        value: List<String>,
+        description: String = "",
+        visibility: () -> Boolean = { true },
+    ) = setting(ListSetting(name, value, description, visibility))
+
     fun <S : AbstractSetting<*>> T.setting(setting: S): S
 
 }
@@ -110,4 +118,10 @@ fun <T : Comparable<T>> AbstractSetting<T>.inRange(range: ClosedRange<T>) = this
 
 fun <T> AbstractSetting<T>.alias(aliasName: String): AbstractSetting<T> = this.apply {
     this.aliasName = aliasName
+    multiText.addLang(Languages.English, aliasName)
+}
+
+fun <T> AbstractSetting<T>.m(cn: String = "", tw: String = ""): AbstractSetting<T> = this.apply {
+    multiText.addLang(Languages.ChineseCN, cn)
+    multiText.addLang(Languages.ChineseTW, tw)
 }

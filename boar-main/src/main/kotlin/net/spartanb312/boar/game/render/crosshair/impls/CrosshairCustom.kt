@@ -1,6 +1,7 @@
 package net.spartanb312.boar.game.render.crosshair.impls
 
 import net.spartanb312.boar.game.config.setting.alias
+import net.spartanb312.boar.game.config.setting.m
 import net.spartanb312.boar.game.config.setting.whenTrue
 import net.spartanb312.boar.game.render.TextureManager
 import net.spartanb312.boar.game.render.crosshair.Crosshair
@@ -17,9 +18,13 @@ import kotlin.math.min
 object CrosshairCustom : Crosshair(0f) {
 
     private val size by setting("Custom-Size", 15f, 1f..50f, 0.5f).alias("Size")
+        .m("准星大小", "準星大小")
     val calibrate = setting("Custom-Calibrate", false).alias("Calibrate")
+        .m("校准准星", "準星校準")
     private val offsetX by setting("Custom-Offset X", 0.0, -5.0..5.0, 0.005).alias("Offset X").whenTrue(calibrate)
+        .m("X偏移", "X位移")
     private val offsetY by setting("Custom-Offset Y", 0.0, -5.0..5.0, 0.005).alias("Offset Y").whenTrue(calibrate)
+        .m("Y偏移", "Y位移")
 
     private val crosshair = TextureManager.lazyTexture("assets/CustomCrosshair.png")
 

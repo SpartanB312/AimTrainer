@@ -1,5 +1,7 @@
 package net.spartanb312.boar.game.config.setting
 
+import net.spartanb312.boar.language.MultiText
+
 abstract class MutableSetting<T : Any>(
     final override val nameString: String,
     valueIn: T,
@@ -11,6 +13,8 @@ abstract class MutableSetting<T : Any>(
         visibilities.add(visibility)
     }
 
+    final override val multiText = MultiText(nameString)
+    override val displayName by multiText
     override var aliasName = nameString
     override val defaultValue = valueIn
     override var value = valueIn

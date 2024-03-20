@@ -45,7 +45,7 @@ class UnicodeFontRenderer(
     private val textures = arrayOfNulls<Texture>(chunkAmount)
     private val badChunks = Array(chunkAmount) { 0 }
     private val loadedChunk = arrayOfNulls<BufferedImage>(chunkAmount)
-
+    override val loadedChunks = mutableListOf<Int>()
     private val chunkCaches = mutableMapOf<Int, ChunkCache>() // ID, Cache
 
     fun setScale(scale: Float): UnicodeFontRenderer {
@@ -60,7 +60,12 @@ class UnicodeFontRenderer(
         }
     }
 
+    override fun initChunkForce(chunk: Int, instantLoad: Boolean) {
+        initChunk(chunk, instantLoad)
+    }
+
     private fun initChunk(chunk: Int, instantLoad: Boolean = false): Texture {
+        loadedChunks.add(chunk)
         if (loadedChunk[chunk] != null) {
             Logger.debug("Chunk $chunk already loaded")
             return textures[chunk]!!

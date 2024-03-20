@@ -18,6 +18,7 @@ import net.spartanb312.boar.graphics.OpenGL.GL_COLOR_BUFFER_BIT
 import net.spartanb312.boar.graphics.OpenGL.glClear
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.matrix.applyOrtho
+import net.spartanb312.boar.language.Language
 import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.utils.math.toRadian
 import net.spartanb312.boar.utils.math.vector.Vec3f
@@ -49,14 +50,15 @@ object AimTrainer : GameGraphics {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
         try {
             Configs.loadConfig("configs.json")
-            Configs.saveConfig("configs.json")
+            Configs.saveConfig("configs.json", false)
         } catch (ignore: Exception) {
-            Configs.saveConfig("configs.json")
+            Configs.saveConfig("configs.json", false)
             ignore.printStackTrace()
         }
         GLHelper.vSync = false
         TextureManager.resume()
         FontCacheManager.readCache()
+        FontCacheManager.initChunks()
         Runtime.getRuntime().addShutdownHook(Thread {
             FontCacheManager.saveCache()
         })
@@ -65,6 +67,7 @@ object AimTrainer : GameGraphics {
 
     override fun Profiler.onLoop() {
         TextureManager.renderThreadHook(5)
+        Language.update()
         // Start rendering
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
         glViewport(0, 0, RS.width, RS.height)

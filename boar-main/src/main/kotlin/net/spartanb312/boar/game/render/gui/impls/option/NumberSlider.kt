@@ -28,7 +28,7 @@ class NumberSlider<T>(
             else ColorRGB.WHITE.alpha((alpha * 0.1f).toInt())
         )
         FontRendererBig.drawString(
-            setting.aliasName,
+            setting.displayName,
             x + scale * 20,
             y + scale * 6,
             ColorRGB.WHITE.alpha((alpha * if (isHoovered) 1.0f else 0.6f).toInt()),

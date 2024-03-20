@@ -9,6 +9,9 @@ import net.spartanb312.boar.game.render.gui.GuiScreen
 import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.font.drawColoredString
+import net.spartanb312.boar.language.Language
+import net.spartanb312.boar.language.Language.m
+import net.spartanb312.boar.language.MultiText
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.timing.Timer
@@ -19,12 +22,16 @@ import kotlin.system.exitProcess
 object MainMenuScreen : GuiScreen() {
 
     private val sideButtons = listOf(
-        SideBar.SideButton("Quick Play") { Academy.start() },
-        SideBar.SideButton("Trainings") { Render2DManager.displayScreen(TrainingScreen) },
-        SideBar.SideButton("Modules") { Render2DManager.displayScreen(ModuleScreen) },
-        SideBar.SideButton("Options") { Render2DManager.displayScreen(OptionScreen) },
-        SideBar.SideButton("Exit") { exitProcess(0) }
+        SideBar.SideButton("Quick Play".m("快速训练", "快速訓練")) { Academy.start() },
+        SideBar.SideButton("Trainings".m("训练场", "訓練場")) { Render2DManager.displayScreen(TrainingScreen) },
+        SideBar.SideButton("Modules".m("模块", "模塊")) { Render2DManager.displayScreen(ModuleScreen) },
+        SideBar.SideButton("Options".m("设定", "設定")) { Render2DManager.displayScreen(OptionScreen) },
+        SideBar.SideButton("Exit".m("退出", "離開")) { exitProcess(0) }
     )
+
+    override fun onInit() {
+        Language.update(true)
+    }
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         val scale = min(RS.widthScale, RS.heightScale)
@@ -60,12 +67,13 @@ object MainMenuScreen : GuiScreen() {
 
     object SideBar {
         class SideButton(
-            private val text: String,
+            private val multiText: MultiText,
             var x: Float = 0f,
             var y: Float = 0f,
             private val action: () -> Unit,
         ) {
 
+            val text by multiText
             var scale = 2f; private set
 
             val width get() = FontRendererMain.getWidth(text, scale)

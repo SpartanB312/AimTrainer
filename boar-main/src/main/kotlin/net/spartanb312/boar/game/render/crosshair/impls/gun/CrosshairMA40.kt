@@ -2,6 +2,7 @@ package net.spartanb312.boar.game.render.crosshair.impls.gun
 
 import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.config.setting.alias
+import net.spartanb312.boar.game.config.setting.m
 import net.spartanb312.boar.game.config.setting.whenFalse
 import net.spartanb312.boar.game.render.crosshair.Crosshair
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
@@ -17,7 +18,9 @@ import kotlin.math.min
 object CrosshairMA40 : GunCrosshair, Crosshair(1.3f / 16f) {
 
     private val followFOV = setting("MA40-Follow FOV", true).alias("Follow FOV")
+        .m("准星大小跟随FOV", "準星隨FOV變化")
     private val size by setting("MA40-Specified FOV", 78f, 60f..120f).alias("Specified FOV").whenFalse(followFOV)
+        .m("指定FOV的准星大小", "指定FOV下的準星")
 
     override val syncFOV get() = followFOV.value
     override var clickTime = System.currentTimeMillis()

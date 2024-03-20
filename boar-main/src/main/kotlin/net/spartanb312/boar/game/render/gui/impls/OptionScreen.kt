@@ -1,10 +1,7 @@
 package net.spartanb312.boar.game.render.gui.impls
 
 import net.spartanb312.boar.game.config.Configs
-import net.spartanb312.boar.game.option.impls.AimAssistOption
-import net.spartanb312.boar.game.option.impls.ControlOption
-import net.spartanb312.boar.game.option.impls.CrosshairOption
-import net.spartanb312.boar.game.option.impls.VideoOption
+import net.spartanb312.boar.game.option.impls.*
 import net.spartanb312.boar.game.render.Background
 import net.spartanb312.boar.game.render.Component2D
 import net.spartanb312.boar.game.render.FontRendererBig
@@ -16,6 +13,9 @@ import net.spartanb312.boar.game.render.scene.impls.DummyScene
 import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
+import net.spartanb312.boar.language.Language
+import net.spartanb312.boar.language.Language.m
+import net.spartanb312.boar.language.MultiText
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.misc.Limiter
@@ -39,6 +39,7 @@ object OptionScreen : GuiScreen() {
     private val slideTimer = Timer()
 
     override fun onInit() {
+        Language.update(true)
         enabled = true
         if (alpha == 1f) alpha++
     }
@@ -91,7 +92,7 @@ object OptionScreen : GuiScreen() {
         currentSelected.optionsRenderer.onMouseReleased(mouseX, mouseY, button)
     }
 
-    override fun onClosed() {
+    fun resetAnimation() {
         leftSideX = 0f
         rightSideX = 0f
         SubTitle.entries.forEach { title ->
@@ -99,6 +100,10 @@ object OptionScreen : GuiScreen() {
                 it.reset()
             }
         }
+    }
+
+    override fun onClosed() {
+        resetAnimation()
         Configs.saveConfig("configs.json")
     }
 
@@ -111,7 +116,7 @@ object OptionScreen : GuiScreen() {
     }
 
     private class SelectButton(
-        private val text: String,
+        multiText: MultiText,
         val optionsRenderer: OptionsRenderer
     ) : Component2D {
         override var x = 0f
@@ -120,8 +125,8 @@ object OptionScreen : GuiScreen() {
         override var height = 0f
 
         private var alphaRate = 0f
-
         private val updateTimer = Timer()
+        private val text by multiText
 
         override fun onRender2D(mouseX: Double, mouseY: Double) {
             val scale = min(RS.widthScale, RS.heightScale)
@@ -157,10 +162,11 @@ object OptionScreen : GuiScreen() {
     }
 
     private enum class SubTitle(val selectButton: SelectButton) {
-        Control(SelectButton("Control", OptionsRenderer(ControlOption))),
-        Video(SelectButton("Video", OptionsRenderer(VideoOption))),
-        Crosshair(SelectButton("Crosshair", OptionsRenderer(CrosshairOption))),
-        AimAssist(SelectButton("AimAssist", OptionsRenderer(AimAssistOption))),
+        Control(SelectButton("Control".m("控制设置","控制設定"), OptionsRenderer(ControlOption))),
+        Video(SelectButton("Video".m("视频设置","視訊設定"), OptionsRenderer(VideoOption))),
+        Crosshair(SelectButton("Crosshair".m("准星调整","準星設定"), OptionsRenderer(CrosshairOption))),
+        AimAssist(SelectButton("AimAssist".m("辅助瞄准","輔助瞄準"), OptionsRenderer(AimAssistOption))),
+        Accessibility(SelectButton("Accessibility".m("辅助功能","輔助功能"), OptionsRenderer(AccessibilityOption)))
     }
 
 }

@@ -1,6 +1,7 @@
 package net.spartanb312.boar.game.render.crosshair.impls
 
 import net.spartanb312.boar.game.config.setting.alias
+import net.spartanb312.boar.game.config.setting.m
 import net.spartanb312.boar.game.render.crosshair.Crosshair
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
@@ -10,6 +11,7 @@ import kotlin.math.min
 object CrosshairCross : Crosshair(0f) {
 
     private val size by setting("Cross-Size", 15f, 1f..50f, 0.5f).alias("Size")
+        .m("准星大小", "準星大小")
 
     override var clickTime = System.currentTimeMillis()
 

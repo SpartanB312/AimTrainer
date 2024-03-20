@@ -1,8 +1,9 @@
 package net.spartanb312.boar.graphics.cache
 
+import net.spartanb312.boar.game.config.Configurable
 import java.util.concurrent.CopyOnWriteArrayList
 
-open class CacheManager {
+open class CacheManager(name: String) : Configurable(name) {
     private val saveList = CopyOnWriteArrayList<CacheSavable>()
     fun register(cacheSavable: CacheSavable) = saveList.add(cacheSavable)
     fun unregister(cacheSavable: CacheSavable) = saveList.remove(cacheSavable)

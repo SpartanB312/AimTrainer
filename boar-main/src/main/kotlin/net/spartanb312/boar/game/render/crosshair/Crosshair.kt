@@ -4,6 +4,7 @@ import net.spartanb312.boar.game.config.setting.AbstractSetting
 import net.spartanb312.boar.game.config.setting.SettingRegister
 import net.spartanb312.boar.game.option.impls.VideoOption
 import net.spartanb312.boar.graphics.RS
+import net.spartanb312.boar.language.Language
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.MathUtils.h2dFOV
 import net.spartanb312.boar.utils.math.MathUtils.v2dFOV
@@ -35,6 +36,7 @@ abstract class Crosshair(resetTime: Float, private val errorRate: Float = 0f) : 
 
     override fun <S : AbstractSetting<*>> Crosshair.setting(setting: S): S {
         settings.add(setting)
+        Language.add(setting.multiText)
         return setting
     }
 }

@@ -7,26 +7,29 @@ import net.spartanb312.boar.game.render.crosshair.impls.CrosshairDot
 import net.spartanb312.boar.game.render.crosshair.impls.gun.CrosshairBR75
 import net.spartanb312.boar.game.render.crosshair.impls.gun.CrosshairM392E
 import net.spartanb312.boar.game.render.crosshair.impls.gun.CrosshairMA40
+import net.spartanb312.boar.language.Language.m
+import net.spartanb312.boar.language.MultiText
 import net.spartanb312.boar.utils.misc.DisplayEnum
 import net.spartanb312.boar.utils.misc.Nameable
 
 enum class Crosshairs(
-    override val nameString: String,
+    multiText: MultiText,
     val crosshairType: Type,
     val crosshair: Crosshair
 ) : Nameable, DisplayEnum {
 
     // Normal
-    Cross("Cross", Type.NORMAL, CrosshairCross),
-    Circle("Circle",Type.NORMAL, CrosshairCircle),
-    Dot("Dot", Type.NORMAL, CrosshairDot),
-    Custom("Custom", Type.NORMAL, CrosshairCustom),
+    Cross("Cross".m("十字", "十字"), Type.NORMAL, CrosshairCross),
+    Circle("Circle".m("圆圈", "圓圈"), Type.NORMAL, CrosshairCircle),
+    Dot("Dot".m("点", "點"), Type.NORMAL, CrosshairDot),
+    Custom("Custom".m("自定义", "自訂"), Type.NORMAL, CrosshairCustom),
 
     // Gun
-    M392E("Bandit Evo", Type.GUN, CrosshairM392E),
-    BR75("BR75", Type.GUN, CrosshairBR75),
-    MA40("MA40 AR", Type.GUN, CrosshairMA40);
+    M392E("Bandit Evo".m("Bandit Evo", "Bandit Evo"), Type.GUN, CrosshairM392E),
+    BR75("BR75".m("BR75", "BR75"), Type.GUN, CrosshairBR75),
+    MA40("MA40 AR".m("MA40 AR", "MA40 AR"), Type.GUN, CrosshairMA40);
 
+    override val nameString: String by multiText
     override val displayName: CharSequence
         get() = nameString
 
