@@ -2,6 +2,7 @@ package net.spartanb312.boar.graphics.texture.loader
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.texture.AbstractTexture
 import net.spartanb312.boar.graphics.texture.delegate.LateUploadTexture
 import net.spartanb312.boar.utils.thread.ConcurrentTaskManager
@@ -9,7 +10,7 @@ import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.math.max
 
-class AsyncTextureLoader(private val threadsCount: Int) : TextureLoader {
+class AsyncTextureLoader(private val threadsCount: Int, private val dynamicLimit: (() -> Int)? = null) : TextureLoader {
 
     private val workingThread = AtomicInteger()
     private val ioThread = AtomicInteger()
@@ -24,22 +25,25 @@ class AsyncTextureLoader(private val threadsCount: Int) : TextureLoader {
     private val renderThreadJobs = LinkedBlockingQueue<() -> LateUploadTexture>()
     private val finishedTextures = mutableListOf<LateUploadTexture>()
     private val taskManager = ConcurrentTaskManager("AsyncTextureLoader" + if (id > 0) "-$id" else "", threadsCount)
+    override val parallelLimit get() = dynamicLimit?.invoke() ?: RS.maxThreads
     private val repeatTask = taskManager.runRepeat(1, true) {
         while (true) {
-            val container = queue.poll()
-            if (container != null) {
-                taskManager.launch(Dispatchers.IO) {
-                    workingThread.incrementAndGet()
-                    ioThread.incrementAndGet()
-                    if (container.state.get() == AbstractTexture.State.CREATED) {
-                        val job = container.asyncLoad {
-                            workingThread.decrementAndGet()
-                            loadedTextures.incrementAndGet()
+            if (activeThread < parallelLimit) {
+                val container = queue.poll()
+                if (container != null) {
+                    taskManager.launch(Dispatchers.IO) {
+                        workingThread.incrementAndGet()
+                        ioThread.incrementAndGet()
+                        if (container.state.get() == AbstractTexture.State.CREATED) {
+                            val job = container.asyncLoad {
+                                workingThread.decrementAndGet()
+                                loadedTextures.incrementAndGet()
+                            }
+                            ioThread.decrementAndGet()
+                            renderThreadJobs.put(job)
                         }
-                        ioThread.decrementAndGet()
-                        renderThreadJobs.put(job)
                     }
-                }
+                } else break
             } else break
         }
     }

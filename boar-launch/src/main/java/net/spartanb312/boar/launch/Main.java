@@ -3,7 +3,10 @@ package net.spartanb312.boar.launch;
 import java.io.File;
 import java.util.Arrays;
 
+@Module(name = "Launch Wrapper", version = Main.LAUNCH_WRAPPER_VERSION, description = "Bootstrap launch wrapper", author = "B_312")
 public class Main {
+
+    public static final String LAUNCH_WRAPPER_VERSION = "1.0.1";
 
     public static void main(String[] args) throws Exception {
         LaunchLogger.info("Initializing launch wrapper...");

@@ -142,9 +142,9 @@ class OptionsRenderer(private val options: Option) : MouseClickListener, MouseRe
         val maxHeight = fontHeight * (visibleButtons + (visibleButtons - 1).coerceAtLeast(0) * 0.1f)
         if (addition == 0) {
             if (scrollOffset > 0 || renderHeight > maxHeight) {
-                scrollAccumulation = (scrollAccumulation.toFloat().converge(0.0f, 0.07f)).toInt()
+                scrollAccumulation = (scrollAccumulation.toFloat().converge(0.0f, 0.1f)).toInt()
             } else if (renderHeight < maxHeight && scrollOffset < 0 && renderHeight - maxHeight > scrollOffset) {
-                scrollAccumulation = (scrollAccumulation.toFloat().converge(renderHeight - maxHeight, 0.07f)).toInt()
+                scrollAccumulation = (scrollAccumulation.toFloat().converge(renderHeight - maxHeight, 0.1f)).toInt()
             }
         }
         scrollOffset = scrollOffset.toFloat().converge(scrollAccumulation.toFloat(), 0.2f).toInt()

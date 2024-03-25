@@ -272,6 +272,6 @@ interface FontRenderer : CacheSavable {
 
     fun initChunkForce(chunk: Int, instantLoad: Boolean = false)
 
-    val loadedChunks: List<Int>
+    val loadedChunks: Set<Int>
 
 }

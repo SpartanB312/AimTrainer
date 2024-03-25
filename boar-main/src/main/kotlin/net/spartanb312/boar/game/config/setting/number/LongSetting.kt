@@ -13,13 +13,13 @@ class LongSetting(
 
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
-        value = jsonObject[nameString]?.asLong ?: value
+        value = (jsonObject[nameString]?.asLong ?: value).coerceIn(range)
     }
 
     override val width = range.last - range.first
 
     override fun setByPercent(percent: Float) {
-        value = range.start + ((range.endInclusive - range.start) * percent / step).toInt() * step
+        value = (range.start + ((range.endInclusive - range.start) * percent / step).toInt() * step).coerceIn(range)
     }
 
     override fun getDisplay(percent: Float): String {

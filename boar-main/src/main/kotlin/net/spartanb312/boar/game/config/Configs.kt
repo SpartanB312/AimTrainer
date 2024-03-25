@@ -16,7 +16,6 @@ object Configs {
         configs.add(VideoOption)
         configs.add(AimAssistOption)
         configs.add(AccessibilityOption)
-        configs.add(FontCacheManager)
     }
 
     fun loadConfig(path: String) {
@@ -24,6 +23,8 @@ object Configs {
         configs.forEach {
             map[it.name]?.asJsonObject?.let { jo -> it.readValue(jo) }
         }
+        val fontMap = (path.substringBeforeLast(".") + ".fontcfg").jsonMap
+        fontMap[FontCacheManager.name]?.asJsonObject?.let { jo -> FontCacheManager.readValue(jo) }
     }
 
     fun saveConfig(path: String, syncChunks: Boolean = true) {
@@ -32,12 +33,20 @@ object Configs {
             configFile.parentFile?.mkdirs()
             configFile.createNewFile()
         }
+        val fontConfig = File(path.substringBeforeLast(".") + ".fontcfg")
+        if (!fontConfig.exists()) {
+            fontConfig.parentFile?.mkdirs()
+            fontConfig.createNewFile()
+        }
         if (syncChunks) FontCacheManager.syncChunks()
         JsonObject().apply {
             configs.forEach {
                 add(it.name, it.saveValue())
             }
         }.saveToFile(configFile)
+        JsonObject().apply {
+            add(FontCacheManager.name, FontCacheManager.saveValue())
+        }.saveToFile(fontConfig)
     }
 
     private val String.jsonMap: Map<String, JsonElement>

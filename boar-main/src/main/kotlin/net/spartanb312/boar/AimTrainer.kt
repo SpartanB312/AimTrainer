@@ -51,7 +51,7 @@ object AimTrainer : GameGraphics {
             Configs.saveConfig("configs.json", false)
         } catch (ignore: Exception) {
             Configs.saveConfig("configs.json", false)
-            ignore.printStackTrace()
+            //ignore.printStackTrace()
         }
         GLHelper.vSync = false
         TextureManager.resume()

@@ -1,12 +1,14 @@
 package net.spartanb312.boar.game.render
 
+import net.spartanb312.boar.game.option.impls.AccessibilityOption
 import net.spartanb312.boar.graphics.OpenGL
+import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.texture.Texture
 import net.spartanb312.boar.graphics.texture.loader.AsyncTextureLoader
 import net.spartanb312.boar.graphics.texture.loader.LazyTextureContainer
 import net.spartanb312.boar.graphics.texture.loader.TextureLoader
 
-object TextureManager : TextureLoader by AsyncTextureLoader(Runtime.getRuntime().availableProcessors()) {
+object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { AccessibilityOption.threadsLimit }) {
 
     fun lazyTexture(
         path: String,

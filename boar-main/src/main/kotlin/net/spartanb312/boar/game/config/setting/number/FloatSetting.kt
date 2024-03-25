@@ -14,13 +14,13 @@ class FloatSetting(
 
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
-        value = jsonObject[nameString]?.asFloat ?: value
+        value = (jsonObject[nameString]?.asFloat ?: value).coerceIn(range)
     }
 
     override val width = range.endInclusive - range.start
 
     override fun setByPercent(percent: Float) {
-        value = range.start + ((range.endInclusive - range.start) * percent / step).roundToInt() * step
+        value = (range.start + ((range.endInclusive - range.start) * percent / step).roundToInt() * step).coerceIn(range)
     }
 
     override fun getDisplay(percent: Float): String {

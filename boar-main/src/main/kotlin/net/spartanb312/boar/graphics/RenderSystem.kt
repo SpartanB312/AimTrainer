@@ -52,6 +52,7 @@ object RenderSystem : Thread() {
     inline val centerYF get() = heightF / 2f
     inline val centerXD get() = widthD / 2.0
     inline val centerYD get() = heightD / 2.0
+    inline val maxThreads get() = Runtime.getRuntime().availableProcessors()
 
     const val initialMouseValue = Int.MIN_VALUE.toDouble()
     var mouseXD = initialMouseValue; private set
