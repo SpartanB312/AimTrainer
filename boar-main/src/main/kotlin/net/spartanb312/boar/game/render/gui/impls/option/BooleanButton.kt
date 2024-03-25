@@ -3,9 +3,13 @@ package net.spartanb312.boar.game.render.gui.impls.option
 import net.spartanb312.boar.game.config.setting.primitive.BooleanSetting
 import net.spartanb312.boar.game.render.FontRendererBig
 import net.spartanb312.boar.graphics.drawing.RenderUtils
+import net.spartanb312.boar.language.Language.m
 import net.spartanb312.boar.utils.color.ColorRGB
 
 class BooleanButton(setting: BooleanSetting) : AbstractSettingComponent<Boolean>(setting) {
+
+    private val on by "ON".m("开", "開")
+    private val off by "OFF".m("关", "關")
 
     override fun onRender2D(mouseX: Double, mouseY: Double, scale: Float, alpha: Float) {
         val isHoovered = isHoovered(mouseX, mouseY)
@@ -24,7 +28,7 @@ class BooleanButton(setting: BooleanSetting) : AbstractSettingComponent<Boolean>
             ColorRGB.WHITE.alpha((alpha * if (isHoovered) 1.0f else 0.6f).toInt()),
             scale * 0.8f
         )
-        val state = if (setting.value) "ON" else "OFF"
+        val state = if (setting.value) on else off
         FontRendererBig.drawString(
             state,
             x + this.width - scale * 20 - FontRendererBig.getWidth(state, scale * 0.8f),

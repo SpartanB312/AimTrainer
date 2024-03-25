@@ -9,6 +9,8 @@ import net.spartanb312.boar.game.render.scene.Scene
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.game.render.scene.impls.DummyScene
 import net.spartanb312.boar.graphics.Skybox
+import net.spartanb312.boar.language.Language
+import net.spartanb312.boar.language.Language.m
 import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 
@@ -30,12 +32,12 @@ object Academy {
 
         private val tickTimer = Timer()
         private val pauseScreen = PauseScreen(this).apply {
-            buttons.add(PauseScreen.Button("Resume") { Render2DManager.popScreen() })
-            buttons.add(PauseScreen.Button("Options") {
+            buttons.add(PauseScreen.Button("Resume".m("继续", "繼續")) { Render2DManager.popScreen() })
+            buttons.add(PauseScreen.Button("Options".m("设置", "設定")) {
                 Render2DManager.closeAll()
                 Render2DManager.displayScreen(OptionScreen)
             })
-            buttons.add(PauseScreen.Button("Menu") { close() })
+            buttons.add(PauseScreen.Button("Menu".m("菜单", "菜單")) { close() })
         }
         private val scoreboardScreen = object : ScoreboardScreen() {
             override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
@@ -64,6 +66,10 @@ object Academy {
         )
         private val training = TrainingScreen.trainings[defaultTraining].new(scoreboardScreen, this)
         val errorAngle = training.errorAngle
+
+        override fun onInit() {
+            Language.update(true)
+        }
 
         override fun onTick() {
             // HaloInfiniteAA

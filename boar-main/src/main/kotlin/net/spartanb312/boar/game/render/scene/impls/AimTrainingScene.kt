@@ -11,6 +11,7 @@ import net.spartanb312.boar.game.render.scene.Scene
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.game.training.Training
 import net.spartanb312.boar.graphics.Skybox
+import net.spartanb312.boar.language.Language.m
 import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 
@@ -34,23 +35,23 @@ object AimTrainingScene : Scene() {
     var currentTraining: Training? = null
 
     private val pauseScreen = PauseScreen(AimTrainingScene).apply {
-        buttons.add(PauseScreen.Button("Resume") {
+        buttons.add(PauseScreen.Button("Resume".m("继续", "繼續")) {
             Render2DManager.popScreen()
         })
-        buttons.add(PauseScreen.Button("Restart") {
+        buttons.add(PauseScreen.Button("Restart".m("重置", "重置")) {
             currentTraining?.reset()
         })
-        buttons.add(PauseScreen.Button("Options") {
+        buttons.add(PauseScreen.Button("Options".m("设置", "設定")) {
             Render2DManager.closeAll()
             Render2DManager.displayScreen(OptionScreen)
         })
-        buttons.add(PauseScreen.Button("Trainings") {
+        buttons.add(PauseScreen.Button("Trainings".m("重选", "重選")) {
             SceneManager.switchScene(DummyScene)
             Render2DManager.closeAll()
             Render2DManager.displayScreen(TrainingScreen)
             CrosshairRenderer.disable()
         })
-        buttons.add(PauseScreen.Button("Menu") {
+        buttons.add(PauseScreen.Button("Menu".m("菜单", "菜單")) {
             SceneManager.switchScene(DummyScene)
             Render2DManager.closeAll()
             Render2DManager.displayScreen(MainMenuScreen)
