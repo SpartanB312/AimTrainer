@@ -84,6 +84,7 @@ object RenderSystem : Thread() {
     private var initHeight = 900
     private var title = "Boar3D"
     private var graphics: Class<out GameGraphics>? = null
+    private var glVersion = GL.GL_210_COMPAT
 
     private val memoryCheckUpdateTimer = Timer()
     private val profilerResultUpdateTimer = Timer()
@@ -100,16 +101,20 @@ object RenderSystem : Thread() {
         title: String = "Boar3D",
         centered: Boolean = false,
         dedicateThread: Boolean = true,
-        debugInfo: Boolean = false
+        debugInfo: Boolean = false,
+        glVersion: GL = GL.GL_210_COMPAT
     ) {
+        this.glVersion = glVersion
         this.graphics = graphics
         this.centered = centered
         this.initWidth = initWidth
         this.initHeight = initHeight
         this.debugInfo = debugInfo
         this.title = title
-        if (dedicateThread) this.start()
-        else this.run()
+        if (dedicateThread) {
+            currentThread().interrupt()
+            this.start()
+        } else this.run()
     }
 
     override fun run() {
@@ -235,6 +240,11 @@ object RenderSystem : Thread() {
             totalMemory = Runtime.getRuntime().totalMemory() / 1048576
             freeMemory = Runtime.getRuntime().freeMemory() / 1048576
         }
+    }
+
+    enum class GL {
+        GL_320_CORE,
+        GL_210_COMPAT
     }
 
 }

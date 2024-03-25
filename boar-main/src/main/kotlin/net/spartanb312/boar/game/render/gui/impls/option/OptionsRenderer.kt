@@ -126,19 +126,28 @@ class OptionsRenderer(private val options: Option) : MouseClickListener, MouseRe
             }
         }
 
-        updateScrollBar(scale, startY <= RS.heightF * 0.9f)
+        updateScrollBar(scale)
     }
 
     private val scrollUpdateTimer = Timer()
-    private var scrollOffset = 0
-    private var scrollAccumulation = 0
+    var scrollOffset = 0
+    var scrollAccumulation = 0
 
-    private fun updateScrollBar(scale: Float, flag: Boolean) = scrollUpdateTimer.passedAndReset(10) {
+    private fun updateScrollBar(scale: Float) = scrollUpdateTimer.passedAndReset(10) {
         val addition = InputManager.getScroll()
-        scrollAccumulation += addition
-        if ((scrollOffset > 0 || flag) && addition == 0) scrollAccumulation =
-            ((scrollAccumulation * 25 * scale).converge(0f, 0.07f) / (25 * scale)).toInt()
-        scrollOffset = scrollOffset.toFloat().converge(scrollAccumulation * 25f * scale, 0.2f).toInt()
+        scrollAccumulation += (addition * 25 * scale).toInt()
+        val renderHeight = RS.heightF * 0.68f
+        val fontHeight = FontRendererBig.getHeight(scale)
+        val visibleButtons = buttons.count { it.setting.isVisible }
+        val maxHeight = fontHeight * (visibleButtons + (visibleButtons - 1).coerceAtLeast(0) * 0.1f)
+        if (addition == 0) {
+            if (scrollOffset > 0 || renderHeight > maxHeight) {
+                scrollAccumulation = (scrollAccumulation.toFloat().converge(0.0f, 0.07f)).toInt()
+            } else if (renderHeight < maxHeight && scrollOffset < 0 && renderHeight - maxHeight > scrollOffset) {
+                scrollAccumulation = (scrollAccumulation.toFloat().converge(renderHeight - maxHeight, 0.07f)).toInt()
+            }
+        }
+        scrollOffset = scrollOffset.toFloat().converge(scrollAccumulation.toFloat(), 0.2f).toInt()
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {

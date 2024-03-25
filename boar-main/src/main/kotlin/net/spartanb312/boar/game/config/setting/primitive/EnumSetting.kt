@@ -37,4 +37,5 @@ class EnumSetting<T : Enum<T>>(
             value = it
         }
     }
+
 }

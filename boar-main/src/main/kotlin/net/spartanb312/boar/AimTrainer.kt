@@ -20,19 +20,17 @@ import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.matrix.applyOrtho
 import net.spartanb312.boar.language.Language
 import net.spartanb312.boar.launch.Module
-import net.spartanb312.boar.utils.math.toRadian
+import net.spartanb312.boar.physics.PhysicsSystem
 import net.spartanb312.boar.utils.math.vector.Vec3f
 import net.spartanb312.boar.utils.misc.Profiler
 import net.spartanb312.boar.utils.timing.Sync
 import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11.*
-import kotlin.math.cos
-import kotlin.math.sin
 
 /**
  * OpenGL 2.1 is Required
- * Everett, You'll always be mine
+ * Migrating to OpenGL 3.2 Core Profile
  */
 @Module(
     name = "Aim Trainer",
@@ -42,7 +40,7 @@ import kotlin.math.sin
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240319"
+    const val AIM_TRAINER_VERSION = "1.0.0.240326"
 
     private val tickTimer = Timer()
 
@@ -63,11 +61,13 @@ object AimTrainer : GameGraphics {
             FontCacheManager.saveCache()
         })
         Render2DManager.displayScreen(LoadingScreen)
+        PhysicsSystem.launch(Player, 60, true)
     }
 
     override fun Profiler.onLoop() {
         TextureManager.renderThreadHook(5)
         Language.update()
+
         // Start rendering
         glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
         glViewport(0, 0, RS.width, RS.height)
@@ -81,7 +81,9 @@ object AimTrainer : GameGraphics {
             Player.project(
                 fov = VideoOption.fov,
                 updateCamera = !lockCamera,
-                sensitivity = ControlOption.sensitivity
+                sensitivity = ControlOption.sensitivity,
+                hRate = ControlOption.hRate,
+                vRate = ControlOption.vRate
             ) {
                 SceneManager.onRender()
             }
@@ -107,38 +109,7 @@ object AimTrainer : GameGraphics {
         // Tick
         tickTimer.passedAndReset(16) {
             SceneManager.onTick()
-            val facing = Vec3f(cos(Player.yaw.toRadian()), 0, sin(Player.yaw.toRadian()))
-            val rightV = Vec3f(0, 1, 0) cross facing
-
-            val moveSpeed = 0.3f
-
-            var xDiff = 0f
-            var yDiff = 0f
-            var zDiff = 0f
-
-            if (GLFW.glfwGetKey(RS.window, GLFW.GLFW_KEY_W) == GLFW.GLFW_PRESS) {
-                xDiff += facing.x * moveSpeed
-                zDiff += facing.z * moveSpeed
-            }
-            if (GLFW.glfwGetKey(RS.window, GLFW.GLFW_KEY_S) == GLFW.GLFW_PRESS) {
-                xDiff -= facing.x * moveSpeed
-                zDiff -= facing.z * moveSpeed
-            }
-            if (GLFW.glfwGetKey(RS.window, GLFW.GLFW_KEY_A) == GLFW.GLFW_PRESS) {
-                xDiff += rightV.x * moveSpeed
-                zDiff += rightV.z * moveSpeed
-            }
-            if (GLFW.glfwGetKey(RS.window, GLFW.GLFW_KEY_D) == GLFW.GLFW_PRESS) {
-                xDiff -= rightV.x * moveSpeed
-                zDiff -= rightV.z * moveSpeed
-            }
-            if (GLFW.glfwGetKey(RS.window, GLFW.GLFW_KEY_SPACE) == GLFW.GLFW_PRESS) {
-                yDiff += moveSpeed
-            }
-            if (GLFW.glfwGetKey(RS.window, GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS) {
-                yDiff -= moveSpeed
-            }
-            Player.move(xDiff, yDiff, zDiff)
+            ControlOption.checkPhysicsThread()
         }
         profiler("Tick")
     }

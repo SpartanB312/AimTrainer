@@ -1,8 +1,9 @@
 package net.spartanb312.boar.physics
 
-class Controller(
-    var positionX: Float = 0f,
-    var positionY: Float = 0f,
-    var positionZ: Float = 0f
-) {
+import net.spartanb312.boar.physics.world.Object
+import net.spartanb312.boar.utils.math.vector.Vec3f
+
+interface Controller : Object {
+    var pos: Vec3f
+    fun update()
 }

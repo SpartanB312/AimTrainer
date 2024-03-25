@@ -15,8 +15,10 @@ class MultiText(private val english: String) : ReadOnlyProperty<Any?, String> {
     }
 
     fun update(language: Languages) {
-        currentLang = language
-        displaying = map[currentLang] ?: english
+        if (currentLang != language) {
+            displaying = map[language] ?: english
+            currentLang = language
+        }
     }
 
     override fun getValue(thisRef: Any?, property: KProperty<*>): String {

@@ -11,6 +11,6 @@ fun main() = Main.main(arrayOf("-DevMode"))
  */
 object Entry {
     init {
-        RenderSystem.launch(AimTrainer::class.java, 1920, 1080, "Test")
+        RenderSystem.launch(AimTrainer::class.java, 1920, 1080)
     }
 }
