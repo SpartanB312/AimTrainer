@@ -207,6 +207,22 @@ object RenderUtils {
         color
     )
 
+    fun drawTriangleFan(
+        centerX: Double,
+        centerY: Double,
+        vertices: Array<Vec2d>,
+        centerColor: ColorRGB,
+        color: ColorRGB = centerColor
+    ) = drawTriangleFan0(centerX, centerY, vertices, centerColor, color)
+
+    fun drawTriangleFan(
+        centerX: Float,
+        centerY: Float,
+        vertices: Array<Vec2d>,
+        centerColor: ColorRGB,
+        color: ColorRGB = centerColor
+    ) = drawTriangleFan0(centerX.toDouble(), centerY.toDouble(), vertices, centerColor, color)
+
     fun drawTriangleOutline(
         pos1X: Double,
         pos1Y: Double,
@@ -994,6 +1010,21 @@ object RenderUtils {
         }
     }
 
+    fun drawTriangleFan0(
+        centerX: Double,
+        centerY: Double,
+        vertices: Array<Vec2d>,
+        centerColor: ColorRGB,
+        color: ColorRGB
+    ) {
+        GL11.GL_TRIANGLE_FAN.buffer(VertexFormat.Pos2dColor, vertices.size + 1) {
+            v2dc(centerX, centerY, centerColor)
+            for (v in vertices) {
+                v2dc(v.x, v.y, color)
+            }
+        }
+    }
+
     private fun drawTriangleOutline0(
         pos1X: Double,
         pos1Y: Double,
@@ -1074,15 +1105,26 @@ object RenderUtils {
         segments: Int,
         color: ColorRGB,
     ) {
-        val arcVertices = getArcVertices(centerX, centerY, radius, angleRange, segments)
-        GL11.GL_TRIANGLE_FAN.buffer(VertexFormat.Pos2dColor, arcVertices.size) {
+        val arcVertices = getArcVertices(centerX, centerY, radius, angleRange, segments).reversed()
+        GL11.GL_TRIANGLE_FAN.buffer(VertexFormat.Pos2dColor, arcVertices.size + 1) {
+            v2dc(centerX, centerY, color)
             for (v in arcVertices) {
                 v2dc(v.x, v.y, color)
             }
         }
     }
 
-    private fun getArcVertices(
+    fun drawArcOutline(
+        vertices: Array<Vec2d>,
+        lineWidth: Float = 1f,
+        color: ColorRGB,
+    ) = drawLinesStrip0(
+        vertices,
+        lineWidth,
+        color
+    )
+
+    fun getArcVertices(
         centerX: Double,
         centerY: Double,
         radius: Float,

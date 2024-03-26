@@ -178,7 +178,7 @@ object MathUtils {
     }
 
     @JvmStatic
-    inline fun Float.v2fFOV(aspect: Double): Float {
+    inline fun Float.v2hFOV(aspect: Double): Float {
         return verticalFOVToHorizontalFOV(this.toDouble(), aspect).toFloat()
     }
 

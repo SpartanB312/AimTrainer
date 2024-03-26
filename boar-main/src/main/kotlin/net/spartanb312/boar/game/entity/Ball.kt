@@ -3,6 +3,7 @@ package net.spartanb312.boar.game.entity
 import net.spartanb312.boar.game.entity.part.Sphere
 import net.spartanb312.boar.utils.math.vector.Vec3f
 import net.spartanb312.boar.utils.misc.random
+import kotlin.math.absoluteValue
 
 class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
 
@@ -15,17 +16,25 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
         errorAngle: Float // DistanceToCenter, Radius
     ): Boolean = body.raytrace(origin, ray, errorAngle)
 
-    fun randomMove() {
+    fun randomMove(reverse: Boolean) {
         val scale = 0.025f
         vec += Vec3f((-scale..scale).random(), (-scale..scale).random(), (-scale..scale).random())
-        vec = Vec3f(
-            vec.x.coerceIn((-10 * scale)..(10 * scale)),
-            vec.y.coerceIn((-10 * scale)..(10 * scale)),
-            vec.z.coerceIn((-10 * scale)..(10 * scale))
-        )
-        val range = -100f..100f
+        fun Float.correct(): Float {
+            val temp = this.coerceIn((-10 * scale)..(10 * scale))
+            return if (temp.absoluteValue <= 3 * scale) (temp / temp.absoluteValue) * 3 * scale else temp
+        }
+        vec = Vec3f(vec.x.correct(), vec.y.correct(), vec.z.correct())
+        if (reverse) {
+            vec -= (vec * 2f)
+        }
+        val range = -50f..50f
         pos += vec
-        pos = Vec3f(pos.x.coerceIn(range), pos.y.coerceIn(range), pos.z.coerceIn(range))
+        var notInRange = 0
+        if (pos.x !in range) notInRange++
+        if (pos.y !in range) notInRange++
+        if (pos.z !in range) notInRange++
+        if (notInRange >= 2) randomMove(true)
+        else pos = Vec3f(pos.x.coerceIn(range), pos.y.coerceIn(range), pos.z.coerceIn(range))
     }
 
     override fun raytraceRate(origin: Vec3f, ray: Vec3f, errorAngle: Float): Float =

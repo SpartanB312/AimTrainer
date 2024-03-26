@@ -13,6 +13,8 @@ import net.spartanb312.boar.game.training.TrainingInfo
 import net.spartanb312.boar.game.training.TrainingInfoContainer
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.misc.asRange
+import net.spartanb312.boar.utils.timing.Timer
+import kotlin.random.Random
 
 class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
     scoreboardScreen,
@@ -33,6 +35,8 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
             return BallFollowing(scoreboardScreen, scene)
         }
     }
+
+    private val reverseTimer = Timer()
 
     private fun click() {
         if (stage != Stage.Training || Render2DManager.displaying) return
@@ -82,9 +86,13 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
 
     override fun onTick() {
         super.onTick()
+        var reverse = false
+        reverseTimer.passedAndReset(1000) {
+            reverse = 0.3 >= Random.nextDouble(0.0, 1.0)
+        }
         click()
         entities.forEach {
-            if (it is Ball) it.randomMove()
+            if (it is Ball) it.randomMove(reverse)
         }
     }
 

@@ -53,7 +53,7 @@ class DMRTest(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrainin
     override fun onTick() {
         super.onTick()
         entities.forEach {
-            if (it is Ball) it.randomMove()
+            if (it is Ball) it.randomMove(false)
         }
     }
 

@@ -97,7 +97,7 @@ abstract class BallHitTraining(
         when (stage) {
             Stage.Prepare -> {
                 val seconds = ((5000 - timeLapsed) / 1000f).roundToInt()
-                FontRendererBig.drawCenteredString(
+                FontRendererBig.drawCenteredStringWithShadow(
                     "0: 0$seconds",
                     RS.centerXF,
                     RS.centerYF - FontRendererBig.getHeight()
@@ -106,7 +106,7 @@ abstract class BallHitTraining(
 
             Stage.Training -> {
                 val seconds = ((65000 - timeLapsed) / 1000f).roundToInt()
-                FontRendererBig.drawCenteredString(
+                FontRendererBig.drawCenteredStringWithShadow(
                     if (seconds >= 10) "0: $seconds" else "0: 0$seconds",
                     RS.centerXF,
                     FontRendererBig.getHeight() / 2f
