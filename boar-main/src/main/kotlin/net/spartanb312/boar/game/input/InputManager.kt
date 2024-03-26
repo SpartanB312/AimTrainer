@@ -1,5 +1,6 @@
 package net.spartanb312.boar.game.input
 
+import net.spartanb312.boar.game.audio.BGMPlayer
 import net.spartanb312.boar.game.input.interfaces.*
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.boar.game.render.gui.Render2DManager
@@ -21,6 +22,7 @@ object InputManager {
         if (Render2DManager.onKeyTyped(key, modifier)) return
         keyTypedListeners.forEach { if (it.onKeyTyped(key, modifier)) return }
         if (key == GLFW.GLFW_KEY_F2) Render2DManager.displayScreen(OptionScreen)
+        if (key == GLFW.GLFW_KEY_F5) BGMPlayer.changeSound(BGMPlayer.nextBGM())
     }
 
     fun onKeyRepeating(key: Int, modifier: Int) {

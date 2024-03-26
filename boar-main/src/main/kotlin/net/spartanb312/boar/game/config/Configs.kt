@@ -12,8 +12,9 @@ object Configs {
 
     init {
         configs.add(ControlOption)
-        configs.add(CrosshairOption)
         configs.add(VideoOption)
+        configs.add(AudioOption)
+        configs.add(CrosshairOption)
         configs.add(AimAssistOption)
         configs.add(AccessibilityOption)
     }

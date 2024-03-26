@@ -166,6 +166,7 @@ object OptionScreen : GuiScreen() {
     private enum class SubTitle(val selectButton: SelectButton) {
         Control(SelectButton("Control".m("控制设置", "控制設定"), OptionsRenderer(ControlOption))),
         Video(SelectButton("Video".m("视频设置", "視訊設定"), OptionsRenderer(VideoOption))),
+        Audio(SelectButton("Audio".m("音频设置", "音頻設定"), OptionsRenderer(AudioOption))),
         Crosshair(SelectButton("Crosshair".m("准星调整", "準星設定"), OptionsRenderer(CrosshairOption))),
         AimAssist(SelectButton("AimAssist".m("辅助瞄准", "輔助瞄準"), OptionsRenderer(AimAssistOption))),
         Accessibility(SelectButton("Accessibility".m("辅助功能", "輔助功能"), OptionsRenderer(AccessibilityOption)))

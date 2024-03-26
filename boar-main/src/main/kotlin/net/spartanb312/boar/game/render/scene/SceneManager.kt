@@ -45,6 +45,7 @@ object SceneManager {
         if (currentScene != scene) {
             unregisterScene(currentScene)
             Render2DManager.unsubscribe(currentScene)
+            currentScene.onClosed()
             currentScene = scene
             registerScene(currentScene)
             Render2DManager.subscribe(currentScene)

@@ -1,6 +1,8 @@
 package net.spartanb312.boar
 
+import net.spartanb312.boar.audio.AudioSystem
 import net.spartanb312.boar.game.Player
+import net.spartanb312.boar.game.audio.BGMPlayer
 import net.spartanb312.boar.game.config.Configs
 import net.spartanb312.boar.game.input.InputManager
 import net.spartanb312.boar.game.option.impls.ControlOption
@@ -21,7 +23,6 @@ import net.spartanb312.boar.graphics.matrix.applyOrtho
 import net.spartanb312.boar.language.Language
 import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.physics.PhysicsSystem
-import net.spartanb312.boar.utils.math.vector.Vec3f
 import net.spartanb312.boar.utils.misc.Profiler
 import net.spartanb312.boar.utils.timing.Sync
 import net.spartanb312.boar.utils.timing.Timer
@@ -62,6 +63,7 @@ object AimTrainer : GameGraphics {
         })
         Render2DManager.displayScreen(LoadingScreen)
         PhysicsSystem.launch(Player, 60, true)
+        AudioSystem.start()
     }
 
     override fun Profiler.onLoop() {
@@ -101,15 +103,11 @@ object AimTrainer : GameGraphics {
         }
         profiler("Render 2D")
 
-        val vec = Vec3f(1f, 1f, 4f)
-        val vec2 = Vec3f(5f, 1f, 4f)
-
-        vec + vec2
-
         // Tick
         tickTimer.passedAndReset(16) {
             SceneManager.onTick()
             ControlOption.checkPhysicsThread()
+            BGMPlayer.onTick()
         }
         profiler("Tick")
     }

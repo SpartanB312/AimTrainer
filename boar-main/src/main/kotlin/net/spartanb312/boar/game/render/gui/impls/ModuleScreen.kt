@@ -4,15 +4,18 @@ import net.spartanb312.boar.AimTrainer
 import net.spartanb312.boar.game.render.Background
 import net.spartanb312.boar.game.render.FontRendererMain
 import net.spartanb312.boar.game.render.FontRendererROG
+import net.spartanb312.boar.game.render.TextureManager
 import net.spartanb312.boar.game.render.gui.GuiScreen
 import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.graphics.drawing.RenderUtils
+import net.spartanb312.boar.graphics.texture.drawTexture
 import net.spartanb312.boar.launch.Main
 import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.utils.color.ColorRGB
 import org.lwjgl.glfw.GLFW
+import kotlin.math.max
 
 object ModuleScreen : GuiScreen() {
 
@@ -34,8 +37,17 @@ object ModuleScreen : GuiScreen() {
         RenderUtils.drawRect(0f, 0f, RS.widthF, RS.heightF, ColorRGB.BLACK.alpha(32))
         RenderUtils.drawRect(0f, clampYT, RS.widthF, clampYB, ColorRGB.DARK_GRAY.alpha(84))
 
-        scrollOffset = 2
+        // Spartan
+        val scale = max(RS.widthScale, RS.heightScale) * 2.5f
+        TextureManager.everett.drawTexture(
+            RS.centerXF - scale * 320f,
+            RS.centerYF - scale * 180f,
+            RS.centerXF + scale * 320f,
+            RS.centerYF + scale * 180f,
+            colorRGB = ColorRGB.WHITE.alpha(224)
+        )
 
+        scrollOffset = 2
         val startX = RS.widthF * 0.2f
         val endX = RS.widthF * 0.8f
         var startY = clampYT + FontRendererMain.getHeight(0.3f)
