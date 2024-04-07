@@ -108,8 +108,7 @@ class UnicodeFontRenderer(
                             val imgWidth = charData.width + scaledOffset * 2
                             if (charData.height > charHeight) {
                                 charHeight = charData.height
-                                if (charHeight > absoluteHeight) absoluteHeight =
-                                    charHeight // Set the max height as Font height
+                                if (charHeight > absoluteHeight) absoluteHeight = charHeight // Set the max height as Font height
                             }
                             if (posX + imgWidth > imgSize) {
                                 posX = 0
@@ -581,6 +580,7 @@ class UnicodeFontRenderer(
                             v = data[2].toFloat()
                             v1 = data[3].toFloat()
                         }
+                        //if (imgSize == 1536) println(charData.height)
                         charDataMap[charIndex] = charData
                     }
                     charDataMap
@@ -595,6 +595,7 @@ class UnicodeFontRenderer(
         val chunkCache = chunkCaches[chunk] ?: return null
         chunkCache.charDataSupplier.invoke().forEach { (charIndex, charData) ->
             charDataArray[charIndex] = charData
+            if (absoluteHeight < charData.height) absoluteHeight = charData.height
         }
         return chunkCache.imgSupplier
     }

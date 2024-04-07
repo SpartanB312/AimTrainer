@@ -13,9 +13,13 @@ import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
 import net.spartanb312.boar.utils.color.ColorRGB
+import net.spartanb312.boar.utils.math.MathUtils.mul
 import net.spartanb312.boar.utils.math.MathUtils.v2hFOV
+import net.spartanb312.boar.utils.math.toRadian
 import net.spartanb312.boar.utils.math.vector.Vec2f
+import net.spartanb312.boar.utils.math.vector.Vec3f
 import net.spartanb312.boar.utils.math.vector.distanceTo
+import org.joml.Matrix4f
 import org.lwjgl.opengl.GL11
 import kotlin.math.abs
 import kotlin.math.max
@@ -86,7 +90,7 @@ object Radar : Configurable("Radar") {
 
         // entities
         val playerVec = Vec2f(Player.pos.x, Player.pos.z)
-        GL11.glRotatef(-angle.toFloat(), 0f, 0f, 1f)
+        val rotateMat = Matrix4f().rotate(-angle.toRadian(), 0f, 0f, 1f)
         for (it in SceneManager.currentScene.entities) {
             if (it == Player) continue
             val color = when (it) {
@@ -99,12 +103,44 @@ object Radar : Configurable("Radar") {
             if (distance > 47.5) continue
             val highLight = (rate < 1) && (abs(distance - pulseRadius) < 5f)
             val highLightAlpha = 255 - 95 * abs(distance - pulseRadius) / 5f
+            val renderPos = Vec3f(offsetVec.x, offsetVec.y, 0f).mul(rotateMat)
+            val renderColor = color.alpha(if (highLight) highLightAlpha.toInt() else 160)
             RenderUtils.drawPoint(
-                offsetVec.x,
-                offsetVec.y,
+                renderPos.x,
+                renderPos.y,
                 5f * scale,
-                color.alpha(if (highLight) highLightAlpha.toInt() else 160)
+                renderColor
             )
+
+            val hOffset = 2.5f
+            val vOffset = 2.5f
+            if (it.pos.y >= Player.pos.y) {
+                RenderUtils.drawLine(
+                    renderPos.x, renderPos.y - vOffset * 2f,
+                    renderPos.x - hOffset * 1f, renderPos.y - vOffset * 1f,
+                    1f * scale,
+                    renderColor
+                )
+                RenderUtils.drawLine(
+                    renderPos.x, renderPos.y - vOffset * 2f,
+                    renderPos.x + hOffset * 1f, renderPos.y - vOffset * 1f,
+                    1f * scale,
+                    renderColor
+                )
+            } else {
+                RenderUtils.drawLine(
+                    renderPos.x, renderPos.y + vOffset * 2f,
+                    renderPos.x - hOffset * 1f, renderPos.y + vOffset * 1f,
+                    1f * scale,
+                    renderColor
+                )
+                RenderUtils.drawLine(
+                    renderPos.x, renderPos.y + vOffset * 2f,
+                    renderPos.x + hOffset * 1f, renderPos.y + vOffset * 1f,
+                    1f * scale,
+                    renderColor
+                )
+            }
         }
     }
 

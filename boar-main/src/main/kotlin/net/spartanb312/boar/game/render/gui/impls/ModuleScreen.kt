@@ -22,9 +22,13 @@ object ModuleScreen : GuiScreen() {
     private var scrollOffset = 0
 
     private val modules = mutableListOf<Module>()
+    private val buttons = arrayOf(
+        Button("Add", 0f, 0f, 150f, 40f) { }, // 150, 40, 20
+        Button("Refresh", 170f, 0f, 320f, 40f) {},
+        Button("Back", 340f, 0f, 490f, 40f) { Render2DManager.popScreen() })
 
     init {
-        modules.add(Main::class.java.getAnnotation(Module::class.java))
+        if (Main.fullMode) modules.add(Main::class.java.getAnnotation(Module::class.java))
         modules.add(RenderSystem.javaClass.getAnnotation(Module::class.java))
         modules.add(AimTrainer.javaClass.getAnnotation(Module::class.java))
     }
@@ -38,14 +42,16 @@ object ModuleScreen : GuiScreen() {
         RenderUtils.drawRect(0f, clampYT, RS.widthF, clampYB, ColorRGB.DARK_GRAY.alpha(84))
 
         // Spartan
-        val scale = max(RS.widthScale, RS.heightScale) * 2.5f
-        TextureManager.everett.drawTexture(
-            RS.centerXF - scale * 320f,
-            RS.centerYF - scale * 180f,
-            RS.centerXF + scale * 320f,
-            RS.centerYF + scale * 180f,
-            colorRGB = ColorRGB.WHITE.alpha(224)
-        )
+        if (Main.fullMode && TextureManager.everett.available) {
+            val scale = max(RS.widthScale, RS.heightScale) * 2.5f
+            TextureManager.everett.drawTexture(
+                RS.centerXF - scale * 320f,
+                RS.centerYF - scale * 180f,
+                RS.centerXF + scale * 320f,
+                RS.centerYF + scale * 180f,
+                colorRGB = ColorRGB.WHITE.alpha(224)
+            )
+        }
 
         scrollOffset = 2
         val startX = RS.widthF * 0.2f
@@ -95,17 +101,32 @@ object ModuleScreen : GuiScreen() {
         // Correct offset
         if (scrollOffset + 6 > modules.size) scrollOffset = modules.size - 6
         else if (scrollOffset < 0) scrollOffset = 0
+
+        val scale = max(RS.widthScale, RS.heightScale) * 1.5f
+        var sX = RS.centerXF - 245 * scale
+        buttons.forEach {
+            it.update(sX, RS.centerYF * 1.85f, 150f * scale, 40f * scale)
+            sX += 170 * scale
+            it.onRender(mouseX, mouseY, scale)
+        }
     }
 
     class Button(
         private val text: String,
-        private val startX: Float,
-        private val startY: Float,
-        private val endX: Float,
-        private val endY: Float,
-        val action: () -> Unit,
+        private var startX: Float,
+        private var startY: Float,
+        private var endX: Float,
+        private var endY: Float,
+        private val action: () -> Unit,
     ) {
-        fun onRender(mouseX: Double, mouseY: Double) {
+        fun update(startX: Float, startY: Float, width: Float, height: Float) {
+            this.startX = startX
+            this.startY = startY
+            this.endX = startX + width
+            this.endY = startY + height
+        }
+
+        fun onRender(mouseX: Double, mouseY: Double, scale: Float) {
             RenderUtils.drawRect(
                 startX,
                 startY,
@@ -113,18 +134,31 @@ object ModuleScreen : GuiScreen() {
                 endY,
                 ColorRGB.WHITE.alpha(if (isHoovered(mouseX, mouseY)) 128 else 64)
             )
-            FontRendererMain.drawCenteredString(this.text, (endX + startX) / 2f, (endY + this.startY) / 2f)
+            FontRendererMain.drawCenteredString(
+                this.text,
+                (endX + startX) / 2f,
+                (endY + this.startY) / 2f,
+                scale = scale
+            )
+        }
+
+        fun onClick(mouseX: Double, mouseY: Double): Boolean {
+            return if (isHoovered(mouseX, mouseY)) {
+                action.invoke()
+                true
+            } else false
         }
 
         fun isHoovered(mouseX: Double, mouseY: Double): Boolean =
             mouseX in startX..this.endX && mouseY in this.startY..endY
     }
 
-    private val buttons = arrayOf(
-        Button("Add", 200f, 420f, 340f, 460f) { },
-        Button("Refresh", 357f, 420f, 497f, 460f) {},
-        Button("Back", 514f, 420f, 654f, 460f) {})
-
+    override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
+        buttons.forEach {
+            if (it.onClick(mouseX.toDouble(), mouseY.toDouble())) return true
+        }
+        return false
+    }
 
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {

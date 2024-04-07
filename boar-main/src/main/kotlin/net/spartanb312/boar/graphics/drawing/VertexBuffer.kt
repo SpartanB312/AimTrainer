@@ -243,13 +243,13 @@ object VertexBuffer {
                 when (it.category) {
                     VertexFormat.Element.Category.Position -> {
                         glEnableClientState(GL_VERTEX_ARRAY)
-                        glVertexPointer(it.count, it.constant, format.totalLength, buffer.position(index))
+                        glVertexPointer(it.count, it.constant, format.totalLength, buffer.position(index) as ByteBuffer)
                         index += it.length
                     }
 
                     VertexFormat.Element.Category.Color -> {
                         glEnableClientState(GL_COLOR_ARRAY)
-                        glColorPointer(it.count, it.constant, format.totalLength, buffer.position(index))
+                        glColorPointer(it.count, it.constant, format.totalLength, buffer.position(index) as ByteBuffer)
                         index += it.length
                     }
 
@@ -259,7 +259,7 @@ object VertexBuffer {
                             it.count,
                             it.constant,
                             format.totalLength,
-                            buffer.position(index)
+                            buffer.position(index) as ByteBuffer
                         )
                         glEnableClientState(GL_TEXTURE_COORD_ARRAY)
                         index += it.length

@@ -1,17 +1,18 @@
 package net.spartanb312.boar.game.render.gui.impls
 
 import net.spartanb312.boar.AimTrainer.AIM_TRAINER_VERSION
-import net.spartanb312.boar.game.Academy
 import net.spartanb312.boar.game.render.Background
 import net.spartanb312.boar.game.render.FontRendererMain
 import net.spartanb312.boar.game.render.FontRendererROG
 import net.spartanb312.boar.game.render.gui.GuiScreen
 import net.spartanb312.boar.game.render.gui.Render2DManager
+import net.spartanb312.boar.game.training.QuickPlay
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.font.drawColoredString
 import net.spartanb312.boar.language.Language
 import net.spartanb312.boar.language.Language.m
 import net.spartanb312.boar.language.MultiText
+import net.spartanb312.boar.launch.Main
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.timing.Timer
@@ -22,7 +23,7 @@ import kotlin.system.exitProcess
 object MainMenuScreen : GuiScreen() {
 
     private val sideButtons = listOf(
-        SideBar.SideButton("Quick Play".m("快速训练", "快速訓練")) { Academy.start() },
+        SideBar.SideButton("Quick Play".m("快速训练", "快速訓練")) { QuickPlay.start() },
         SideBar.SideButton("Trainings".m("训练场", "訓練場")) { Render2DManager.displayScreen(TrainingScreen) },
         SideBar.SideButton("Modules".m("模块", "模塊")) { Render2DManager.displayScreen(ModuleScreen) },
         SideBar.SideButton("Options".m("设定", "設定")) { Render2DManager.displayScreen(OptionScreen) },
@@ -42,6 +43,12 @@ object MainMenuScreen : GuiScreen() {
 
         // Title
         FontRendererROG.drawColoredString("Aim Trainer", leftX, startY, saturation = 0.8f, shadowDepth = 2f * scale)
+        if (!Main.fullMode) FontRendererROG.drawString(
+            "Lite",
+            leftX + FontRendererROG.getWidth("Aim Trainer "),
+            startY + FontRendererROG.getHeight(0.61f),
+            scale = 0.3f
+        )
 
         startY += FontRendererROG.getHeight()
         startY += 100 * scale

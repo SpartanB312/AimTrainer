@@ -86,6 +86,7 @@ object Player : EntityPlayer(), Controller {
         updateCamera: Boolean = true,
         block: Camera.() -> Unit
     ) {
+        sensK = sensitivity * 1000.0
         if (AimAssistOption.aimAssist.value) {
             composition.aimComposite(sensitivity)
             composition.moveComposite()

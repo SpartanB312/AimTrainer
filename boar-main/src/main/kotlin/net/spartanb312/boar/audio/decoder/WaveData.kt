@@ -5,6 +5,7 @@ import net.spartanb312.boar.utils.ResourceHelper
 import org.lwjgl.openal.AL10
 import java.io.BufferedInputStream
 import java.io.ByteArrayInputStream
+import java.io.File
 import java.io.InputStream
 import java.nio.ByteBuffer
 import java.nio.ByteOrder
@@ -17,11 +18,12 @@ class WaveData(
     override val sampleRate: Int
 ) : SoundData {
 
-    override fun dispose() {
-        data.clear()
-    }
-
     companion object {
+
+        @JvmStatic
+        fun create(file: File): WaveData? {
+            return create(file.inputStream())
+        }
 
         @JvmStatic
         fun create(path: String): WaveData? {

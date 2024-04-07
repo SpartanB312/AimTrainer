@@ -31,7 +31,7 @@ import org.lwjgl.opengl.GL11.*
 
 /**
  * OpenGL 2.1 is Required
- * Migrating to OpenGL 3.2 Core Profile
+ * Migrating to OpenGL 3.2 Core Profile s∞n
  */
 @Module(
     name = "Aim Trainer",
@@ -41,8 +41,9 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240326"
+    const val AIM_TRAINER_VERSION = "1.0.0.240408"
 
+    var isReady = false
     private val tickTimer = Timer()
 
     override fun onInit() {

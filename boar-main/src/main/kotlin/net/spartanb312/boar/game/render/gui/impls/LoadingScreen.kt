@@ -1,11 +1,11 @@
 package net.spartanb312.boar.game.render.gui.impls
 
+import net.spartanb312.boar.AimTrainer
 import net.spartanb312.boar.game.render.Background.drawBackground
 import net.spartanb312.boar.game.render.FontRendererASCII
 import net.spartanb312.boar.game.render.TextureManager
 import net.spartanb312.boar.game.render.gui.GuiScreen
 import net.spartanb312.boar.game.render.gui.Render2DManager
-import net.spartanb312.boar.game.render.scene.impls.DummyScene
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
 import net.spartanb312.boar.graphics.texture.MipmapTexture
@@ -18,7 +18,7 @@ object LoadingScreen : GuiScreen() {
     override fun onRender(mouseX: Double, mouseY: Double) {
         if (TextureManager.loadedCount == TextureManager.totalCount) {
             Render2DManager.displayScreen(MainMenuScreen)
-            DummyScene.onInit()
+            AimTrainer.isReady = true
         }
         bg.drawBackground(mouseX, mouseY, 0f)
         val rate = TextureManager.loadedCount / TextureManager.totalCount.toFloat()

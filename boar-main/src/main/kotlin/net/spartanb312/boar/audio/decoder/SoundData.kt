@@ -7,5 +7,7 @@ interface SoundData {
     val format: Int
     val sampleRate: Int
 
-    fun dispose()
+    fun dispose() {
+        data.clear()
+    }
 }

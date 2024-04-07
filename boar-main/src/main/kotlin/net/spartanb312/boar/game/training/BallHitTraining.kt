@@ -11,10 +11,12 @@ import net.spartanb312.boar.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.boar.game.render.scene.Scene
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.RenderSystem
+import net.spartanb312.boar.graphics.drawing.RenderUtils
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.vector.Vec3f
 import net.spartanb312.boar.utils.misc.asRange
 import net.spartanb312.boar.utils.misc.random
+import kotlin.math.max
 import kotlin.math.roundToInt
 
 abstract class BallHitTraining(
@@ -46,6 +48,8 @@ abstract class BallHitTraining(
     protected var lastShotTime = 0L
     protected val reactionTimes = mutableListOf<Int>()
     override val showingScore get() = if (score > 0) (score * accuracy).roundToInt() else score
+    private val generalColor = ColorRGB(101, 176, 210)
+    private val lightColor = ColorRGB(194, 247, 254)
 
     init {
         repeat(amount) {
@@ -105,11 +109,41 @@ abstract class BallHitTraining(
             }
 
             Stage.Training -> {
+                val scale = max(RS.widthScale, RS.heightScale)
                 val seconds = ((65000 - timeLapsed) / 1000f).roundToInt()
-                FontRendererBig.drawCenteredStringWithShadow(
-                    if (seconds >= 10) "0: $seconds" else "0: 0$seconds",
+                val rate = seconds / 60f
+                RenderUtils.drawRect(
+                    RS.centerXF - scale * 150f,
+                    RS.centerYF * 1.75f - scale * 15f,
+                    RS.centerXF + scale * 150f,
+                    RS.centerYF * 1.75f + scale * 15f,
+                    generalColor.alpha(64)
+                )
+                RenderUtils.drawRect(
+                    RS.centerXF - scale * 150f,
+                    RS.centerYF * 1.75f - scale * 15f,
+                    RS.centerXF + scale * (300f * rate - 150),
+                    RS.centerYF * 1.75f + scale * 15f,
+                    generalColor.alpha(128)
+                )
+                RenderUtils.drawRectOutline(
+                    RS.centerXF - scale * 150f,
+                    RS.centerYF * 1.75f - scale * 15f,
+                    RS.centerXF + scale * 150f,
+                    RS.centerYF * 1.75f + scale * 15f,
+                    1f * scale,
+                    lightColor.alpha(192)
+                )
+                //FontRendererMain.drawCenteredStringWithShadow(
+                //    if (seconds >= 10) "0: $seconds" else "0: 0$seconds",
+                //    RS.centerXF,
+                //    RS.centerYF * 1.7f
+                //)
+                FontRendererMain.drawCenteredStringWithShadow(
+                    showingScore.toString(),
                     RS.centerXF,
-                    FontRendererBig.getHeight() / 2f
+                    RS.centerYF * 1.75f,
+                    scale = scale
                 )
             }
 
@@ -154,6 +188,7 @@ abstract class BallHitTraining(
             reactionTimes.add(lastHitTimeLapse)
             hits++
         } else score -= onMiss(lastShotTimeLapse)
+        score = score.coerceAtLeast(0)
         lastShotTime = currentTime
     }
 

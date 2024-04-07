@@ -35,10 +35,9 @@ object PhysicsSystem {
                 controller?.update()
                 // obj Updates
             }
-
         } else {
-            Logger.info("ERROR")
-            throw Exception("ERROR")
+            Logger.info("Physics system should be handled by physics thread")
+            throw Exception("Physics system handled by non-PhysicsThread")
         }
     }
 

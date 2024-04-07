@@ -10,10 +10,11 @@ object Language {
 
     fun add(multiText: MultiText) = textContainers.add(multiText)
 
-    fun String.m(cn: String = "", tw: String = ""): MultiText {
+    fun String.m(cn: String = this, tw: String = this): MultiText {
         val multiText = MultiText(this)
         multiText.addLang(Languages.ChineseCN, cn)
         multiText.addLang(Languages.ChineseTW, tw)
+        //multiText.addLang()
         textContainers.add(multiText)
         return multiText
     }

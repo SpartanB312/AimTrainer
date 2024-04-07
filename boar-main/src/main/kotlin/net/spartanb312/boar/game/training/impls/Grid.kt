@@ -11,10 +11,10 @@ import net.spartanb312.boar.utils.misc.asRange
 class Grid(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
     scoreboardScreen,
     scene,
-    4,
+    3,
     2f.asRange,
     5f,
-    5,
+    6,
     5,
     1.5f,
     1.5f,

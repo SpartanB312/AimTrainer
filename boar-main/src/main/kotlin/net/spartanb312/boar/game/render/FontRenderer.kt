@@ -3,9 +3,9 @@ package net.spartanb312.boar.game.render
 import net.spartanb312.boar.game.config.setting.ListSetting
 import net.spartanb312.boar.game.option.impls.AccessibilityOption
 import net.spartanb312.boar.graphics.cache.CacheManager
-import net.spartanb312.boar.graphics.font.CustomFont
 import net.spartanb312.boar.graphics.font.FontRenderer
-import net.spartanb312.boar.graphics.font.StaticFont
+import net.spartanb312.boar.graphics.font.LocalFontRenderer
+import net.spartanb312.boar.launch.Main
 
 object FontCacheManager : CacheManager("FontRenderer") {
 
@@ -34,20 +34,32 @@ object FontCacheManager : CacheManager("FontRenderer") {
 
 }
 
-object FontRendererMain : FontRenderer by FontRenderer(
+object FontRendererMain : FontRenderer by if (Main.fullMode) FontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,
     scaleFactor = 0.5f,
     chunkSize = 49,
-    textureLoader = TextureManager
+    textureLoader = TextureManager,
+) else LocalFontRenderer(
+    "Microsoft YaHei UI",
+    50f,
+    scaleFactor = 0.5f,
+    chunkSize = 49,
+    textureLoader = TextureManager,
 )
 
-object FontRendererBig : FontRenderer by FontRenderer(
+object FontRendererBig : FontRenderer by if (Main.fullMode) FontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,
     scaleFactor = 1f,
     chunkSize = 49,
     textureLoader = TextureManager
+) else LocalFontRenderer(
+    "Microsoft YaHei UI",
+    50f,
+    scaleFactor = 1f,
+    chunkSize = 49,
+    textureLoader = TextureManager,
 )
 
 object FontRendererROG : FontRenderer by FontRenderer(
@@ -59,15 +71,14 @@ object FontRendererROG : FontRenderer by FontRenderer(
     textureLoader = TextureManager
 )
 
-object FontRendererASCII : FontRenderer by FontRenderer(
+object FontRendererASCII : FontRenderer by if (Main.fullMode) FontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     25f,
     imgSize = 256,
     chunkSize = 49
-)
-
-object FontMain : StaticFont by CustomFont.fromPath(
-    "assets/font/Microsoft YaHei UI.ttc",
-    50f,
-    textureLoader = TextureManager
+) else LocalFontRenderer(
+    "Microsoft YaHei UI",
+    25f,
+    imgSize = 256,
+    chunkSize = 49
 )

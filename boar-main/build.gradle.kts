@@ -1,6 +1,7 @@
 plugins {
     java
     kotlin("jvm")
+    id("dev.luna5ama.jar-optimizer") version "1.2-SNAPSHOT"
 }
 
 repositories {
@@ -32,7 +33,10 @@ dependencies {
     library("it.unimi.dsi:fastutil:8.5.9")
     library("org.joml:joml:1.10.4")
     library("com.google.code.gson:gson:2.10")
-    library("com.google.guava:guava:31.1-jre")
+    library("com.google.guava:guava:32.0.0-android")
+
+    // Audio System
+    library("com.googlecode.soundlibs:mp3spi:1.9.5.4")
 
     // Render Engine
     library(platform("org.lwjgl:lwjgl-bom:$lwjglVersion"))
@@ -73,7 +77,7 @@ val collectModules = task("collectModules", type = Copy::class) {
 
 val moveJar = task("moveJar", type = Copy::class) {
     group = "build"
-    from("$buildDir\\libs\\")
+    from("$buildDir\\libs\\boar-main.jar")
     into("$rootDir\\release\\engine")
 }
 
@@ -91,6 +95,31 @@ val collectAssets = task("collectAssets", type = Copy::class) {
     into("$rootDir\\release\\assets")
 }
 
+val fatJar = task("FatJar", type = Jar::class) {
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+    archiveFileName.set("fat.jar")
+    from(library.map { if (it.isDirectory) it else zipTree(it) })
+    from(projectModule.map { if (it.isDirectory) it else zipTree(it) })
+    from(zipTree(File("$buildDir\\libs\\boar-main.jar")))
+    from("$projectDir\\src\\main\\resources\\")
+    exclude("assets/sound/background/**")
+    exclude("assets/texture/EVRT.png")
+    exclude("assets/font/Microsoft YaHei UI.ttc")
+    exclude("linux/")
+    exclude("macos/")
+    exclude("windows/x86/")
+    exclude("windows/arm64/")
+    manifest {
+        attributes(
+            "Manifest-Version" to 1.0,
+            "Main-Class" to " net.spartanb312.boar.launch.MinimalLaunchKt"
+        )
+    }
+}
+val optimizeFatJar = jarOptimizer.register(fatJar, "net.spartanb312")
+
+val outputMinimal = true
+
 tasks {
     compileKotlin {
         kotlinOptions {
@@ -105,7 +134,7 @@ tasks {
 
     "build" {
         dependsOn(collectLibs, collectAssets)
-
-        finalizedBy(collectModules, moveJar)
+        if (outputMinimal) finalizedBy(collectModules, moveJar, optimizeFatJar)
+        else finalizedBy(collectModules, moveJar)
     }
 }

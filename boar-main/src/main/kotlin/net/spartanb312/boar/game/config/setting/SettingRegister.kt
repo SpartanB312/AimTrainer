@@ -121,7 +121,10 @@ fun <T> AbstractSetting<T>.alias(aliasName: String): AbstractSetting<T> = this.a
     multiText.addLang(Languages.English, aliasName)
 }
 
-fun <T> AbstractSetting<T>.m(cn: String = "", tw: String = ""): AbstractSetting<T> = this.apply {
+fun <T> AbstractSetting<T>.m(
+    cn: String = aliasName,
+    tw: String = aliasName
+): AbstractSetting<T> = this.apply {
     multiText.addLang(Languages.ChineseCN, cn)
     multiText.addLang(Languages.ChineseTW, tw)
 }

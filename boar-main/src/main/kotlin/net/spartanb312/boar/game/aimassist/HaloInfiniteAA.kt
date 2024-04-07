@@ -1,6 +1,6 @@
 package net.spartanb312.boar.game.aimassist
 
-import net.spartanb312.boar.game.Academy
+import net.spartanb312.boar.game.training.QuickPlay
 import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.entity.Entity
 import net.spartanb312.boar.game.option.impls.AimAssistOption
@@ -44,7 +44,7 @@ class HaloInfiniteAA {
             Player.sensK = if (Player.sensK == -1.0) sensitivity * 1000.0
             else {
                 val firing = !Render2DManager.displaying
-                        && (SceneManager.currentScene == AimTrainingScene || SceneManager.currentScene is Academy.AcademyScene)
+                        && (SceneManager.currentScene == AimTrainingScene || SceneManager.currentScene is QuickPlay.QuickPlayScene)
                         && GLFW.glfwGetMouseButton(RS.window, GLFW.GLFW_MOUSE_BUTTON_1) == GLFW.GLFW_PRESS
                 val targetAA = when {
                     AimAssistOption.frEnabled && Player.raytraced && firing -> AimAssistOption.firingCoefficient

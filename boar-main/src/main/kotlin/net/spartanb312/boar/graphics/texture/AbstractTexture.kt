@@ -11,7 +11,7 @@ abstract class AbstractTexture : Texture {
     var type = TextureType.DIFFUSE
 
     val state: AtomicReference<State> = AtomicReference(State.CREATED)
-    val available get() = state.get() == State.UPLOADED
+    override val available get() = state.get() == State.UPLOADED
 
     override fun bindTexture() {
         val state = state.get()

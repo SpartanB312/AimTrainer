@@ -1,6 +1,6 @@
 package net.spartanb312.boar.game.render.scene
 
-import net.spartanb312.boar.game.Academy
+import net.spartanb312.boar.game.training.QuickPlay
 import net.spartanb312.boar.game.input.InputManager
 import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.game.render.scene.impls.AimTrainingScene
@@ -9,11 +9,11 @@ import net.spartanb312.boar.game.render.scene.impls.DummyScene
 object SceneManager {
 
     var currentScene: Scene = DummyScene
-    val inTraining get() = currentScene == AimTrainingScene || currentScene is Academy.AcademyScene
+    val inTraining get() = currentScene == AimTrainingScene || currentScene is QuickPlay.QuickPlayScene
     val errorAngle
         get() = when (currentScene) {
             AimTrainingScene -> AimTrainingScene.currentTraining?.errorAngle ?: 0f
-            is Academy.AcademyScene -> (currentScene as Academy.AcademyScene).errorAngle
+            is QuickPlay.QuickPlayScene -> (currentScene as QuickPlay.QuickPlayScene).errorAngle
             else -> 0f
         }
 

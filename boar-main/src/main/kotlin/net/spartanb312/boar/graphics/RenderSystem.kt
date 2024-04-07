@@ -24,7 +24,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.0.4"
+    const val ENGINE_VERSION = "1.0.5"
 
     init {
         name = "RenderThread"

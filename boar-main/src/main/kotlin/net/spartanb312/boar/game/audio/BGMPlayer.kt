@@ -1,24 +1,20 @@
 package net.spartanb312.boar.game.audio
 
+import net.spartanb312.boar.AimTrainer
 import net.spartanb312.boar.audio.Sound
 import net.spartanb312.boar.game.option.impls.AudioOption
+import net.spartanb312.boar.game.render.scene.SceneManager
+import net.spartanb312.boar.launch.Main
 import net.spartanb312.boar.utils.timing.Timer
 
 object BGMPlayer {
 
-    private val bgmList = mutableListOf(
+    private val bgmList = if (Main.fullMode) mutableListOf(
         Sound("assets/sound/background/bg1.wav"),
         Sound("assets/sound/background/bg2.wav"),
-        Sound("assets/sound/background/bg3.wav")
-    )
-
-    fun fadeIn() {
-        mute = false
-    }
-
-    fun fadeOut() {
-        mute = true
-    }
+        Sound("assets/sound/background/bg3.wav"),
+        Sound("assets/sound/background/bg4.wav"),
+    ) else mutableListOf(Sound())
 
     var currentBGM = nextBGM()
 
@@ -40,6 +36,8 @@ object BGMPlayer {
     val timer = Timer()
 
     fun onTick() {
+        if (!Main.fullMode || !currentBGM.available) return
+        mute = (SceneManager.inTraining && !AudioOption.bgmInGame) || !AimTrainer.isReady
         currentBGM.updateStates()
 
         volume += if (mute) -5 else 5

@@ -16,8 +16,8 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
         errorAngle: Float // DistanceToCenter, Radius
     ): Boolean = body.raytrace(origin, ray, errorAngle)
 
-    fun randomMove(reverse: Boolean) {
-        val scale = 0.025f
+    fun randomMove(reverse: Boolean, moveSpeed: Float) {
+        val scale = 0.01f * moveSpeed
         vec += Vec3f((-scale..scale).random(), (-scale..scale).random(), (-scale..scale).random())
         fun Float.correct(): Float {
             val temp = this.coerceIn((-10 * scale)..(10 * scale))
@@ -33,7 +33,7 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
         if (pos.x !in range) notInRange++
         if (pos.y !in range) notInRange++
         if (pos.z !in range) notInRange++
-        if (notInRange >= 2) randomMove(true)
+        if (notInRange >= 2) randomMove(true, moveSpeed)
         else pos = Vec3f(pos.x.coerceIn(range), pos.y.coerceIn(range), pos.z.coerceIn(range))
     }
 

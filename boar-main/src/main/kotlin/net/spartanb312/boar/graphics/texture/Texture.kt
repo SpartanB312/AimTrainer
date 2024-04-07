@@ -10,6 +10,7 @@ interface Texture {
     val id: Int
     var width: Int
     var height: Int
+    val available:Boolean
     fun bindTexture()
     fun unbindTexture()
     fun deleteTexture()

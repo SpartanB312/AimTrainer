@@ -59,6 +59,7 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
             reactionTimes.add(lastHitTimeLapse)
             hits++
         } else score -= onMiss(lastShotTimeLapse)
+        score = score.coerceAtLeast(0)
         lastShotTime = currentTime
     }
 
@@ -92,12 +93,12 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
         }
         click()
         entities.forEach {
-            if (it is Ball) it.randomMove(reverse)
+            if (it is Ball) it.randomMove(reverse, 2.5f)
         }
     }
 
     override fun onHit(timeLapse: Int): Int {
-        return (300f / timeLapse.coerceIn(50..2000)).toInt()
+        return (400f / timeLapse.coerceIn(50..2000)).toInt()
     }
 
     override fun onMiss(timeLapse: Int): Int {

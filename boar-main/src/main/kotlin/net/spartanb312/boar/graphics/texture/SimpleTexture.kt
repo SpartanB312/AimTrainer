@@ -13,6 +13,7 @@ class SimpleTexture(img: BufferedImage, format: Int = GL_RGBA) : Texture {
     override val id = glGenTextures()
     override var height: Int
     override var width: Int
+    override val available = true
 
     init {
         bindTexture()

@@ -1,8 +1,10 @@
 package net.spartanb312.boar.audio
 
+import kotlinx.coroutines.CoroutineScope
 import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.misc.NULL
+import net.spartanb312.boar.utils.thread.newCoroutineScope
 import org.lwjgl.openal.AL
 import org.lwjgl.openal.ALC
 import org.lwjgl.openal.ALC11.*
@@ -12,7 +14,10 @@ import org.lwjgl.system.MemoryUtil
 import java.nio.IntBuffer
 import java.util.concurrent.LinkedBlockingQueue
 
-object AudioSystem : Thread("AudioThread") {
+object AudioSystem : Thread("AudioThread"), CoroutineScope by newCoroutineScope(
+    Runtime.getRuntime().availableProcessors(),
+    "AudioLoader"
+) {
 
     var alcDevice = 0L; private set
     val devices = mutableMapOf<Int, String>()
@@ -50,8 +55,6 @@ object AudioSystem : Thread("AudioThread") {
         Logger.debug("ALC_SYNC          : " + (alcGetInteger(alcDevice, ALC_SYNC) == ALC_TRUE))
         Logger.debug("ALC_MONO_SOURCES  : " + alcGetInteger(alcDevice, ALC_MONO_SOURCES))
         Logger.debug("ALC_STEREO_SOURCES: " + alcGetInteger(alcDevice, ALC_STEREO_SOURCES))
-
-
     }
 
     private fun loop() {
@@ -94,7 +97,7 @@ object AudioSystem : Thread("AudioThread") {
 
     fun playClone(sound: Sound, delay: Int = 0) = play(sound.clone()!!, delay)
 
-    fun runOnAudioThread(task:Runnable) {
+    fun runOnAudioThread(task: Runnable) {
         threadTask.put(task)
     }
 
