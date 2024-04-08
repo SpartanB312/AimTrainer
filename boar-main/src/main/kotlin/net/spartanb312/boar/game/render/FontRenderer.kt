@@ -5,6 +5,7 @@ import net.spartanb312.boar.game.option.impls.AccessibilityOption
 import net.spartanb312.boar.graphics.cache.CacheManager
 import net.spartanb312.boar.graphics.font.FontRenderer
 import net.spartanb312.boar.graphics.font.LocalFontRenderer
+import net.spartanb312.boar.graphics.font.RTOFontRenderer
 import net.spartanb312.boar.launch.Main
 
 object FontCacheManager : CacheManager("FontRenderer") {
@@ -34,7 +35,15 @@ object FontCacheManager : CacheManager("FontRenderer") {
 
 }
 
-object FontRendererMain : FontRenderer by if (Main.fullMode) FontRenderer(
+object RTO : FontRenderer by RTOFontRenderer(
+    "assets/font/Microsoft YaHei UI.ttc",
+    50f,
+    scaleFactor = 0.5f,
+    chunkSize = 49,
+    textureLoader = TextureManager,
+)
+
+object FontRendererMain : FontRenderer by if (Main.fullMode) RTOFontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,
     scaleFactor = 0.5f,
@@ -48,7 +57,7 @@ object FontRendererMain : FontRenderer by if (Main.fullMode) FontRenderer(
     textureLoader = TextureManager,
 )
 
-object FontRendererBig : FontRenderer by if (Main.fullMode) FontRenderer(
+object FontRendererBig : FontRenderer by if (Main.fullMode) RTOFontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,
     scaleFactor = 1f,

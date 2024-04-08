@@ -107,6 +107,7 @@ object AimTrainer : GameGraphics {
         // Tick
         tickTimer.passedAndReset(16) {
             SceneManager.onTick()
+            Render2DManager.onTick()
             ControlOption.checkPhysicsThread()
             BGMPlayer.onTick()
         }

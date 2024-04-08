@@ -7,6 +7,7 @@ import net.spartanb312.boar.graphics.texture.Texture
 import net.spartanb312.boar.graphics.texture.loader.AsyncTextureLoader
 import net.spartanb312.boar.graphics.texture.loader.LazyTextureContainer
 import net.spartanb312.boar.graphics.texture.loader.TextureLoader
+import net.spartanb312.boar.launch.Main
 
 object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { AccessibilityOption.threadsLimit }) {
 
@@ -29,6 +30,6 @@ object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { Acc
     val bg = lazyTexture("assets/texture/menu/halo_infinite_background.png")
 
     // Spartan
-    val everett by lazy { lazyTexture("assets/texture/EVRT.png") }
+    val everett = if (Main.fullMode) lazyTexture("assets/texture/EVRT.png") else null
 
 }

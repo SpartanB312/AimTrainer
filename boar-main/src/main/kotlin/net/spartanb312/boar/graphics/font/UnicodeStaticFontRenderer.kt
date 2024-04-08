@@ -41,6 +41,7 @@ class UnicodeStaticFontRenderer(
     private var imgSupplier: (() -> BufferedImage)? = null
     override var absoluteWidth = 0
     override var absoluteHeight = 0
+    override val isReady get() = texture.available
 
     fun setScale(scale: Float): UnicodeStaticFontRenderer {
         this.scaleFactor = scale
@@ -94,7 +95,7 @@ class UnicodeStaticFontRenderer(
                 val metrics = it.fontMetrics
                 var charHeight = 0
                 var posX = 0
-                var posY = 1
+                var posY = 0
                 for (char in text) {
                     val dimension = metrics.getStringBounds(char.toString(), it)
                     val width = dimension.bounds.width

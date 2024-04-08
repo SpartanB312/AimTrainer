@@ -8,6 +8,7 @@ interface StaticFontRenderer : CacheSavable {
     var absoluteWidth: Int
     var absoluteHeight: Int
     var scaleFactor: Float
+    val isReady: Boolean
     fun getWidth(scale: Float = 1f): Float
     fun getHeight(scale: Float = 1f): Float
     fun _drawString(

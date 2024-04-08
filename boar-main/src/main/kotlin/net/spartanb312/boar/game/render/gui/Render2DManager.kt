@@ -5,6 +5,7 @@ import net.spartanb312.boar.game.render.EnergyShield
 import net.spartanb312.boar.game.render.Radar
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.graphics.GLHelper
+import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.RenderSystem
 import org.lwjgl.glfw.GLFW
 import java.util.*
@@ -34,9 +35,13 @@ object Render2DManager {
         }
     }
 
+    fun onTick() {
+        RS.rto = currentScreen != null
+    }
+
     fun onRender(mouseX: Double, mouseY: Double) {
-        if (SceneManager.inTraining){
-            if(VideoOption.radar.value) Radar.render2D()
+        if (SceneManager.inTraining) {
+            if (VideoOption.radar.value) Radar.render2D()
             if (VideoOption.shield) EnergyShield.render2D()
         }
         val currentScreen = currentScreen

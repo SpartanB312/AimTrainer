@@ -1,10 +1,7 @@
 package net.spartanb312.boar.game.render.gui.impls
 
 import net.spartanb312.boar.AimTrainer
-import net.spartanb312.boar.game.render.Background
-import net.spartanb312.boar.game.render.FontRendererMain
-import net.spartanb312.boar.game.render.FontRendererROG
-import net.spartanb312.boar.game.render.TextureManager
+import net.spartanb312.boar.game.render.*
 import net.spartanb312.boar.game.render.gui.GuiScreen
 import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.graphics.RS
@@ -42,7 +39,7 @@ object ModuleScreen : GuiScreen() {
         RenderUtils.drawRect(0f, clampYT, RS.widthF, clampYB, ColorRGB.DARK_GRAY.alpha(84))
 
         // Spartan
-        if (Main.fullMode && TextureManager.everett.available) {
+        if (TextureManager.everett?.available == true) {
             val scale = max(RS.widthScale, RS.heightScale) * 2.5f
             TextureManager.everett.drawTexture(
                 RS.centerXF - scale * 320f,
@@ -98,6 +95,9 @@ object ModuleScreen : GuiScreen() {
                 startY += FontRendererMain.getHeight(1.3f)
             }
         }
+
+        RTO.drawCenteredString("RTO Test", RS.centerX, RS.centerY)
+
         // Correct offset
         if (scrollOffset + 6 > modules.size) scrollOffset = modules.size - 6
         else if (scrollOffset < 0) scrollOffset = 0

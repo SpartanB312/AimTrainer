@@ -43,6 +43,26 @@ fun FontRenderer(
     size.toInt(), antiAlias, fractionalMetrics, imgSize, chunkSize, linearMag, useMipmap, scaleFactor, textureLoader
 )
 
+fun RTOFontRenderer(
+    path: String,
+    size: Float,
+    type: Int = Font.TRUETYPE_FONT,
+    style: Int = Font.PLAIN,
+    antiAlias: Boolean = true,
+    fractionalMetrics: Boolean = false,
+    imgSize: Int = 512,
+    chunkSize: Int = 64,
+    linearMag: Boolean = false,
+    useMipmap: Boolean = true,
+    scaleFactor: Float = 1f,
+    textureLoader: TextureLoader? = null
+): FontRenderer = UnicodeRTOFontRenderer(
+    Font.createFont(type, ResourceHelper.getResourceStream(path)!!)!!
+        .deriveFont(size)
+        .deriveFont(style),
+    size.toInt(), antiAlias, fractionalMetrics, imgSize, chunkSize, linearMag, useMipmap, scaleFactor, textureLoader
+)
+
 fun LazyFontRenderer(
     path: String,
     size: Float,

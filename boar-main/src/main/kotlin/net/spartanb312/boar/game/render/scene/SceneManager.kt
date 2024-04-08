@@ -1,10 +1,10 @@
 package net.spartanb312.boar.game.render.scene
 
-import net.spartanb312.boar.game.training.QuickPlay
 import net.spartanb312.boar.game.input.InputManager
 import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.boar.game.render.scene.impls.DummyScene
+import net.spartanb312.boar.game.training.QuickPlay
 
 object SceneManager {
 
