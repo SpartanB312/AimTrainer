@@ -5,7 +5,6 @@ import net.spartanb312.boar.graphics.compat.GLCompatibility
 import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.collection.CircularArray
-import net.spartanb312.boar.utils.math.ceilToInt
 import net.spartanb312.boar.utils.misc.*
 import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.Callbacks
@@ -25,7 +24,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.0.5"
+    const val ENGINE_VERSION = "1.0.6"
 
     init {
         name = "RenderThread"
@@ -68,6 +67,7 @@ object RenderSystem : Thread() {
     var frames = 0L; private set
     var activeFrames = 0L; private set
     var rto = true
+    const val rtoTime = 5
 
     private val renderThreadJob = LinkedBlockingQueue<Runnable>()
     fun addRenderThreadJob(runnable: Runnable) = renderThreadJob.add(runnable)
@@ -190,9 +190,10 @@ object RenderSystem : Thread() {
 
         while (!glfwWindowShouldClose(window)) {
             frames++
-            if (activeFrames < averageFPS) {
+            val rtoLimit = (averageFPS * rtoTime).toLong()
+            if (activeFrames < rtoLimit) {
                 activeFrames++
-                activeFrames = activeFrames.coerceAtMost(averageFPS.ceilToInt().toLong())
+                activeFrames = activeFrames.coerceAtMost(rtoLimit)
             }
             gameGraphics.onSync()
             profiler.start()

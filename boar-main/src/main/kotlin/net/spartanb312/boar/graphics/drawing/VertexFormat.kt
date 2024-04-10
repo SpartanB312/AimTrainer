@@ -15,7 +15,9 @@ enum class VertexFormat(vararg val elements: Element) {
     Pos2iColor(Element.Position2i, Element.Color),// 12
     Pos3iColor(Element.Position3i, Element.Color),// 16
     Pos2iTex(Element.Position2i, Element.Color, Element.Texture),// 20
-    Pos3iTex(Element.Position3i, Element.Color, Element.Texture);// 24
+    Pos3iTex(Element.Position3i, Element.Color, Element.Texture),// 24
+
+    Pos3fNormalTex(Element.Position3f, Element.Position3f, Element.Texture);// 32
 
     val totalLength: Int
 

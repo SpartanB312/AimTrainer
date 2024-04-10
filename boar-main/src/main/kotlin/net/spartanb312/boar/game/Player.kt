@@ -1,5 +1,6 @@
 package net.spartanb312.boar.game
 
+import net.spartanb312.boar.game.aimassist.FrictionAA
 import net.spartanb312.boar.game.aimassist.HaloInfiniteAA
 import net.spartanb312.boar.game.entity.Entity
 import net.spartanb312.boar.game.entity.EntityPlayer
@@ -8,9 +9,13 @@ import net.spartanb312.boar.game.option.impls.ControlOption
 import net.spartanb312.boar.graphics.Camera
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.physics.Controller
-import net.spartanb312.boar.physics.world.Object
+import net.spartanb312.boar.physics.world.BoundingBox
+import net.spartanb312.boar.physics.world.Box
+import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.math.toRadian
 import net.spartanb312.boar.utils.math.vector.Vec3f
+import net.spartanb312.boar.utils.math.vector.toVec3d
+import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import kotlin.math.cos
 import kotlin.math.sin
@@ -26,7 +31,14 @@ object Player : EntityPlayer(), Controller {
     val sens get() = sensK / 1000.0
     val raytraced get() = lastRayTracedTarget != null
 
-    private val composition = HaloInfiniteAA()
+    private var onGround = false
+    val boundingBox
+        get() = BoundingBox(
+            pos.plus(-0.4f, -1.8f, -0.4f).toVec3d(),
+            pos.plus(0.4f, 0.2f, 0.4f).toVec3d()
+        )
+    override val boundingBoxes: MutableList<Box> get() = mutableListOf(boundingBox)
+
 
     override fun update() {
         val facing = Vec3f(cos(yaw.toRadian()), 0, sin(yaw.toRadian()))
@@ -64,17 +76,66 @@ object Player : EntityPlayer(), Controller {
         move(xDiff.toFloat(), yDiff.toFloat(), zDiff.toFloat())
     }
 
-    override fun intersects(obj: Object): Boolean {
-        return false
-    }
-
     fun setPosition(position: Vec3f) {
         pos = position
         camera.cameraPos = pos
     }
 
-    fun move(x: Float, y: Float, z: Float) {
-        pos = pos.plus(x, y, z)
+    private val timer = Timer()
+    private var eyeOffset = 0f
+
+    fun move(xDiff: Float, yDiff: Float, zDiff: Float) {
+        timer.passedAndRun(10) {
+            eyeOffset = eyeOffset.converge(
+                if (onGround && GLFW.glfwGetKey(RS.window, GLFW.GLFW_KEY_LEFT_SHIFT) == GLFW.GLFW_PRESS) 100f
+                else 0f,
+                0.3f
+            )
+        }
+        // Check movement
+        var targetPos = pos.plus(xDiff, yDiff, zDiff)
+
+        val prevBB = boundingBox
+
+        var finalX = targetPos.x.toDouble()
+        var finalY = targetPos.y.toDouble()
+        var finalZ = targetPos.z.toDouble()
+
+        if (yDiff != 0f) onGround = false
+        TrainingWorld.objects.forEach { obj ->
+            obj.boundingBoxes.forEach { box ->
+                val targetBB = BoundingBox(
+                    targetPos.plus(-0.4f, -1.8f, -0.4f).toVec3d(),
+                    targetPos.plus(0.4f, 0.2f, 0.4f).toVec3d()
+                )
+                val xOverlaps = box.minX < prevBB.maxX && box.maxX > prevBB.minX
+                val yOverlaps = box.minY < prevBB.maxY && box.maxY > prevBB.minY
+                val zOverlaps = box.minZ < prevBB.maxZ && box.maxZ > prevBB.minZ
+
+                if (box.intersects(targetBB)) {
+                    // Check X
+                    if (yOverlaps && zOverlaps) {
+                        if (box.maxX < prevBB.minX) finalX = box.maxX + 0.40001f
+                        else if (box.minX > prevBB.maxX) finalX = box.minX - 0.40001f
+                    }
+                    // Check Y
+                    if (xOverlaps && zOverlaps) {
+                        if (box.maxY < prevBB.minY) {
+                            onGround = true
+                            finalY = box.maxY + 1.80001f
+                        } else if (box.minY > prevBB.maxY) finalY = box.minY - 0.20001f
+                    }
+                    // Check Z
+                    if (xOverlaps && yOverlaps) {
+                        if (box.maxZ < prevBB.minZ) finalZ = box.maxZ + 0.40001f
+                        else if (box.minZ > prevBB.maxZ) finalZ = box.minZ - 0.40001f
+                    }
+
+                }
+                targetPos = Vec3f(finalX, finalY, finalZ)
+            }
+        }
+        pos = targetPos
         camera.cameraPos = pos
     }
 
@@ -86,10 +147,10 @@ object Player : EntityPlayer(), Controller {
         updateCamera: Boolean = true,
         block: Camera.() -> Unit
     ) {
-        sensK = sensitivity * 1000.0
+        //sensK = sensitivity * 1000.0
         if (AimAssistOption.aimAssist.value) {
-            composition.aimComposite(sensitivity)
-            composition.moveComposite()
+            if (AimAssistOption.mcEnabled) HaloInfiniteAA.compensate(sensitivity)
+            else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
         }
         camera.project(
             yaw,

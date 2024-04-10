@@ -85,23 +85,27 @@ class UnicodeRTOFontRenderer(
 
     init {
         val timer = Timer()
-        Thread {
-            while (RenderSystem.isAlive) {
-                inner@ while (true) {
-                    val task = cacheQueue.poll()
-                    if (task != null) solve(task)
-                    else break@inner
-                }
-                timer.passedAndReset(1000) {
-                    cacheL2.toList().forEach { (code, freq) ->
-                        val newFreq = (freq - (RS.averageFPS / 2f).floorToInt()).coerceAtLeast(0)
-                        if (newFreq == 0L) {
-                            cacheL2.remove(code)
-                            if (cacheL1.get(code)?.timer?.passed(1000) == true) cacheL1.remove(code)
-                        } else cacheL2[code] = newFreq
+        object : Thread("RTO-${font.fontName}") {
+            override fun run() {
+                while (RenderSystem.isAlive) {
+                    inner@ while (true) {
+                        val task = cacheQueue.poll()
+                        if (task != null) solve(task)
+                        else break@inner
                     }
+                    timer.passedAndReset(1000) {
+                        cacheL2.toList().forEach { (code, freq) ->
+                            val newFreq = (freq - (RS.averageFPS * 0.3f).floorToInt()).coerceAtLeast(0)
+                            if (newFreq == 0L) {
+                                cacheL2.remove(code)
+                                if (cacheL1.get(code)?.timer?.passed(20000 * RS.rtoTime) == true) {
+                                    cacheL1.remove(code)
+                                }
+                            } else cacheL2[code] = newFreq
+                        }
+                    }
+                    sleep(1)
                 }
-                Thread.sleep(1)
             }
         }.start()
     }
@@ -147,7 +151,7 @@ class UnicodeRTOFontRenderer(
         scale0: Float,
         shadow: Boolean
     ) {
-        if (RS.rto && text.length in 2..15 && !gradient) {
+        if (RS.rto && text.length in 2..31 && !gradient) {
             val code = text.hashCode().toLong() shl 32 // and xxx
             cacheQueue.put(code to text)
             val staticRenderer: StaticText? = cacheL1.get(code)

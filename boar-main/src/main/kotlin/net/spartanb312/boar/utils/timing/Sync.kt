@@ -77,7 +77,7 @@ object Sync {
         val osName = System.getProperty("os.name")
         if (osName.startsWith("Win")) {
             // On windows the sleep functions can be highly inaccurate by
-            // over 10ms making in unusable. However it can be forced to
+            // over 10ms making in unusable. However, it can be forced to
             // be a bit more accurate by running a separate sleeping daemon
             // thread.
             val timerAccuracyThread = Thread {

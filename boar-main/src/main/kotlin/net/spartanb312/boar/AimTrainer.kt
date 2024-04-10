@@ -108,10 +108,13 @@ object AimTrainer : GameGraphics {
         tickTimer.passedAndReset(16) {
             SceneManager.onTick()
             Render2DManager.onTick()
-            ControlOption.checkPhysicsThread()
             BGMPlayer.onTick()
         }
         profiler("Tick")
+
+        // Physics
+        ControlOption.checkPhysicsThread()
+        profiler("Physics")
     }
 
     override fun onKeyCallback(key: Int, action: Int, modifier: Int) {
