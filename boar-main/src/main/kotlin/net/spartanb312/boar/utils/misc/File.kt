@@ -5,7 +5,7 @@ import java.io.File
 fun createFile(path: String): File {
     return File(path).apply {
         if (!exists()) {
-            parentFile.mkdirs()
+            parentFile?.mkdirs()
             createNewFile()
         }
     }

@@ -19,12 +19,12 @@ object AimTrainingScene : Scene() {
 
     private val tickTimer = Timer()
     private val skybox = Skybox(
-        -200.0,
-        -200.0,
-        -200.0,
-        200.0,
-        200.0,
-        200.0,
+        -200f,
+        -200f,
+        -200f,
+        200f,
+        200f,
+        200f,
         TextureManager.down,
         TextureManager.up,
         TextureManager.left,

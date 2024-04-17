@@ -34,7 +34,7 @@ class OneShotSphere(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
     }
 
     override fun onMiss(timeLapse: Int): Int {
-        return (timeLapse.coerceIn(50..2000) / 10f).toInt()
+        return (timeLapse.coerceIn(50..2000) / 30f).toInt()
     }
 
 }

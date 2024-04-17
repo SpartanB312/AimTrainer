@@ -1,9 +1,10 @@
 package net.spartanb312.boar.graphics
 
-
 import net.spartanb312.boar.graphics.drawing.RenderUtils
-import net.spartanb312.boar.graphics.drawing.VertexBuffer.buffer
 import net.spartanb312.boar.graphics.drawing.VertexFormat
+import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
+import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
+import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
 import net.spartanb312.boar.utils.color.ColorHSB
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.vector.Vec2f
@@ -39,7 +40,6 @@ class ParticleSystem(
     init {
         if (instantInit) {
             init()
-            //println(particleList.size)
         }
     }
 
@@ -69,7 +69,11 @@ class ParticleSystem(
             glPointSize(size)
             glEnable(GL_POINT_SMOOTH)
             glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
-            GL_POINTS.buffer(VertexFormat.Pos2fColor, particleList.size) {
+            if (!RS.compatMode) GL_POINTS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+                list.forEach {
+                    universe(it.x, it.y, it.color.alpha(it.alpha.toInt().coerceIn(0, initialAlpha)))
+                }
+            } else GL_POINTS.buffer(VertexFormat.Pos2fColor, particleList.size) {
                 list.forEach {
                     v2fc(it.x, it.y, it.color.alpha(it.alpha.toInt().coerceIn(0, initialAlpha)))
                 }

@@ -35,14 +35,6 @@ object FontCacheManager : CacheManager("FontRenderer") {
 
 }
 
-object RTO : FontRenderer by RTOFontRenderer(
-    "assets/font/Microsoft YaHei UI.ttc",
-    50f,
-    scaleFactor = 0.5f,
-    chunkSize = 49,
-    textureLoader = TextureManager,
-)
-
 object FontRendererMain : FontRenderer by if (Main.fullMode) RTOFontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,

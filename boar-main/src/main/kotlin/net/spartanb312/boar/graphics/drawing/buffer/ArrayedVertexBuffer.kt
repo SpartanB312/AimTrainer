@@ -1,7 +1,6 @@
-@file:Suppress("NOTHING_TO_INLINE")
+package net.spartanb312.boar.graphics.drawing.buffer
 
-package net.spartanb312.boar.graphics.drawing
-
+import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL11.*
@@ -9,7 +8,7 @@ import org.lwjgl.opengl.GL13.GL_TEXTURE0
 import org.lwjgl.opengl.GL13.glClientActiveTexture
 import java.nio.ByteBuffer
 
-object VertexBuffer {
+object ArrayedVertexBuffer {
 
     fun Int.buffer(
         format: VertexFormat = VertexFormat.Pos2fColor,
@@ -236,20 +235,30 @@ object VertexBuffer {
             return this
         }
 
-        private inline fun preDraw() {
+        private fun preDraw() {
             buffer.flip()
             var index = 0
             format.elements.forEach {
                 when (it.category) {
                     VertexFormat.Element.Category.Position -> {
                         glEnableClientState(GL_VERTEX_ARRAY)
-                        glVertexPointer(it.count, it.constant, format.totalLength, buffer.position(index) as ByteBuffer)
+                        glVertexPointer(
+                            it.count,
+                            it.glDataType.glEnum,
+                            format.totalLength,
+                            buffer.position(index) as ByteBuffer
+                        )
                         index += it.length
                     }
 
                     VertexFormat.Element.Category.Color -> {
                         glEnableClientState(GL_COLOR_ARRAY)
-                        glColorPointer(it.count, it.constant, format.totalLength, buffer.position(index) as ByteBuffer)
+                        glColorPointer(
+                            it.count,
+                            it.glDataType.glEnum,
+                            format.totalLength,
+                            buffer.position(index) as ByteBuffer
+                        )
                         index += it.length
                     }
 
@@ -257,7 +266,7 @@ object VertexBuffer {
                         glClientActiveTexture(GL_TEXTURE0)
                         glTexCoordPointer(
                             it.count,
-                            it.constant,
+                            it.glDataType.glEnum,
                             format.totalLength,
                             buffer.position(index) as ByteBuffer
                         )
@@ -274,7 +283,7 @@ object VertexBuffer {
             postDraw()
         }
 
-        private inline fun postDraw() {
+        private fun postDraw() {
             format.elements.forEach {
                 when (it.category) {
                     VertexFormat.Element.Category.Position -> glDisableClientState(GL_VERTEX_ARRAY)

@@ -40,6 +40,7 @@ object Render2DManager {
     }
 
     fun onRender(mouseX: Double, mouseY: Double) {
+        subscribedRenderers.forEach { it.render2D() }
         if (SceneManager.inTraining) {
             if (VideoOption.radar.value) Radar.render2D()
             if (VideoOption.shield) EnergyShield.render2D()
@@ -48,7 +49,6 @@ object Render2DManager {
         if (currentScreen != null) {
             currentScreen.onRender(mouseX, mouseY)
         } else RenderSystem.addRenderThreadJob { GLHelper.mouseMode(GLFW.GLFW_CURSOR_DISABLED) }
-        subscribedRenderers.forEach { it.render2D() }
     }
 
     fun onKeyTyped(key: Int, modifier: Int): Boolean {

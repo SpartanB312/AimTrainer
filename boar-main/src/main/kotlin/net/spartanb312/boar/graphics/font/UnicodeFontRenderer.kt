@@ -2,8 +2,11 @@ package net.spartanb312.boar.graphics.font
 
 import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.OpenGL.*
-import net.spartanb312.boar.graphics.drawing.VertexBuffer.buffer
+import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.VertexFormat
+import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
+import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
+import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
 import net.spartanb312.boar.graphics.texture.MipmapTexture
 import net.spartanb312.boar.graphics.texture.Texture
 import net.spartanb312.boar.graphics.texture.loader.LazyTextureContainer
@@ -108,7 +111,8 @@ class UnicodeFontRenderer(
                             val imgWidth = charData.width + scaledOffset * 2
                             if (charData.height > charHeight) {
                                 charHeight = charData.height
-                                if (charHeight > absoluteHeight) absoluteHeight = charHeight // Set the max height as Font height
+                                if (charHeight > absoluteHeight) absoluteHeight =
+                                    charHeight // Set the max height as Font height
                             }
                             if (posX + imgWidth > imgSize) {
                                 posX = 0
@@ -232,8 +236,8 @@ class UnicodeFontRenderer(
         scale0: Float,
         shadow: Boolean,
     ) {
+        if (RS.compatMode) GLHelper.texture2d = true
         GLHelper.smooth = true
-        GLHelper.texture2d = true
         GLHelper.blend = true
         GLHelper.alpha = true
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
@@ -328,7 +332,44 @@ class UnicodeFontRenderer(
                 rightColor = shadowColor.alpha(alpha)
             }
 
-            GL_QUADS.buffer(VertexFormat.Pos3fTex, 4) {
+            if (!RS.compatMode) GL_QUADS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+                //RT
+                universe(
+                    endX,
+                    startY,
+                    0f,
+                    data.u1,
+                    data.v,
+                    rightColor
+                )
+                //LT
+                universe(
+                    startX,
+                    startY,
+                    0f,
+                    data.u,
+                    data.v,
+                    leftColor
+                )
+                //LB
+                universe(
+                    startX,
+                    endY,
+                    0f,
+                    data.u,
+                    data.v1,
+                    leftColor
+                )
+                //RB
+                universe(
+                    endX,
+                    endY,
+                    0f,
+                    data.u1,
+                    data.v1,
+                    rightColor
+                )
+            } else GL_QUADS.buffer(VertexFormat.Pos3fColorTex, 4) {
                 //RT
                 v3Tex2fC(
                     endX,
@@ -365,16 +406,15 @@ class UnicodeFontRenderer(
                     data.v1,
                     rightColor
                 )
-
-                startX = endX
-                currentColor = rightColor
             }
+            startX = endX
+            currentColor = rightColor
         }
         glBindTexture(GL_TEXTURE_2D, 0)
         if (scale != 1f) {
             GLHelper.popMatrix(GL_MODELVIEW)
         }
-        GLHelper.texture2d = false
+        if (RS.compatMode) GLHelper.texture2d = false
     }
 
     private fun Char.getColor(prev: ColorRGB = ColorRGB.WHITE): ColorRGB? = when (this) {

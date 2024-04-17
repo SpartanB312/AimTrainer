@@ -24,27 +24,29 @@ class ConcurrentTaskManager(
 
     init {
         //launch a daemon thread for those scheduled tasks
-        Thread {
-            while (working.get()) {
-                val currentTime = System.currentTimeMillis()
-                scheduledTasks.removeIf { (task, startTime) ->
-                    if (currentTime > startTime) {
-                        launch(block = task)
-                        true
-                    } else false
-                }
-                repeatUnits.removeIf {
-                    if (it.isDead) true
-                    else {
-                        if (!it.isSuspended) it.invoke()
-                        false
+        object : Thread("$name-Daemon") {
+            override fun run() {
+                while (working.get()) {
+                    val currentTime = System.currentTimeMillis()
+                    scheduledTasks.removeIf { (task, startTime) ->
+                        if (currentTime > startTime) {
+                            launch(block = task)
+                            true
+                        } else false
                     }
+                    repeatUnits.removeIf {
+                        if (it.isDead) true
+                        else {
+                            if (!it.isSuspended) it.invoke()
+                            false
+                        }
+                    }
+                    if (lite) sleep(1)
                 }
-                if (lite) Thread.sleep(1)
             }
-        }.also {
-            it.isDaemon = true
-            it.start()
+        }.apply {
+            isDaemon = true
+            start()
         }
     }
 

@@ -34,6 +34,7 @@ object GLHelper : CompatContext,
     IVBO by if (RenderSystem.compat.arbVbo) ARBVBO else GL15VBO,
     IVertexAttrib by if (!RenderSystem.compat.openGL20) ARBVertexAttrib else GL20VertexAttrib {
 
+    // Disabled in core mode
     var alpha by GLState(false) { if (it) glEnable(GL_ALPHA_TEST) else glDisable(GL_ALPHA_TEST) }
     var blend by GLState(false) { if (it) glEnable(GL_BLEND) else glDisable(GL_BLEND) }
     var smooth by GLState(false) { if (it) glEnable(GL_SMOOTH) else glDisable(GL_FLAT) }
@@ -71,6 +72,7 @@ object GLHelper : CompatContext,
 
     fun unbindProgram() = useProgram(0)
 
+    @Deprecated("Disabled in core mode")
     fun pushMatrix(mode: Int) {
         when (mode) {
             GL_MODELVIEW -> {
@@ -87,6 +89,7 @@ object GLHelper : CompatContext,
         }
     }
 
+    @Deprecated("Disabled in core mode")
     fun popMatrix(mode: Int) {
         when (mode) {
             GL_MODELVIEW -> {
@@ -103,6 +106,7 @@ object GLHelper : CompatContext,
         }
     }
 
+    @Deprecated("Disabled in core mode")
     fun pushMatrixAll() {
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()
@@ -110,6 +114,7 @@ object GLHelper : CompatContext,
         glPushMatrix()
     }
 
+    @Deprecated("Disabled in core mode")
     fun popMatrixAll() {
         glMatrixMode(GL_MODELVIEW)
         glPopMatrix()
@@ -117,6 +122,7 @@ object GLHelper : CompatContext,
         glPopMatrix()
     }
 
+    @Deprecated("Disabled in core mode")
     inline fun glMatrixScope(block: () -> Unit) {
         pushMatrixAll()
         block()

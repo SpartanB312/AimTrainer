@@ -14,4 +14,6 @@ interface GameGraphics {
     fun onMouseClicked(button: Int, action: Int, modifier: Int) {}
 
     fun onSync() {}
+
+    fun onResolutionUpdate(oldWith: Int, oldHeight: Int, newWidth: Int, newHeight: Int) {}
 }

@@ -1,7 +1,7 @@
 package net.spartanb312.boar.graphics.model
 
 import net.spartanb312.boar.graphics.GLHelper
-import net.spartanb312.boar.graphics.drawing.VertexBuffer
+import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer
 import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL30.*
@@ -25,7 +25,7 @@ class Mesh(
     }
 
     private fun setupMesh() {
-        val byteBuffer = VertexBuffer.getBuffer(VertexFormat.Pos3fNormalTex, vertices.size) {
+        val byteBuffer = ArrayedVertexBuffer.getBuffer(VertexFormat.Pos3fNormalTex, vertices.size) {
             vertices.forEach {
                 v3f(it.position.x, it.position.y, it.position.z)
                 n3f(it.normal.x, it.normal.y, it.normal.z)

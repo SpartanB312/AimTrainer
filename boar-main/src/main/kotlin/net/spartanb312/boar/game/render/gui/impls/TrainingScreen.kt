@@ -11,6 +11,7 @@ import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.boar.game.render.scene.impls.DummyScene
+import net.spartanb312.boar.game.training.ReactionTest
 import net.spartanb312.boar.game.training.TrainingInfo
 import net.spartanb312.boar.game.training.impls.*
 import net.spartanb312.boar.graphics.RS
@@ -24,13 +25,13 @@ object TrainingScreen : GuiScreen() {
         Grid,
         Grid3x3,
         BallFollowing,
-        BallFollowingBig,
         SixShotWall,
         SixShotSphere,
         SixBallDMR,
         OneShotWall,
         OneShotSphere,
         OneBallDMR,
+        ReactionTest
     )
     private var clickArea = mutableListOf<Pair<ClosedFloatingPointRange<Float>, ClosedFloatingPointRange<Float>>>()
 

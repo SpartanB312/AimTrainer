@@ -6,12 +6,15 @@ plugins {
 
 repositories {
     mavenCentral()
+    maven("https://maven.luna5ama.dev/")
 }
 
 val library: Configuration by configurations.creating
 val projectModule: Configuration by configurations.creating
 
 val lwjglVersion = "3.3.3"
+val kmogusVersion= "1.0-SNAPSHOT"
+
 val platforms = arrayOf(
     "natives-windows-x86", // Windows 32bit
     "natives-windows", // Windows 64bit
@@ -47,6 +50,8 @@ dependencies {
     library("org.lwjgl", "lwjgl-opencl")
     library("org.lwjgl", "lwjgl-opengl")
     library("org.lwjgl", "lwjgl-stb")
+    library("dev.luna5ama:kmogus-core:$kmogusVersion")
+    library("dev.luna5ama:kmogus-struct-api:$kmogusVersion")
 
     platforms.forEach {
         library("org.lwjgl", "lwjgl", classifier = it)

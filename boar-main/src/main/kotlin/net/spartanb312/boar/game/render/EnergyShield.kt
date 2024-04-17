@@ -5,8 +5,10 @@ import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.GLHelper.scissor
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
-import net.spartanb312.boar.graphics.drawing.VertexBuffer.buffer
 import net.spartanb312.boar.graphics.drawing.VertexFormat
+import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
+import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
+import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.math.ceilToInt
@@ -55,7 +57,7 @@ object EnergyShield {
         val startX = (w - 80 * scale).floorToInt()
         val healthBound = startX + (160 * scale * (currentHealthRate / 100f)).ceilToInt()
         //RenderUtils.scissor(startX, 0, healthBound, 1000, ) {
-        GL11.GL_TRIANGLE_FAN.buffer(VertexFormat.Pos2fColor, 10) {
+        if (RS.compatMode) GL11.GL_TRIANGLE_FAN.buffer(VertexFormat.Pos2fColor, 10) {
             shieldOutline.forEachIndexed { index, it ->
                 val light = generalLightColor
                 val dark = generalColor
@@ -63,6 +65,16 @@ object EnergyShield {
                     0 -> v2fc(it.x, it.y, light.alpha(192))
                     5 -> v2fc(it.x, it.y, light.mix(dark, 0.9f).alpha(192))
                     else -> v2fc(it.x, it.y, dark.alpha(192))
+                }
+            }
+        } else GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+            shieldOutline.forEachIndexed { index, it ->
+                val light = generalLightColor
+                val dark = generalColor
+                when (index) {
+                    0 -> universe(it.x, it.y, light.alpha(192))
+                    5 -> universe(it.x, it.y, light.mix(dark, 0.9f).alpha(192))
+                    else -> universe(it.x, it.y, dark.alpha(192))
                 }
             }
         }

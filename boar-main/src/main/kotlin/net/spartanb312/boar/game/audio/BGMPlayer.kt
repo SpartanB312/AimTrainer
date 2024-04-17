@@ -5,6 +5,7 @@ import net.spartanb312.boar.audio.Sound
 import net.spartanb312.boar.game.option.impls.AudioOption
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.launch.Main
+import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.timing.Timer
 
 object BGMPlayer {
@@ -21,7 +22,10 @@ object BGMPlayer {
     fun nextBGM(): Sound {
         val bgm = bgmList.random()
         return if (currentBGM == bgm) nextBGM()
-        else bgm
+        else {
+            Logger.info("Start playing BGM ${bgm.name}")
+            bgm
+        }
     }
 
     private var volume = 0f

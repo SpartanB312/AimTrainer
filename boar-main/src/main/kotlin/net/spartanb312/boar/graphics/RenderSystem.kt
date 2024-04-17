@@ -19,7 +19,7 @@ typealias RS = RenderSystem
 @Module(
     name = "Boar Engine",
     version = RenderSystem.ENGINE_VERSION,
-    description = "Core game engine",
+    description = "Core game engine refined on Gloom.",
     author = "B_312"
 )
 object RenderSystem : Thread() {
@@ -89,7 +89,8 @@ object RenderSystem : Thread() {
     private var initHeight = 900
     private var title = "Boar3D"
     private var graphics: Class<out GameGraphics>? = null
-    private var glVersion = GL.GL_210_COMPAT
+    private var glVersion = GL.GL_210
+    val compatMode get() = glVersion == GL.GL_210
 
     private val memoryCheckUpdateTimer = Timer()
     private val profilerResultUpdateTimer = Timer()
@@ -107,7 +108,7 @@ object RenderSystem : Thread() {
         centered: Boolean = false,
         dedicateThread: Boolean = true,
         debugInfo: Boolean = false,
-        glVersion: GL = GL.GL_210_COMPAT
+        glVersion: GL = GL.GL_450
     ) {
         this.glVersion = glVersion
         this.graphics = graphics
@@ -182,7 +183,7 @@ object RenderSystem : Thread() {
         glFrontFace(GL11.GL_CCW)
 
         glClearColor(0f, 0f, 0f, 1f)
-        updateResolution()
+        updateResolution(false)
 
         gameGraphics.onInit()
 
@@ -240,10 +241,18 @@ object RenderSystem : Thread() {
     private val widthArray = IntArray(1)
     private val heightArray = IntArray(1)
 
-    private fun updateResolution() {
+    private fun updateResolution(updateBlock: Boolean = true) {
         glfwGetFramebufferSize(window, widthArray, heightArray)
-        width = widthArray[0]
-        height = heightArray[0]
+        val newWidth = widthArray[0]
+        val newHeight = heightArray[0]
+        if (updateBlock && (newWidth != width || newHeight != height)) gameGraphics.onResolutionUpdate(
+            width,
+            height,
+            newWidth,
+            newHeight
+        )
+        width = newWidth
+        height = newHeight
     }
 
     private fun updateMemory() {
@@ -253,9 +262,10 @@ object RenderSystem : Thread() {
         }
     }
 
-    enum class GL {
-        GL_320_CORE,
-        GL_210_COMPAT
+    enum class GL(override val displayName: String) : DisplayEnum {
+        GL_450("OpenGL 4.5"),
+        GL_210("OpenGL 2.1"),
+        Vulkan("Vulkan")
     }
 
 }

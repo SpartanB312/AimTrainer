@@ -69,7 +69,7 @@ class OneBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
     }
 
     override fun onMiss(timeLapse: Int): Int {
-        return (timeLapse.coerceIn(50..2000) / 10f).toInt()
+        return (timeLapse.coerceIn(50..2000) / 30f).toInt()
     }
 
 }

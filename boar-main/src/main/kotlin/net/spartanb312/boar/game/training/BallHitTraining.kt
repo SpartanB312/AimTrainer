@@ -10,7 +10,6 @@ import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.boar.game.render.scene.Scene
 import net.spartanb312.boar.graphics.RS
-import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.graphics.drawing.RenderUtils
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.vector.Vec3f
@@ -85,6 +84,7 @@ abstract class BallHitTraining(
         }
     }
 
+    private var displayed =false
     override fun render2D() {
         scene.getRayTracedResult(
             Player.offsetPos,
@@ -100,6 +100,7 @@ abstract class BallHitTraining(
         }
         when (stage) {
             Stage.Prepare -> {
+                displayed = false
                 val seconds = ((5000 - timeLapsed) / 1000f).roundToInt()
                 FontRendererBig.drawCenteredStringWithShadow(
                     "0: 0$seconds",
@@ -147,14 +148,19 @@ abstract class BallHitTraining(
                 )
             }
 
-            else -> RenderSystem.addRenderThreadJob {
-                Render2DManager.displayScreen(scoreboardScreen.apply {
-                    scoreboard["Score"] = showingScore.toString()
-                    scoreboard["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
-                    scoreboard["Fired"] = shots.toString()
-                    scoreboard["Hits"] = hits.toString()
-                    scoreboard["Reaction Time"] = String.format("%.2f", reactionTimes.average())
-                })
+            else -> {
+                if (!displayed) {
+                    displayed = true
+                    RS.addRenderThreadJob {
+                        Render2DManager.displayScreen(scoreboardScreen.apply {
+                            scoreboard["Score"] = showingScore.toString()
+                            scoreboard["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
+                            scoreboard["Fired"] = shots.toString()
+                            scoreboard["Hits"] = hits.toString()
+                            scoreboard["Reaction Time"] = String.format("%.2f", reactionTimes.average())
+                        })
+                    }
+                }
             }
         }
     }

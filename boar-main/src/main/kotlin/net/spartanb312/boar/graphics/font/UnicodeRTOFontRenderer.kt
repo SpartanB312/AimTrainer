@@ -1,12 +1,13 @@
 package net.spartanb312.boar.graphics.font
 
 import it.unimi.dsi.fastutil.longs.Long2LongArrayMap
+import it.unimi.dsi.fastutil.longs.Long2LongLinkedOpenHashMap
 import it.unimi.dsi.fastutil.longs.Long2ObjectArrayMap
 import net.spartanb312.boar.graphics.RS
-import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.graphics.texture.loader.TextureLoader
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.floorToInt
+import net.spartanb312.boar.utils.thread.ConcurrentTaskManager
 import net.spartanb312.boar.utils.timing.Timer
 import java.awt.Font
 import java.util.concurrent.LinkedBlockingQueue
@@ -23,6 +24,10 @@ class UnicodeRTOFontRenderer(
     scaleFactor: Float = 1f,
     private val textureLoader: TextureLoader? = null,
 ) : RTOFontRenderer {
+
+    companion object {
+        val taskManager = ConcurrentTaskManager("RTO")
+    }
 
     private val dynamicFontRenderer = UnicodeFontRenderer(
         font,
@@ -56,7 +61,7 @@ class UnicodeRTOFontRenderer(
 
     class StaticText(val renderer: Lazy<StaticFontRenderer>, val timer: Timer = Timer())
 
-    private val cacheL2 = Long2LongArrayMap() // code to freq
+    private val cacheL2 = Long2LongLinkedOpenHashMap() // code to freq
     private val cacheL1 = Long2ObjectArrayMap<StaticText>()
     private fun clearCache() {
         cacheL1.clear()
@@ -85,29 +90,25 @@ class UnicodeRTOFontRenderer(
 
     init {
         val timer = Timer()
-        object : Thread("RTO-${font.fontName}") {
-            override fun run() {
-                while (RenderSystem.isAlive) {
-                    inner@ while (true) {
-                        val task = cacheQueue.poll()
-                        if (task != null) solve(task)
-                        else break@inner
-                    }
-                    timer.passedAndReset(1000) {
-                        cacheL2.toList().forEach { (code, freq) ->
-                            val newFreq = (freq - (RS.averageFPS * 0.3f).floorToInt()).coerceAtLeast(0)
-                            if (newFreq == 0L) {
-                                cacheL2.remove(code)
-                                if (cacheL1.get(code)?.timer?.passed(20000 * RS.rtoTime) == true) {
-                                    cacheL1.remove(code)
-                                }
-                            } else cacheL2[code] = newFreq
+        fun run() {
+            inner@ while (true) {
+                val task = cacheQueue.poll()
+                if (task != null) solve(task)
+                else break@inner
+            }
+            timer.passedAndReset(1000) {
+                Long2LongArrayMap(cacheL2).forEach { (code, freq) ->
+                    val newFreq = (freq - (RS.averageFPS * 0.3f).floorToInt()).coerceAtLeast(0)
+                    if (newFreq == 0L) {
+                        cacheL2.remove(code)
+                        if (cacheL1.get(code)?.timer?.passed(20000 * RS.rtoTime) == true) {
+                            cacheL1.remove(code)
                         }
-                    }
-                    sleep(1)
+                    } else cacheL2[code] = newFreq
                 }
             }
-        }.start()
+        }
+        taskManager.runRepeat(1) { run() }
     }
 
     private fun solve(pair: Pair<Long, String>) {

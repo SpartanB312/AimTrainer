@@ -2,6 +2,7 @@ package net.spartanb312.boar.graphics.shader
 
 import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.GLObject
+import net.spartanb312.boar.utils.ResourceHelper
 import org.lwjgl.opengl.GL20
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
@@ -37,7 +38,7 @@ open class Shader(
     val isValidShader get() = id != 0
 
     private fun createShader(path: String, shaderType: Int): Int =
-        createShader(javaClass.getResourceAsStream(path)!!.readBytes(), shaderType)
+        createShader(ResourceHelper.getResourceStream(path)!!.readBytes(), shaderType)
 
     private fun createShader(bytes: ByteArray, shaderType: Int): Int {
         val srcString = bytes.decodeToString()
@@ -48,6 +49,7 @@ open class Shader(
 
         if (GLHelper.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == 0) {
             GLHelper.glDeleteShader(shaderId)
+            println("Failed to create")
             return 0
         }
         return shaderId
@@ -112,7 +114,7 @@ open class Shader(
 }
 
 @OptIn(ExperimentalContracts::class)
-inline fun <T : Shader> T.use(block: T.() -> Unit) {
+inline fun <T : Shader> T.useShader(block: T.() -> Unit) {
     contract {
         callsInPlace(block, InvocationKind.EXACTLY_ONCE)
     }

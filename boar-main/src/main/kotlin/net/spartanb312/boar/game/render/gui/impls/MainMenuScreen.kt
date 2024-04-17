@@ -63,6 +63,14 @@ object MainMenuScreen : GuiScreen() {
         val width = FontRendererMain.getWidth("Version: $AIM_TRAINER_VERSION") + 10
         val height = FontRendererMain.getHeight()
         FontRendererMain.drawString("Version: $AIM_TRAINER_VERSION", RS.widthF - width, RS.heightF - height)
+        if (RS.compatMode) {
+            FontRendererMain.drawString(
+                "Running on compat mode. Graphics card with OpenGL 4.5 support is required in the future!",
+                0f,
+                RS.heightF - height,
+                ColorRGB.RED
+            )
+        }
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {

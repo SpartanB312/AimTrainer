@@ -5,6 +5,7 @@ import net.spartanb312.boar.game.Player
 import net.spartanb312.boar.game.audio.BGMPlayer
 import net.spartanb312.boar.game.config.Configs
 import net.spartanb312.boar.game.input.InputManager
+import net.spartanb312.boar.game.option.impls.AccessibilityOption
 import net.spartanb312.boar.game.option.impls.ControlOption
 import net.spartanb312.boar.game.option.impls.VideoOption
 import net.spartanb312.boar.game.render.FontCacheManager
@@ -19,11 +20,14 @@ import net.spartanb312.boar.graphics.GameGraphics
 import net.spartanb312.boar.graphics.OpenGL.GL_COLOR_BUFFER_BIT
 import net.spartanb312.boar.graphics.OpenGL.glClear
 import net.spartanb312.boar.graphics.RS
+import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
 import net.spartanb312.boar.graphics.matrix.applyOrtho
 import net.spartanb312.boar.language.Language
 import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.physics.PhysicsSystem
+import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.misc.Profiler
+import net.spartanb312.boar.utils.misc.createFile
 import net.spartanb312.boar.utils.timing.Sync
 import net.spartanb312.boar.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
@@ -31,7 +35,7 @@ import org.lwjgl.opengl.GL11.*
 
 /**
  * OpenGL 2.1 is Required
- * Migrating to OpenGL 3.2 Core Profile s∞n
+ * Migrating to OpenGL 4.5
  */
 @Module(
     name = "Aim Trainer",
@@ -41,7 +45,7 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240408"
+    const val AIM_TRAINER_VERSION = "1.0.0.240416"
 
     var isReady = false
     private val tickTimer = Timer()
@@ -61,6 +65,10 @@ object AimTrainer : GameGraphics {
         FontCacheManager.initChunks()
         Runtime.getRuntime().addShutdownHook(Thread {
             FontCacheManager.saveCache()
+            val api = AccessibilityOption.getLaunchOGLVersion()
+            createFile("launch_option.cfg").apply {
+                writeText("API=$api")
+            }
         })
         Render2DManager.displayScreen(LoadingScreen)
         PhysicsSystem.launch(Player, 60, true)
@@ -140,6 +148,11 @@ object AimTrainer : GameGraphics {
         val vSync = VideoOption.videoMode.value == VideoOption.VideoMode.VSync
         GLHelper.vSync = vSync
         if (!vSync && VideoOption.videoMode.value != VideoOption.VideoMode.Unlimited) Sync.sync(VideoOption.fpsLimit)
+        PersistentMappedVertexBuffer.onSync()
+    }
+
+    override fun onResolutionUpdate(oldWith: Int, oldHeight: Int, newWidth: Int, newHeight: Int) {
+        Logger.info("Resolution updated to $newWidth x $newHeight")
     }
 
 }

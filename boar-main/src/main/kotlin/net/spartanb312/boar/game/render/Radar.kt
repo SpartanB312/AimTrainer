@@ -33,9 +33,9 @@ object Radar : Configurable("Radar") {
         .m("雷达范围", "雷達範圍")
         .whenTrue(VideoOption.radar)
 
-    private val arc1Vertices = RenderUtils.getArcVertices(0.0, 0.0, 50f, 0f..360f).reversed().toTypedArray()
-    private val arc2Vertices = RenderUtils.getArcVertices(0.0, 0.0, 25f, 0f..360f).reversed().toTypedArray()
-    private val centerVertices = RenderUtils.getArcVertices(0.0, 0.0, 7f, 0f..360f).reversed().toTypedArray()
+    private val arc1Vertices = RenderUtils.getArcVertices(0f, 0f, 50f, 0f..360f).reversed().toTypedArray()
+    private val arc2Vertices = RenderUtils.getArcVertices(0f, 0f, 25f, 0f..360f).reversed().toTypedArray()
+    private val centerVertices = RenderUtils.getArcVertices(0f, 0f, 7f, 0f..360f).reversed().toTypedArray()
     private val generalColor = ColorRGB(101, 176, 210)
     private val lightColor = ColorRGB(194, 247, 254)
 
