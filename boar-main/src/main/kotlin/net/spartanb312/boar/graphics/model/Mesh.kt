@@ -1,24 +1,31 @@
 package net.spartanb312.boar.graphics.model
 
-import net.spartanb312.boar.graphics.GLHelper
-import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer
 import net.spartanb312.boar.graphics.drawing.VertexFormat
+import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer
 import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL30.*
 
 class Mesh(
     val vertices: MutableList<Vertex>,
-    private val textures: MutableList<ModelTexture>,
-    private val indices: IntArray,
+    val diffuse: MutableList<ModelTexture>,
+    val normal: MutableList<ModelTexture>,
+    val specular: MutableList<ModelTexture>,
+    val height: MutableList<ModelTexture>,
+    val indices: IntArray,
 ) {
 
-    private var vao = 0
-    private val diffuseTexture = textures.firstOrNull { it.type == ModelTexture.Type.DIFFUSE }?.also {
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT)
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT)
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR)
-        //glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-    }!!
+    var vao = 0
+
+    // Textures
+    val diffuseTexture = diffuse.getOrNull(0)
+    val normalTexture = normal.getOrNull(0)
+    val specularTexture = specular.getOrNull(0)
+    val heightTexture = height.getOrNull(0)
+    val textures = diffuse.toMutableList().apply {
+        addAll(normal)
+        addAll(specular)
+        addAll(height)
+    }
 
     init {
         setupMesh()
@@ -68,40 +75,6 @@ class Mesh(
 
         glBindVertexArray(0)
 
-    }
-
-    fun forceDraw() {
-        if (indices.size % 3 != 0) throw Exception("error")
-        GLHelper.texture2d = true
-        diffuseTexture.texture.bindTexture()
-        glColor4f(1f, 1f, 1f, 1f)
-        glBegin(GL_TRIANGLES)
-        for (i in indices) {
-            val vertex = vertices[i]
-            glTexCoord2f(vertex.texCoords.x, vertex.texCoords.y)
-            glVertex3f(vertex.position.x, vertex.position.y, vertex.position.z)
-        }
-        glEnd()
-        diffuseTexture.texture.unbindTexture()
-        GLHelper.texture2d = false
-    }
-
-    fun draw(shader: MeshShader) {
-        if (textures.isEmpty()) println("empt")
-        textures.forEachIndexed { _, texture ->
-            if (texture.type == ModelTexture.Type.DIFFUSE) {
-                glActiveTexture(GL_TEXTURE0)
-                glUniform1i(shader.getUniformLocation("texture_diffuse1"), 0)
-                texture.texture.bindTexture()
-            }
-        }
-
-        // Draw mesh
-        glBindVertexArray(vao)
-        glDrawElements(GL_TRIANGLES, vertices.size, GL_UNSIGNED_INT, 0)
-        glBindVertexArray(0)
-
-        glActiveTexture(GL_TEXTURE0)
     }
 
 }

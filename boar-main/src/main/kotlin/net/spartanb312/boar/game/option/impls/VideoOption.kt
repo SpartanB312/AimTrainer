@@ -3,6 +3,7 @@ package net.spartanb312.boar.game.option.impls
 import net.spartanb312.boar.game.config.setting.atMode
 import net.spartanb312.boar.game.config.setting.m
 import net.spartanb312.boar.game.option.Option
+import net.spartanb312.boar.game.render.Background
 import net.spartanb312.boar.game.render.Radar
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.language.Language.m
@@ -30,11 +31,14 @@ object VideoOption : Option("Video") {
         .m("垂直FOV", "垂直FOV")
 
     val radar = setting("Radar", true).m("雷达", "雷達")
-    val shield by setting("Energy Shield", true).m("能量护盾", "能量護盾")
-
     init {
         Radar.settings.forEach { setting(it) }
     }
+    val shield by setting("Energy Shield", true).m("能量护盾", "能量護盾")
+
+    val backgroundMode by setting("Background Mode", Background.Mode.Halo)
+    val particle by setting("Particle Background", true)
+
 
     val fov
         get() = when (fovMode.value) {

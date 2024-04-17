@@ -1,6 +1,7 @@
 package net.spartanb312.boar.game.config.setting.number
 
 import com.google.gson.JsonObject
+import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
 class FloatSetting(
@@ -12,6 +13,7 @@ class FloatSetting(
     visibility: (() -> Boolean) = { true }
 ) : NumberSetting<Float>(name, value, range, step, description, visibility) {
 
+    private val format = DecimalFormat("#.#")
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
         value = (jsonObject[nameString]?.asFloat ?: value).coerceIn(range)
@@ -24,8 +26,8 @@ class FloatSetting(
     }
 
     override fun getDisplay(percent: Float): String {
-        return if (percent == 1f) String.format("%.1f", value)
-        else String.format("%.1f", range.start + ((range.endInclusive - range.start) * percent / step).roundToInt() * step)
+        return if (percent == 1f) format.format(value)
+        else format.format(range.start + ((range.endInclusive - range.start) * percent / step).roundToInt() * step)
     }
 
     override fun getPercentBar(): Float {

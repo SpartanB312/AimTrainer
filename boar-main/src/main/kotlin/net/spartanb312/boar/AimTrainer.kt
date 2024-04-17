@@ -45,7 +45,7 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240416"
+    const val AIM_TRAINER_VERSION = "1.0.0.240418"
 
     var isReady = false
     private val tickTimer = Timer()

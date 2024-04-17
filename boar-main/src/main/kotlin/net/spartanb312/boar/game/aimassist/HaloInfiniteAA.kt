@@ -66,7 +66,7 @@ object HaloInfiniteAA : AimAssist {
                     val yawOffset = (feedbackVec.yaw - preVec.yaw).coerceIn(clampRange)
                     val pitchOffset = (feedbackVec.pitch - preVec.pitch).coerceIn(clampRange)
                     Player.yaw = locked.yaw + yawOffset * cos(Player.pitch.toRadian())
-                    Player.pitch = locked.pitch + pitchOffset
+                    Player.pitch = (locked.pitch + pitchOffset).coerceIn(-89.5f..89.5f)
                 }
             }
         } else FrictionAA.compensate(sensitivity)

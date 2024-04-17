@@ -33,25 +33,6 @@ object PersistentMappedVertexBuffer {
             val values = listOf(Pos2fColor, Pos3fColor, Pos2fColorTex, Pos3fColorTex, Universe)
         }
 
-        data object Universe : VertexMode(
-            VertexFormat.Pos3fColorTex, Shader(
-                "assets/shader/general/UniverseDraw.vsh",
-                "assets/shader/general/UniverseDraw.fsh"
-            ).apply {
-                glUniform1i(glGetUniformLocation(id, "texture"), 0)
-            }
-        ) {
-            private val drawTextureUniform = glGetUniformLocation(shader.id, "drawTex")
-            private var currentUniformState = 0
-            fun drawTexture(boolean: Boolean) {
-                val newState = if (boolean) 1 else 0
-                if (newState != currentUniformState) {
-                    currentUniformState = newState
-                    glUniform1i(drawTextureUniform, newState)
-                }
-            }
-        }
-
         data object Pos2fColor : VertexMode(
             VertexFormat.Pos2fColor, Shader(
                 "assets/shader/general/Pos2fColor.vsh",
@@ -84,6 +65,25 @@ object PersistentMappedVertexBuffer {
                 glUniform1i(glGetUniformLocation(id, "texture"), 0)
             }
         )
+
+        data object Universe : VertexMode(
+            VertexFormat.Pos3fColorTex, Shader(
+                "assets/shader/general/UniverseDraw.vsh",
+                "assets/shader/general/UniverseDraw.fsh"
+            ).apply {
+                glUniform1i(glGetUniformLocation(id, "texture"), 0)
+            }
+        ) {
+            private val drawTextureUniform = glGetUniformLocation(shader.id, "drawTex")
+            private var currentUniformState = 0
+            fun drawTexture(boolean: Boolean) {
+                val newState = if (boolean) 1 else 0
+                if (newState != currentUniformState) {
+                    currentUniformState = newState
+                    glUniform1i(drawTextureUniform, newState)
+                }
+            }
+        }
 
         private val vbo = GL45C.glCreateBuffers().apply {
             GL45C.glNamedBufferStorage(

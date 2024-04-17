@@ -46,7 +46,10 @@ class Model(private val path: String) {
     private fun processMesh(mesh: AIMesh, scene: AIScene): Mesh {
         val vertices = mutableListOf<Vertex>()
         val indices = mutableListOf<Int>()
-        val textures = mutableListOf<ModelTexture>()
+        val diffuseTextures = mutableListOf<ModelTexture>()
+        val specularTextures = mutableListOf<ModelTexture>()
+        val normalTextures = mutableListOf<ModelTexture>()
+        val heightTextures = mutableListOf<ModelTexture>()
 
         // Vertex
         val aiV = mesh.mVertices()
@@ -82,13 +85,13 @@ class Model(private val path: String) {
         val aiMP = scene.mMaterials()?.get(mesh.mMaterialIndex())
         if (aiMP != null && aiMP != MemoryUtil.NULL) {
             val aiM = AIMaterial.create(aiMP)
-            textures.addAll(loadTextures(aiM, ModelTexture.Type.DIFFUSE))
-            textures.addAll(loadTextures(aiM, ModelTexture.Type.SPECULAR))
-            textures.addAll(loadTextures(aiM, ModelTexture.Type.NORMAL))
-            textures.addAll(loadTextures(aiM, ModelTexture.Type.HEIGHT))
+            diffuseTextures.addAll(loadTextures(aiM, ModelTexture.Type.DIFFUSE))
+            specularTextures.addAll(loadTextures(aiM, ModelTexture.Type.SPECULAR))
+            normalTextures.addAll(loadTextures(aiM, ModelTexture.Type.NORMAL))
+            heightTextures.addAll(loadTextures(aiM, ModelTexture.Type.HEIGHT))
         }
 
-        return Mesh(vertices, textures, indices.toIntArray())
+        return Mesh(vertices, diffuseTextures, normalTextures, specularTextures, heightTextures, indices.toIntArray())
     }
 
     private fun loadTextures(material: AIMaterial, type: ModelTexture.Type): List<ModelTexture> {

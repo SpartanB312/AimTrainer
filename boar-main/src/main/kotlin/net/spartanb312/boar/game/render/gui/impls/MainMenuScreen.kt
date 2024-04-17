@@ -1,6 +1,7 @@
 package net.spartanb312.boar.game.render.gui.impls
 
 import net.spartanb312.boar.AimTrainer.AIM_TRAINER_VERSION
+import net.spartanb312.boar.game.forge.Forge
 import net.spartanb312.boar.game.render.Background
 import net.spartanb312.boar.game.render.FontRendererMain
 import net.spartanb312.boar.game.render.FontRendererROG
@@ -27,6 +28,7 @@ object MainMenuScreen : GuiScreen() {
         SideBar.SideButton("Trainings".m("训练场", "訓練場")) { Render2DManager.displayScreen(TrainingScreen) },
         SideBar.SideButton("Modules".m("模块", "模塊")) { Render2DManager.displayScreen(ModuleScreen) },
         SideBar.SideButton("Options".m("设定", "設定")) { Render2DManager.displayScreen(OptionScreen) },
+        SideBar.SideButton("Forge".m("锻造", "鍛造")) { Forge.start() },
         SideBar.SideButton("Exit".m("退出", "離開")) { exitProcess(0) }
     )
 

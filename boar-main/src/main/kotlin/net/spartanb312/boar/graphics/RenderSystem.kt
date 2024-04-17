@@ -24,7 +24,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.0.6"
+    const val ENGINE_VERSION = "1.1.0"
 
     init {
         name = "RenderThread"
@@ -153,6 +153,10 @@ object RenderSystem : Thread() {
 
         glfwMakeContextCurrent(window)
         compat = GLCompatibility(createCapabilities())
+        if (glVersion == GL.GL_450 && !compat.openGL45) {
+            glVersion = GL.GL_210
+            Logger.error("OpenGL 4.5 is not supported on this device! Using OpenGL 2.1 compat mode!")
+        }
 
         gameGraphics = graphics!!.instance!!
         if (gameGraphics == DummyGraphics) throw Exception("This GFX is not supported")
