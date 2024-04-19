@@ -1,7 +1,8 @@
-#version 450 core
+#version 140
 
-layout (location = 0) in vec3 position;
-layout (location = 1) in vec2 texCoords;
+attribute vec3 position;
+attribute vec3 normal;
+attribute vec2 texCoords;
 
 uniform mat4 matrix;
 

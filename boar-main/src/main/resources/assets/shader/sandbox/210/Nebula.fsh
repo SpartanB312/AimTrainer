@@ -1,11 +1,8 @@
 #version 140
-precision mediump float;
 
 uniform float time;
 uniform vec2 mouse;
 uniform vec2 resolution;
-
-uniform vec2 fragCoord;
 
 float mod289(float x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
 vec4 mod289(vec4 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -74,7 +71,6 @@ vec3 nrand3(vec2 co)
 }
 
 void main(void) {
-
     vec2 uv = 2. * gl_FragCoord.xy / resolution.xy - 1.;
     vec2 uvs = uv * resolution.xy / max(resolution.x, resolution.y);
     vec3 p = vec3(uvs / 4., 0) + vec3(1., -1.3, 0.);
@@ -102,5 +98,4 @@ void main(void) {
     vec4 starcolor = vec4(pow(rnd.y, 30.0));
 
     gl_FragColor = mix(freqs[3]-.3, 1., v) * vec4(1.5*freqs[2] * t * t* t, 1.2*freqs[1] * t * t, freqs[3]*t, 1.0)+c2+starcolor;
-
 }

@@ -23,8 +23,6 @@ object AccessibilityOption : Option("Accessibility") {
             if (input == RenderSystem.API.Vulkan) {
                 Notification.showCenter("Vulkan has not yet implemented!")
                 AccessibilityOption.ogl = prev
-            } else if (input == RenderSystem.API.GL_450) {
-                Notification.showCenter("Experimental functions. May cause instability.")
             }
         }
 

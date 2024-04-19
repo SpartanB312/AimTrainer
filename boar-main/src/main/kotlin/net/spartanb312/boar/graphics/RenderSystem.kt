@@ -133,6 +133,14 @@ object RenderSystem : Thread() {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
 
+        // TODO: Texture2D bug in core profile
+        //glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API)
+        //glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
+        //glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 5)
+        //glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+        //glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, 1)
+        //glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, 1)
+
         window = glfwCreateWindow(initWidth, initHeight, title, NULL, NULL)
         if (window == NULL) throw RuntimeException("Failed to create the GLFW window")
 

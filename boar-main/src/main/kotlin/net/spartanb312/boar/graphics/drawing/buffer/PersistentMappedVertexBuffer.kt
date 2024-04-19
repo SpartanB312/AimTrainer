@@ -33,22 +33,22 @@ object PersistentMappedVertexBuffer {
 
         data object Pos2fColor : VertexMode(
             VertexFormat.Pos2fColor, Shader(
-                "assets/shader/general/Pos2fColor.vsh",
-                "assets/shader/general/Pos2fColor.fsh"
+                "assets/shader/general/450/Pos2fColor.vsh",
+                "assets/shader/general/450/Pos2fColor.fsh"
             )
         )
 
         data object Pos3fColor : VertexMode(
             VertexFormat.Pos3fColor, Shader(
-                "assets/shader/general/Pos3fColor.vsh",
-                "assets/shader/general/Pos3fColor.fsh"
+                "assets/shader/general/450/Pos3fColor.vsh",
+                "assets/shader/general/450/Pos3fColor.fsh"
             )
         )
 
         data object Pos2fColorTex : VertexMode(
             VertexFormat.Pos2fColorTex, Shader(
-                "assets/shader/general/Pos2fColorTex.vsh",
-                "assets/shader/general/Pos2fColorTex.fsh"
+                "assets/shader/general/450/Pos2fColorTex.vsh",
+                "assets/shader/general/450/Pos2fColorTex.fsh"
             ).apply {
                 glUniform1i(glGetUniformLocation(id, "texture"), 0)
             }
@@ -56,8 +56,8 @@ object PersistentMappedVertexBuffer {
 
         data object Pos3fColorTex : VertexMode(
             VertexFormat.Pos3fColorTex, Shader(
-                "assets/shader/general/Pos3fColorTex.vsh",
-                "assets/shader/general/Pos3fColorTex.fsh"
+                "assets/shader/general/450/Pos3fColorTex.vsh",
+                "assets/shader/general/450/Pos3fColorTex.fsh"
             ).apply
             {
                 glUniform1i(glGetUniformLocation(id, "texture"), 0)
@@ -66,31 +66,21 @@ object PersistentMappedVertexBuffer {
 
         data object Universe : VertexMode(
             VertexFormat.Pos3fColorTex, Shader(
-                "assets/shader/general/UniverseDraw.vsh",
-                "assets/shader/general/UniverseDraw.fsh"
+                "assets/shader/general/450/UniverseDraw.vsh",
+                "assets/shader/general/450/UniverseDraw.fsh"
             ).apply {
                 glUniform1i(glGetUniformLocation(id, "texture"), 0)
             }
-        ) {
-            private val drawTextureUniform = glGetUniformLocation(shader.id, "drawTex")
-            private val matrixUniform = glGetUniformLocation(shader.id, "matrix")
-            private var currentUniformState = 0
-            private var currentCheckID = 0L
+        )
 
-            fun updateMatrix(stack: MatrixLayerStack) {
-                val checkID = stack.checkID
-                if (checkID != currentCheckID) {
-                    currentCheckID = checkID
-                    glUniformMatrix4fv(matrixUniform, false, stack.matrixArray)
-                }
-            }
+        private val matrixUniform = glGetUniformLocation(shader.id, "matrix")
+        private var currentCheckID = 0L
 
-            fun drawTexture(boolean: Boolean) {
-                val newState = if (boolean) 1 else 0
-                if (newState != currentUniformState) {
-                    currentUniformState = newState
-                    glUniform1i(drawTextureUniform, newState)
-                }
+        private fun updateMatrix(stack: MatrixLayerStack) {
+            val checkID = stack.checkID
+            if (checkID != currentCheckID) {
+                currentCheckID = checkID
+                glUniformMatrix4fv(matrixUniform, false, stack.matrixArray)
             }
         }
 
@@ -150,8 +140,8 @@ object PersistentMappedVertexBuffer {
             pointer[4] = posY
             pointer[8] = 0f
             pointer[12] = color.rgba
-            pointer[16] = 0f
-            pointer[20] = 0f
+            pointer[16] = -114514f
+            pointer[20] = -114514f
             arr += 24
             vertexSize++
             drawTex = false
@@ -176,8 +166,8 @@ object PersistentMappedVertexBuffer {
             pointer[4] = posY
             pointer[8] = posZ
             pointer[12] = color.rgba
-            pointer[16] = 0f
-            pointer[20] = 0f
+            pointer[16] = -114514f
+            pointer[20] = -114514f
             arr += 24
             vertexSize++
             drawTex = false
@@ -242,13 +232,10 @@ object PersistentMappedVertexBuffer {
             drawTex = false
         }
 
-        fun draw(vertexMode: VertexMode, mode: Int) {
+        fun draw(vertexMode: VertexMode, shader: Shader, mode: Int) {
             if (vertexSize == 0) return
-            vertexMode.shader.bind()
-            if (vertexMode == Universe) {
-                Universe.updateMatrix(RS.matrixLayer)
-                Universe.drawTexture(drawTex)
-            }
+            shader.bind()
+            vertexMode.updateMatrix(RS.matrixLayer)
             GLHelper.glBindVertexArray(vertexMode.vao)
             glDrawArrays(mode, drawOffset, vertexSize)
             end(vertexMode.stride)
@@ -267,9 +254,9 @@ object PersistentMappedVertexBuffer {
         return vaoID
     }
 
-    fun Int.draw(vertexMode: VertexMode, block: VertexMode.() -> Unit) {
+    fun Int.draw(vertexMode: VertexMode, shader: Shader = vertexMode.shader, block: VertexMode.() -> Unit) {
         vertexMode.block()
-        vertexMode.draw(vertexMode, this)
+        vertexMode.draw(vertexMode, shader, this)
     }
 
 }

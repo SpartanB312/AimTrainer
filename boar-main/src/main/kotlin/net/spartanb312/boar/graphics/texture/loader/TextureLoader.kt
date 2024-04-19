@@ -1,5 +1,6 @@
 package net.spartanb312.boar.graphics.texture.loader
 
+import net.spartanb312.boar.graphics.OpenGL
 import java.util.concurrent.LinkedBlockingQueue
 
 interface TextureLoader {
@@ -18,5 +19,17 @@ interface TextureLoader {
     fun LazyTextureContainer.register(): LazyTextureContainer {
         add(this)
         return this
+    }
+
+    fun lazyLoad(
+        path: String,
+        format: Int = OpenGL.GL_RGBA,
+        levels: Int = 3,
+        useMipmap: Boolean = true,
+        qualityLevel: Int = 2
+    ): LazyTextureContainer {
+        val lazyTexture = LazyTextureContainer(path, format, levels, useMipmap, qualityLevel)
+        add(lazyTexture)
+        return lazyTexture
     }
 }

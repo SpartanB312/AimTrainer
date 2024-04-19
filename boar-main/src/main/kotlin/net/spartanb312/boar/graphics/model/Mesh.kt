@@ -1,7 +1,9 @@
 package net.spartanb312.boar.graphics.model
 
 import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
+import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL30.glGenVertexArrays
 
 abstract class Mesh(
@@ -33,7 +35,58 @@ abstract class Mesh(
         }
     }
 
-    abstract fun setupMesh()
+    open fun setupMesh() {
+        val buffer = createDirectByteBuffer(vertices.size * 32).apply {
+            vertices.forEach {
+                putFloat(it.position.x)
+                putFloat(it.position.y)
+                putFloat(it.position.z)
+                putFloat(it.normal.x)
+                putFloat(it.normal.y)
+                putFloat(it.normal.z)
+                putFloat(it.texCoords.x)
+                putFloat(it.texCoords.y)
+            }
+            flip()
+        }
+
+        val indicesBuffer = createDirectByteBuffer(indices.size * 4).apply {
+            indices.forEach {
+                putInt(it)
+            }
+            flip()
+        }
+        val vbo = GL30.glGenBuffers()
+        val ibo = GL30.glGenBuffers()
+
+        GL30.glBindVertexArray(vao)
+
+        // Vertex
+        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)
+        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW)
+        GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, 32, 0)
+        GL30.glEnableVertexAttribArray(0)
+
+        // Normal
+        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)
+        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW)
+        GL30.glVertexAttribPointer(1, 3, GL30.GL_FLOAT, false, 32, 12)
+        GL30.glEnableVertexAttribArray(1)
+
+        // TexCoords
+        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)
+        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW)
+        GL30.glVertexAttribPointer(2, 2, GL30.GL_FLOAT, false, 32, 24)
+        GL30.glEnableVertexAttribArray(2)
+
+        // Buffer EBO
+        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, ibo)
+        GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL30.GL_STATIC_DRAW)
+
+        GL30.glBindVertexArray(0)
+        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, 0)
+    }
+
     abstract fun MatrixLayerStack.draw()
     abstract fun drawLegacy()
 

@@ -10,7 +10,6 @@ import net.spartanb312.boar.graphics.model.MeshData
 import net.spartanb312.boar.graphics.model.MeshRenderer
 import net.spartanb312.boar.graphics.shader.Shader
 import net.spartanb312.boar.utils.color.ColorRGB
-import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
 import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
@@ -26,7 +25,9 @@ class MeshBasic(meshData: MeshData) : Mesh(
 
     companion object DrawShader : MeshRenderer() {
 
-        override val shader = Shader("assets/shader/model/MeshVertex.vsh", "assets/shader/model/MeshBasic.fsh")
+        override val shader =
+            if (RS.compatMode) Shader("assets/shader/model/210/MeshVertex.vsh", "assets/shader/model/210/MeshBasic.fsh")
+            else Shader("assets/shader/model/450/MeshVertex.vsh", "assets/shader/model/450/MeshBasic.fsh")
         private val matrixUniform = shader.getUniformLocation("matrix")
         private val diffuse = shader.getUniformLocation("diffuseTex")
 
@@ -76,55 +77,6 @@ class MeshBasic(meshData: MeshData) : Mesh(
             }
         }
 
-    }
-
-    override fun setupMesh() {
-        val positionBuffer = createDirectByteBuffer(vertices.size * 12).apply {
-            vertices.forEach {
-                putFloat(it.position.x)
-                putFloat(it.position.y)
-                putFloat(it.position.z)
-            }
-            flip()
-        }
-        val texCoordsBuffer = createDirectByteBuffer(vertices.size * 8).apply {
-            vertices.forEach {
-                putFloat(it.texCoords.x)
-                putFloat(it.texCoords.y)
-            }
-            flip()
-        }
-
-        val indicesBuffer = createDirectByteBuffer(indices.size * 4).apply {
-            indices.forEach {
-                putInt(it)
-            }
-            flip()
-        }
-        val positionVbo = GL30.glGenBuffers()
-        val uvVbo = GL30.glGenBuffers()
-        val ibo = GL30.glGenBuffers()
-
-        GL30.glBindVertexArray(vao)
-
-        // Vertex
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, positionVbo)
-        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, positionBuffer, GL30.GL_STATIC_DRAW)
-        GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, 12, 0)
-        GL30.glEnableVertexAttribArray(0)
-
-        // TexCoords
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, uvVbo)
-        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, texCoordsBuffer, GL30.GL_STATIC_DRAW)
-        GL30.glVertexAttribPointer(1, 2, GL30.GL_FLOAT, false, 8, 0)
-        GL30.glEnableVertexAttribArray(1)
-
-        // Buffer EBO
-        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, ibo)
-        GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL30.GL_STATIC_DRAW)
-
-        GL30.glBindVertexArray(0)
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, 0)
     }
 
 }

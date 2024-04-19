@@ -2,6 +2,7 @@ package net.spartanb312.boar.graphics.model
 
 import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
 import net.spartanb312.boar.graphics.texture.MipmapTexture
+import net.spartanb312.boar.graphics.texture.loader.TextureLoader
 import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.math.vector.Vec2f
 import net.spartanb312.boar.utils.math.vector.Vec3f
@@ -10,7 +11,11 @@ import org.lwjgl.system.MemoryUtil
 import java.io.File
 import java.nio.IntBuffer
 
-class Model(private val path: String, private val processMesh: (MeshData) -> Mesh) {
+class Model(
+    private val path: String,
+    private val textureLoader: TextureLoader? = null,
+    private val processMesh: (MeshData) -> Mesh
+) {
 
     private val dir = path.substringBeforeLast("/")
     private val textures = mutableListOf<ModelTexture>()
@@ -101,6 +106,7 @@ class Model(private val path: String, private val processMesh: (MeshData) -> Mes
             heightTextures,
             indices.toIntArray()
         )
+
         return processMesh.invoke(meshData)
     }
 
@@ -123,7 +129,7 @@ class Model(private val path: String, private val processMesh: (MeshData) -> Mes
                 textures.add(exist)
             } else {
                 Logger.debug("/$dir/$name")
-                val tex = MipmapTexture("/$dir/$name")
+                val tex = textureLoader?.lazyLoad(path) ?: MipmapTexture("/$dir/$name")
                 val meshTexture = ModelTexture(tex, type, name)
                 textures.add(meshTexture)
                 this.textures.add(meshTexture)
