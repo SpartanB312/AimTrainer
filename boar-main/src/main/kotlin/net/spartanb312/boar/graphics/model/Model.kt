@@ -9,17 +9,17 @@ import org.lwjgl.system.MemoryUtil
 import java.io.File
 import java.nio.IntBuffer
 
-class Model(private val path: String) {
+class Model(private val path: String, private val processMesh: (MeshData) -> Mesh) {
 
     private val dir = path.substringBeforeLast("/")
     private val textures = mutableListOf<ModelTexture>()
-    val meshes = mutableListOf<Mesh>()
+    private val meshes = mutableListOf<Mesh>()
 
     fun drawModel() {
-
+        meshes.forEach { it.draw() }
     }
 
-    private fun loadModel() {
+    fun loadModel() {
         Logger.info("Loading model $path")
         val scene = Assimp.aiImportFile(
             File(path).absolutePath,
@@ -91,7 +91,16 @@ class Model(private val path: String) {
             heightTextures.addAll(loadTextures(aiM, ModelTexture.Type.HEIGHT))
         }
 
-        return Mesh(vertices, diffuseTextures, normalTextures, specularTextures, heightTextures, indices.toIntArray())
+        // Post process mesh
+        val meshData = MeshData(
+            vertices,
+            diffuseTextures,
+            normalTextures,
+            specularTextures,
+            heightTextures,
+            indices.toIntArray()
+        )
+        return processMesh.invoke(meshData)
     }
 
     private fun loadTextures(material: AIMaterial, type: ModelTexture.Type): List<ModelTexture> {

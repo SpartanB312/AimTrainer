@@ -64,15 +64,11 @@ object QuickPlay {
             TextureManager.right,
             TextureManager.back
         )
-        private val training = TrainingScreen.trainings[defaultTraining].new(scoreboardScreen, this)
+        private val training = TrainingScreen.trainings[defaultTraining].new(scoreboardScreen, this).apply { reset() }
         val errorAngle = training.errorAngle
 
         override fun onInit() {
             Language.update(true)
-        }
-
-        override fun onTick() {
-            // HaloInfiniteAA
         }
 
         override fun render3D() {

@@ -18,16 +18,16 @@ object Entry {
                 val api = it.readLines().find { s -> s.startsWith("API=") }
                     ?.substringAfter("API=")
                 when (api) {
-                    RenderSystem.GL.GL_210.displayName -> RenderSystem.GL.GL_210
-                    RenderSystem.GL.GL_450.displayName -> RenderSystem.GL.GL_450
-                    RenderSystem.GL.Vulkan.displayName -> RenderSystem.GL.Vulkan
+                    RenderSystem.API.GL_210.displayName -> RenderSystem.API.GL_210
+                    RenderSystem.API.GL_450.displayName -> RenderSystem.API.GL_450
+                    RenderSystem.API.Vulkan.displayName -> RenderSystem.API.Vulkan
                     else -> {
                         Logger.info("Unsupported API: $api")
-                        RenderSystem.GL.GL_210
+                        RenderSystem.API.GL_210
                     }
                 }
-            } else RenderSystem.GL.GL_210
+            } else RenderSystem.API.GL_210
         }
-        RenderSystem.launch(AimTrainer::class.java, 1920, 1080, glVersion = ogl)
+        RenderSystem.launch(AimTrainer::class.java, 1920, 1080, APIVersion = ogl)
     }
 }

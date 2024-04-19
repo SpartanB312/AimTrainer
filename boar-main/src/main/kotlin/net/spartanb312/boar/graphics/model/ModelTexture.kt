@@ -8,11 +8,11 @@ data class ModelTexture(
     val texture: Texture,
     val type: Type = Type.DIFFUSE,
     val name: String,
-) {
+) : Texture by texture {
     enum class Type(override val displayName: String, val type: Int) : DisplayEnum {
         DIFFUSE("texture_diffuse", Assimp.aiTextureType_DIFFUSE),
-        NORMAL("texture_specular", Assimp.aiTextureType_NORMALS),
-        SPECULAR("texture_normal", Assimp.aiTextureType_SPECULAR),
+        NORMAL("texture_normal", Assimp.aiTextureType_NORMALS),
+        SPECULAR("texture_specular", Assimp.aiTextureType_SPECULAR),
         HEIGHT("texture_height", Assimp.aiTextureType_HEIGHT)
     }
 }

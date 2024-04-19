@@ -13,8 +13,6 @@ import org.lwjgl.opengl.GL11C.glDrawArrays
 import org.lwjgl.opengl.GL20.glGetUniformLocation
 import org.lwjgl.opengl.GL20.glUniform1i
 import org.lwjgl.opengl.GL30C.glBindVertexArray
-import org.lwjgl.opengl.GL45C.glCreateVertexArrays
-import org.lwjgl.opengl.GL45C.glMapNamedBufferRange
 import java.nio.ByteBuffer
 
 /**
@@ -93,7 +91,7 @@ object PersistentMappedVertexBuffer {
             )
         }
         private val arr = Arr.wrap(
-            glMapNamedBufferRange(
+            GL45C.glMapNamedBufferRange(
                 vbo,
                 0,
                 64L * 1024L * 1024L,
@@ -105,7 +103,7 @@ object PersistentMappedVertexBuffer {
         private var drawTex = false
         private var sync = 0L
 
-        fun end(stride: Int) {
+        private fun end(stride: Int) {
             drawOffset = (arr.pos / stride).toInt()
             // println("Stride $stride, $drawOffset")
         }
@@ -246,7 +244,7 @@ object PersistentMappedVertexBuffer {
     }
 
     fun createVao(vertexAttribute: VertexAttribute, vbo: Int): Int {
-        val vaoID = glCreateVertexArrays()
+        val vaoID = GL45C.glCreateVertexArrays()
         GL32.glBindVertexArray(vaoID)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo)
         vertexAttribute.apply()

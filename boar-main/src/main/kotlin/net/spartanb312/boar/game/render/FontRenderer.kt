@@ -72,6 +72,14 @@ object FontRendererROG : FontRenderer by FontRenderer(
     textureLoader = TextureManager
 )
 
+object FontRendererIcon : FontRenderer by FontRenderer(
+    "assets/font/Icon.otf",
+    50f,
+    scaleFactor = 1f,
+    chunkSize = 49,
+    textureLoader = TextureManager
+)
+
 object FontRendererASCII : FontRenderer by if (Main.fullMode) FontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     25f,

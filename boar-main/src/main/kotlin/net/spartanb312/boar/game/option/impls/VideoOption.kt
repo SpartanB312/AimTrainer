@@ -31,13 +31,18 @@ object VideoOption : Option("Video") {
         .m("垂直FOV", "垂直FOV")
 
     val radar = setting("Radar", true).m("雷达", "雷達")
+
     init {
         Radar.settings.forEach { setting(it) }
     }
-    val shield by setting("Energy Shield", true).m("能量护盾", "能量護盾")
+
+    val shield by setting("Energy Shield", true)
+        .m("能量护盾", "能量護盾")
 
     val backgroundMode by setting("Background Mode", Background.Mode.Halo)
+        .m("背景模式", "背景模式")
     val particle by setting("Particle Background", true)
+        .m("粒子效果", "粒子特效")
 
 
     val fov

@@ -10,10 +10,10 @@ import net.spartanb312.boar.graphics.model.MeshRenderer
 import net.spartanb312.boar.graphics.shader.Shader
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.misc.createDirectByteBuffer
-import org.lwjgl.opengl.GL11.GL_TRIANGLES
+import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 
-class MeshBasic(meshData: MeshData) : Mesh(
+class MeshDNSH(meshData: MeshData) : Mesh(
     meshData.vertices,
     meshData.diffuse,
     meshData.normal,
@@ -24,23 +24,44 @@ class MeshBasic(meshData: MeshData) : Mesh(
 
     companion object DrawShader : MeshRenderer() {
 
-        override val shader = Shader("assets/shader/model/MeshVertex.vsh", "assets/shader/model/MeshBasic.fsh")
+        override val shader = Shader("assets/shader/model/MeshVertex.vsh", "assets/shader/model/MeshDNSH.fsh")
+        private val diffuse = shader.getUniformLocation("diffuseTex")
+        private val normal = shader.getUniformLocation("normalTex")
+        private val specular = shader.getUniformLocation("specularTex")
+        private val height = shader.getUniformLocation("heightTex")
 
         override fun draw(mesh: Mesh) {
             if (mesh.textures.isEmpty()) return
-            GLHelper.cull = false
 
             shader.bind()
             mesh.diffuseTexture?.let {
                 GL30.glActiveTexture(GL30.GL_TEXTURE0)
-                GL30.glUniform1i(shader.getUniformLocation("diffuseTex"), 0)
+                GL30.glUniform1i(diffuse, 0)
+                it.bindTexture()
+            }
+
+            mesh.normalTexture?.let {
+                GL30.glActiveTexture(GL30.GL_TEXTURE1)
+                GL30.glUniform1i(normal, 1)
+                it.bindTexture()
+            }
+
+            mesh.specularTexture?.let {
+                GL30.glActiveTexture(GL30.GL_TEXTURE2)
+                GL30.glUniform1i(specular, 2)
+                it.bindTexture()
+            }
+
+            mesh.heightTexture?.let {
+                GL30.glActiveTexture(GL30.GL_TEXTURE3)
+                GL30.glUniform1i(height, 3)
                 it.bindTexture()
             }
 
             // Draw mesh
-            GLHelper.glBindVertexArray(mesh.vao)
+            GL30.glBindVertexArray(mesh.vao)
             GL30.glDrawElements(GL30.GL_TRIANGLES, mesh.vertices.size, GL30.GL_UNSIGNED_INT, 0)
-            GLHelper.glBindVertexArray(0)
+            GL30.glBindVertexArray(0)
 
             GL30.glActiveTexture(GL30.GL_TEXTURE0)
             if (RS.compatMode) shader.unbind()
@@ -58,7 +79,23 @@ class MeshBasic(meshData: MeshData) : Mesh(
         GLHelper.texture2d = true
         diffuseTexture?.let {
             it.bindTexture()
-            GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
+            GL11.GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
+                for (i in indices) {
+                    val vert = vertices[i]
+                    v3Tex2fC(
+                        vert.position.x,
+                        vert.position.y,
+                        vert.position.z,
+                        vert.texCoords.x,
+                        vert.texCoords.y,
+                        ColorRGB.WHITE
+                    )
+                }
+            }
+        }
+        specularTexture?.let {
+            it.bindTexture()
+            GL11.GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
                 for (i in indices) {
                     val vert = vertices[i]
                     v3Tex2fC(

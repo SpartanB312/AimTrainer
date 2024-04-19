@@ -44,8 +44,9 @@ abstract class AbstractSetting<T> : Nameable, AliasNameable, ReadWriteProperty<A
         return this
     }
 
-    fun valueListen(listener: (prev: T, input: T) -> Unit) {
+    fun valueListen(listener: (prev: T, input: T) -> Unit): AbstractSetting<T> {
         this.valueListeners.add(listener)
+        return this
     }
 
     override fun toString() = value.toString()

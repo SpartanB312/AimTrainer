@@ -1,6 +1,7 @@
 package net.spartanb312.boar.game.training
 
 import net.spartanb312.boar.game.Player
+import net.spartanb312.boar.game.render.gui.Notification
 import net.spartanb312.boar.game.render.gui.SubscribedRenderer
 import net.spartanb312.boar.graphics.RenderSystem
 import net.spartanb312.boar.graphics.texture.Texture
@@ -16,7 +17,7 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     val timeLapsed get() = System.currentTimeMillis() - startTime
     var startTime = System.currentTimeMillis()
     var stage = Stage.Prepare
-    abstract val errorAngle:Float
+    abstract val errorAngle: Float
     abstract fun render()
     abstract fun onClick()
     open fun onTick() {
@@ -25,7 +26,12 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
         }
     }
 
+    private fun showTitle() {
+        Notification.showCenter(trainingName, 5000)
+    }
+
     open fun reset() {
+        showTitle()
         startTime = System.currentTimeMillis()
         stage = Stage.Prepare
         shots = 0

@@ -8,9 +8,11 @@ import net.spartanb312.boar.game.input.InputManager
 import net.spartanb312.boar.game.option.impls.AccessibilityOption
 import net.spartanb312.boar.game.option.impls.ControlOption
 import net.spartanb312.boar.game.option.impls.VideoOption
+import net.spartanb312.boar.game.render.DebugInfo
 import net.spartanb312.boar.game.render.FontCacheManager
 import net.spartanb312.boar.game.render.TextureManager
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.boar.game.render.gui.Notification
 import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.game.render.gui.impls.LoadingScreen
 import net.spartanb312.boar.game.render.scene.SceneManager
@@ -22,6 +24,8 @@ import net.spartanb312.boar.graphics.OpenGL.glClear
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
 import net.spartanb312.boar.graphics.matrix.applyOrtho
+import net.spartanb312.boar.graphics.model.Model
+import net.spartanb312.boar.graphics.model.mesh.MeshDNSH
 import net.spartanb312.boar.language.Language
 import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.physics.PhysicsSystem
@@ -45,10 +49,12 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240418"
+    const val AIM_TRAINER_VERSION = "1.0.0.240419"
 
     var isReady = false
     private val tickTimer = Timer()
+
+    val model = Model("assets/nanosuit/nanosuit.obj") { MeshDNSH(it) }
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
@@ -73,6 +79,7 @@ object AimTrainer : GameGraphics {
         Render2DManager.displayScreen(LoadingScreen)
         PhysicsSystem.launch(Player, 60, true)
         AudioSystem.start()
+        model.loadModel()
     }
 
     override fun Profiler.onLoop() {
@@ -107,8 +114,9 @@ object AimTrainer : GameGraphics {
         glMatrixScope {
             applyOrtho(0.0f, RS.widthF, RS.heightF, 0.0f, -1.0f, 1.0f)
             Render2DManager.onRender(RS.mouseXD, RS.mouseYD)
-            //InfoRenderer.render()
+            Notification.render2D()
             CrosshairRenderer.onRender(VideoOption.dfov)
+            DebugInfo.render2D()
         }
         profiler("Render 2D")
 
@@ -127,7 +135,11 @@ object AimTrainer : GameGraphics {
 
     override fun onKeyCallback(key: Int, action: Int, modifier: Int) {
         when (action) {
-            GLFW.GLFW_PRESS -> InputManager.onKeyTyped(key, modifier)
+            GLFW.GLFW_PRESS -> {
+                if (key == GLFW.GLFW_KEY_F3) DebugInfo.enabled = !DebugInfo.enabled
+                InputManager.onKeyTyped(key, modifier)
+            }
+
             GLFW.GLFW_REPEAT -> InputManager.onKeyRepeating(key, modifier)
             GLFW.GLFW_RELEASE -> InputManager.onKeyReleased(key, modifier)
         }

@@ -17,14 +17,14 @@ import java.util.concurrent.LinkedBlockingQueue
 typealias RS = RenderSystem
 
 @Module(
-    name = "Boar Engine",
+    name = "Everett's Sight",
     version = RenderSystem.ENGINE_VERSION,
     description = "Core game engine refined on Gloom.",
     author = "B_312"
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.1.0"
+    const val ENGINE_VERSION = "1.1.1"
 
     init {
         name = "RenderThread"
@@ -89,8 +89,8 @@ object RenderSystem : Thread() {
     private var initHeight = 900
     private var title = "Boar3D"
     private var graphics: Class<out GameGraphics>? = null
-    private var glVersion = GL.GL_210
-    val compatMode get() = glVersion == GL.GL_210
+    private var APIVersion = API.GL_210
+    val compatMode get() = APIVersion == API.GL_210
 
     private val memoryCheckUpdateTimer = Timer()
     private val profilerResultUpdateTimer = Timer()
@@ -108,9 +108,9 @@ object RenderSystem : Thread() {
         centered: Boolean = false,
         dedicateThread: Boolean = true,
         debugInfo: Boolean = false,
-        glVersion: GL = GL.GL_450
+        APIVersion: API = API.GL_450
     ) {
-        this.glVersion = glVersion
+        this.APIVersion = APIVersion
         this.graphics = graphics
         this.centered = centered
         this.initWidth = initWidth
@@ -153,8 +153,8 @@ object RenderSystem : Thread() {
 
         glfwMakeContextCurrent(window)
         compat = GLCompatibility(createCapabilities())
-        if (glVersion == GL.GL_450 && !compat.openGL45) {
-            glVersion = GL.GL_210
+        if (APIVersion == API.GL_450 && !compat.openGL45) {
+            APIVersion = API.GL_210
             Logger.error("OpenGL 4.5 is not supported on this device! Using OpenGL 2.1 compat mode!")
         }
 
@@ -266,9 +266,9 @@ object RenderSystem : Thread() {
         }
     }
 
-    enum class GL(override val displayName: String) : DisplayEnum {
-        GL_450("OpenGL 4.5"),
+    enum class API(override val displayName: String) : DisplayEnum {
         GL_210("OpenGL 2.1"),
+        GL_450("OpenGL 4.5"),
         Vulkan("Vulkan")
     }
 

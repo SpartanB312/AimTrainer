@@ -53,7 +53,7 @@ object EnergyShield {
             currentAbsRate = currentAbsRate.converge(targetAbsRate, 0.1f)
         }
         val w = RS.widthD / 2f
-        // health
+        // shield
         val startX = (w - 80 * scale).floorToInt()
         val healthBound = startX + (160 * scale * (currentHealthRate / 100f)).ceilToInt()
         //RenderUtils.scissor(startX, 0, healthBound, 1000, ) {
@@ -78,25 +78,7 @@ object EnergyShield {
                 }
             }
         }
-        //}
         RenderUtils.drawLinesLoop(shieldOutline, 1.5f, generalColor.alpha(192))
-
-        // absorption
-        //val absBound = startX + (160 * scale * (currentAbsRate / 100f)).ceilToInt()
-        ////RenderUtils.scissor(startX, 0, absBound, 1000, event.res) {
-        //    GL11.GL_TRIANGLE_FAN.buffer(VertexFormat.Pos2fColor, 10) {
-        //        shieldOutline.forEachIndexed { index, it ->
-        //            val light = ColorRGB(246, 237, 96)
-        //            val dark = ColorRGB(242, 218, 67)
-        //            when (index) {
-        //                0 -> v2fc(it.x, it.y, light.alpha(128))
-        //                5 -> v2fc(it.x, it.y, light.mix(dark, 0.9f).alpha(128))
-        //                else -> v2fc(it.x, it.y, dark.alpha(128))
-        //            }
-        //        }
-        //    }
-        //    RenderUtils.drawLinesLoop(shieldOutline, 1.5f, ColorRGB(242, 218, 67).alpha(192)) // included
-        ////}
     }
 
     private fun renderCompass(scale: Float) {

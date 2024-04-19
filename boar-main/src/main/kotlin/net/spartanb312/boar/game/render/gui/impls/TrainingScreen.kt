@@ -97,7 +97,9 @@ object TrainingScreen : GuiScreen() {
             if (mouseX.toFloat() in range.first && mouseY.toFloat() in range.second) {
                 if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
                     AimTrainingScene.entities.clear()
-                    AimTrainingScene.currentTraining = trainings[index].new(scoreboardScreen, AimTrainingScene)
+                    AimTrainingScene.currentTraining = trainings[index].new(scoreboardScreen, AimTrainingScene).apply {
+                        reset()
+                    }
                     Render2DManager.closeAll()
                     SceneManager.switchScene(AimTrainingScene)
                     CrosshairRenderer.enable()

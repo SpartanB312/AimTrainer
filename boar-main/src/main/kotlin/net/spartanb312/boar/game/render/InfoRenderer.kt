@@ -53,7 +53,7 @@ object InfoRenderer {
         { CrosshairRenderer.currentCrosshair.nameString }
     )
 
-    fun render() {
+    fun render2D() {
         var startY = 0f
         val color = ColorRGB.AQUA
         leftUpInfo.forEach {
