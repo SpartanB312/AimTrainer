@@ -1,11 +1,13 @@
-#version 120
+#version 450 core
 
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 uniform sampler2D heightTex;
 
-varying vec2 uv;
+in vec2 uv;
+
+out vec4 FragColor;
 
 void main() {
     vec4 color = texture2D(diffuseTex, uv);
@@ -20,5 +22,5 @@ void main() {
         green +=  color1.g / 2.0;
         blue += color1.b / 2.0;
     }
-    gl_FragColor = vec4(red, green, blue, 1.0);
+    FragColor = vec4(red, green, blue, 1.0);
 }

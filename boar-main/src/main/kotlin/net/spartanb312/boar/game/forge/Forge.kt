@@ -12,6 +12,7 @@ import net.spartanb312.boar.game.render.gui.impls.PauseScreen
 import net.spartanb312.boar.game.render.scene.Scene
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.game.render.scene.impls.DummyScene
+import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.Skybox
 import net.spartanb312.boar.language.Language.m
 import org.lwjgl.glfw.GLFW
@@ -63,7 +64,9 @@ object Forge {
 
         override fun render3D() {
             skybox.onRender3D()
-            AimTrainer.model.drawModel()
+            with(AimTrainer.model) {
+                RS.matrixLayer.drawModel()
+            }
         }
 
         override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {

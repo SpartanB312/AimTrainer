@@ -7,6 +7,9 @@ import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
+import net.spartanb312.boar.graphics.matrix.scalef
+import net.spartanb312.boar.graphics.matrix.scope
+import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.graphics.texture.MipmapTexture
 import net.spartanb312.boar.graphics.texture.Texture
 import net.spartanb312.boar.graphics.texture.loader.LazyTextureContainer
@@ -258,161 +261,160 @@ class UnicodeFontRenderer(
 
         //Scale
         val scale = scale0 * this.scaleFactor
-        if (scale != 1f) {
-            GLHelper.pushMatrix(GL_MODELVIEW)
-            glTranslatef(x, y, 0f)
-            glScalef(scale, scale, 1f)
-            startX = 0f
-            startY = 0f
-        }
-        var chunk = -1
-        var shouldSkip = false
-        for (index in text.indices) {
-            if (shouldSkip) {
-                shouldSkip = false
-                continue
+
+        RS.matrixLayer.scope {
+            if (scale != 1f) {
+                translatef(x, y, 0f)
+                scalef(scale, scale, 1f)
+                startX = 0f
+                startY = 0f
             }
-            val char = text[index]
-            if (char == '\n') {
-                startY += absoluteHeight
-                startX = x
-                continue
-            }
-            if (char == '§' || char == '&') {
-                val next = text.getOrNull(index + 1)
-                if (next != null) {
-                    //Color
-                    val newColor = next.getColor(color0)
-                    if (newColor != null) {
-                        if (!gradient) currentColor = newColor.alpha(alpha)
-                        shouldSkip = true
-                        continue
+            var chunk = -1
+            var shouldSkip = false
+            for (index in text.indices) {
+                if (shouldSkip) {
+                    shouldSkip = false
+                    continue
+                }
+                val char = text[index]
+                if (char == '\n') {
+                    startY += absoluteHeight
+                    startX = x
+                    continue
+                }
+                if (char == '§' || char == '&') {
+                    val next = text.getOrNull(index + 1)
+                    if (next != null) {
+                        //Color
+                        val newColor = next.getColor(color0)
+                        if (newColor != null) {
+                            if (!gradient) currentColor = newColor.alpha(alpha)
+                            shouldSkip = true
+                            continue
+                        }
                     }
                 }
-            }
-            val currentChunk = char.code / chunkSize
-            if (currentChunk != chunk) {
-                chunk = currentChunk
-                val texture = textures[chunk]
-                if (texture == null) {
-                    // If this is a bad chunk then we skip it
-                    if (badChunks[chunk] == 1) continue
-                    val newTexture = try {
-                        initChunk(chunk)
-                    } catch (ignore: Exception) {
-                        badChunks[chunk] = 1
-                        null
-                    }
-                    if (newTexture == null) {
-                        continue
+                val currentChunk = char.code / chunkSize
+                if (currentChunk != chunk) {
+                    chunk = currentChunk
+                    val texture = textures[chunk]
+                    if (texture == null) {
+                        // If this is a bad chunk then we skip it
+                        if (badChunks[chunk] == 1) continue
+                        val newTexture = try {
+                            initChunk(chunk)
+                        } catch (ignore: Exception) {
+                            badChunks[chunk] = 1
+                            null
+                        }
+                        if (newTexture == null) {
+                            continue
+                        } else {
+                            textures[chunk] = newTexture
+                            newTexture.bindTexture()
+                        }
+                    } else texture.bindTexture()
+                }
+                val data = charDataArray.getOrNull(char.code) ?: continue
+
+                val endX = startX + data.width
+                val endY = startY + data.height
+
+                var leftColor = currentColor
+                var rightColor = if (gradient) {
+                    if (sliceMode) {
+                        if (missingLastColor && index == text.length - 1) colors[0]
+                        else colors[index + 1]
                     } else {
-                        textures[chunk] = newTexture
-                        newTexture.bindTexture()
+                        val ratio = ((endX - x) / width).coerceAtMost(colors.size - 1f).coerceAtLeast(0f)
+                        colors[ratio.floorToInt()].mix(colors[ratio.ceilToInt()], ratio - ratio.floorToInt())
                     }
-                } else texture.bindTexture()
-            }
-            val data = charDataArray.getOrNull(char.code) ?: continue
+                } else currentColor
 
-            val endX = startX + data.width
-            val endY = startY + data.height
-
-            var leftColor = currentColor
-            var rightColor = if (gradient) {
-                if (sliceMode) {
-                    if (missingLastColor && index == text.length - 1) colors[0]
-                    else colors[index + 1]
-                } else {
-                    val ratio = ((endX - x) / width).coerceAtMost(colors.size - 1f).coerceAtLeast(0f)
-                    colors[ratio.floorToInt()].mix(colors[ratio.ceilToInt()], ratio - ratio.floorToInt())
+                if (shadow) {
+                    leftColor = shadowColor.alpha(alpha)
+                    rightColor = shadowColor.alpha(alpha)
                 }
-            } else currentColor
 
-            if (shadow) {
-                leftColor = shadowColor.alpha(alpha)
-                rightColor = shadowColor.alpha(alpha)
+                if (!RS.compatMode) GL_QUADS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+                    //RT
+                    universe(
+                        endX,
+                        startY,
+                        0f,
+                        data.u1,
+                        data.v,
+                        rightColor
+                    )
+                    //LT
+                    universe(
+                        startX,
+                        startY,
+                        0f,
+                        data.u,
+                        data.v,
+                        leftColor
+                    )
+                    //LB
+                    universe(
+                        startX,
+                        endY,
+                        0f,
+                        data.u,
+                        data.v1,
+                        leftColor
+                    )
+                    //RB
+                    universe(
+                        endX,
+                        endY,
+                        0f,
+                        data.u1,
+                        data.v1,
+                        rightColor
+                    )
+                } else GL_QUADS.buffer(VertexFormat.Pos3fColorTex, 4) {
+                    //RT
+                    v3Tex2fC(
+                        endX,
+                        startY,
+                        0f,
+                        data.u1,
+                        data.v,
+                        rightColor
+                    )
+                    //LT
+                    v3Tex2fC(
+                        startX,
+                        startY,
+                        0f,
+                        data.u,
+                        data.v,
+                        leftColor
+                    )
+                    //LB
+                    v3Tex2fC(
+                        startX,
+                        endY,
+                        0f,
+                        data.u,
+                        data.v1,
+                        leftColor
+                    )
+                    //RB
+                    v3Tex2fC(
+                        endX,
+                        endY,
+                        0f,
+                        data.u1,
+                        data.v1,
+                        rightColor
+                    )
+                }
+                startX = endX
+                currentColor = rightColor
             }
-
-            if (!RS.compatMode) GL_QUADS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                //RT
-                universe(
-                    endX,
-                    startY,
-                    0f,
-                    data.u1,
-                    data.v,
-                    rightColor
-                )
-                //LT
-                universe(
-                    startX,
-                    startY,
-                    0f,
-                    data.u,
-                    data.v,
-                    leftColor
-                )
-                //LB
-                universe(
-                    startX,
-                    endY,
-                    0f,
-                    data.u,
-                    data.v1,
-                    leftColor
-                )
-                //RB
-                universe(
-                    endX,
-                    endY,
-                    0f,
-                    data.u1,
-                    data.v1,
-                    rightColor
-                )
-            } else GL_QUADS.buffer(VertexFormat.Pos3fColorTex, 4) {
-                //RT
-                v3Tex2fC(
-                    endX,
-                    startY,
-                    0f,
-                    data.u1,
-                    data.v,
-                    rightColor
-                )
-                //LT
-                v3Tex2fC(
-                    startX,
-                    startY,
-                    0f,
-                    data.u,
-                    data.v,
-                    leftColor
-                )
-                //LB
-                v3Tex2fC(
-                    startX,
-                    endY,
-                    0f,
-                    data.u,
-                    data.v1,
-                    leftColor
-                )
-                //RB
-                v3Tex2fC(
-                    endX,
-                    endY,
-                    0f,
-                    data.u1,
-                    data.v1,
-                    rightColor
-                )
-            }
-            startX = endX
-            currentColor = rightColor
-        }
-        glBindTexture(GL_TEXTURE_2D, 0)
-        if (scale != 1f) {
-            GLHelper.popMatrix(GL_MODELVIEW)
+            glBindTexture(GL_TEXTURE_2D, 0)
         }
         if (RS.compatMode) GLHelper.texture2d = false
     }

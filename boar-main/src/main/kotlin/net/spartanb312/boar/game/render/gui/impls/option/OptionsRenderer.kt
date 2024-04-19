@@ -14,11 +14,10 @@ import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.boar.game.render.crosshair.Crosshairs
 import net.spartanb312.boar.game.render.crosshair.impls.CrosshairCustom
 import net.spartanb312.boar.game.render.crosshair.impls.gun.GunCrosshair
-import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.GLHelper.scissor
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
-import net.spartanb312.boar.graphics.matrix.mulToGL
+import net.spartanb312.boar.graphics.matrix.scope
 import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
@@ -40,7 +39,7 @@ class OptionsRenderer(private val options: Option) : MouseClickListener, MouseRe
         val startX = RS.widthF * 0.07f
         var startY = RS.heightF * 0.22f + scrollOffset
 
-        glMatrixScope {
+        RS.matrixLayer.scope {
             val rightStartX = RS.widthF * 0.62f
             val rightEndX = RS.widthF * 0.93f
             val rightStartY = RS.heightF * 0.22f
@@ -105,7 +104,7 @@ class OptionsRenderer(private val options: Option) : MouseClickListener, MouseRe
                     ColorRGB.RED.alpha(alpha.toInt())
                 )
             }
-            translatef(centerX, centerY, 0F).mulToGL()
+            translatef(centerX, centerY, 0F)
             CrosshairRenderer.testRender(VideoOption.dfov, ColorRGB.WHITE.alpha(alpha.toInt()))
         }
 

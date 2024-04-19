@@ -6,12 +6,12 @@ import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.VertexAttribute
 import net.spartanb312.boar.graphics.drawing.VertexFormat
+import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
 import net.spartanb312.boar.graphics.shader.Shader
 import net.spartanb312.boar.utils.color.ColorRGB
 import org.lwjgl.opengl.*
 import org.lwjgl.opengl.GL11C.glDrawArrays
-import org.lwjgl.opengl.GL20.glGetUniformLocation
-import org.lwjgl.opengl.GL20.glUniform1i
+import org.lwjgl.opengl.GL20.*
 import org.lwjgl.opengl.GL30C.glBindVertexArray
 import java.nio.ByteBuffer
 
@@ -73,7 +73,18 @@ object PersistentMappedVertexBuffer {
             }
         ) {
             private val drawTextureUniform = glGetUniformLocation(shader.id, "drawTex")
+            private val matrixUniform = glGetUniformLocation(shader.id, "matrix")
             private var currentUniformState = 0
+            private var currentCheckID = 0L
+
+            fun updateMatrix(stack: MatrixLayerStack) {
+                val checkID = stack.checkID
+                if (checkID != currentCheckID) {
+                    currentCheckID = checkID
+                    glUniformMatrix4fv(matrixUniform, false, stack.matrixArray)
+                }
+            }
+
             fun drawTexture(boolean: Boolean) {
                 val newState = if (boolean) 1 else 0
                 if (newState != currentUniformState) {
@@ -234,7 +245,10 @@ object PersistentMappedVertexBuffer {
         fun draw(vertexMode: VertexMode, mode: Int) {
             if (vertexSize == 0) return
             vertexMode.shader.bind()
-            if (vertexMode == Universe) Universe.drawTexture(drawTex)
+            if (vertexMode == Universe) {
+                Universe.updateMatrix(RS.matrixLayer)
+                Universe.drawTexture(drawTex)
+            }
             GLHelper.glBindVertexArray(vertexMode.vao)
             glDrawArrays(mode, drawOffset, vertexSize)
             end(vertexMode.stride)

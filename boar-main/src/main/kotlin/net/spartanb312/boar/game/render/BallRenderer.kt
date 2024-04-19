@@ -1,14 +1,13 @@
 package net.spartanb312.boar.game.render
 
-import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.Sphere
 import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
-import net.spartanb312.boar.graphics.matrix.mulScale
-import net.spartanb312.boar.graphics.matrix.mulToGL
+import net.spartanb312.boar.graphics.matrix.scalef
+import net.spartanb312.boar.graphics.matrix.scope
 import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.vector.Vec3f
@@ -31,10 +30,9 @@ object BallRenderer {
         level: Int = 13
     ) {
         val vertices = getVertices(level)
-        glMatrixScope {
+        RS.matrixLayer.scope {
             translatef(x, y, z)
-                .mulScale(r, r, r)
-                .mulToGL()
+            scalef(r, r, r)
             if (outline) {
                 GL11.glLineWidth(outlineWidth)
                 if (RS.compatMode) GL11.GL_LINE_STRIP.buffer(VertexFormat.Pos3fColor, vertices.size * 4) {

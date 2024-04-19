@@ -8,6 +8,9 @@ import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
+import net.spartanb312.boar.graphics.matrix.scalef
+import net.spartanb312.boar.graphics.matrix.scope
+import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.graphics.texture.MipmapTexture
 import net.spartanb312.boar.graphics.texture.Texture
 import net.spartanb312.boar.graphics.texture.loader.LazyTextureContainer
@@ -172,42 +175,39 @@ class UnicodeStaticFontRenderer(
         var startX = x
         var startY = y
         val scale = scale0 * this.scaleFactor
-        if (scale != 1f) {
-            GLHelper.pushMatrix(GL_MODELVIEW)
-            glTranslatef(x, y, 0f)
-            glScalef(scale, scale, 1f)
-            startX = 0f
-            startY = 0f
-        }
-        val endX = startX + imgWidth
-        val endY = startY + imgHeight
-        val alpha = ((color1.a + color2.a + color3.a + color4.a) / 4f).ceilToInt().coerceAtMost(255)
+        RS.matrixLayer.scope {
+            if (scale != 1f) {
+                translatef(x, y, 0f)
+                scalef(scale, scale, 1f)
+                startX = 0f
+                startY = 0f
+            }
+            val endX = startX + imgWidth
+            val endY = startY + imgHeight
+            val alpha = ((color1.a + color2.a + color3.a + color4.a) / 4f).ceilToInt().coerceAtMost(255)
 
-        texture.useTexture {
-            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-            GLHelper.alpha = true
-            GLHelper.blend = true
-            if (RS.compatMode) {
-                GLHelper.texture2d = true
-                GL_QUADS.buffer(VertexFormat.Pos2fColorTex, 4) {
-                    v2Tex2fC(endX, startY, 1f, 0f, if (shadow) shadowColor.alpha(alpha) else color1)
-                    v2Tex2fC(startX, startY, 0f, 0f, if (shadow) shadowColor.alpha(alpha) else color2)
-                    v2Tex2fC(startX, endY, 0f, 1f, if (shadow) shadowColor.alpha(alpha) else color3)
-                    v2Tex2fC(endX, endY, 1f, 1f, if (shadow) shadowColor.alpha(alpha) else color4)
-                }
-                GLHelper.texture2d = false
-            } else {
-                GL_QUADS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                    universe(endX, startY, 1f, 0f, if (shadow) shadowColor.alpha(alpha) else color1)
-                    universe(startX, startY, 0f, 0f, if (shadow) shadowColor.alpha(alpha) else color2)
-                    universe(startX, endY, 0f, 1f, if (shadow) shadowColor.alpha(alpha) else color3)
-                    universe(endX, endY, 1f, 1f, if (shadow) shadowColor.alpha(alpha) else color4)
+            texture.useTexture {
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                GLHelper.alpha = true
+                GLHelper.blend = true
+                if (RS.compatMode) {
+                    GLHelper.texture2d = true
+                    GL_QUADS.buffer(VertexFormat.Pos2fColorTex, 4) {
+                        v2Tex2fC(endX, startY, 1f, 0f, if (shadow) shadowColor.alpha(alpha) else color1)
+                        v2Tex2fC(startX, startY, 0f, 0f, if (shadow) shadowColor.alpha(alpha) else color2)
+                        v2Tex2fC(startX, endY, 0f, 1f, if (shadow) shadowColor.alpha(alpha) else color3)
+                        v2Tex2fC(endX, endY, 1f, 1f, if (shadow) shadowColor.alpha(alpha) else color4)
+                    }
+                    GLHelper.texture2d = false
+                } else {
+                    GL_QUADS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+                        universe(endX, startY, 1f, 0f, if (shadow) shadowColor.alpha(alpha) else color1)
+                        universe(startX, startY, 0f, 0f, if (shadow) shadowColor.alpha(alpha) else color2)
+                        universe(startX, endY, 0f, 1f, if (shadow) shadowColor.alpha(alpha) else color3)
+                        universe(endX, endY, 1f, 1f, if (shadow) shadowColor.alpha(alpha) else color4)
+                    }
                 }
             }
-        }
-
-        if (scale != 1f) {
-            GLHelper.popMatrix(GL_MODELVIEW)
         }
     }
 

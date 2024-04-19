@@ -7,12 +7,10 @@ import net.spartanb312.boar.game.config.setting.whenFalse
 import net.spartanb312.boar.game.render.crosshair.Crosshair
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer.transparentAlphaRate
 import net.spartanb312.boar.game.render.scene.SceneManager
-import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
-import net.spartanb312.boar.graphics.matrix.mulScale
-import net.spartanb312.boar.graphics.matrix.mulToGL
-import net.spartanb312.boar.graphics.matrix.mulTranslate
+import net.spartanb312.boar.graphics.matrix.scalef
+import net.spartanb312.boar.graphics.matrix.scope
 import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
@@ -40,11 +38,11 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
             colorRate = colorRate.converge(if (Player.raytraced && SceneManager.inTraining) 100f else 0f, 0.25f)
         }
         val color = colorRGB.mix(ColorRGB(255, 50, 60), colorRate / 100f)
-        glMatrixScope {
+        RS.matrixLayer.scope {
             translatef(centerX, centerY, 0.0f)
-                .mulScale(scale, scale, 1.0f)
-                .mulTranslate(-centerX, -centerY, 0.0f)
-                .mulToGL()
+            scalef(scale, scale, 1.0f)
+            translatef(-centerX, -centerY, 0.0f)
+
             val transparentColor = color.alpha((color.a * transparentAlphaRate).toInt())
             val actualFOV = if (followFOV.value) fov else size.inDFov
             // Outer circle 120 to 14.5 65 to 22.0

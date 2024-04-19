@@ -3,9 +3,9 @@ package net.spartanb312.boar.game.render
 import net.spartanb312.boar.game.option.impls.VideoOption
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.game.render.scene.impls.DummyScene
-import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.ParticleSystem
 import net.spartanb312.boar.graphics.RS
+import net.spartanb312.boar.graphics.matrix.scope
 import net.spartanb312.boar.graphics.texture.Texture
 import net.spartanb312.boar.graphics.texture.drawTexture
 import net.spartanb312.boar.utils.color.ColorRGB
@@ -39,7 +39,7 @@ object Background {
     }
 
     fun Texture.drawBackground(mouseX: Double, mouseY: Double, offsetRate: Float = 0.01f) {
-        GLHelper.glMatrixScope {
+        RS.matrixLayer.scope {
             val aspect = width / height.toFloat()
             val maxOffset = max(RS.widthF * offsetRate, RS.heightF * offsetRate)
             offsetTimer.passedAndReset(17) {

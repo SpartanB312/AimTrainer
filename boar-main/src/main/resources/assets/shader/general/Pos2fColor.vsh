@@ -1,11 +1,13 @@
-#version 120
+#version 450 core
 
-attribute vec2 position;
-attribute vec4 vertColor;
+layout (location = 0) in vec2 position;
+layout (location = 1) in vec4 vertColor;
 
-varying vec4 color;
+uniform mat4 matrix;
+
+out vec4 color;
 
 void main() {
-    gl_Position = gl_ModelViewProjectionMatrix * vec4(position, 0.0, 1.0);
+    gl_Position = matrix * vec4(position, 0.0, 1.0);
     color = vertColor.abgr;
 }

@@ -4,6 +4,7 @@ import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
+import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
 import net.spartanb312.boar.graphics.model.Mesh
 import net.spartanb312.boar.graphics.model.MeshData
 import net.spartanb312.boar.graphics.model.MeshRenderer
@@ -11,6 +12,7 @@ import net.spartanb312.boar.graphics.shader.Shader
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 
 class MeshDNSH(meshData: MeshData) : Mesh(
@@ -25,15 +27,17 @@ class MeshDNSH(meshData: MeshData) : Mesh(
     companion object DrawShader : MeshRenderer() {
 
         override val shader = Shader("assets/shader/model/MeshVertex.vsh", "assets/shader/model/MeshDNSH.fsh")
+        private val matrixUniform = shader.getUniformLocation("matrix")
         private val diffuse = shader.getUniformLocation("diffuseTex")
         private val normal = shader.getUniformLocation("normalTex")
         private val specular = shader.getUniformLocation("specularTex")
         private val height = shader.getUniformLocation("heightTex")
 
-        override fun draw(mesh: Mesh) {
+        override fun MatrixLayerStack.draw(mesh: Mesh) {
             if (mesh.textures.isEmpty()) return
 
             shader.bind()
+            GL20.glUniformMatrix4fv(matrixUniform, false, matrixArray)
             mesh.diffuseTexture?.let {
                 GL30.glActiveTexture(GL30.GL_TEXTURE0)
                 GL30.glUniform1i(diffuse, 0)
@@ -73,7 +77,7 @@ class MeshDNSH(meshData: MeshData) : Mesh(
         setupMesh()
     }
 
-    override fun draw() = DrawShader.draw(this)
+    override fun MatrixLayerStack.draw() = draw(this@MeshDNSH)
 
     override fun drawLegacy() {
         GLHelper.texture2d = true

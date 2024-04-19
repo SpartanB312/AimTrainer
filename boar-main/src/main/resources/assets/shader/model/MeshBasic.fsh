@@ -1,11 +1,13 @@
-#version 120
+#version 450 core
 
 uniform sampler2D diffuseTex;
 
-varying vec2 uv;
+in vec2 uv;
+
+out vec4 FragColor;
 
 void main() {
     vec4 color = texture2D(diffuseTex, uv);
-    if (color.a < 0.5) gl_FragColor = vec4(1.0, 0.0, 0.0, 0.25);
-    else gl_FragColor = color;
+    if (color.a < 0.5) FragColor = vec4(1.0, 0.0, 0.0, 0.25);
+    else FragColor = color;
 }

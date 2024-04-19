@@ -1,8 +1,8 @@
 package net.spartanb312.boar.graphics
 
 import net.spartanb312.boar.graphics.RenderSystem.initialMouseValue
-import net.spartanb312.boar.graphics.matrix.mulCameraProject
-import net.spartanb312.boar.graphics.matrix.mulToGL
+import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
+import net.spartanb312.boar.graphics.matrix.cameraProject
 import net.spartanb312.boar.graphics.matrix.perspectivef
 import net.spartanb312.boar.utils.math.toRadian
 import net.spartanb312.boar.utils.math.vector.Vec3f
@@ -31,13 +31,13 @@ abstract class Camera(
         updateCamera: Boolean = false
     )
 
-    fun project(
-        yaw: Float = this.yaw,
-        pitch: Float = this.pitch,
-        position: Vec3f = this.cameraPos,
-        fov: Float = this.fov,
-        zNear: Float = this.zRange.start,
-        zFar: Float = this.zRange.endInclusive,
+    fun MatrixLayerStack.project(
+        yaw: Float = this@Camera.yaw,
+        pitch: Float = this@Camera.pitch,
+        position: Vec3f = this@Camera.cameraPos,
+        fov: Float = this@Camera.fov,
+        zNear: Float = this@Camera.zRange.start,
+        zFar: Float = this@Camera.zRange.endInclusive,
         sensitivity: Double = 2.2,
         vRate: Float = 1.0f,
         hRate: Float = 1.0f,
@@ -46,9 +46,8 @@ abstract class Camera(
     ) {
         onUpdate(sensitivity, vRate, hRate, updateCamera)
         perspectivef(fov, RenderSystem.widthF / RenderSystem.heightF, zNear, zFar)
-            .mulCameraProject(yaw, pitch, position)
-            .mulToGL()
-        block.invoke(this)
+        cameraProject(yaw, pitch, position)
+        block.invoke(this@Camera)
     }
 
     object Default : Camera() {
@@ -84,7 +83,7 @@ abstract class Camera(
     }
 
     companion object {
-        fun project(
+        fun MatrixLayerStack.project(
             yaw: Float,
             pitch: Float,
             position: Vec3f = Vec3f.ZERO,
@@ -94,8 +93,7 @@ abstract class Camera(
             block: () -> Unit
         ) {
             perspectivef(fov, RenderSystem.widthF / RenderSystem.heightF, zNear, zFar)
-                .mulCameraProject(yaw, pitch, position)
-                .mulToGL()
+            cameraProject(yaw, pitch, position)
             block.invoke()
         }
     }

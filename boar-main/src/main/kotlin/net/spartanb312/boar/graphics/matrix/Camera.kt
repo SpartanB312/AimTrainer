@@ -12,36 +12,24 @@ fun Matrix4f.mulCameraProject(
     cameraPosX: Float,
     cameraPosY: Float,
     cameraPosZ: Float
-): Matrix4f = mul(cameraProject(yaw, pitch, cameraPosX, cameraPosY, cameraPosZ))
+): Matrix4f = mul(cameraProjectMat(yaw, pitch, cameraPosX, cameraPosY, cameraPosZ))
 
-fun applyCameraProject(
+fun MatrixLayerStack.applyCameraProject(
     yaw: Float,
     pitch: Float,
     cameraPosX: Float,
     cameraPosY: Float,
     cameraPosZ: Float
-): Matrix4f = cameraProject(yaw, pitch, cameraPosX, cameraPosY, cameraPosZ).applyToGL()
+): Matrix4f = apply(cameraProjectMat(yaw, pitch, cameraPosX, cameraPosY, cameraPosZ))
 
-fun MatrixStack.cameraProject(
+fun MatrixLayerStack.cameraProject(
     yaw: Float,
     pitch: Float,
     cameraPosX: Float,
     cameraPosY: Float,
     cameraPosZ: Float
-): MatrixStack {
-    current().mulCameraProject(yaw, pitch, cameraPosX, cameraPosY, cameraPosZ)
-    return this
-}
-
-fun MatrixStack.applyCameraProject(
-    yaw: Float,
-    pitch: Float,
-    cameraPosX: Float,
-    cameraPosY: Float,
-    cameraPosZ: Float
-): MatrixStack {
-    current().mulCameraProject(yaw, pitch, cameraPosX, cameraPosY, cameraPosZ)
-    applyToGL()
+): MatrixLayerStack {
+    mul(cameraProjectMat(yaw, pitch, cameraPosX, cameraPosY, cameraPosZ))
     return this
 }
 
@@ -49,43 +37,33 @@ fun Matrix4f.mulCameraProject(
     yaw: Float,
     pitch: Float,
     cameraPos: Vec3f
-): Matrix4f = mul(cameraProject(yaw, pitch, cameraPos.x, cameraPos.y, cameraPos.z))
+): Matrix4f = mul(cameraProjectMat(yaw, pitch, cameraPos.x, cameraPos.y, cameraPos.z))
 
-fun applyCameraProject(
+fun MatrixLayerStack.applyCameraProject(
     yaw: Float,
     pitch: Float,
     cameraPos: Vec3f
-): Matrix4f = cameraProject(yaw, pitch, cameraPos.x, cameraPos.y, cameraPos.z).applyToGL()
+): Matrix4f = apply(cameraProjectMat(yaw, pitch, cameraPos.x, cameraPos.y, cameraPos.z))
 
-fun MatrixStack.cameraProject(
+fun MatrixLayerStack.cameraProject(
     yaw: Float,
     pitch: Float,
     cameraPos: Vec3f
-): MatrixStack {
-    current().mulCameraProject(yaw, pitch, cameraPos.x, cameraPos.y, cameraPos.z)
-    return this
-}
-
-fun MatrixStack.applyCameraProject(
-    yaw: Float,
-    pitch: Float,
-    cameraPos: Vec3f
-): MatrixStack {
-    current().mulCameraProject(yaw, pitch, cameraPos.x, cameraPos.y, cameraPos.z)
-    applyToGL()
+): MatrixLayerStack {
+    mul(cameraProjectMat(yaw, pitch, cameraPos.x, cameraPos.y, cameraPos.z))
     return this
 }
 
 // Raw
-fun cameraProject(
+fun cameraProjectMat(
     yaw: Float,
     pitch: Float,
     cameraPosX: Float,
     cameraPosY: Float,
     cameraPosZ: Float
-) = cameraProject(yaw, pitch, Vec3f(cameraPosX, cameraPosY, cameraPosZ))
+) = cameraProjectMat(yaw, pitch, Vec3f(cameraPosX, cameraPosY, cameraPosZ))
 
-fun cameraProject(
+fun cameraProjectMat(
     yaw: Float,
     pitch: Float,
     cameraPos: Vec3f

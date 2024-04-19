@@ -9,9 +9,12 @@ import net.spartanb312.boar.game.entity.Ball
 import net.spartanb312.boar.game.entity.EntityPlayer
 import net.spartanb312.boar.game.option.impls.VideoOption
 import net.spartanb312.boar.game.render.scene.SceneManager
-import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
+import net.spartanb312.boar.graphics.matrix.rotatef
+import net.spartanb312.boar.graphics.matrix.scalef
+import net.spartanb312.boar.graphics.matrix.scope
+import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.MathUtils.mul
 import net.spartanb312.boar.utils.math.MathUtils.v2hFOV
@@ -39,11 +42,11 @@ object Radar : Configurable("Radar") {
     private val generalColor = ColorRGB(101, 176, 210)
     private val lightColor = ColorRGB(194, 247, 254)
 
-    fun render2D() = glMatrixScope {
+    fun render2D() = RS.matrixLayer.scope {
         val scale = generalScale * max(RS.widthScale, RS.heightScale) * 2f
         val h = RS.heightF - 70f * scale
-        GL11.glTranslatef(70f * scale, h, 0f)
-        GL11.glScalef(scale, scale, scale)
+        translatef(70f * scale, h, 0f)
+        scalef(scale, scale, scale)
 
         RenderUtils.drawTriangleFan(0.0, 0.0, arc1Vertices, generalColor.alpha(64))
         RenderUtils.drawArcOutline(arc1Vertices, 2f, lightColor.alpha(128))
@@ -75,10 +78,10 @@ object Radar : Configurable("Radar") {
 
         // cross
         val angle = (Player.yaw + 360 + 90) % 360
-        GL11.glRotatef(-angle, 0f, 0f, 1f)
+        rotatef(-angle, Vec3f(0f, 0f, 1f))
         RenderUtils.drawLine(Vec2f(0f, 50f), Vec2f(0f, -50f), 1.5f, lightColor.alpha(96))
         RenderUtils.drawLine(Vec2f(50f, 0f), Vec2f(-50f, 0f), 1.5f, lightColor.alpha(96))
-        GL11.glRotatef(angle, 0f, 0f, 1f)
+        rotatef(angle, Vec3f(0f, 0f, 1f))
 
         // fov
         val fovAngle = VideoOption.fov.v2hFOV(RS.aspectD) / 2

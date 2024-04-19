@@ -1,5 +1,6 @@
 package net.spartanb312.boar.graphics.model
 
+import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
 import net.spartanb312.boar.graphics.texture.MipmapTexture
 import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.math.vector.Vec2f
@@ -15,8 +16,8 @@ class Model(private val path: String, private val processMesh: (MeshData) -> Mes
     private val textures = mutableListOf<ModelTexture>()
     private val meshes = mutableListOf<Mesh>()
 
-    fun drawModel() {
-        meshes.forEach { it.draw() }
+    fun MatrixLayerStack.drawModel() {
+        meshes.forEach { with(it) { draw() } }
     }
 
     fun loadModel() {

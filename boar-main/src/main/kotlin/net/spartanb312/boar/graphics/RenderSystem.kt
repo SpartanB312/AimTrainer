@@ -2,6 +2,7 @@ package net.spartanb312.boar.graphics
 
 import net.spartanb312.boar.graphics.OpenGL.*
 import net.spartanb312.boar.graphics.compat.GLCompatibility
+import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
 import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.collection.CircularArray
@@ -24,7 +25,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.1.1"
+    const val ENGINE_VERSION = "1.1.2"
 
     init {
         name = "RenderThread"
@@ -68,6 +69,7 @@ object RenderSystem : Thread() {
     var activeFrames = 0L; private set
     var rto = true
     const val rtoTime = 5
+    val matrixLayer = MatrixLayerStack()
 
     private val renderThreadJob = LinkedBlockingQueue<Runnable>()
     fun addRenderThreadJob(runnable: Runnable) = renderThreadJob.add(runnable)

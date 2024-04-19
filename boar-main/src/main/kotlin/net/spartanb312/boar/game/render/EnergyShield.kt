@@ -1,7 +1,6 @@
 package net.spartanb312.boar.game.render
 
 import net.spartanb312.boar.game.Player
-import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.GLHelper.scissor
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
@@ -9,6 +8,9 @@ import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
+import net.spartanb312.boar.graphics.matrix.scalef
+import net.spartanb312.boar.graphics.matrix.scope
+import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.math.ceilToInt
@@ -29,19 +31,15 @@ object EnergyShield {
     private var currentAbsRate = 0f
     private val updateTimer = Timer()
 
-    fun render2D() = glMatrixScope {
+    fun render2D() = RS.matrixLayer.scope {
         val rate = max(RS.widthScale, RS.heightScale)
         val scale = 3f * rate
         val w = RS.widthF / 2f
         val h = 40f * scale
-        GL11.glTranslatef(w, h, 0f)
-        GL11.glScalef(scale, scale, scale)
-
+        translatef(w, h, 0f)
+        scalef(scale, scale, scale)
         renderShield(scale)
         renderOutline()
-
-        GL11.glScalef(1f / scale, 1f / scale, 1f / scale)
-        GL11.glTranslatef(-w, -h, 0f)
     }
 
     private fun renderShield(scale: Float) {

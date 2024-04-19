@@ -3,10 +3,8 @@ package net.spartanb312.boar.game.render.gui.impls.option
 import net.spartanb312.boar.game.config.setting.AbstractSetting
 import net.spartanb312.boar.game.input.interfaces.MouseClickListener
 import net.spartanb312.boar.game.input.interfaces.MouseReleaseListener
-import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.math.vector.Vec2i
 import net.spartanb312.boar.utils.timing.Timer
-import org.lwjgl.opengl.GL11
 import kotlin.math.max
 import kotlin.math.min
 
@@ -19,19 +17,6 @@ abstract class AbstractSettingComponent<T>(val setting: AbstractSetting<T>) : Mo
 
     protected var offsetRate = 0f
     private val offsetTimer = Timer()
-
-    protected fun updateOffset(isHoovered: Boolean) {
-        offsetTimer.passedAndReset(10) {
-            offsetRate = (offsetRate * 100f).converge(if (isHoovered) 100f else 0f, 0.1f) / 100f
-        }
-    }
-
-    protected inline fun Float.renderOffset(block: () -> Unit) {
-        val offset = this * 6f * offsetRate
-        GL11.glTranslatef(offset, -offset, 0f)
-        block()
-        GL11.glTranslatef(-offset, offset, 0f)
-    }
 
     private var reachableArea: Pair<Vec2i, Vec2i> = Pair(
         Vec2i(Int.MIN_VALUE, Int.MIN_VALUE),

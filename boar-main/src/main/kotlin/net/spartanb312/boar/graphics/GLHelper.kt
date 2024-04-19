@@ -73,41 +73,7 @@ object GLHelper : CompatContext,
     fun unbindProgram() = useProgram(0)
 
     @Deprecated("Disabled in core mode")
-    fun pushMatrix(mode: Int) {
-        when (mode) {
-            GL_MODELVIEW -> {
-                glMatrixMode(GL_MODELVIEW)
-                glPushMatrix()
-            }
-
-            GL_PROJECTION -> {
-                glMatrixMode(GL_PROJECTION)
-                glPushMatrix()
-            }
-
-            else -> throw IllegalArgumentException("Unknown matrix mode,it should be one of GL_MODELVIEW and GL_PROJECTION.")
-        }
-    }
-
-    @Deprecated("Disabled in core mode")
-    fun popMatrix(mode: Int) {
-        when (mode) {
-            GL_MODELVIEW -> {
-                glMatrixMode(GL_MODELVIEW)
-                glPopMatrix()
-            }
-
-            GL_PROJECTION -> {
-                glMatrixMode(GL_PROJECTION)
-                glPopMatrix()
-            }
-
-            else -> throw IllegalArgumentException("Unknown matrix mode,it should be one of GL_MODELVIEW and GL_PROJECTION.")
-        }
-    }
-
-    @Deprecated("Disabled in core mode")
-    fun pushMatrixAll() {
+    private fun pushMatrixAll() {
         glMatrixMode(GL_PROJECTION)
         glPushMatrix()
         glMatrixMode(GL_MODELVIEW)
@@ -115,7 +81,7 @@ object GLHelper : CompatContext,
     }
 
     @Deprecated("Disabled in core mode")
-    fun popMatrixAll() {
+    private fun popMatrixAll() {
         glMatrixMode(GL_MODELVIEW)
         glPopMatrix()
         glMatrixMode(GL_PROJECTION)
@@ -123,7 +89,7 @@ object GLHelper : CompatContext,
     }
 
     @Deprecated("Disabled in core mode")
-    inline fun glMatrixScope(block: () -> Unit) {
+    fun glMatrixScope(block: () -> Unit) {
         pushMatrixAll()
         block()
         popMatrixAll()

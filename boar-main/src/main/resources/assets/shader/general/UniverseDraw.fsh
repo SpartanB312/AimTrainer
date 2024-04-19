@@ -1,12 +1,15 @@
-#version 120
+#version 450 core
 
 uniform sampler2D texture;
+uniform vec4 scissor;
 uniform int drawTex;
 
-varying vec4 color;
-varying vec2 uv;
+in vec4 color;
+in vec2 uv;
+
+out vec4 FragColor;
 
 void main() {
-    if (drawTex == 1) gl_FragColor = color * texture2D(texture, uv);
-    else gl_FragColor = color;
+    if (drawTex == 1) FragColor = color * texture2D(texture, uv);
+    else FragColor = color;
 }

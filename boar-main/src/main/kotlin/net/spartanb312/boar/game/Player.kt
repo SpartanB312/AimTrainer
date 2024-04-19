@@ -152,19 +152,21 @@ object Player : EntityPlayer(), Controller {
             if (AimAssistOption.mcEnabled) HaloInfiniteAA.compensate(sensitivity)
             else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
         }
-        camera.project(
-            yaw,
-            pitch,
-            pos,
-            fov,
-            camera.zRange.start,
-            camera.zRange.endInclusive,
-            sens,
-            vRate,
-            hRate,
-            updateCamera,
-            block
-        )
+        with(camera) {
+            RS.matrixLayer.project(
+                yaw,
+                pitch,
+                pos,
+                fov,
+                camera.zRange.start,
+                camera.zRange.endInclusive,
+                sens,
+                vRate,
+                hRate,
+                updateCamera,
+                block
+            )
+        }
     }
 
     override var pitch: Float

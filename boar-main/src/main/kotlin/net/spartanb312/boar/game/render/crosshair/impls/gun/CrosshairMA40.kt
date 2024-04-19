@@ -7,9 +7,9 @@ import net.spartanb312.boar.game.config.setting.whenFalse
 import net.spartanb312.boar.game.render.crosshair.Crosshair
 import net.spartanb312.boar.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.boar.game.render.scene.SceneManager
-import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.RenderUtils
+import net.spartanb312.boar.graphics.matrix.scope
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.math.ConvergeUtil.converge
 import net.spartanb312.boar.utils.timing.Timer
@@ -37,7 +37,7 @@ object CrosshairMA40 : GunCrosshair, Crosshair(1.3f / 16f) {
             colorRate = colorRate.converge(if (Player.raytraced && SceneManager.inTraining) 100f else 0f, 0.25f)
         }
         val color = colorRGB.mix(ColorRGB(255, 50, 60), colorRate / 100f)
-        glMatrixScope {
+        RS.matrixLayer.scope {
             val transparentColor = color.alpha((color.a * CrosshairRenderer.transparentAlphaRate).toInt())
             val actualFOV = if (followFOV.value) fov else size.inDFov
             val outerRadius = 22f + 28f * (120f - actualFOV) / 55f

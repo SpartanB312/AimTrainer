@@ -1,5 +1,6 @@
 package net.spartanb312.boar.graphics.model
 
+import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL30.glGenVertexArrays
 
@@ -33,7 +34,7 @@ abstract class Mesh(
     }
 
     abstract fun setupMesh()
-    abstract fun draw()
+    abstract fun MatrixLayerStack.draw()
     abstract fun drawLegacy()
 
 }

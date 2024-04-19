@@ -17,13 +17,13 @@ import net.spartanb312.boar.game.render.gui.Render2DManager
 import net.spartanb312.boar.game.render.gui.impls.LoadingScreen
 import net.spartanb312.boar.game.render.scene.SceneManager
 import net.spartanb312.boar.graphics.GLHelper
-import net.spartanb312.boar.graphics.GLHelper.glMatrixScope
 import net.spartanb312.boar.graphics.GameGraphics
 import net.spartanb312.boar.graphics.OpenGL.GL_COLOR_BUFFER_BIT
 import net.spartanb312.boar.graphics.OpenGL.glClear
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.buffer.PersistentMappedVertexBuffer
 import net.spartanb312.boar.graphics.matrix.applyOrtho
+import net.spartanb312.boar.graphics.matrix.scope
 import net.spartanb312.boar.graphics.model.Model
 import net.spartanb312.boar.graphics.model.mesh.MeshDNSH
 import net.spartanb312.boar.language.Language
@@ -92,7 +92,7 @@ object AimTrainer : GameGraphics {
         profiler("Render Hook")
 
         // Render3D
-        glMatrixScope {
+        RS.matrixLayer.scope {
             val lockCamera = !Render2DManager.updateCamera
             GLHelper.depth = true
             GLHelper.cull = true
@@ -111,7 +111,7 @@ object AimTrainer : GameGraphics {
         profiler("Render 3D")
 
         // Render2D
-        glMatrixScope {
+        RS.matrixLayer.scope {
             applyOrtho(0.0f, RS.widthF, RS.heightF, 0.0f, -1.0f, 1.0f)
             Render2DManager.onRender(RS.mouseXD, RS.mouseYD)
             Notification.render2D()

@@ -2,6 +2,7 @@ package net.spartanb312.boar.graphics.shader
 
 import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.GLObject
+import net.spartanb312.boar.utils.Logger
 import net.spartanb312.boar.utils.ResourceHelper
 import org.lwjgl.opengl.GL20
 import kotlin.contracts.ExperimentalContracts
@@ -38,9 +39,9 @@ open class Shader(
     val isValidShader get() = id != 0
 
     private fun createShader(path: String, shaderType: Int): Int =
-        createShader(ResourceHelper.getResourceStream(path)!!.readBytes(), shaderType)
+        createShader(path, ResourceHelper.getResourceStream(path)!!.readBytes(), shaderType)
 
-    private fun createShader(bytes: ByteArray, shaderType: Int): Int {
+    private fun createShader(path: String, bytes: ByteArray, shaderType: Int): Int {
         val srcString = bytes.decodeToString()
         val shaderId = GLHelper.glCreateShader(shaderType)
 
@@ -49,7 +50,7 @@ open class Shader(
 
         if (GLHelper.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == 0) {
             GLHelper.glDeleteShader(shaderId)
-            println("Failed to create")
+            Logger.error("Failed to create ${if (shaderType == GL20.GL_VERTEX_SHADER) "vertex shader" else "frag shader"}: $path")
             return 0
         }
         return shaderId

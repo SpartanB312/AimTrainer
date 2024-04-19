@@ -4,6 +4,7 @@ import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.RS
 import net.spartanb312.boar.graphics.drawing.VertexFormat
 import net.spartanb312.boar.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
+import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
 import net.spartanb312.boar.graphics.model.Mesh
 import net.spartanb312.boar.graphics.model.MeshData
 import net.spartanb312.boar.graphics.model.MeshRenderer
@@ -11,6 +12,7 @@ import net.spartanb312.boar.graphics.shader.Shader
 import net.spartanb312.boar.utils.color.ColorRGB
 import net.spartanb312.boar.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
+import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 
 class MeshBasic(meshData: MeshData) : Mesh(
@@ -25,15 +27,18 @@ class MeshBasic(meshData: MeshData) : Mesh(
     companion object DrawShader : MeshRenderer() {
 
         override val shader = Shader("assets/shader/model/MeshVertex.vsh", "assets/shader/model/MeshBasic.fsh")
+        private val matrixUniform = shader.getUniformLocation("matrix")
+        private val diffuse = shader.getUniformLocation("diffuseTex")
 
-        override fun draw(mesh: Mesh) {
+        override fun MatrixLayerStack.draw(mesh: Mesh) {
             if (mesh.textures.isEmpty()) return
             GLHelper.cull = false
 
             shader.bind()
+            GL20.glUniformMatrix4fv(matrixUniform, false, matrixArray)
             mesh.diffuseTexture?.let {
                 GL30.glActiveTexture(GL30.GL_TEXTURE0)
-                GL30.glUniform1i(shader.getUniformLocation("diffuseTex"), 0)
+                GL30.glUniform1i(diffuse, 0)
                 it.bindTexture()
             }
 
@@ -52,26 +57,25 @@ class MeshBasic(meshData: MeshData) : Mesh(
         setupMesh()
     }
 
-    override fun draw() = DrawShader.draw(this)
+    override fun MatrixLayerStack.draw() = draw(this@MeshBasic)
 
     override fun drawLegacy() {
         GLHelper.texture2d = true
-        diffuseTexture?.let {
-            it.bindTexture()
-            GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
-                for (i in indices) {
-                    val vert = vertices[i]
-                    v3Tex2fC(
-                        vert.position.x,
-                        vert.position.y,
-                        vert.position.z,
-                        vert.texCoords.x,
-                        vert.texCoords.y,
-                        ColorRGB.WHITE
-                    )
-                }
+        diffuseTexture?.bindTexture()
+        GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
+            for (i in indices) {
+                val vert = vertices[i]
+                v3Tex2fC(
+                    vert.position.x,
+                    vert.position.y,
+                    vert.position.z,
+                    vert.texCoords.x,
+                    vert.texCoords.y,
+                    ColorRGB.WHITE
+                )
             }
         }
+
     }
 
     override fun setupMesh() {

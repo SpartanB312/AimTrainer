@@ -5,11 +5,9 @@ import net.spartanb312.boar.game.config.setting.m
 import net.spartanb312.boar.game.config.setting.whenTrue
 import net.spartanb312.boar.game.render.TextureManager
 import net.spartanb312.boar.game.render.crosshair.Crosshair
-import net.spartanb312.boar.graphics.GLHelper
 import net.spartanb312.boar.graphics.RS
-import net.spartanb312.boar.graphics.matrix.mulScale
-import net.spartanb312.boar.graphics.matrix.mulToGL
-import net.spartanb312.boar.graphics.matrix.mulTranslate
+import net.spartanb312.boar.graphics.matrix.scalef
+import net.spartanb312.boar.graphics.matrix.scope
 import net.spartanb312.boar.graphics.matrix.translatef
 import net.spartanb312.boar.graphics.texture.drawTexture
 import net.spartanb312.boar.utils.color.ColorRGB
@@ -34,11 +32,10 @@ object CrosshairCustom : Crosshair(0f) {
         val centerX = (if (test) 0f else RS.centerXF) + offsetX.toFloat()
         val centerY = (if (test) 0f else RS.centerYF) + offsetY.toFloat()
         val scaledSize = min(RS.widthScale, RS.heightScale) * size
-        GLHelper.glMatrixScope {
+        RS.matrixLayer.scope {
             translatef(centerX, centerY, 0.0f)
-                .mulScale(scaledSize, scaledSize, 1.0f)
-                .mulTranslate(-centerX, -centerY, 0.0f)
-                .mulToGL()
+            scalef(scaledSize, scaledSize, 1.0f)
+            translatef(-centerX, -centerY, 0.0f)
             crosshair.drawTexture(centerX - 5f, centerY - 5f, centerX + 5f, centerY + 5f)
         }
     }
