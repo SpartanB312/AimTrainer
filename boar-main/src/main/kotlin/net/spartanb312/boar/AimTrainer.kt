@@ -38,8 +38,8 @@ import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11.*
 
 /**
- * OpenGL 2.1 is Required
- * Migrating to OpenGL 4.5
+ * OpenGL 4.5 is Required
+ * Migrating to Core Profile
  */
 @Module(
     name = "Aim Trainer",

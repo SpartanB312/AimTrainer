@@ -2,6 +2,7 @@ package net.spartanb312.boar.graphics
 
 import net.spartanb312.boar.graphics.OpenGL.*
 import net.spartanb312.boar.graphics.compat.GLCompatibility
+import net.spartanb312.boar.graphics.event.EngineLoopEvent
 import net.spartanb312.boar.graphics.matrix.MatrixLayerStack
 import net.spartanb312.boar.launch.Module
 import net.spartanb312.boar.utils.Logger
@@ -25,7 +26,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.1.2"
+    const val ENGINE_VERSION = "1.1.3"
 
     init {
         name = "RenderThread"
@@ -210,7 +211,9 @@ object RenderSystem : Thread() {
                 activeFrames++
                 activeFrames = activeFrames.coerceAtMost(rtoLimit)
             }
+            EngineLoopEvent.Sync.Pre.post()
             gameGraphics.onSync()
+            EngineLoopEvent.Sync.Post.post()
             profiler.start()
 
             // Pre-render
@@ -221,19 +224,28 @@ object RenderSystem : Thread() {
             countTimer.passedAndReset(125) { countArray.add(rawFPS) }
             updateResolution()
             updateMemory()
+            EngineLoopEvent.Task.Pre.post()
             while (true) {
                 val task = renderThreadJob.poll()
                 if (task != null) task.run()
                 else break
             }
+            EngineLoopEvent.Task.Post.post()
+            EngineLoopEvent.PollEvents.Pre.post()
             glfwPollEvents()
+            EngineLoopEvent.PollEvents.Post.post()
             profiler.profiler("Pre Render")
 
             // On Loop
             with(gameGraphics) {
+                EngineLoopEvent.Loop.Pre.post()
                 profiler.onLoop()
+                EngineLoopEvent.Loop.Post.post()
             }
+
+            EngineLoopEvent.SwapBuffer.Pre.post()
             glfwSwapBuffers(window)
+            EngineLoopEvent.SwapBuffer.Post.post()
             profiler.profiler("Swap Buffer")
             if (profilerResultUpdateTimer.passed(1000)) {
                 profilerResultUpdateTimer.reset()
