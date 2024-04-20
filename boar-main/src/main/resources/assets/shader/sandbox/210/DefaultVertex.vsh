@@ -1,9 +1,7 @@
-#version 140
-
-precision mediump float;
+#version 120
 
 attribute vec3 position;
 
 void main() {
-    gl_Position = vec4(position, 1.0f);
+    gl_Position = vec4(position, 1.0);
 }

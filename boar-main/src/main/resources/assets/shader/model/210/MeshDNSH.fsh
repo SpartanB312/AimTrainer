@@ -1,11 +1,11 @@
-#version 140
+#version 120
 
 uniform sampler2D diffuseTex;
 uniform sampler2D normalTex;
 uniform sampler2D specularTex;
 uniform sampler2D heightTex;
 
-in vec2 uv;
+varying vec2 uv;
 
 void main() {
     vec4 color = texture2D(diffuseTex, uv);

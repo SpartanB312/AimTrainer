@@ -117,13 +117,13 @@ val fatJar = task("FatJar", type = Jar::class) {
     manifest {
         attributes(
             "Manifest-Version" to 1.0,
-            "Main-Class" to " net.spartanb312.boar.launch.MinimalLaunchKt"
+            "Main-Class" to " net.spartanb312.everett.launch.MinimalLaunchKt"
         )
     }
 }
 val optimizeFatJar = jarOptimizer.register(fatJar, "net.spartanb312")
 
-val outputMinimal = true
+val outputMinimal = false
 
 tasks {
     compileKotlin {

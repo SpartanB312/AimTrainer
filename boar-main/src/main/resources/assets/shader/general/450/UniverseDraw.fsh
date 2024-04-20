@@ -1,7 +1,6 @@
 #version 450 core
 
 uniform sampler2D texture;
-uniform vec4 scissor;
 
 in vec4 color;
 in vec2 uv;
