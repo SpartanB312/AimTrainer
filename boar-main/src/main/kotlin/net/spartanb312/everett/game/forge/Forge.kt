@@ -12,7 +12,7 @@ import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.Skybox
-import net.spartanb312.everett.language.Language.m
+import net.spartanb312.everett.game.Language.m
 import org.lwjgl.glfw.GLFW
 
 object Forge {
@@ -62,10 +62,7 @@ object Forge {
 
         override fun render3D() {
             skybox.onRender3D()
-
-            with(AimTrainer.model) {
-                RS.matrixLayer.drawModel()
-            }
+            AimTrainer.model.drawModel(RS.matrixLayer)
         }
 
         override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {

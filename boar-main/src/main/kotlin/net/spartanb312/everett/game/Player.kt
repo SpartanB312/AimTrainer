@@ -141,6 +141,7 @@ object Player : EntityPlayer(), Controller {
     fun project(
         fov: Float = camera.fov,
         sensitivity: Double = 2.2,
+        dpiModifier: Double = 1.0,
         vRate: Float = 1.0f,
         hRate: Float = 1.0f,
         updateCamera: Boolean = true,
@@ -159,6 +160,7 @@ object Player : EntityPlayer(), Controller {
                 camera.zRange.start,
                 camera.zRange.endInclusive,
                 sens,
+                dpiModifier,
                 vRate,
                 hRate,
                 updateCamera,

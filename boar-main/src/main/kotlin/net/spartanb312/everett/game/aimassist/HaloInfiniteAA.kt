@@ -32,6 +32,7 @@ object HaloInfiniteAA : AimAssist {
             ) == GLFW.GLFW_PRESS
         ) AimAssistOption.firingCompensation else AimAssistOption.moveCompensation
 
+    // TODO split yaw and pitch calc
     override fun compensate(sensitivity: Double) {
         if (!AimAssistOption.mcEnabled) return
         val locked = locked
@@ -52,6 +53,7 @@ object HaloInfiniteAA : AimAssist {
             val vec = (result.pos - Player.pos).mul(rotateMat)
             val angle = vec.angle(preVec)
             val zeroAngle = vec == preVec
+
             if (!angle.isNaN()) {
                 if (zeroAngle) {
                     if (AimAssistOption.zeroAngleFriction) FrictionAA.compensate(sensitivity, true)
@@ -62,11 +64,13 @@ object HaloInfiniteAA : AimAssist {
                     val mat = Matrix4d().rotate(feedbackAngle, Vector3f(normal.x, normal.y, normal.z))
                     val feedbackVec = preVec.mul(mat)
                     //println("Feedback Angle${feedbackVec.angle(vec).toDegree()}, Angle ${feedbackAngle.toDegree()}")
-                    val clampRange = -(feedbackRate.toFloat() / 10f)..(feedbackRate.toFloat() / 10f)
-                    val yawOffset = (feedbackVec.yaw - preVec.yaw).coerceIn(clampRange)
-                    val pitchOffset = (feedbackVec.pitch - preVec.pitch).coerceIn(clampRange)
+                    val xzClampRange = -(feedbackRate.toFloat() / 10f)..(feedbackRate.toFloat() / 10f)
+                    val yClampRange = -(feedbackRate.toFloat() / 50f)..(feedbackRate.toFloat() / 50f)
+                    val yawOffset = (feedbackVec.yaw - preVec.yaw).coerceIn(xzClampRange)
+                    val pitchOffset = (feedbackVec.pitch - preVec.pitch).coerceIn(yClampRange)
+                    println(pitchOffset)
                     Player.yaw = locked.yaw + yawOffset * cos(Player.pitch.toRadian())
-                    Player.pitch = (locked.pitch + pitchOffset).coerceIn(-89.5f..89.5f)
+                    Player.pitch = (locked.pitch - pitchOffset).coerceIn(-89.5f..89.5f)
                 }
             }
         } else FrictionAA.compensate(sensitivity)

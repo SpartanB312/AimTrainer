@@ -3,7 +3,7 @@ package net.spartanb312.everett.game.render.gui.impls.option
 import net.spartanb312.everett.game.config.setting.primitive.BooleanSetting
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.language.Language.m
+import net.spartanb312.everett.game.Language.m
 import net.spartanb312.everett.utils.color.ColorRGB
 
 class BooleanButton(setting: BooleanSetting) : AbstractSettingComponent<Boolean>(setting) {

@@ -4,8 +4,8 @@ import net.spartanb312.everett.game.config.setting.at
 import net.spartanb312.everett.game.config.setting.m
 import net.spartanb312.everett.game.config.setting.whenTrue
 import net.spartanb312.everett.game.option.Option
-import net.spartanb312.everett.language.Language.m
-import net.spartanb312.everett.language.MultiText
+import net.spartanb312.everett.game.Language.m
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.misc.DisplayEnum
 
@@ -19,6 +19,8 @@ object ControlOption : Option("Control") {
     private val sensitivityDecimal by setting("Sensitivity Decimal", 0.000, 0.001..0.1, 0.001)
         .whenTrue(preciseSensitivity)
         .m("灵敏度小数位", "靈敏度小數位")
+    private val dpiRate by setting("DPI Rate", 100, 10..500)
+        .m("DPI 百分比", "DPI 百分比 ")
     private val VHSeparate = setting("VH Separate", false)
         .m("分离水平与垂直灵敏度", "分離水平垂直")
     private val verticalRate by setting("Vertical Rate", 1f, 0.1f..5f, 0.1f)
@@ -63,7 +65,8 @@ object ControlOption : Option("Control") {
     }
 
     var defaultTraining by setting("DefaultTraining", 0).at { false }
-    val sensitivity get() = if (preciseSensitivity.value) sensitivityRough + sensitivityDecimal else sensitivityRough.toDouble()
+    val sensitivity get() = (if (preciseSensitivity.value) sensitivityRough + sensitivityDecimal else sensitivityRough.toDouble())
+    val dpiModifyRate get() = 100.0 / dpiRate
     val vRate get() = if (VHSeparate.value) verticalRate else 1f
     val hRate get() = if (VHSeparate.value) horizontalRate else 1f
 

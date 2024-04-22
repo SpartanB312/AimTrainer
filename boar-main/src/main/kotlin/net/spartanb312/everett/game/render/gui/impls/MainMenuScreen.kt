@@ -10,9 +10,9 @@ import net.spartanb312.everett.game.training.QuickPlay
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.font.drawColoredString
-import net.spartanb312.everett.language.Language
-import net.spartanb312.everett.language.Language.m
-import net.spartanb312.everett.language.MultiText
+import net.spartanb312.everett.game.Language
+import net.spartanb312.everett.game.Language.m
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.launch.Main
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge

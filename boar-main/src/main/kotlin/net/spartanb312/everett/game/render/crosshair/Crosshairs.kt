@@ -7,8 +7,8 @@ import net.spartanb312.everett.game.render.crosshair.impls.CrosshairDot
 import net.spartanb312.everett.game.render.crosshair.impls.gun.CrosshairBR75
 import net.spartanb312.everett.game.render.crosshair.impls.gun.CrosshairM392E
 import net.spartanb312.everett.game.render.crosshair.impls.gun.CrosshairMA40
-import net.spartanb312.everett.language.Language.m
-import net.spartanb312.everett.language.MultiText
+import net.spartanb312.everett.game.Language.m
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.misc.DisplayEnum
 import net.spartanb312.everett.utils.misc.Nameable
 

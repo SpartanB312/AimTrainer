@@ -1,6 +1,7 @@
 package net.spartanb312.everett
 
 import net.spartanb312.everett.audio.AudioSystem
+import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.BGMPlayer
 import net.spartanb312.everett.game.config.Configs
@@ -26,7 +27,6 @@ import net.spartanb312.everett.graphics.matrix.applyOrtho
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.model.Model
 import net.spartanb312.everett.graphics.model.mesh.MeshDNSH
-import net.spartanb312.everett.language.Language
 import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.Logger
@@ -37,9 +37,10 @@ import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11.*
 
+
 /**
- * OpenGL 4.5 is Required
- * Migrating to Core Profile
+ * An engine based on OpenGL 4.5 Core Profile
+ * Compatibility mode based on OpenGL 2.1 (Minimal requirements)
  */
 @Module(
     name = "Aim Trainer",
@@ -54,7 +55,7 @@ object AimTrainer : GameGraphics {
     var isReady = false
     private val tickTimer = Timer()
 
-    val model = Model("assets/nanosuit/nanosuit.obj") { MeshDNSH(it) }
+    val model = Model("assets/spartan/spartan.obj", TextureManager) { MeshDNSH(it) }
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
@@ -101,6 +102,7 @@ object AimTrainer : GameGraphics {
                 fov = VideoOption.fov,
                 updateCamera = !lockCamera,
                 sensitivity = ControlOption.sensitivity,
+                dpiModifier = ControlOption.dpiModifyRate,
                 hRate = ControlOption.hRate,
                 vRate = ControlOption.vRate
             ) {

@@ -1,6 +1,6 @@
 package net.spartanb312.everett.game.config.setting
 
-import net.spartanb312.everett.language.MultiText
+import net.spartanb312.everett.utils.language.MultiText
 
 abstract class MutableSetting<T : Any>(
     final override val nameString: String,

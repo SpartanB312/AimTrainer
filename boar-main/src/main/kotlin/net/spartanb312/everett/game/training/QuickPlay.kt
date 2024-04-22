@@ -9,8 +9,8 @@ import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.graphics.Skybox
-import net.spartanb312.everett.language.Language
-import net.spartanb312.everett.language.Language.m
+import net.spartanb312.everett.game.Language
+import net.spartanb312.everett.game.Language.m
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 

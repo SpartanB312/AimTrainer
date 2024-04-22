@@ -5,6 +5,14 @@ import org.lwjgl.opengl.GLCapabilities
 
 class GLCompatibility(context: GLCapabilities) {
 
+    // OpenGL version
+    val glVersion = glGetString(GL_VERSION) ?: ""
+    val gpuManufacturer = glGetString(GL_VENDOR) ?: ""
+    val gpuName = glGetString(GL_RENDERER)?.substringBefore("/")?: ""
+    val intelGraphics = glVersion.lowercase().contains("intel")
+            || gpuManufacturer.lowercase().contains("intel")
+            || gpuName.lowercase().contains("intel")
+
     val openGL11 = context.OpenGL11
     val openGL12 = context.OpenGL12
     val openGL13 = context.OpenGL13
@@ -22,7 +30,7 @@ class GLCompatibility(context: GLCapabilities) {
     val openGL43 = context.OpenGL43
     val openGL44 = context.OpenGL44
     val openGL45 = context.OpenGL45
-    val openGL46 = context.OpenGL46
+    val openGL46 = context.OpenGL46 || (openGL45 && intelGraphics) //傻逼Intel 草泥马
 
     // ARB
     val arbShaders: Boolean = !context.OpenGL21
@@ -37,34 +45,26 @@ class GLCompatibility(context: GLCapabilities) {
     val blendSeparate = context.OpenGL14 || context.GL_EXT_blend_func_separate
     val useVAO = context.OpenGL30 || context.GL_ARB_vertex_array_object
 
-    // OpenGL version
-    val glVersion = glGetString(GL_VERSION) ?: ""
-    val gpuManufacturer = glGetString(GL_VENDOR) ?: ""
-    val gpuName = glGetString(GL_RENDERER)?.substringBefore("/")?: ""
-    val intelGraphics = glVersion.lowercase().contains("intel")
-            || gpuManufacturer.lowercase().contains("intel")
-            || gpuName.lowercase().contains("intel")
-
-    val openGLVersion = context.run {
+    val openGLVersion = run {
         when {
-            OpenGL46 -> "4.6"
-            OpenGL45 -> "4.5"
-            OpenGL44 -> "4.4"
-            OpenGL43 -> "4.3"
-            OpenGL42 -> "4.2"
-            OpenGL41 -> "4.1"
-            OpenGL40 -> "4.0"
-            OpenGL33 -> "3.3"
-            OpenGL32 -> "3.2"
-            OpenGL31 -> "3.1"
-            OpenGL30 -> "3.0"
-            OpenGL21 -> "2.1"
-            OpenGL20 -> "2.0"
-            OpenGL15 -> "1.5"
-            OpenGL14 -> "1.4"
-            OpenGL13 -> "1.3"
-            OpenGL12 -> "1.2"
-            OpenGL11 -> "1.1"
+            openGL46 -> "4.6"
+            openGL45 -> "4.5"
+            openGL44 -> "4.4"
+            openGL43 -> "4.3"
+            openGL42 -> "4.2"
+            openGL41 -> "4.1"
+            openGL40 -> "4.0"
+            openGL33 -> "3.3"
+            openGL32 -> "3.2"
+            openGL31 -> "3.1"
+            openGL30 -> "3.0"
+            openGL21 -> "2.1"
+            openGL20 -> "2.0"
+            openGL15 -> "1.5"
+            openGL14 -> "1.4"
+            openGL13 -> "1.3"
+            openGL12 -> "1.2"
+            openGL11 -> "1.1"
             else -> throw Exception("Unsupported graphics card")
         }
     }

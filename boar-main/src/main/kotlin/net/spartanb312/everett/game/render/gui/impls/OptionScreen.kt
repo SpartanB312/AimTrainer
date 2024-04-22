@@ -13,9 +13,9 @@ import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.language.Language
-import net.spartanb312.everett.language.Language.m
-import net.spartanb312.everett.language.MultiText
+import net.spartanb312.everett.game.Language
+import net.spartanb312.everett.game.Language.m
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.misc.Limiter

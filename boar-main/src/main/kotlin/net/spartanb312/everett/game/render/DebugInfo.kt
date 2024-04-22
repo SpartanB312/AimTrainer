@@ -1,5 +1,6 @@
 package net.spartanb312.everett.game.render
 
+import net.spartanb312.everett.graphics.OpenGL
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.launch.Platform
@@ -11,9 +12,8 @@ object DebugInfo {
     var enabled = false
 
     private val fps get() = RS.averageFPS
-    private val gpuManufacturer = glGetString(7936) ?: ""
-    private val gpuName = glGetString(7937) ?: ""
-    private val glContextVersion = glGetString(7938) ?: ""
+    private val gpuName = glGetString(OpenGL.GL_RENDERER) ?: ""
+    private val glContextVersion = glGetString(OpenGL.GL_VERSION) ?: ""
     private val jreVersion = System.getProperty("java.version")
     private val x64 = !Platform.getPlatform().name.contains("32")
     private val system = System.getProperty("os.name")!! + " " +
@@ -23,7 +23,7 @@ object DebugInfo {
 
     private val debugInfos: MutableList<() -> String> = mutableListOf(
         { "OpenGL: $glContextVersion" },
-        { "GPU: $gpuManufacturer $gpuName" },
+        { "GPU: $gpuName" },
         { "System: $system" },
         { "Java: $jreVersion" },
         { "FPS: $fps" }

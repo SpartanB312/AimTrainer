@@ -1,7 +1,7 @@
 package net.spartanb312.everett.game.config.setting
 
 import com.google.gson.JsonObject
-import net.spartanb312.everett.language.MultiText
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.misc.AliasNameable
 import net.spartanb312.everett.utils.misc.Nameable
 import kotlin.properties.ReadWriteProperty

@@ -110,7 +110,6 @@ object PersistentMappedVertexBuffer {
         ).asMutable()
 
         private var drawOffset = 0
-        private var drawTex = false
         private var sync = 0L
 
         private fun end(stride: Int) {

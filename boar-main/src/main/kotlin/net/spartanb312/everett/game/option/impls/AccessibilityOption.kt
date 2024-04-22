@@ -2,10 +2,9 @@ package net.spartanb312.everett.game.option.impls
 
 import net.spartanb312.everett.game.config.setting.m
 import net.spartanb312.everett.game.option.Option
-import net.spartanb312.everett.game.render.gui.Notification
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.RenderSystem
-import net.spartanb312.everett.language.Languages
+import net.spartanb312.everett.utils.language.Languages
 
 object AccessibilityOption : Option("Accessibility") {
 
@@ -16,18 +15,11 @@ object AccessibilityOption : Option("Accessibility") {
     val threadsLimit by setting("Max Threads", RS.maxThreads, 1..RS.maxThreads, 1)
         .m("最大线程数量", "最大線程數量")
 
-    private var ogl: RenderSystem.API by setting("Graphics API", RenderSystem.API.GL_450)
+    private var ogl: RenderSystem.API by setting("Graphics API", RenderSystem.API.GL_450_CORE)
         .m("图形API", "圖形API")
-        .valueListen { prev, input ->
-            if (prev == RenderSystem.API.Vulkan) return@valueListen
-            if (input == RenderSystem.API.Vulkan) {
-                Notification.showCenter("Vulkan has not yet implemented!")
-                AccessibilityOption.ogl = prev
-            }
-        }
 
     fun getLaunchOGLVersion(): String {
-        return ogl.displayName
+        return ogl.saveName
     }
 
 }

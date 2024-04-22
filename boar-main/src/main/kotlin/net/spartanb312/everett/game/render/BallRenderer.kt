@@ -58,6 +58,10 @@ object BallRenderer {
                     count++
                 }
             }
+
+            //translatef(-0.5f,-13.2f,0f)
+            //scalef(7f, 7f, 7f)
+            //AimTrainer.model.drawModel(this)
         }
     }
 

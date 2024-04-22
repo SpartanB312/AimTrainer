@@ -5,7 +5,7 @@ import net.spartanb312.everett.game.config.setting.SettingRegister
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
-import net.spartanb312.everett.language.Language
+import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.MathUtils.h2dFOV
 import net.spartanb312.everett.utils.math.MathUtils.v2dFOV

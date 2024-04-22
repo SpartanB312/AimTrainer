@@ -22,5 +22,7 @@ void main() {
         green +=  color1.g / 2.0;
         blue += color1.b / 2.0;
     }
+    //if (color.a == 0.0)  FragColor = vec4(1.0, 0.0, 0.0, 0.25);
+    //else
     FragColor = vec4(red, green, blue, 1.0);
 }

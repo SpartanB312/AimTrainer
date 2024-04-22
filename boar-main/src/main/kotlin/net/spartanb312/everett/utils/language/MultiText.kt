@@ -1,4 +1,4 @@
-package net.spartanb312.everett.language
+package net.spartanb312.everett.utils.language
 
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty

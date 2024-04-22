@@ -1008,7 +1008,7 @@ object RenderUtils : Renderer2D by if (RS.compatMode) ArrayedRenderer2D else PMV
         lineWidth: Float = 1f,
         color: ColorRGB,
     ) = drawLinesStrip0(
-        getArcVertices(centerX.toFloat(), centerY.toFloat(), radius, angleRange, segments),
+        getArcVertices(centerX, centerY, radius, angleRange, segments),
         lineWidth,
         color
     )

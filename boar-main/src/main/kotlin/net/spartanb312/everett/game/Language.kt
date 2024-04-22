@@ -1,7 +1,9 @@
-package net.spartanb312.everett.language
+package net.spartanb312.everett.game
 
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.render.gui.impls.OptionScreen
+import net.spartanb312.everett.utils.language.Languages
+import net.spartanb312.everett.utils.language.MultiText
 
 object Language {
 

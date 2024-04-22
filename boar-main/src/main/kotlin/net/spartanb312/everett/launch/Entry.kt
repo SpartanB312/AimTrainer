@@ -2,7 +2,6 @@ package net.spartanb312.everett.launch
 
 import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.graphics.RenderSystem
-import net.spartanb312.everett.utils.Logger
 import java.io.File
 
 // Only for debug
@@ -13,21 +12,22 @@ fun main() = Main.main(arrayOf("-DevMode"))
  */
 object Entry {
     init {
-        val ogl = File("launch_option.cfg").let {
+        val graphicsAPI = File("launch_option.cfg").let {
             if (it.exists()) {
                 val api = it.readLines().find { s -> s.startsWith("API=") }
                     ?.substringAfter("API=")
                 when (api) {
-                    RenderSystem.API.GL_210.displayName -> RenderSystem.API.GL_210
-                    RenderSystem.API.GL_450.displayName -> RenderSystem.API.GL_450
-                    RenderSystem.API.Vulkan.displayName -> RenderSystem.API.Vulkan
+                    RenderSystem.API.GL_210_COMPAT.saveName -> RenderSystem.API.GL_210_COMPAT
+                    RenderSystem.API.GL_450_CORE.saveName -> RenderSystem.API.GL_450_CORE
+                    RenderSystem.API.GL_460_CORE.saveName -> RenderSystem.API.GL_460_CORE
                     else -> {
-                        Logger.info("Unsupported API: $api")
-                        RenderSystem.API.GL_210
+                        LaunchLogger.info("Unsupported API: $api")
+                        RenderSystem.API.GL_450_CORE
                     }
                 }
-            } else RenderSystem.API.GL_210
+            } else RenderSystem.API.GL_450_CORE
         }
-        RenderSystem.launch(AimTrainer::class.java, 1920, 1080, graphicsAPI = ogl)
+        LaunchLogger.info("Attempting to use API: ${graphicsAPI.fullName} to launch")
+        RenderSystem.launch(AimTrainer::class.java, 1920, 1080, graphicsAPI = graphicsAPI)
     }
 }

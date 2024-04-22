@@ -26,6 +26,7 @@ abstract class Camera(
 
     abstract fun onUpdate(
         sensitivity: Double = 2.2,
+        dpiModifier: Double = 1.0,
         vRate: Float = 1.0f,
         hRate: Float = 1.0f,
         updateCamera: Boolean = false
@@ -39,12 +40,13 @@ abstract class Camera(
         zNear: Float = this@Camera.zRange.start,
         zFar: Float = this@Camera.zRange.endInclusive,
         sensitivity: Double = 2.2,
+        dpiModifier: Double = 1.0,
         vRate: Float = 1.0f,
         hRate: Float = 1.0f,
         updateCamera: Boolean = true,
         block: Camera.() -> Unit
     ) {
-        onUpdate(sensitivity, vRate, hRate, updateCamera)
+        onUpdate(sensitivity, dpiModifier, vRate, hRate, updateCamera)
         perspectivef(fov, RenderSystem.widthF / RenderSystem.heightF, zNear, zFar)
         cameraProject(yaw, pitch, position)
         block.invoke(this@Camera)
@@ -53,7 +55,13 @@ abstract class Camera(
     object Default : Camera() {
         private var lastMouseX = RenderSystem.mouseXD
         private var lastMouseY = RenderSystem.mouseYD
-        override fun onUpdate(sensitivity: Double, vRate: Float, hRate: Float, updateCamera: Boolean) {
+        override fun onUpdate(
+            sensitivity: Double,
+            dpiModifier: Double,
+            vRate: Float,
+            hRate: Float,
+            updateCamera: Boolean
+        ) {
             val mouseX = RenderSystem.mouseXD
             val mouseY = RenderSystem.mouseYD
             if (updateCamera) {
@@ -66,8 +74,8 @@ abstract class Camera(
                     val diffY = RenderSystem.mouseYD - lastMouseY
                     lastMouseX = RenderSystem.mouseXD
                     lastMouseY = RenderSystem.mouseYD
-                    yaw += (diffX * 0.0371248537 * sensitivity * hRate).toFloat()
-                    pitch -= (diffY * 0.0371248537 * sensitivity * vRate).toFloat()
+                    yaw += (diffX * 0.0371248537 * sensitivity * hRate * dpiModifier).toFloat()
+                    pitch -= (diffY * 0.0371248537 * sensitivity * vRate * dpiModifier).toFloat()
                     while (true) {
                         if (yaw > 360f) yaw -= 360f
                         else if (yaw < 0f) yaw += 360f

@@ -7,7 +7,7 @@ import net.spartanb312.everett.game.config.setting.number.LongSetting
 import net.spartanb312.everett.game.config.setting.primitive.BooleanSetting
 import net.spartanb312.everett.game.config.setting.primitive.EnumSetting
 import net.spartanb312.everett.game.config.setting.primitive.StringSetting
-import net.spartanb312.everett.language.Languages
+import net.spartanb312.everett.utils.language.Languages
 
 interface SettingRegister<T> {
 

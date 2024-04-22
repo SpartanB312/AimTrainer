@@ -21,8 +21,8 @@ class Model(
     private val textures = mutableListOf<ModelTexture>()
     private val meshes = mutableListOf<Mesh>()
 
-    fun MatrixLayerStack.drawModel() {
-        meshes.forEach { with(it) { draw() } }
+    fun drawModel(matrixLayerStack: MatrixLayerStack) {
+        meshes.forEach { with(it) { matrixLayerStack.draw() } }
     }
 
     fun loadModel() {
@@ -129,7 +129,7 @@ class Model(
                 textures.add(exist)
             } else {
                 Logger.debug("/$dir/$name")
-                val tex = textureLoader?.lazyLoad(path) ?: MipmapTexture("/$dir/$name")
+                val tex = textureLoader?.lazyLoad("/$dir/$name") ?: MipmapTexture("/$dir/$name")
                 val meshTexture = ModelTexture(tex, type, name)
                 textures.add(meshTexture)
                 this.textures.add(meshTexture)

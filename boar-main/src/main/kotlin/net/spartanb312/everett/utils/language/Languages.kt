@@ -1,4 +1,4 @@
-package net.spartanb312.everett.language
+package net.spartanb312.everett.utils.language
 
 import net.spartanb312.everett.utils.misc.DisplayEnum
 

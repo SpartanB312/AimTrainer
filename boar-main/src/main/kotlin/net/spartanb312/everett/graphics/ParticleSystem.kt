@@ -10,7 +10,8 @@ import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.vector.Vec2f
 import net.spartanb312.everett.utils.math.vector.distanceSq
 import net.spartanb312.everett.utils.timing.Timer
-import org.lwjgl.opengl.GL11.*
+import org.lwjgl.opengl.GL11.GL_POINTS
+import org.lwjgl.opengl.GL11.glPointSize
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.math.sqrt
@@ -67,8 +68,7 @@ class ParticleSystem(
         for (size in particles.keys) {
             val list = particles[size]!!
             glPointSize(size)
-            glEnable(GL_POINT_SMOOTH)
-            glHint(GL_POINT_SMOOTH_HINT, GL_NICEST)
+            GLHelper.pointSmooth = true
             if (!RS.compatMode) GL_POINTS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
                 list.forEach {
                     universe(it.x, it.y, it.color.alpha(it.alpha.toInt().coerceIn(0, initialAlpha)))
