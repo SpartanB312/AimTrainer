@@ -8,8 +8,9 @@ uniform sampler2D heightTex;
 varying vec2 uv;
 
 void main() {
-    vec4 color = texture2D(diffuseTex, uv);
-    vec4 color1 = texture2D(specularTex, uv);
+    vec2 revUV = vec2(uv.x, 1.0-uv.y);
+    vec4 color = texture2D(diffuseTex, revUV);
+    vec4 color1 = texture2D(specularTex, revUV);
     float alpha = color.a;
     if (color1.a > color.a) alpha = color1.a;
     float red = color.r;

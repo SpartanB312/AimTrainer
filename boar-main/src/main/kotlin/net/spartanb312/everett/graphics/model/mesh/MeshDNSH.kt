@@ -41,25 +41,25 @@ class MeshDNSH(meshData: MeshData) : Mesh(
             shader.bind()
             GL20.glUniformMatrix4fv(matrixUniform, false, matrixArray)
             mesh.diffuseTexture?.let {
-                GLHelper.setActiveTexture(GL30.GL_TEXTURE0)
+                GLHelper.glActiveTexture(GL30.GL_TEXTURE0)
                 GL30.glUniform1i(diffuse, 0)
                 it.bindTexture()
             }
 
             mesh.normalTexture?.let {
-                GLHelper.setActiveTexture(GL30.GL_TEXTURE1)
+                GLHelper.glActiveTexture(GL30.GL_TEXTURE1)
                 GL30.glUniform1i(normal, 1)
                 it.bindTexture()
             }
 
             mesh.specularTexture?.let {
-                GLHelper.setActiveTexture(GL30.GL_TEXTURE2)
+                GLHelper.glActiveTexture(GL30.GL_TEXTURE2)
                 GL30.glUniform1i(specular, 2)
                 it.bindTexture()
             }
 
             mesh.heightTexture?.let {
-                GLHelper.setActiveTexture(GL30.GL_TEXTURE3)
+                GLHelper.glActiveTexture(GL30.GL_TEXTURE3)
                 GL30.glUniform1i(height, 3)
                 it.bindTexture()
             }
@@ -69,7 +69,7 @@ class MeshDNSH(meshData: MeshData) : Mesh(
             OpenGL.glDrawElements(GL30.GL_TRIANGLES, mesh.vertices.size, GL30.GL_UNSIGNED_INT, 0)
             GLHelper.glBindVertexArray(0)
 
-            GLHelper.setActiveTexture(GL30.GL_TEXTURE0)
+            GLHelper.glActiveTexture(GL30.GL_TEXTURE0)
             if (RS.compatMode) shader.unbind()
         }
 

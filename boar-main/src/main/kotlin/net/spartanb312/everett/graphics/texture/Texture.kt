@@ -87,10 +87,10 @@ fun <T : Texture> T.drawTextureNew(
     val endV = v1 / height.toFloat()
     GLHelper.alpha = true
     GLHelper.blend = true
-    OpenGL.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-        universe(endX, startY, endU, startV, colorRGB)
-        universe(startX, startY, startU, startV, colorRGB)
-        universe(endX, endY, endU, endV, colorRGB)
-        universe(startX, endY, startU, endV, colorRGB)
+    OpenGL.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+        universal(endX, startY, endU, startV, colorRGB)
+        universal(startX, startY, startU, startV, colorRGB)
+        universal(endX, endY, endU, endV, colorRGB)
+        universal(startX, endY, startU, endV, colorRGB)
     }
 }

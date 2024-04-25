@@ -39,9 +39,9 @@ object BallRenderer {
                     vertices.forEach {
                         v3fc(it.x, it.y, it.z, outlineColor)
                     }
-                } else GL11.GL_LINE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+                } else GL11.GL_LINE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                     vertices.forEach {
-                        universe(it.x, it.y, it.z, outlineColor)
+                        universal(it.x, it.y, it.z, outlineColor)
                     }
                 }
             }
@@ -51,10 +51,10 @@ object BallRenderer {
                     v3fc(it.x, it.y, it.z, color)
                     count++
                 }
-            } else GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+            } else GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                 vertices.forEach {
                     // TODO: GL_TRIANGLE_STRIP
-                    universe(it.x, it.y, it.z, color)
+                    universal(it.x, it.y, it.z, color)
                     count++
                 }
             }

@@ -81,6 +81,15 @@ interface IShaders {
     fun glUniformMatrix4(location: Int, transpose: Boolean, matrices: FloatBuffer)
 
     @Delegate
+    fun glUniformMatrix2(location: Int, transpose: Boolean, matrices: FloatArray)
+
+    @Delegate
+    fun glUniformMatrix3(location: Int, transpose: Boolean, matrices: FloatArray)
+
+    @Delegate
+    fun glUniformMatrix4(location: Int, transpose: Boolean, matrices: FloatArray)
+
+    @Delegate
     fun glGetAttribLocation(program: Int, name: CharSequence): Int
 
     @Delegate

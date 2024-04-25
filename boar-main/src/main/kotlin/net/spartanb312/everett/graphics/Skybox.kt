@@ -86,56 +86,56 @@ class Skybox(
             GLHelper.texture2d = false
         } else {
             front.useTexture {
-                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                    universe(maxX - offset, maxY - offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
-                    universe(minX + offset, maxY - offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
-                    universe(maxX - offset, minY + offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
-                    universe(minX + offset, minY + offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
+                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                    universal(maxX - offset, maxY - offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
+                    universal(minX + offset, maxY - offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
+                    universal(maxX - offset, minY + offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
+                    universal(minX + offset, minY + offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
                 }
             }
 
             right.useTexture {
-                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                    universe(maxX - offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
-                    universe(maxX - offset, maxY - offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
-                    universe(maxX - offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
-                    universe(maxX - offset, minY + offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
+                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                    universal(maxX - offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
+                    universal(maxX - offset, maxY - offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
+                    universal(maxX - offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
+                    universal(maxX - offset, minY + offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
                 }
             }
 
             back.useTexture {
-                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                    universe(minX + offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
-                    universe(maxX - offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
-                    universe(minX + offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
-                    universe(maxX - offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
+                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                    universal(minX + offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
+                    universal(maxX - offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
+                    universal(minX + offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
+                    universal(maxX - offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
                 }
             }
 
             left.useTexture {
-                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                    universe(minX + offset, maxY - offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
-                    universe(minX + offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
-                    universe(minX + offset, minY + offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
-                    universe(minX + offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
+                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                    universal(minX + offset, maxY - offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
+                    universal(minX + offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
+                    universal(minX + offset, minY + offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
+                    universal(minX + offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
                 }
             }
 
             up.useTexture {
-                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                    universe(maxX - offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
-                    universe(minX + offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
-                    universe(maxX - offset, maxY - offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
-                    universe(minX + offset, maxY - offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
+                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                    universal(maxX - offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
+                    universal(minX + offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
+                    universal(maxX - offset, maxY - offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
+                    universal(minX + offset, maxY - offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
                 }
             }
 
             down.useTexture {
-                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                    universe(maxX - offset, minY + offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
-                    universe(minX + offset, minY + offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
-                    universe(maxX - offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
-                    universe(minX + offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
+                GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                    universal(maxX - offset, minY + offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
+                    universal(minX + offset, minY + offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
+                    universal(maxX - offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
+                    universal(minX + offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
                 }
             }
         }

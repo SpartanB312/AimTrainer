@@ -5,13 +5,13 @@ import org.lwjgl.opengl.GL13C
 
 object GL13MultiTexture : IMultiTexture {
 
-    override fun setActiveTexture(texture: Int) =
+    override fun glActiveTexture(texture: Int) =
         GL13C.glActiveTexture(texture)
 
-    override fun setClientActiveTexture(texture: Int) =
+    override fun glClientActiveTexture(texture: Int) =
         GL13.glClientActiveTexture(texture)
 
-    override fun setLightmapTextureCoords(target: Int, x: Float, y: Float) =
+    override fun glMultiTexCoord2f(target: Int, x: Float, y: Float) =
         GL13.glMultiTexCoord2f(target, x, y)
 
 }

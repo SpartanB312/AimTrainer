@@ -15,8 +15,8 @@ object PMVBORenderer2D : Renderer2D {
     override fun drawPoint0(x: Float, y: Float, size: Float, color: ColorRGB) {
         GLHelper.pointSmooth = true
         GL11.glPointSize(size)
-        GL_POINTS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(x, y, color)
+        GL_POINTS.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(x, y, color)
         }
         GLHelper.pointSmooth = false
     }
@@ -32,9 +32,9 @@ object PMVBORenderer2D : Renderer2D {
     ) {
         GLHelper.lineSmooth = true
         GL11.glLineWidth(width)
-        GL11.GL_LINES.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(startX, startY, color1)
-            universe(endX, endY, color2)
+        GL11.GL_LINES.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(startX, startY, color1)
+            universal(endX, endY, color2)
         }
         GLHelper.lineSmooth = false
     }
@@ -42,9 +42,9 @@ object PMVBORenderer2D : Renderer2D {
     override fun drawLinesStrip0(vertexArray: Array<Vec2f>, width: Float, color: ColorRGB) {
         GLHelper.lineSmooth = true
         GL11.glLineWidth(width)
-        GL11.GL_LINE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+        GL11.GL_LINE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
             for (v in vertexArray) {
-                universe(v.x, v.y, color)
+                universal(v.x, v.y, color)
             }
         }
         GLHelper.lineSmooth = false
@@ -53,9 +53,9 @@ object PMVBORenderer2D : Renderer2D {
     override fun drawLinesLoop0(vertexArray: Array<Vec2f>, width: Float, color: ColorRGB) {
         GLHelper.lineSmooth = true
         GL11.glLineWidth(width)
-        GL11.GL_LINE_LOOP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+        GL11.GL_LINE_LOOP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
             for (v in vertexArray) {
-                universe(v.x, v.y, color)
+                universal(v.x, v.y, color)
             }
         }
         GLHelper.lineSmooth = false
@@ -70,10 +70,10 @@ object PMVBORenderer2D : Renderer2D {
         pos3Y: Float,
         color: ColorRGB,
     ) {
-        GL11.GL_TRIANGLES.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(pos1X, pos1Y, color)
-            universe(pos2X, pos2Y, color)
-            universe(pos3X, pos3Y, color)
+        GL11.GL_TRIANGLES.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(pos1X, pos1Y, color)
+            universal(pos2X, pos2Y, color)
+            universal(pos3X, pos3Y, color)
         }
     }
 
@@ -84,10 +84,10 @@ object PMVBORenderer2D : Renderer2D {
         centerColor: ColorRGB,
         color: ColorRGB
     ) {
-        GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(centerX, centerY, centerColor)
+        GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(centerX, centerY, centerColor)
             for (v in vertices) {
-                universe(v.x, v.y, color)
+                universal(v.x, v.y, color)
             }
         }
     }
@@ -104,20 +104,20 @@ object PMVBORenderer2D : Renderer2D {
     ) {
         GLHelper.lineSmooth = true
         GL11.glLineWidth(width)
-        GL11.GL_LINE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(pos1X, pos1Y, color)
-            universe(pos2X, pos2Y, color)
-            universe(pos3X, pos3Y, color)
+        GL11.GL_LINE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(pos1X, pos1Y, color)
+            universal(pos2X, pos2Y, color)
+            universal(pos3X, pos3Y, color)
         }
         GLHelper.lineSmooth = false
     }
 
     override fun drawRect0(startX: Float, startY: Float, endX: Float, endY: Float, color: ColorRGB) {
-        GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(endX, startY, color)
-            universe(startX, startY, color)
-            universe(endX, endY, color)
-            universe(startX, endY, color)
+        GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(endX, startY, color)
+            universal(startX, startY, color)
+            universal(endX, endY, color)
+            universal(startX, endY, color)
         }
     }
 
@@ -131,11 +131,11 @@ object PMVBORenderer2D : Renderer2D {
         color3: ColorRGB,
         color4: ColorRGB,
     ) {
-        GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(endX, startY, color1)
-            universe(startX, startY, color2)
-            universe(endX, endY, color4)
-            universe(startX, endY, color3)
+        GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(endX, startY, color1)
+            universal(startX, startY, color2)
+            universal(endX, endY, color4)
+            universal(startX, endY, color3)
         }
 
     }
@@ -153,11 +153,11 @@ object PMVBORenderer2D : Renderer2D {
     ) {
         GLHelper.lineSmooth = true
         GL11.glLineWidth(width)
-        GL11.GL_LINE_LOOP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(endX, startY, color1)
-            universe(startX, startY, color2)
-            universe(startX, endY, color3)
-            universe(endX, endY, color4)
+        GL11.GL_LINE_LOOP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(endX, startY, color1)
+            universal(startX, startY, color2)
+            universal(startX, endY, color3)
+            universal(endX, endY, color4)
         }
         GLHelper.lineSmooth = false
 
@@ -172,10 +172,10 @@ object PMVBORenderer2D : Renderer2D {
         color: ColorRGB,
     ) {
         val arcVertices = RenderUtils.getArcVertices(centerX, centerY, radius, angleRange, segments).reversed()
-        GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-            universe(centerX, centerY, color)
+        GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(centerX, centerY, color)
             for (v in arcVertices) {
-                universe(v.x, v.y, color)
+                universal(v.x, v.y, color)
             }
         }
     }

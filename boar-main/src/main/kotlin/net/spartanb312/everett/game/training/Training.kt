@@ -1,6 +1,7 @@
 package net.spartanb312.everett.game.training
 
 import net.spartanb312.everett.game.Player
+import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Notification
 import net.spartanb312.everett.game.render.gui.SubscribedRenderer
 import net.spartanb312.everett.graphics.RenderSystem
@@ -31,6 +32,8 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     }
 
     open fun reset() {
+        Player.reset()
+        CrosshairRenderer.disable()
         showTitle()
         startTime = System.currentTimeMillis()
         stage = Stage.Prepare

@@ -68,7 +68,6 @@ object HaloInfiniteAA : AimAssist {
                     val yClampRange = -(feedbackRate.toFloat() / 50f)..(feedbackRate.toFloat() / 50f)
                     val yawOffset = (feedbackVec.yaw - preVec.yaw).coerceIn(xzClampRange)
                     val pitchOffset = (feedbackVec.pitch - preVec.pitch).coerceIn(yClampRange)
-                    println(pitchOffset)
                     Player.yaw = locked.yaw + yawOffset * cos(Player.pitch.toRadian())
                     Player.pitch = (locked.pitch - pitchOffset).coerceIn(-89.5f..89.5f)
                 }

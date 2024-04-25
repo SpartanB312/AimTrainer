@@ -102,7 +102,6 @@ object TrainingScreen : GuiScreen() {
                     }
                     Render2DManager.closeAll()
                     SceneManager.switchScene(AimTrainingScene)
-                    CrosshairRenderer.enable()
                 } else if (button == GLFW.GLFW_MOUSE_BUTTON_2) {
                     defaultTraining = index
                     Configs.saveConfig("configs.json")

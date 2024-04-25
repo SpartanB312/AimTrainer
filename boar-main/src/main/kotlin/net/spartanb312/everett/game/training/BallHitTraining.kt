@@ -6,6 +6,7 @@ import net.spartanb312.everett.game.option.impls.AimAssistOption.bulletAdsorptio
 import net.spartanb312.everett.game.render.BallRenderer
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.game.render.FontRendererMain
+import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
@@ -110,6 +111,7 @@ abstract class BallHitTraining(
             }
 
             Stage.Training -> {
+                CrosshairRenderer.enable()
                 val scale = max(RS.widthScale, RS.heightScale)
                 val seconds = ((65000 - timeLapsed) / 1000f).roundToInt()
                 val rate = seconds / 60f

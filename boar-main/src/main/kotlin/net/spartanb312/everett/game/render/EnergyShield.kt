@@ -65,14 +65,14 @@ object EnergyShield {
                     else -> v2fc(it.x, it.y, dark.alpha(192))
                 }
             }
-        } else GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+        } else GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
             shieldOutline.forEachIndexed { index, it ->
                 val light = generalLightColor
                 val dark = generalColor
                 when (index) {
-                    0 -> universe(it.x, it.y, light.alpha(192))
-                    5 -> universe(it.x, it.y, light.mix(dark, 0.9f).alpha(192))
-                    else -> universe(it.x, it.y, dark.alpha(192))
+                    0 -> universal(it.x, it.y, light.alpha(192))
+                    5 -> universal(it.x, it.y, light.mix(dark, 0.9f).alpha(192))
+                    else -> universal(it.x, it.y, dark.alpha(192))
                 }
             }
         }

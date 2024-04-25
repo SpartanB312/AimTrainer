@@ -1,12 +1,12 @@
 package net.spartanb312.everett.game.option.impls
 
+import net.spartanb312.everett.game.Language.m
 import net.spartanb312.everett.game.config.setting.at
 import net.spartanb312.everett.game.config.setting.m
 import net.spartanb312.everett.game.config.setting.whenTrue
 import net.spartanb312.everett.game.option.Option
-import net.spartanb312.everett.game.Language.m
-import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.physics.PhysicsSystem
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.misc.DisplayEnum
 
 object ControlOption : Option("Control") {
@@ -17,18 +17,18 @@ object ControlOption : Option("Control") {
     private val sensitivityRough by setting("Sensitivity", 2.2f, 0.1f..10.0f, 0.1f)
         .m("灵敏度", "靈敏度")
     private val sensitivityDecimal by setting("Sensitivity Decimal", 0.000, 0.001..0.1, 0.001)
-        .whenTrue(preciseSensitivity)
         .m("灵敏度小数位", "靈敏度小數位")
+        .whenTrue(preciseSensitivity)
     private val dpiRate by setting("DPI Rate", 100, 10..500)
         .m("DPI 百分比", "DPI 百分比 ")
     private val VHSeparate = setting("VH Separate", false)
         .m("分离水平与垂直灵敏度", "分離水平垂直")
     private val verticalRate by setting("Vertical Rate", 1f, 0.1f..5f, 0.1f)
-        .whenTrue(VHSeparate)
         .m("垂直比率", "垂直比率")
-    private val horizontalRate by setting("Horizontal Rate", 1f, 0.1f..5f, 0.1f)
         .whenTrue(VHSeparate)
+    private val horizontalRate by setting("Horizontal Rate", 1f, 0.1f..5f, 0.1f)
         .m("水平比率", "水平比率")
+        .whenTrue(VHSeparate)
 
     // Movement
     val moveSpeed by setting("Move Speed", 0.3, 0.0..5.0, 0.05)

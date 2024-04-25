@@ -50,12 +50,12 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240419"
+    const val AIM_TRAINER_VERSION = "1.0.0.240426"
 
     var isReady = false
     private val tickTimer = Timer()
 
-    val model = Model("assets/spartan/spartan.obj", TextureManager) { MeshDNSH(it) }
+    val model = Model("assets/everett/Everett.obj", TextureManager) { MeshDNSH(it) }
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")

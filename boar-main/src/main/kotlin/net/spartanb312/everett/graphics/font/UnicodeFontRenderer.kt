@@ -336,9 +336,9 @@ class UnicodeFontRenderer(
                     rightColor = shadowColor.alpha(alpha)
                 }
 
-                if (!RS.compatMode) GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+                if (!RS.compatMode) GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                     //RT
-                    universe(
+                    universal(
                         endX,
                         startY,
                         0f,
@@ -347,7 +347,7 @@ class UnicodeFontRenderer(
                         rightColor
                     )
                     //LT
-                    universe(
+                    universal(
                         startX,
                         startY,
                         0f,
@@ -356,7 +356,7 @@ class UnicodeFontRenderer(
                         leftColor
                     )
                     //RB
-                    universe(
+                    universal(
                         endX,
                         endY,
                         0f,
@@ -365,7 +365,7 @@ class UnicodeFontRenderer(
                         rightColor
                     )
                     //LB
-                    universe(
+                    universal(
                         startX,
                         endY,
                         0f,

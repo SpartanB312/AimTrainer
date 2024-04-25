@@ -15,14 +15,16 @@ import kotlin.math.min
 
 object CrosshairCustom : Crosshair(0f) {
 
-    private val size by setting("Custom-Size", 15f, 1f..50f, 0.5f).alias("Size")
-        .m("准星大小", "準星大小")
-    val calibrate = setting("Custom-Calibrate", false).alias("Calibrate")
-        .m("校准准星", "準星校準")
-    private val offsetX by setting("Custom-Offset X", 0.0, -5.0..5.0, 0.005).alias("Offset X").whenTrue(calibrate)
-        .m("X偏移", "X位移")
-    private val offsetY by setting("Custom-Offset Y", 0.0, -5.0..5.0, 0.005).alias("Offset Y").whenTrue(calibrate)
-        .m("Y偏移", "Y位移")
+    private val size by setting("Custom-Size", 15f, 1f..50f, 0.5f)
+        .alias("Size").m("准星大小", "準星大小")
+    val calibrate = setting("Custom-Calibrate", false)
+        .alias("Calibrate").m("校准准星", "準星校準")
+    private val offsetX by setting("Custom-Offset X", 0.0, -5.0..5.0, 0.005)
+        .alias("Offset X").m("X偏移", "X位移")
+        .whenTrue(calibrate)
+    private val offsetY by setting("Custom-Offset Y", 0.0, -5.0..5.0, 0.005)
+        .alias("Offset Y").m("Y偏移", "Y位移")
+        .whenTrue(calibrate)
 
     private val crosshair = TextureManager.lazyTexture("assets/CustomCrosshair.png")
 
@@ -32,13 +34,17 @@ object CrosshairCustom : Crosshair(0f) {
         centerX: Float,
         centerY: Float,
         fov: Float,
+        shadow: Boolean,
         colorRGB: ColorRGB
     ) {
+        if (shadow) return
         val scaledSize = min(RS.widthScale, RS.heightScale) * size
-        translatef(centerX, centerY, 0.0f)
+        val cx = centerX + offsetX.toFloat()
+        val cy = centerY + offsetY.toFloat()
+        translatef(cx, cy, 0.0f)
         scalef(scaledSize, scaledSize, 1.0f)
-        translatef(-centerX, -centerY, 0.0f)
-        crosshair.drawTexture(centerX - 5f, centerY - 5f, centerX + 5f, centerY + 5f)
+        translatef(-cx, -cy, 0.0f)
+        crosshair.drawTexture(cx - 5f, cy - 5f, cx + 5f, cy + 5f)
     }
 
 }

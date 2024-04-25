@@ -11,7 +11,6 @@ import net.spartanb312.everett.graphics.model.MeshRenderer
 import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.opengl.GL11.GL_TRIANGLES
-import org.lwjgl.opengl.GL20
 import org.lwjgl.opengl.GL30
 
 class MeshBasic(meshData: MeshData) : Mesh(
@@ -36,10 +35,10 @@ class MeshBasic(meshData: MeshData) : Mesh(
             GLHelper.cull = false
 
             shader.bind()
-            GL20.glUniformMatrix4fv(matrixUniform, false, matrixArray)
+            GLHelper.glUniformMatrix4(matrixUniform, false, matrixArray)
             mesh.diffuseTexture?.let {
-                GL30.glActiveTexture(GL30.GL_TEXTURE0)
-                GL30.glUniform1i(diffuse, 0)
+                GLHelper.glActiveTexture(GL30.GL_TEXTURE0)
+                GLHelper.glUniform1(diffuse, 0)
                 it.bindTexture()
             }
 

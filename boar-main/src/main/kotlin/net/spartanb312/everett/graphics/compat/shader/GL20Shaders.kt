@@ -80,6 +80,15 @@ object GL20Shaders : IShaders {
     override fun glUniformMatrix4(location: Int, transpose: Boolean, matrices: FloatBuffer) =
         GL20C.glUniformMatrix4fv(location, transpose, matrices)
 
+    override fun glUniformMatrix2(location: Int, transpose: Boolean, matrices: FloatArray) =
+        GL20C.glUniformMatrix2fv(location, transpose, matrices)
+
+    override fun glUniformMatrix3(location: Int, transpose: Boolean, matrices: FloatArray) =
+        GL20C.glUniformMatrix3fv(location, transpose, matrices)
+
+    override fun glUniformMatrix4(location: Int, transpose: Boolean, matrices: FloatArray) =
+        GL20C.glUniformMatrix4fv(location, transpose, matrices)
+
     override fun glGetAttribLocation(program: Int, name: CharSequence): Int =
         GL20C.glGetAttribLocation(program, name)
 

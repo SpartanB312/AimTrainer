@@ -11,16 +11,14 @@ import net.spartanb312.everett.utils.timing.Timer
 object BGMPlayer {
 
     private val bgmList = if (Main.fullMode) mutableListOf(
-        Sound("assets/sound/background/bg1.wav"),
-        Sound("assets/sound/background/bg2.wav"),
-        Sound("assets/sound/background/bg3.wav"),
-        Sound("assets/sound/background/bg4.wav"),
+        Sound("assets/sound/background/overture.wav"),
     ) else mutableListOf(Sound())
 
     var currentBGM = nextBGM()
 
     fun nextBGM(): Sound {
         val bgm = bgmList.random()
+        if (bgmList.size < 2) return bgm
         return if (currentBGM == bgm) nextBGM()
         else {
             Logger.info("Start playing BGM ${bgm.name}")

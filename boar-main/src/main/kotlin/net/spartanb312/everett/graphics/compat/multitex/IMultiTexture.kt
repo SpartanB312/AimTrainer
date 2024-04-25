@@ -5,12 +5,12 @@ import net.spartanb312.everett.graphics.compat.Delegate
 interface IMultiTexture {
 
     @Delegate
-    fun setActiveTexture(texture: Int)
+    fun glActiveTexture(texture: Int)
 
     @Delegate
-    fun setClientActiveTexture(texture: Int)
+    fun glClientActiveTexture(texture: Int)
 
     @Delegate
-    fun setLightmapTextureCoords(target: Int, x: Float, y: Float)
+    fun glMultiTexCoord2f(target: Int, x: Float, y: Float)
 
 }

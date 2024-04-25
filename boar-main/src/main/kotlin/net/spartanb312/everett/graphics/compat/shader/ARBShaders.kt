@@ -81,6 +81,15 @@ object ARBShaders : IShaders {
     override fun glUniformMatrix4(location: Int, transpose: Boolean, matrices: FloatBuffer) =
         ARBShaderObjects.glUniformMatrix4fvARB(location, transpose, matrices)
 
+    override fun glUniformMatrix2(location: Int, transpose: Boolean, matrices: FloatArray) =
+        ARBShaderObjects.glUniformMatrix2fvARB(location, transpose, matrices)
+
+    override fun glUniformMatrix3(location: Int, transpose: Boolean, matrices: FloatArray) =
+        ARBShaderObjects.glUniformMatrix3fvARB(location, transpose, matrices)
+
+    override fun glUniformMatrix4(location: Int, transpose: Boolean, matrices: FloatArray) =
+        ARBShaderObjects.glUniformMatrix4fvARB(location, transpose, matrices)
+
     override fun glGetAttribLocation(program: Int, name: CharSequence): Int =
         ARBVertexShader.glGetAttribLocationARB(program, name)
 

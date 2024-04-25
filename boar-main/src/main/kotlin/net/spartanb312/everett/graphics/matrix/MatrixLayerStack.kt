@@ -65,14 +65,22 @@ class MatrixLayerStack {
 
 }
 
-fun MatrixLayerStack.scope(block: MatrixLayerStack.() -> Unit) {
+class MatrixScope(private val stack: MatrixLayerStack, preMat: Matrix4f) {
+    private val prevMat = Matrix4f(preMat)
+    fun recover() {
+        stack.apply(prevMat)
+    }
+}
+
+fun MatrixLayerStack.scope(block: MatrixLayerStack.(MatrixScope) -> Unit) {
     if (RS.compatMode) {
+        val scope = MatrixScope(this, peek)
         pushMatrixLayer()
-        block()
+        block(scope)
         popMatrixLayer()
     } else {
-        val prevMat = Matrix4f(peek)
-        block()
-        apply(prevMat)
+        val scope = MatrixScope(this, peek)
+        block(scope)
+        scope.recover()
     }
 }

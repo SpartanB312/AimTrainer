@@ -1,11 +1,11 @@
 package net.spartanb312.everett.game.render.crosshair
 
+import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.config.setting.AbstractSetting
 import net.spartanb312.everett.game.config.setting.SettingRegister
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
-import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.MathUtils.h2dFOV
 import net.spartanb312.everett.utils.math.MathUtils.v2dFOV
@@ -21,6 +21,7 @@ abstract class Crosshair(resetTime: Float, private val errorRate: Float = 0f) : 
         centerX: Float,
         centerY: Float,
         fov: Float,
+        shadow: Boolean,
         colorRGB: ColorRGB
     )
 

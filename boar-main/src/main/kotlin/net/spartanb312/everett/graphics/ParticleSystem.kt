@@ -69,9 +69,9 @@ class ParticleSystem(
             val list = particles[size]!!
             glPointSize(size)
             GLHelper.pointSmooth = true
-            if (!RS.compatMode) GL_POINTS.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
+            if (!RS.compatMode) GL_POINTS.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                 list.forEach {
-                    universe(it.x, it.y, it.color.alpha(it.alpha.toInt().coerceIn(0, initialAlpha)))
+                    universal(it.x, it.y, it.color.alpha(it.alpha.toInt().coerceIn(0, initialAlpha)))
                 }
             } else GL_POINTS.buffer(VertexFormat.Pos2fColor, particleList.size) {
                 list.forEach {

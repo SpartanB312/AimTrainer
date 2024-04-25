@@ -1,5 +1,7 @@
 package net.spartanb312.everett.game.training
 
+import net.spartanb312.everett.game.Language
+import net.spartanb312.everett.game.Language.m
 import net.spartanb312.everett.game.option.impls.ControlOption.defaultTraining
 import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
@@ -9,8 +11,6 @@ import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.graphics.Skybox
-import net.spartanb312.everett.game.Language
-import net.spartanb312.everett.game.Language.m
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 
@@ -19,7 +19,6 @@ object QuickPlay {
     fun start() {
         Render2DManager.closeAll()
         SceneManager.switchScene(QuickPlayScene())
-        CrosshairRenderer.enable()
     }
 
     fun close() {

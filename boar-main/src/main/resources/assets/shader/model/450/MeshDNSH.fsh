@@ -10,8 +10,9 @@ in vec2 uv;
 out vec4 FragColor;
 
 void main() {
-    vec4 color = texture2D(diffuseTex, uv);
-    vec4 color1 = texture2D(specularTex, uv);
+    vec2 revUV = vec2(uv.x, 1.0-uv.y);
+    vec4 color = texture2D(diffuseTex, revUV);
+    vec4 color1 = texture2D(specularTex, revUV);
     float alpha = color.a;
     if (color1.a > color.a) alpha = color1.a;
     float red = color.r;
@@ -22,7 +23,6 @@ void main() {
         green +=  color1.g / 2.0;
         blue += color1.b / 2.0;
     }
-    //if (color.a == 0.0)  FragColor = vec4(1.0, 0.0, 0.0, 0.25);
-    //else
-    FragColor = vec4(red, green, blue, 1.0);
+    if (color.a == 0.0)  FragColor = vec4(1.0, 0.0, 0.0, 0.25);
+    else FragColor = vec4(red, green, blue, 1.0);
 }

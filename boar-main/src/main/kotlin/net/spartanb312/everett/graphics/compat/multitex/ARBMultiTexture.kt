@@ -4,13 +4,13 @@ import org.lwjgl.opengl.ARBMultitexture
 
 object ARBMultiTexture : IMultiTexture {
 
-    override fun setActiveTexture(texture: Int) =
+    override fun glActiveTexture(texture: Int) =
         ARBMultitexture.glActiveTextureARB(texture)
 
-    override fun setClientActiveTexture(texture: Int) =
+    override fun glClientActiveTexture(texture: Int) =
         ARBMultitexture.glClientActiveTextureARB(texture)
 
-    override fun setLightmapTextureCoords(target: Int, x: Float, y: Float) =
+    override fun glMultiTexCoord2f(target: Int, x: Float, y: Float) =
         ARBMultitexture.glMultiTexCoord2fARB(target, x, y)
 
 }

@@ -9,10 +9,10 @@ import net.spartanb312.everett.graphics.drawing.VertexFormat
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.utils.color.ColorRGB
-import org.lwjgl.opengl.*
-import org.lwjgl.opengl.GL11C.glDrawArrays
-import org.lwjgl.opengl.GL20.*
-import org.lwjgl.opengl.GL30C.glBindVertexArray
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL15
+import org.lwjgl.opengl.GL32
+import org.lwjgl.opengl.GL45
 import java.nio.ByteBuffer
 
 /**
@@ -28,7 +28,7 @@ object PersistentMappedVertexBuffer {
 
     sealed class VertexMode(val format: VertexFormat, val shader: Shader) {
         companion object {
-            val values = listOf(Pos2fColor, Pos3fColor, Pos2fColorTex, Pos3fColorTex, Universe)
+            val values = listOf(Pos2fColor, Pos3fColor, Pos2fColorTex, Pos3fColorTex, Universal)
         }
 
         data object Pos2fColor : VertexMode(
@@ -50,7 +50,7 @@ object PersistentMappedVertexBuffer {
                 "assets/shader/general/450/Pos2fColorTex.vsh",
                 "assets/shader/general/450/Pos2fColorTex.fsh"
             ).apply {
-                glUniform1i(glGetUniformLocation(id, "texture"), 0)
+                GLHelper.glUniform1(getUniformLocation("texture"), 0)
             }
         )
 
@@ -60,7 +60,7 @@ object PersistentMappedVertexBuffer {
                 "assets/shader/general/450/Pos3fColorTex.fsh"
             ).apply
             {
-                glUniform1i(glGetUniformLocation(id, "texture"), 0)
+                GLHelper.glUniform1(getUniformLocation("texture"), 0)
             }
         )
 
@@ -69,43 +69,43 @@ object PersistentMappedVertexBuffer {
                 "assets/shader/general/450/Pos3fTex.vsh",
                 "assets/shader/general/450/Pos3fTex.fsh"
             ).apply {
-                glUniform1i(glGetUniformLocation(id, "texture"), 0)
+                GLHelper.glUniform1(getUniformLocation("texture"), 0)
             }
         )
 
-        data object Universe : VertexMode(
+        data object Universal : VertexMode(
             VertexFormat.Pos3fColorTex, Shader(
-                "assets/shader/general/450/UniverseDraw.vsh",
-                "assets/shader/general/450/UniverseDraw.fsh"
+                "assets/shader/general/450/UniversalDraw.vsh",
+                "assets/shader/general/450/UniversalDraw.fsh"
             ).apply {
-                glUniform1i(glGetUniformLocation(id, "texture"), 0)
+                GLHelper.glUniform1(getUniformLocation("texture"), 0)
             }
         )
 
-        private val matrixUniform = glGetUniformLocation(shader.id, "matrix")
+        private val matrixUniform = shader.getUniformLocation("matrix")
         private var currentCheckID = 0L
 
         fun updateMatrix(stack: MatrixLayerStack) {
             val checkID = stack.checkID
             if (checkID != currentCheckID) {
                 currentCheckID = checkID
-                glUniformMatrix4fv(matrixUniform, false, stack.matrixArray)
+                GLHelper.glUniformMatrix4(matrixUniform, false, stack.matrixArray)
             }
         }
 
-        private val vbo = GL45C.glCreateBuffers().apply {
-            GL45C.glNamedBufferStorage(
+        private val vbo = GL45.glCreateBuffers().apply {
+            GL45.glNamedBufferStorage(
                 this,
                 64L * 1024L * 1024L,
-                GL32.GL_MAP_WRITE_BIT or GL44.GL_MAP_PERSISTENT_BIT or GL44.GL_MAP_COHERENT_BIT
+                GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT
             )
         }
         private val arr = Arr.wrap(
-            GL45C.glMapNamedBufferRange(
+            GL45.glMapNamedBufferRange(
                 vbo,
                 0,
                 64L * 1024L * 1024L,
-                GL32.GL_MAP_WRITE_BIT or GL44.GL_MAP_PERSISTENT_BIT or GL44.GL_MAP_COHERENT_BIT or GL32.GL_MAP_UNSYNCHRONIZED_BIT
+                GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT or GL45.GL_MAP_UNSYNCHRONIZED_BIT
             ) as ByteBuffer
         ).asMutable()
 
@@ -121,10 +121,10 @@ object PersistentMappedVertexBuffer {
             if (!usingPMVBP) return
             if (sync == 0L) {
                 if (arr.pos >= arr.len / 2) {
-                    sync = GL32C.glFenceSync(GL32.GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
+                    sync = GL32.glFenceSync(GL32.GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
                 }
             } else if (IntArray(1).apply {
-                    GL32C.glGetSynciv(
+                    GL32.glGetSynciv(
                         sync,
                         GL32.GL_SYNC_STATUS,
                         IntArray(1),
@@ -142,7 +142,7 @@ object PersistentMappedVertexBuffer {
         private val vao = createVao(format.attribute, vbo)
         private val stride = format.totalLength
 
-        fun universe(posX: Float, posY: Float, color: ColorRGB) {
+        fun universal(posX: Float, posY: Float, color: ColorRGB) {
             val pointer = arr.ptr
             pointer[0] = posX
             pointer[4] = posY
@@ -154,7 +154,7 @@ object PersistentMappedVertexBuffer {
             vertexSize++
         }
 
-        fun universe(posX: Float, posY: Float, u: Float, v: Float, color: ColorRGB) {
+        fun universal(posX: Float, posY: Float, u: Float, v: Float, color: ColorRGB) {
             val pointer = arr.ptr
             pointer[0] = posX
             pointer[4] = posY
@@ -166,7 +166,7 @@ object PersistentMappedVertexBuffer {
             vertexSize++
         }
 
-        fun universe(posX: Float, posY: Float, posZ: Float, color: ColorRGB) {
+        fun universal(posX: Float, posY: Float, posZ: Float, color: ColorRGB) {
             val pointer = arr.ptr
             pointer[0] = posX
             pointer[4] = posY
@@ -178,7 +178,7 @@ object PersistentMappedVertexBuffer {
             vertexSize++
         }
 
-        fun universe(posX: Float, posY: Float, posZ: Float, u: Float, v: Float, color: ColorRGB) {
+        fun universal(posX: Float, posY: Float, posZ: Float, u: Float, v: Float, color: ColorRGB) {
             val pointer = arr.ptr
             pointer[0] = posX
             pointer[4] = posY
@@ -248,20 +248,20 @@ object PersistentMappedVertexBuffer {
             shader.bind()
             vertexMode.updateMatrix(RS.matrixLayer)
             GLHelper.glBindVertexArray(vertexMode.vao)
-            glDrawArrays(mode, drawOffset, vertexSize)
+            GL11.glDrawArrays(mode, drawOffset, vertexSize)
             end(vertexMode.stride)
-            glBindVertexArray(0)
+            GLHelper.glBindVertexArray(0)
             vertexSize = 0
         }
     }
 
     fun createVao(vertexAttribute: VertexAttribute, vbo: Int): Int {
-        val vaoID = GL45C.glCreateVertexArrays()
-        GL32.glBindVertexArray(vaoID)
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo)
+        val vaoID = GLHelper.glGenVertexArrays()
+        GLHelper.glBindVertexArray(vaoID)
+        GLHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo)
         vertexAttribute.apply()
-        GL32.glBindVertexArray(0)
-        GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
+        GLHelper.glBindVertexArray(0)
+        GLHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
         return vaoID
     }
 

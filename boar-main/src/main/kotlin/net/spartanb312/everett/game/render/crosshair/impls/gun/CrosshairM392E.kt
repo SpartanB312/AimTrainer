@@ -1,12 +1,10 @@
 package net.spartanb312.everett.game.render.crosshair.impls.gun
 
-import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.config.setting.alias
 import net.spartanb312.everett.game.config.setting.m
 import net.spartanb312.everett.game.config.setting.whenFalse
 import net.spartanb312.everett.game.render.crosshair.Crosshair
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
-import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
@@ -21,12 +19,13 @@ import kotlin.math.min
 
 object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.1f) {
 
-    private val followFOV = setting("M392E-Follow FOV", true).alias("Follow FOV")
-        .m("准星大小跟随FOV", "準星隨FOV變化")
-    private val size by setting("M392E-Specified FOV", 78f, 60f..120f).alias("Specified FOV").whenFalse(followFOV)
-        .m("指定FOV的准星大小", "指定FOV下的準星")
-    private val animation by setting("M392E-Animation", false).alias("Animation")
-        .m("旋转动画", "準星旋轉動畫")
+    private val followFOV = setting("M392E-Follow FOV", true)
+        .alias("Follow FOV").m("准星大小跟随FOV", "準星隨FOV變化")
+    private val size by setting("M392E-Specified FOV", 78f, 60f..120f)
+        .alias("Specified FOV").m("指定FOV的准星大小", "指定FOV下的準星")
+        .whenFalse(followFOV)
+    private val animation by setting("M392E-Animation", false)
+        .alias("Animation").m("旋转动画", "準星旋轉動畫")
 
     override val syncFOV get() = followFOV.value
     override var clickTime = 0L
@@ -38,16 +37,20 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.1f) {
         centerX: Float,
         centerY: Float,
         fov: Float,
+        shadow: Boolean,
         colorRGB: ColorRGB
     ) {
-        val scale = min(RS.widthF / 2560f, RS.heightF / 1369f)
+        var scale = min(RS.widthF / 2560f, RS.heightF / 1369f)
         val progress =
-            if (animation) ((System.currentTimeMillis() - clickTime) / resetTime.toFloat()).coerceIn(0f..1f) else 0f
+            if (animation) ((System.currentTimeMillis() - clickTime) / resetTime.toFloat()).coerceIn(0f..1f)
+            else 0f
         colorTimer.passedAndReset(10) {
-            colorRate = colorRate.converge(if (Player.raytraced && SceneManager.inTraining) 100f else 0f, 0.25f)
+            colorRate = colorRate.converge(if (CrosshairRenderer.raytraced) 100f else 0f, 0.25f)
         }
-        val color = colorRGB.mix(ColorRGB(255, 50, 60), colorRate / 100f)
+        val color = if (shadow) CrosshairRenderer.shadowColor
+        else colorRGB.mix(ColorRGB(255, 50, 60), colorRate / 100f)
 
+        if (shadow) scale *= 1.03f
         translatef(centerX, centerY, 0.0f)
         scalef(scale, scale, 1.0f)
         translatef(-centerX, -centerY, 0.0f)

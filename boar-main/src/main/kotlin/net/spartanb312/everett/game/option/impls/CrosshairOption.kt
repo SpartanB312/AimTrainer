@@ -7,8 +7,10 @@ import net.spartanb312.everett.game.render.crosshair.Crosshairs
 
 object CrosshairOption : Option("Crosshair") {
 
-    val crosshairType = setting("Crosshair Type", Crosshairs.Cross)
+    val crosshairType = setting("Crosshair Type", Crosshairs.M392E)
         .m("准星类型", "準星類別")
+    val shadow by setting("Shadow", true)
+        .m("阴影", "陰影")
 
     init {
         Crosshairs.entries.forEach {

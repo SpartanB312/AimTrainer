@@ -1,10 +1,11 @@
 package net.spartanb312.everett.graphics.model
 
+import net.spartanb312.everett.graphics.GLHelper
+import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.misc.createDirectByteBuffer
 import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL30
-import org.lwjgl.opengl.GL30.glGenVertexArrays
+import org.lwjgl.opengl.GL15
 
 abstract class Mesh(
     val vertices: MutableList<Vertex>,
@@ -15,7 +16,8 @@ abstract class Mesh(
     val indices: IntArray,
 ) {
 
-    val vao = glGenVertexArrays()
+    // Nvidia GeForce 6000/7000 series supports VAO via ARB
+    val vao = if (RS.compat.useVAO) GLHelper.glGenVertexArrays() else 0
 
     // Textures
     val diffuseTexture = diffuse.getOrNull(0)
@@ -35,6 +37,7 @@ abstract class Mesh(
         }
     }
 
+    // TODO: OGL2.1 implementation
     open fun setupMesh() {
         val buffer = createDirectByteBuffer(vertices.size * 32).apply {
             vertices.forEach {
@@ -56,33 +59,33 @@ abstract class Mesh(
             }
             flip()
         }
-        val vbo = GL30.glGenBuffers()
-        val ibo = GL30.glGenBuffers()
+        val vbo = GLHelper.glGenBuffers()
+        val ibo = GLHelper.glGenBuffers()
 
-        GL30.glBindVertexArray(vao)
+        GLHelper.glBindVertexArray(vao)
 
         // Buffer data
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, vbo)
-        GL30.glBufferData(GL30.GL_ARRAY_BUFFER, buffer, GL30.GL_STATIC_DRAW)
+        GLHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo)
+        GLHelper.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW)
 
         // Vertex
-        GL30.glVertexAttribPointer(0, 3, GL30.GL_FLOAT, false, 32, 0)
-        GL30.glEnableVertexAttribArray(0)
+        GLHelper.glVertexAttribPointer(0, 3, GL_FLOAT, false, 32, 0)
+        GLHelper.glEnableVertexAttribArray(0)
 
         // TexCoords
-        GL30.glVertexAttribPointer(1, 2, GL30.GL_FLOAT, false, 32, 12)
-        GL30.glEnableVertexAttribArray(1)
+        GLHelper.glVertexAttribPointer(1, 2, GL_FLOAT, false, 32, 12)
+        GLHelper.glEnableVertexAttribArray(1)
 
         // Normal
-        GL30.glVertexAttribPointer(2, 3, GL30.GL_FLOAT, false, 32, 20)
-        GL30.glEnableVertexAttribArray(2)
+        GLHelper.glVertexAttribPointer(2, 3, GL_FLOAT, false, 32, 20)
+        GLHelper.glEnableVertexAttribArray(2)
 
         // Buffer EBO
-        GL30.glBindBuffer(GL30.GL_ELEMENT_ARRAY_BUFFER, ibo)
-        GL30.glBufferData(GL30.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL30.GL_STATIC_DRAW)
+        GLHelper.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo)
+        GLHelper.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW)
 
-        GL30.glBindVertexArray(0)
-        GL30.glBindBuffer(GL30.GL_ARRAY_BUFFER, 0)
+        GLHelper.glBindVertexArray(0)
+        GLHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
     }
 
     abstract fun MatrixLayerStack.draw()

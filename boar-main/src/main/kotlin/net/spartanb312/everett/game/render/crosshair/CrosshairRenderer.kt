@@ -1,6 +1,8 @@
 package net.spartanb312.everett.game.render.crosshair
 
+import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.option.impls.CrosshairOption
+import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.utils.color.ColorRGB
@@ -10,6 +12,8 @@ object CrosshairRenderer {
     var enabled = false; private set
     val transparentAlphaRate = 0.627451f
     val currentCrosshair: Crosshairs get() = CrosshairOption.crosshairType.value
+    val raytraced get() = Player.raytraced && SceneManager.inTraining
+    val shadowColor = ColorRGB.DARK_GRAY.alpha(128)
 
     fun onRender(fov: Float, colorRGB: ColorRGB = ColorRGB.WHITE) =
         onRender(true, RS.centerXF, RS.centerYF, fov, colorRGB)
@@ -23,7 +27,11 @@ object CrosshairRenderer {
     ) {
         RS.matrixLayer.scope {
             if (!checkEnabled || enabled) with(currentCrosshair.crosshair) {
-                onRender(centerX, centerY, fov, colorRGB)
+                if (CrosshairOption.shadow) {
+                    onRender(centerX, centerY, fov, true, colorRGB)
+                    it.recover()
+                }
+                onRender(centerX, centerY, fov, false, colorRGB)
             }
         }
     }

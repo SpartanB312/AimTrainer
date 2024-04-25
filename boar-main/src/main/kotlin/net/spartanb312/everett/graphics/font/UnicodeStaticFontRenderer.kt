@@ -200,11 +200,11 @@ class UnicodeStaticFontRenderer(
                     }
                     GLHelper.texture2d = false
                 } else {
-                    GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universe) {
-                        universe(endX, startY, 1f, 0f, if (shadow) shadowColor.alpha(alpha) else color1)
-                        universe(startX, startY, 0f, 0f, if (shadow) shadowColor.alpha(alpha) else color2)
-                        universe(endX, endY, 1f, 1f, if (shadow) shadowColor.alpha(alpha) else color4)
-                        universe(startX, endY, 0f, 1f, if (shadow) shadowColor.alpha(alpha) else color3)
+                    GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                        universal(endX, startY, 1f, 0f, if (shadow) shadowColor.alpha(alpha) else color1)
+                        universal(startX, startY, 0f, 0f, if (shadow) shadowColor.alpha(alpha) else color2)
+                        universal(endX, endY, 1f, 1f, if (shadow) shadowColor.alpha(alpha) else color4)
+                        universal(startX, endY, 0f, 1f, if (shadow) shadowColor.alpha(alpha) else color3)
                     }
                 }
             }

@@ -169,6 +169,12 @@ object Player : EntityPlayer(), Controller {
         }
     }
 
+    fun reset() {
+        yaw = 0f
+        pitch = 0f
+        pos = Vec3f.ZERO
+    }
+
     override var pitch: Float
         get() = camera.pitch
         set(value) {
