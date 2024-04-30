@@ -247,7 +247,7 @@ object PersistentMappedVertexBuffer {
             GLHelper.glBindVertexArray(vertexMode.vao)
             GL11C.glDrawArrays(mode, drawOffset, vertexSize)
             end(vertexMode.stride)
-            //GLHelper.glBindVertexArray(0)
+            // GLHelper.glBindVertexArray(0)
             vertexSize = 0
         }
     }

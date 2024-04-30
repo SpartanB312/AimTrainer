@@ -33,11 +33,11 @@ class MeshDNSH(meshData: MeshData) : Mesh(
         private val specular = shader.getUniformLocation("specularTex")
         private val height = shader.getUniformLocation("heightTex")
 
-        override fun MatrixLayerStack.draw(mesh: Mesh) {
+        override fun MatrixLayerStack.MatrixScope.draw(mesh: Mesh) {
             if (mesh.textures.isEmpty()) return
 
             shader.bind()
-            matrixArray.glUniform(matrixUniform)
+            layer.matrixArray.glUniform(matrixUniform)
             mesh.diffuseTexture?.let {
                 GLHelper.glActiveTexture(GL_TEXTURE0)
                 glUniform1i(diffuse, 0)
@@ -65,10 +65,11 @@ class MeshDNSH(meshData: MeshData) : Mesh(
             // Draw mesh
             GLHelper.glBindVertexArray(mesh.vao)
             glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
-            //GLHelper.glBindVertexArray(0)
-
+            if (RS.compatMode) {
+                GLHelper.glBindVertexArray(0)
+                shader.unbind()
+            }
             GLHelper.glActiveTexture(GL_TEXTURE0)
-            if (RS.compatMode) shader.unbind()
         }
 
     }
@@ -77,7 +78,7 @@ class MeshDNSH(meshData: MeshData) : Mesh(
         setupMesh()
     }
 
-    override fun MatrixLayerStack.draw() = draw(this@MeshDNSH)
+    override fun MatrixLayerStack.MatrixScope.draw() = draw(this@MeshDNSH)
 
     override fun drawLegacy() {
         GLHelper.texture2d = true

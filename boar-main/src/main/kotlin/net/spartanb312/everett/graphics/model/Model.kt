@@ -21,8 +21,8 @@ class Model(
     private val textures = mutableListOf<ModelTexture>()
     private val meshes = mutableListOf<Mesh>()
 
-    fun drawModel(matrixLayerStack: MatrixLayerStack) {
-        meshes.forEach { with(it) { matrixLayerStack.draw() } }
+    fun drawModel(scope: MatrixLayerStack.MatrixScope) {
+        meshes.forEach { with(it) { scope.draw() } }
     }
 
     fun loadModel() {

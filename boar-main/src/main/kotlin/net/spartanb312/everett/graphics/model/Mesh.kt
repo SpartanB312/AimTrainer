@@ -87,7 +87,7 @@ abstract class Mesh(
         GLHelper.glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
-    abstract fun MatrixLayerStack.draw()
+    abstract fun MatrixLayerStack.MatrixScope.draw()
     abstract fun drawLegacy()
 
 }

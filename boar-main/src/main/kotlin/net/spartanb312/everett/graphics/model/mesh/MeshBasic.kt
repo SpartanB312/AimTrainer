@@ -30,12 +30,12 @@ class MeshBasic(meshData: MeshData) : Mesh(
         private val matrixUniform = shader.getUniformLocation("matrix")
         private val diffuse = shader.getUniformLocation("diffuseTex")
 
-        override fun MatrixLayerStack.draw(mesh: Mesh) {
+        override fun MatrixLayerStack.MatrixScope.draw(mesh: Mesh) {
             if (mesh.textures.isEmpty()) return
             GLHelper.cull = false
 
             shader.bind()
-            matrixArray.glUniform(matrixUniform)
+            layer.matrixArray.glUniform(matrixUniform)
             mesh.diffuseTexture?.let {
                 GLHelper.glActiveTexture(GL_TEXTURE0)
                 GLHelper.glUniform1(diffuse, 0)
@@ -45,10 +45,11 @@ class MeshBasic(meshData: MeshData) : Mesh(
             // Draw mesh
             GLHelper.glBindVertexArray(mesh.vao)
             glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
-            //GLHelper.glBindVertexArray(0)
-
+            if (RS.compatMode) {
+                GLHelper.glBindVertexArray(0)
+                shader.unbind()
+            }
             GLHelper.glActiveTexture(GL_TEXTURE0)
-            if (RS.compatMode) shader.unbind()
         }
 
     }
@@ -57,7 +58,7 @@ class MeshBasic(meshData: MeshData) : Mesh(
         setupMesh()
     }
 
-    override fun MatrixLayerStack.draw() = draw(this@MeshBasic)
+    override fun MatrixLayerStack.MatrixScope.draw() = draw(this@MeshBasic)
 
     override fun drawLegacy() {
         GLHelper.texture2d = true

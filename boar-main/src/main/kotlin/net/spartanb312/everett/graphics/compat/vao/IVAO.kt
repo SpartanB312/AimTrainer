@@ -6,7 +6,7 @@ interface IVAO {
 
     companion object {
         @JvmStatic
-        var currentVAO = 0
+        var currentVAO = -1
     }
 
     //GL30

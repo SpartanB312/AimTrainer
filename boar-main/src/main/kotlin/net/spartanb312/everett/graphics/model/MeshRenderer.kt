@@ -5,5 +5,5 @@ import net.spartanb312.everett.graphics.shader.Shader
 
 abstract class MeshRenderer {
     abstract val shader: Shader
-    abstract fun MatrixLayerStack.draw(mesh: Mesh)
+    abstract fun MatrixLayerStack.MatrixScope.draw(mesh: Mesh)
 }
