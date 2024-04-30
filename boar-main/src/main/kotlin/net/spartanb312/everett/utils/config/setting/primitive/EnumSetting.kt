@@ -1,7 +1,7 @@
-package net.spartanb312.everett.game.config.setting.primitive
+package net.spartanb312.everett.utils.config.setting.primitive
 
 import com.google.gson.JsonObject
-import net.spartanb312.everett.game.config.setting.MutableSetting
+import net.spartanb312.everett.utils.config.setting.MutableSetting
 import net.spartanb312.everett.utils.misc.last
 import net.spartanb312.everett.utils.misc.next
 

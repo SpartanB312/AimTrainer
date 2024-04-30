@@ -1,9 +1,9 @@
 package net.spartanb312.everett.game.option.impls
 
 import net.spartanb312.everett.game.Language.m
-import net.spartanb312.everett.game.config.setting.at
-import net.spartanb312.everett.game.config.setting.m
-import net.spartanb312.everett.game.config.setting.whenTrue
+import net.spartanb312.everett.utils.config.setting.at
+import net.spartanb312.everett.utils.config.setting.m
+import net.spartanb312.everett.utils.config.setting.whenTrue
 import net.spartanb312.everett.game.option.Option
 import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.language.MultiText

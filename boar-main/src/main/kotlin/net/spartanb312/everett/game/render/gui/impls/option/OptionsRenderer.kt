@@ -1,8 +1,8 @@
 package net.spartanb312.everett.game.render.gui.impls.option
 
-import net.spartanb312.everett.game.config.setting.number.NumberSetting
-import net.spartanb312.everett.game.config.setting.primitive.BooleanSetting
-import net.spartanb312.everett.game.config.setting.primitive.EnumSetting
+import net.spartanb312.everett.utils.config.setting.number.NumberSetting
+import net.spartanb312.everett.utils.config.setting.primitive.BooleanSetting
+import net.spartanb312.everett.utils.config.setting.primitive.EnumSetting
 import net.spartanb312.everett.game.input.InputManager
 import net.spartanb312.everett.game.input.interfaces.MouseClickListener
 import net.spartanb312.everett.game.input.interfaces.MouseReleaseListener

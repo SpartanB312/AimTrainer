@@ -1,22 +1,22 @@
-package net.spartanb312.everett.game.config.setting.number
+package net.spartanb312.everett.utils.config.setting.number
 
 import com.google.gson.JsonObject
 import java.text.DecimalFormat
 import kotlin.math.roundToInt
 
-class FloatSetting(
+class DoubleSetting(
     name: String,
-    value: Float,
-    range: ClosedFloatingPointRange<Float>,
-    step: Float,
+    value: Double,
+    range: ClosedFloatingPointRange<Double>,
+    step: Double,
     description: String = "",
     visibility: (() -> Boolean) = { true }
-) : NumberSetting<Float>(name, value, range, step, description, visibility) {
+) : NumberSetting<Double>(name, value, range, step, description, visibility) {
 
-    private val format = DecimalFormat("0.0")
+    private val format = DecimalFormat("0.000")
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
-        value = (jsonObject[nameString]?.asFloat ?: value).coerceIn(range)
+        value = (jsonObject[nameString]?.asDouble ?: value).coerceIn(range)
     }
 
     override val width = range.endInclusive - range.start
@@ -31,7 +31,7 @@ class FloatSetting(
     }
 
     override fun getPercentBar(): Float {
-        return ((value - range.start) / (range.endInclusive - range.start))
+        return ((value - range.start) / (range.endInclusive - range.start)).toFloat()
     }
 
 }

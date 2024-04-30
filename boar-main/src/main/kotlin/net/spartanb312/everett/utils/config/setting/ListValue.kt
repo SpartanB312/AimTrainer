@@ -1,4 +1,4 @@
-package net.spartanb312.everett.game.config.setting
+package net.spartanb312.everett.utils.config.setting
 
 import com.google.gson.JsonArray
 import com.google.gson.JsonObject

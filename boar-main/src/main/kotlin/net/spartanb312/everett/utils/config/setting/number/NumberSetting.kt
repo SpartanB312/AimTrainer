@@ -1,6 +1,6 @@
-package net.spartanb312.everett.game.config.setting.number
+package net.spartanb312.everett.utils.config.setting.number
 
-import net.spartanb312.everett.game.config.setting.MutableSetting
+import net.spartanb312.everett.utils.config.setting.MutableSetting
 
 abstract class NumberSetting<T>(
     name: String,

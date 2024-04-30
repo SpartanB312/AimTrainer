@@ -1,6 +1,6 @@
 package net.spartanb312.everett.game.render.gui.impls.option
 
-import net.spartanb312.everett.game.config.setting.number.NumberSetting
+import net.spartanb312.everett.utils.config.setting.number.NumberSetting
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB

@@ -1,6 +1,6 @@
 package net.spartanb312.everett.game.option.impls
 
-import net.spartanb312.everett.game.config.setting.m
+import net.spartanb312.everett.utils.config.setting.m
 import net.spartanb312.everett.game.option.Option
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.RenderSystem

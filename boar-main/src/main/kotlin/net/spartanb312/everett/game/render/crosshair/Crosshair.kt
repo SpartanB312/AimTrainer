@@ -1,8 +1,8 @@
 package net.spartanb312.everett.game.render.crosshair
 
 import net.spartanb312.everett.game.Language
-import net.spartanb312.everett.game.config.setting.AbstractSetting
-import net.spartanb312.everett.game.config.setting.SettingRegister
+import net.spartanb312.everett.utils.config.setting.AbstractSetting
+import net.spartanb312.everett.utils.config.setting.SettingRegister
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack

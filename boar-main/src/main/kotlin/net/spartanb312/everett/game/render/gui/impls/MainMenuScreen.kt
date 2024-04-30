@@ -1,6 +1,8 @@
 package net.spartanb312.everett.game.render.gui.impls
 
 import net.spartanb312.everett.AimTrainer.AIM_TRAINER_VERSION
+import net.spartanb312.everett.game.Language
+import net.spartanb312.everett.game.Language.m
 import net.spartanb312.everett.game.forge.Forge
 import net.spartanb312.everett.game.render.*
 import net.spartanb312.everett.game.render.gui.GuiScreen
@@ -10,14 +12,13 @@ import net.spartanb312.everett.game.training.QuickPlay
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.font.drawColoredString
-import net.spartanb312.everett.game.Language
-import net.spartanb312.everett.game.Language.m
-import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.launch.Main
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
+import kotlin.math.max
 import kotlin.math.min
 import kotlin.system.exitProcess
 
@@ -67,6 +68,7 @@ object MainMenuScreen : GuiScreen() {
 
         startY += FontRendererROG.getHeight()
         startY += 100 * scale
+        startY = max(startY, RS.heightF * 0.25f)
         if (startY >= RS.heightF * 0.3f) startY = RS.heightF * 0.3f
 
         // Select Button

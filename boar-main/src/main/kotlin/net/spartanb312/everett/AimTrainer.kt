@@ -4,7 +4,7 @@ import net.spartanb312.everett.audio.AudioSystem
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.BGMPlayer
-import net.spartanb312.everett.game.config.Configs
+import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.input.InputManager
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.ControlOption

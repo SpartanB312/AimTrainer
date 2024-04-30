@@ -1,12 +1,12 @@
-package net.spartanb312.everett.game.config.setting
+package net.spartanb312.everett.utils.config.setting
 
-import net.spartanb312.everett.game.config.setting.number.DoubleSetting
-import net.spartanb312.everett.game.config.setting.number.FloatSetting
-import net.spartanb312.everett.game.config.setting.number.IntegerSetting
-import net.spartanb312.everett.game.config.setting.number.LongSetting
-import net.spartanb312.everett.game.config.setting.primitive.BooleanSetting
-import net.spartanb312.everett.game.config.setting.primitive.EnumSetting
-import net.spartanb312.everett.game.config.setting.primitive.StringSetting
+import net.spartanb312.everett.utils.config.setting.number.DoubleSetting
+import net.spartanb312.everett.utils.config.setting.number.FloatSetting
+import net.spartanb312.everett.utils.config.setting.number.IntegerSetting
+import net.spartanb312.everett.utils.config.setting.number.LongSetting
+import net.spartanb312.everett.utils.config.setting.primitive.BooleanSetting
+import net.spartanb312.everett.utils.config.setting.primitive.EnumSetting
+import net.spartanb312.everett.utils.config.setting.primitive.StringSetting
 import net.spartanb312.everett.utils.language.Languages
 
 interface SettingRegister<T> {

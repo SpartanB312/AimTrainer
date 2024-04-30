@@ -1,11 +1,14 @@
-package net.spartanb312.everett.game.config
+package net.spartanb312.everett.utils.config
 
 import com.google.gson.JsonObject
-import net.spartanb312.everett.game.Language
-import net.spartanb312.everett.game.config.setting.AbstractSetting
-import net.spartanb312.everett.game.config.setting.SettingRegister
+import net.spartanb312.everett.utils.config.setting.AbstractSetting
+import net.spartanb312.everett.utils.config.setting.SettingRegister
+import net.spartanb312.everett.utils.language.LanguageManager
 
-open class Configurable(var name: String) : SettingRegister<Configurable> {
+open class Configurable(
+    var name: String,
+    private val languageManager: LanguageManager
+) : SettingRegister<Configurable> {
 
     val settings = mutableListOf<AbstractSetting<*>>()
 
@@ -21,7 +24,7 @@ open class Configurable(var name: String) : SettingRegister<Configurable> {
 
     override fun <S : AbstractSetting<*>> Configurable.setting(setting: S): S {
         settings.add(setting)
-        Language.add(setting.multiText)
+        languageManager.add(setting.multiText)
         return setting
     }
 

@@ -1,10 +1,7 @@
 package net.spartanb312.everett.game.render
 
+import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Player
-import net.spartanb312.everett.game.config.Configurable
-import net.spartanb312.everett.game.config.setting.alias
-import net.spartanb312.everett.game.config.setting.m
-import net.spartanb312.everett.game.config.setting.whenTrue
 import net.spartanb312.everett.game.entity.Ball
 import net.spartanb312.everett.game.entity.EntityPlayer
 import net.spartanb312.everett.game.option.impls.VideoOption
@@ -16,6 +13,10 @@ import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.matrix.translatef
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.config.Configurable
+import net.spartanb312.everett.utils.config.setting.alias
+import net.spartanb312.everett.utils.config.setting.m
+import net.spartanb312.everett.utils.config.setting.whenTrue
 import net.spartanb312.everett.utils.math.MathUtils.mul
 import net.spartanb312.everett.utils.math.MathUtils.v2hFOV
 import net.spartanb312.everett.utils.math.toRadian
@@ -23,11 +24,10 @@ import net.spartanb312.everett.utils.math.vector.Vec2f
 import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.math.vector.distanceTo
 import org.joml.Matrix4f
-import org.lwjgl.opengl.GL11
 import kotlin.math.abs
 import kotlin.math.max
 
-object Radar : Configurable("Radar") {
+object Radar : Configurable("Radar", Language) {
 
     private var generalScale by setting("Radar-Scale", 1f, 0.1f..5.0f, 0.1f).alias("Radar Scale")
         .m("雷达大小", "雷達尺寸")

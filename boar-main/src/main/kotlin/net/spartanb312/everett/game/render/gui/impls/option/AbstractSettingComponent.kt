@@ -1,6 +1,6 @@
 package net.spartanb312.everett.game.render.gui.impls.option
 
-import net.spartanb312.everett.game.config.setting.AbstractSetting
+import net.spartanb312.everett.utils.config.setting.AbstractSetting
 import net.spartanb312.everett.game.input.interfaces.MouseClickListener
 import net.spartanb312.everett.game.input.interfaces.MouseReleaseListener
 import net.spartanb312.everett.utils.math.vector.Vec2i

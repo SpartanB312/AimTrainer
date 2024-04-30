@@ -1,8 +1,8 @@
 package net.spartanb312.everett.game.render.crosshair.impls.gun
 
-import net.spartanb312.everett.game.config.setting.alias
-import net.spartanb312.everett.game.config.setting.m
-import net.spartanb312.everett.game.config.setting.whenFalse
+import net.spartanb312.everett.utils.config.setting.alias
+import net.spartanb312.everett.utils.config.setting.m
+import net.spartanb312.everett.utils.config.setting.whenFalse
 import net.spartanb312.everett.game.render.crosshair.Crosshair
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.graphics.RS
@@ -17,7 +17,7 @@ object CrosshairMA40 : GunCrosshair, Crosshair(1.3f / 16f) {
 
     private val followFOV = setting("MA40-Follow FOV", true)
         .alias("Follow FOV").m("准星大小跟随FOV", "準星隨FOV變化")
-    private val size by setting("MA40-Specified FOV", 78f, 60f..120f)
+    private val size by setting("MA40-Specified FOV", 78f, 60f..150f)
         .alias("Specified FOV").m("指定FOV的准星大小", "指定FOV下的準星")
         .whenFalse(followFOV)
 

@@ -1,6 +1,6 @@
 package net.spartanb312.everett.game.render.gui.impls
 
-import net.spartanb312.everett.game.config.Configs
+import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.option.impls.ControlOption.defaultTraining
 import net.spartanb312.everett.game.render.Background
 import net.spartanb312.everett.game.render.FontRendererMain

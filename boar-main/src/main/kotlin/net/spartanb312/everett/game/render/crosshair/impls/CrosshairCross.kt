@@ -1,7 +1,7 @@
 package net.spartanb312.everett.game.render.crosshair.impls
 
-import net.spartanb312.everett.game.config.setting.alias
-import net.spartanb312.everett.game.config.setting.m
+import net.spartanb312.everett.utils.config.setting.alias
+import net.spartanb312.everett.utils.config.setting.m
 import net.spartanb312.everett.game.render.crosshair.Crosshair
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.graphics.RS

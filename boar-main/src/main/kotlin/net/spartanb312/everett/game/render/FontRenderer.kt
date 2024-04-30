@@ -1,6 +1,6 @@
 package net.spartanb312.everett.game.render
 
-import net.spartanb312.everett.game.config.setting.ListSetting
+import net.spartanb312.everett.utils.config.setting.ListSetting
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.graphics.cache.CacheManager
 import net.spartanb312.everett.graphics.font.FontRenderer

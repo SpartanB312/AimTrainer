@@ -1,8 +1,9 @@
-package net.spartanb312.everett.game.config
+package net.spartanb312.everett.game
 
 import com.google.gson.*
 import net.spartanb312.everett.game.option.impls.*
 import net.spartanb312.everett.game.render.FontCacheManager
+import net.spartanb312.everett.utils.config.Configurable
 import java.io.*
 
 object Configs {
