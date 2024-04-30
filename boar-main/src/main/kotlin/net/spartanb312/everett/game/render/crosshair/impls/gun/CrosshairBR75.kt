@@ -30,7 +30,7 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f) {
     private val colorTimer = Timer()
     private var colorRate = 0F
 
-    override fun MatrixLayerStack.onRender(
+    override fun MatrixLayerStack.MatrixScope.onRender(
         centerX: Float,
         centerY: Float,
         fov: Float,

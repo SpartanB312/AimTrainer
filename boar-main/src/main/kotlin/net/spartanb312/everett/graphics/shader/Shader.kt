@@ -2,9 +2,16 @@ package net.spartanb312.everett.graphics.shader
 
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.GLObject
+import net.spartanb312.everett.graphics.OpenGL.*
+import net.spartanb312.everett.graphics.compat.Delegate
+import net.spartanb312.everett.graphics.matrix.getFloatArray
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.ResourceHelper
-import org.lwjgl.opengl.GL20
+import net.spartanb312.everett.utils.math.vector.Vec2f
+import net.spartanb312.everett.utils.math.vector.Vec2i
+import net.spartanb312.everett.utils.math.vector.Vec3f
+import net.spartanb312.everett.utils.math.vector.Vec3i
+import org.joml.Matrix4f
 import kotlin.contracts.ExperimentalContracts
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
@@ -17,18 +24,18 @@ open class Shader(
 
     init {
         val id = GLHelper.glCreateProgram()
-        val vshID = createShader(vsh, GL20.GL_VERTEX_SHADER)
-        val fshID = createShader(fsh, GL20.GL_FRAGMENT_SHADER)
+        val vshID = createShader(vsh, GL_VERTEX_SHADER)
+        val fshID = createShader(fsh, GL_FRAGMENT_SHADER)
 
         GLHelper.glAttachShader(id, vshID)
         GLHelper.glAttachShader(id, fshID)
         GLHelper.glLinkProgram(id)
 
-        if (GLHelper.glGetProgrami(id, GL20.GL_LINK_STATUS) == 0) {
+        if (GLHelper.glGetProgrami(id, GL_LINK_STATUS) == 0) {
             GLHelper.glDeleteProgram(id)
             GLHelper.glDeleteShader(vshID)
             GLHelper.glDeleteShader(fshID)
-            throw IllegalStateException("Failed to link shader " + GL20.glGetProgramInfoLog(id, 1024))
+            throw IllegalStateException("Failed to link shader " + glGetProgramInfoLog(id, 1024))
         }
 
         GLHelper.glDeleteShader(vshID)
@@ -48,9 +55,9 @@ open class Shader(
         GLHelper.glShaderSource(shaderId, srcString)
         GLHelper.glCompileShader(shaderId)
 
-        if (GLHelper.glGetShaderi(shaderId, GL20.GL_COMPILE_STATUS) == 0) {
+        if (GLHelper.glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {
             GLHelper.glDeleteShader(shaderId)
-            Logger.error("Failed to create ${if (shaderType == GL20.GL_VERTEX_SHADER) "vertex shader" else "frag shader"}: $path")
+            Logger.error("Failed to create ${if (shaderType == GL_VERTEX_SHADER) "vertex shader" else "frag shader"}: $path")
             return 0
         }
         return shaderId
@@ -67,51 +74,54 @@ open class Shader(
 
     fun destroy() = GLHelper.glDeleteProgram(id)
 
-    @Deprecated("Get uniform location when called", ReplaceWith("glUniform1i(gl)", "org.lwjgl.opengl.GL20.glUniform1i"))
-    fun setBoolean(name: String, value: Boolean) {
-        setBoolean(getUniformLocation(name), value)
-    }
-
-    @Deprecated("Get uniform location when called", ReplaceWith("glUniform1i(gl)", "org.lwjgl.opengl.GL20.glUniform1i"))
-    fun setInt(name: String, value: Int) {
-        setInt(getUniformLocation(name), value)
-    }
-
-    @Deprecated("Get uniform location when called", ReplaceWith("glUniform1f(gl)", "org.lwjgl.opengl.GL20.glUniform1f"))
-    fun setFloat(name: String, value: Float) {
-        setFloat(getUniformLocation(name), value)
-    }
-
-    fun setVec4(name: String, x: Float, y: Float, z: Float, w: Float) {
-        GLHelper.glUniform4(getUniformLocation(name), x, y, z, w)
-    }
-
-    fun setVec3(name: String, x: Float, y: Float, z: Float) {
-        GLHelper.glUniform3(getUniformLocation(name), x, y, z)
-    }
-
-    fun setVec2(name: String, x: Float, y: Float) {
-        GLHelper.glUniform2(getUniformLocation(name), x, y)
-    }
-
+    @Delegate
     fun getUniformLocation(name: String) = GLHelper.glGetUniformLocation(id, name)
 
-    fun setBoolean(location: Int, value: Boolean) {
-        GLHelper.glUniform1(location, if (value) 1 else 0)
-    }
+}
 
-    fun setInt(location: Int, value: Int) {
-        GLHelper.glUniform1(location, value)
-    }
+@Delegate
+fun Boolean.glUniform(location: Int) {
+    GLHelper.glUniform1(location, if (this) 1 else 0)
+}
 
-    fun setFloat(location: Int, value: Float) {
-        GLHelper.glUniform1(location, value)
-    }
+@Delegate
+fun Int.glUniform(location: Int) {
+    GLHelper.glUniform1(location, this)
+}
 
-    //fun uploadMatrix(location: Int, matrix: FloatBuffer) {
-    //    GLStateManager.glUniformMatrix4(location, false, matrix)
-    //}
+@Delegate
+fun Float.glUniform(location: Int) {
+    GLHelper.glUniform1(location, this)
+}
 
+@Delegate
+fun Vec2i.glUniform(location: Int) {
+    GLHelper.glUniform2(location, this.x, this.y)
+}
+
+@Delegate
+fun Vec2f.glUniform(location: Int) {
+    GLHelper.glUniform2(location, this.x, this.y)
+}
+
+@Delegate
+fun Vec3i.glUniform(location: Int) {
+    GLHelper.glUniform3(location, this.x, this.y, this.z)
+}
+
+@Delegate
+fun Vec3f.glUniform(location: Int) {
+    GLHelper.glUniform3(location, this.x, this.y, this.z)
+}
+
+@Delegate
+fun Matrix4f.glUniform(location: Int, transpose: Boolean = false) {
+    GLHelper.glUniformMatrix4(location, transpose, this.getFloatArray())
+}
+
+@Delegate
+fun FloatArray.glUniform(location: Int, transpose: Boolean = false) {
+    GLHelper.glUniformMatrix4(location, transpose, this)
 }
 
 @OptIn(ExperimentalContracts::class)

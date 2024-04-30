@@ -33,6 +33,9 @@ object ModuleScreen : GuiScreen() {
         modules.add(AimTrainer.javaClass.getAnnotation(Module::class.java))
     }
 
+    private val width2 = FontRendererMain.getWidth("Description: ")
+    private val width3 = FontRendererMain.getWidth("Author: ")
+
     override fun onRender(mouseX: Double, mouseY: Double) {
         Background.renderBackground(mouseX, mouseY)
         FontRendererROG.drawCenteredStringWithShadow("Modules", RS.width / 2f, RS.heightF * 0.05f, scale = 0.8f)
@@ -75,23 +78,35 @@ object ModuleScreen : GuiScreen() {
                     startY + FontRendererMain.getHeight() * 2,
                     ColorRGB.WHITE.alpha(if (isHoovered) 128 else 64)
                 )
+
+                // Name
+                val nameStr = "$name "
+                val width1 = FontRendererMain.getWidth(nameStr)
+                FontRendererMain.drawStringWithShadow(nameStr, startX + 10f, startY)
                 FontRendererMain.drawStringWithShadow(
-                    "&f$name &r$version",
-                    startX + 10f,
+                    version,
+                    startX + 10f + width1,
                     startY,
                     ColorRGB.GREEN
                 )
                 startY += FontRendererMain.getHeight()
+
+                // Description
+                FontRendererMain.drawStringWithShadow("Description: ", startX + 10f, startY)
                 FontRendererMain.drawStringWithShadow(
-                    "&fDescription: &r$desc",
-                    startX + 10f,
+                    desc,
+                    startX + 10f + width2,
                     startY,
                     ColorRGB.AQUA
                 )
-                val authorInfo = "&fAuthor: &r" + if (author == "") " Unknown" else author
+
+                // Author
+                val authorInfo = if (author == "") " Unknown" else author
+                val width4 = FontRendererMain.getWidth(authorInfo)
+                FontRendererMain.drawStringWithShadow("Author: ", endX - 10f - width3 - width4, startY)
                 FontRendererMain.drawStringWithShadow(
-                    authorInfo,
-                    endX - 10f - FontRendererMain.getWidth(authorInfo),
+                    if (author == "") " Unknown" else author,
+                    endX - 10f - width4,
                     startY,
                     ColorRGB.AQUA
                 )

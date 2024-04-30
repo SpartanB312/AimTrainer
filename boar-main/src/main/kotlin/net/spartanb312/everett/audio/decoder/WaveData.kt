@@ -50,7 +50,6 @@ class WaveData(
             }
         }
 
-
         @JvmStatic
         fun create(input: AudioInputStream): WaveData? {
             // Configure format

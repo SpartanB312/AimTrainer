@@ -61,7 +61,6 @@ object Radar : Configurable("Radar") {
             in 1000..2000 -> ((1 - (time - 1000) / 1000f) * 64).toInt()
             else -> 0
         }
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA)
         RenderUtils.drawArc(
             Vec2f.ZERO,
             pulseRadius,

@@ -32,7 +32,7 @@ abstract class Camera(
         updateCamera: Boolean = false
     )
 
-    fun MatrixLayerStack.project(
+    fun MatrixLayerStack.MatrixScope.project(
         yaw: Float = this@Camera.yaw,
         pitch: Float = this@Camera.pitch,
         position: Vec3f = this@Camera.cameraPos,
@@ -52,7 +52,7 @@ abstract class Camera(
         block.invoke(this@Camera)
     }
 
-    object Default : Camera() {
+    object HaloSeries : Camera() {
         private var lastMouseX = RenderSystem.mouseXD
         private var lastMouseY = RenderSystem.mouseYD
         override fun onUpdate(
@@ -91,7 +91,7 @@ abstract class Camera(
     }
 
     companion object {
-        fun MatrixLayerStack.project(
+        fun MatrixLayerStack.MatrixScope.project(
             yaw: Float,
             pitch: Float,
             position: Vec3f = Vec3f.ZERO,

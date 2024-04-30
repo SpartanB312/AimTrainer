@@ -6,6 +6,7 @@ import net.spartanb312.everett.graphics.RS
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL11
 import java.util.*
+import java.util.concurrent.atomic.AtomicInteger
 
 class MatrixLayerStack {
 
@@ -14,14 +15,12 @@ class MatrixLayerStack {
     var checkID = 0L
 
     fun pushMatrixLayer(matrix4f: Matrix4f = Matrix4f()) {
-        checkID++
         if (RS.compatMode) GLHelper.pushMatrixAll()
         stack.push(matrix4f)
         stateStack.push(getMatrixResult())
     }
 
     fun popMatrixLayer(): Matrix4f {
-        checkID++
         if (RS.compatMode) GLHelper.popMatrixAll()
         if (stateStack.isNotEmpty()) stateStack.pop()
         return if (stack.empty()) {
@@ -51,36 +50,52 @@ class MatrixLayerStack {
 
     fun makeIdentity(): Matrix4f = peek.identity()
 
-    fun apply(matrix4f: Matrix4f): Matrix4f {
-        checkID++
+    fun apply(checkInc: Int, matrix4f: Matrix4f): Matrix4f {
+        checkID += checkInc
         if (RS.compatMode) GL11.glLoadMatrixf(matrix4f.getFloatArray())
         return peek.set(matrix4f)
     }
 
-    fun mul(matrix4f: Matrix4f): Matrix4f {
-        checkID++
+    fun mul(checkInc: Int, matrix4f: Matrix4f): Matrix4f {
+        checkID += checkInc
         if (RS.compatMode) GL11.glMultMatrixf(matrix4f.getFloatArray())
         return peek.mul(matrix4f)
     }
 
-}
-
-class MatrixScope(private val stack: MatrixLayerStack, preMat: Matrix4f) {
-    private val prevMat = Matrix4f(preMat)
-    fun recover() {
-        stack.apply(prevMat)
+    private val id = AtomicInteger()
+    private fun genID() = id.getAndIncrement()
+    fun resetID() {
+        id.set(0)
     }
+
+    inner class MatrixScope(val layer: MatrixLayerStack, preMat: Matrix4f) {
+        private val prevMat = Matrix4f(preMat)
+        val checkInc = genID()
+        fun recover() {
+            layer.apply(checkInc, prevMat)
+        }
+    }
+
 }
 
-fun MatrixLayerStack.scope(block: MatrixLayerStack.(MatrixScope) -> Unit) {
+inline val MatrixLayerStack.newScope get() = this.MatrixScope(this, peek)
+
+inline fun MatrixLayerStack.useScope(
+    scope: MatrixLayerStack.MatrixScope,
+    block: MatrixLayerStack.MatrixScope.() -> Unit
+) {
+    val preCheckID = checkID
     if (RS.compatMode) {
-        val scope = MatrixScope(this, peek)
         pushMatrixLayer()
-        block(scope)
+        scope.block()
         popMatrixLayer()
     } else {
-        val scope = MatrixScope(this, peek)
-        block(scope)
+        scope.block()
         scope.recover()
     }
+    checkID = preCheckID
 }
+
+inline fun MatrixLayerStack.scope(
+    block: MatrixLayerStack.MatrixScope.() -> Unit
+) = useScope(newScope, block)

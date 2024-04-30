@@ -1,11 +1,10 @@
 package net.spartanb312.everett.graphics.model
 
 import net.spartanb312.everett.graphics.GLHelper
+import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.misc.createDirectByteBuffer
-import org.lwjgl.opengl.GL11.*
-import org.lwjgl.opengl.GL15
 
 abstract class Mesh(
     val vertices: MutableList<Vertex>,
@@ -65,8 +64,8 @@ abstract class Mesh(
         GLHelper.glBindVertexArray(vao)
 
         // Buffer data
-        GLHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo)
-        GLHelper.glBufferData(GL15.GL_ARRAY_BUFFER, buffer, GL15.GL_STATIC_DRAW)
+        GLHelper.glBindBuffer(GL_ARRAY_BUFFER, vbo)
+        GLHelper.glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
 
         // Vertex
         GLHelper.glVertexAttribPointer(0, 3, GL_FLOAT, false, 32, 0)
@@ -81,11 +80,11 @@ abstract class Mesh(
         GLHelper.glEnableVertexAttribArray(2)
 
         // Buffer EBO
-        GLHelper.glBindBuffer(GL15.GL_ELEMENT_ARRAY_BUFFER, ibo)
-        GLHelper.glBufferData(GL15.GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL15.GL_STATIC_DRAW)
+        GLHelper.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo)
+        GLHelper.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW)
 
         GLHelper.glBindVertexArray(0)
-        GLHelper.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
+        GLHelper.glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
     abstract fun MatrixLayerStack.draw()

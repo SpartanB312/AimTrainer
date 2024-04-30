@@ -22,7 +22,7 @@ object CrosshairCircle : Crosshair(0f) {
     private val colorTimer = Timer()
     private var colorRate = 0F
 
-    override fun MatrixLayerStack.onRender(
+    override fun MatrixLayerStack.MatrixScope.onRender(
         centerX: Float,
         centerY: Float,
         fov: Float,

@@ -8,6 +8,7 @@ import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.graphics.Camera
 import net.spartanb312.everett.graphics.RS
+import net.spartanb312.everett.graphics.matrix.newScope
 import net.spartanb312.everett.physics.Controller
 import net.spartanb312.everett.physics.world.BoundingBox
 import net.spartanb312.everett.physics.world.Box
@@ -22,7 +23,7 @@ import kotlin.math.sin
 
 object Player : EntityPlayer(), Controller {
 
-    val camera: Camera = Camera.Default
+    val camera: Camera = Camera.HaloSeries
     var lastRayTracedTarget: Entity? = null
     var rayTracedRate: Float = 0f
     val offsetPos get() = pos.plus(0.001f, 0.001f, 0.001f)
@@ -152,7 +153,7 @@ object Player : EntityPlayer(), Controller {
             else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
         } else sensK = sensitivity * 1000.0
         with(camera) {
-            RS.matrixLayer.project(
+            RS.matrixLayer.newScope.project(
                 yaw,
                 pitch,
                 pos,

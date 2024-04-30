@@ -9,10 +9,7 @@ import net.spartanb312.everett.graphics.drawing.VertexFormat
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.utils.color.ColorRGB
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL15
-import org.lwjgl.opengl.GL32
-import org.lwjgl.opengl.GL45
+import org.lwjgl.opengl.*
 import java.nio.ByteBuffer
 
 /**
@@ -20,7 +17,7 @@ import java.nio.ByteBuffer
  */
 object PersistentMappedVertexBuffer {
 
-    private val usingPMVBP = RS.compat.openGL45 && !RS.compatMode
+    private val usingPMVB = RS.compat.openGL45 && !RS.compatMode
 
     fun onSync() {
         VertexMode.values.forEach { it.onSync() }
@@ -118,20 +115,20 @@ object PersistentMappedVertexBuffer {
         }
 
         fun onSync() {
-            if (!usingPMVBP) return
+            if (!usingPMVB) return
             if (sync == 0L) {
                 if (arr.pos >= arr.len / 2) {
-                    sync = GL32.glFenceSync(GL32.GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
+                    sync = GL32C.glFenceSync(GL32.GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
                 }
             } else if (IntArray(1).apply {
-                    GL32.glGetSynciv(
+                    GL32C.glGetSynciv(
                         sync,
                         GL32.GL_SYNC_STATUS,
                         IntArray(1),
                         this
                     )
                 }[0] == GL32.GL_SIGNALED) {
-                GL32.glDeleteSync(sync)
+                GL32C.glDeleteSync(sync)
                 sync = 0L
                 arr.pos = 0L
                 drawOffset = 0
@@ -248,9 +245,9 @@ object PersistentMappedVertexBuffer {
             shader.bind()
             vertexMode.updateMatrix(RS.matrixLayer)
             GLHelper.glBindVertexArray(vertexMode.vao)
-            GL11.glDrawArrays(mode, drawOffset, vertexSize)
+            GL11C.glDrawArrays(mode, drawOffset, vertexSize)
             end(vertexMode.stride)
-            GLHelper.glBindVertexArray(0)
+            //GLHelper.glBindVertexArray(0)
             vertexSize = 0
         }
     }

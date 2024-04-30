@@ -27,7 +27,7 @@ object CrosshairMA40 : GunCrosshair, Crosshair(1.3f / 16f) {
     private val colorTimer = Timer()
     private var colorRate = 0F
 
-    override fun MatrixLayerStack.onRender(
+    override fun MatrixLayerStack.MatrixScope.onRender(
         centerX: Float,
         centerY: Float,
         fov: Float,

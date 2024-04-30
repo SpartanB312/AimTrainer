@@ -187,7 +187,6 @@ class UnicodeStaticFontRenderer(
             val alpha = ((color1.a + color2.a + color3.a + color4.a) / 4f).ceilToInt().coerceAtMost(255)
 
             texture.useTexture {
-                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 GLHelper.alpha = true
                 GLHelper.blend = true
                 if (RS.compatMode) {

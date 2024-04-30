@@ -219,7 +219,7 @@ class UnicodeFontRenderer(
             val delta = charDataArray.getOrNull(char.code)?.width ?: 0
             if (char == '§' || char == '&') {
                 val next = text.getOrNull(index + 1)
-                if (next != null && next in "0123456789abcdefr") {
+                if (next != null && next.colorCode != null) {
                     shouldSkip = true
                 }
                 continue
@@ -243,7 +243,6 @@ class UnicodeFontRenderer(
         GLHelper.smooth = true
         GLHelper.blend = true
         GLHelper.alpha = true
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         var startX = x
         var startY = y
 
@@ -419,25 +418,39 @@ class UnicodeFontRenderer(
         if (RS.compatMode) GLHelper.texture2d = false
     }
 
-    private fun Char.getColor(prev: ColorRGB = ColorRGB.WHITE): ColorRGB? = when (this) {
-        '0' -> ColorRGB(0, 0, 0)
-        '1' -> ColorRGB(0, 0, 170)
-        '2' -> ColorRGB(0, 170, 0)
-        '3' -> ColorRGB(0, 170, 170)
-        '4' -> ColorRGB(170, 0, 0)
-        '5' -> ColorRGB(170, 0, 170)
-        '6' -> ColorRGB(255, 170, 0)
-        '7' -> ColorRGB(170, 170, 170)
-        '8' -> ColorRGB(85, 85, 85)
-        '9' -> ColorRGB(85, 85, 255)
-        'a' -> ColorRGB(85, 255, 85)
-        'b' -> ColorRGB(85, 255, 255)
-        'c' -> ColorRGB(255, 85, 85)
-        'd' -> ColorRGB(255, 85, 255)
-        'e' -> ColorRGB(255, 255, 85)
-        'f' -> ColorRGB(255, 255, 255)
-        'r' -> prev
-        else -> null
+
+    private val colorArray = arrayOf(
+        ColorRGB(0, 0, 0),
+        ColorRGB(0, 0, 170),
+        ColorRGB(0, 170, 0),
+        ColorRGB(0, 170, 170),
+        ColorRGB(170, 0, 0),
+        ColorRGB(170, 0, 170),
+        ColorRGB(255, 170, 0),
+        ColorRGB(170, 170, 170),
+        ColorRGB(85, 85, 85),
+        ColorRGB(85, 85, 255),
+        ColorRGB(85, 255, 85),
+        ColorRGB(85, 255, 255),
+        ColorRGB(255, 85, 85),
+        ColorRGB(255, 85, 255),
+        ColorRGB(255, 255, 85),
+        ColorRGB(255, 255, 255)
+    )
+
+    private val Char.colorCode
+        get() = when (val preCode = code) {
+            in 48..57 -> preCode - 48
+            in 97..102 -> preCode - 87
+            else -> null
+        }
+
+    private fun Char.getColor(prev: ColorRGB = ColorRGB.WHITE): ColorRGB? {
+        return if (this == 'r') prev
+        else {
+            val code = colorCode ?: return null
+            colorArray.getOrNull(code)
+        }
     }
 
     override fun initAllChunks(instantLoad: Boolean) {

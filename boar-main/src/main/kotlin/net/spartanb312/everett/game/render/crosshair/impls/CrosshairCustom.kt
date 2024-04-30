@@ -30,7 +30,7 @@ object CrosshairCustom : Crosshair(0f) {
 
     override var clickTime = System.currentTimeMillis()
 
-    override fun MatrixLayerStack.onRender(
+    override fun MatrixLayerStack.MatrixScope.onRender(
         centerX: Float,
         centerY: Float,
         fov: Float,

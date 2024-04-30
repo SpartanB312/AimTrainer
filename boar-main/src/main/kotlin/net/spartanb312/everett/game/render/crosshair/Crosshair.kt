@@ -17,7 +17,7 @@ abstract class Crosshair(resetTime: Float, private val errorRate: Float = 0f) : 
     val resetTime = resetTime.ceilToInt()
     protected abstract var clickTime: Long
 
-    abstract fun MatrixLayerStack.onRender(
+    abstract fun MatrixLayerStack.MatrixScope.onRender(
         centerX: Float,
         centerY: Float,
         fov: Float,

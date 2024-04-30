@@ -26,7 +26,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.1.4"
+    const val ENGINE_VERSION = "1.1.5"
 
     init {
         name = "RenderThread"
@@ -240,6 +240,7 @@ object RenderSystem : Thread() {
             updateResolution()
             updateMemory()
             EngineLoopEvent.Task.Pre.post()
+            matrixLayer.resetID()
             while (true) {
                 val task = renderThreadJob.poll()
                 if (task != null) task.run()

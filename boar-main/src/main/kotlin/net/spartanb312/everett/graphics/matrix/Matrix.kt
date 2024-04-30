@@ -59,7 +59,7 @@ fun scalef(x: Float, y: Float, z: Float): Matrix4f =
 fun rotatef(angleDegree: Float, axis: Vec3f): Matrix4f =
     Matrix4f().rotate((angleDegree / (180f / PI)).toFloat(), Vector3f(axis.x, axis.y, axis.z))
 
-fun MatrixLayerStack.applyLookAt(
+fun MatrixLayerStack.MatrixScope.applyLookAt(
     eyeX: Float,
     eyeY: Float,
     eyeZ: Float,
@@ -69,9 +69,9 @@ fun MatrixLayerStack.applyLookAt(
     upX: Float,
     upY: Float,
     upZ: Float,
-): Matrix4f = apply(Matrix4f().lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ))
+): Matrix4f = layer.apply(checkInc, Matrix4f().lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ))
 
-fun MatrixLayerStack.applyOrtho(
+fun MatrixLayerStack.MatrixScope.applyOrtho(
     left: Float,
     right: Float,
     bottom: Float,
@@ -79,19 +79,19 @@ fun MatrixLayerStack.applyOrtho(
     near: Float,
     far: Float
 ): Matrix4f =
-    apply(Matrix4f().ortho(left, right, bottom, top, near, far))
+    layer.apply(checkInc, Matrix4f().ortho(left, right, bottom, top, near, far))
 
-fun MatrixLayerStack.applyPerspective(fov: Float, aspect: Float, zNear: Float, zFar: Float): Matrix4f =
-    apply(Matrix4f().perspective((fov * PI / 180f).toFloat(), aspect, zNear, zFar))
+fun MatrixLayerStack.MatrixScope.applyPerspective(fov: Float, aspect: Float, zNear: Float, zFar: Float): Matrix4f =
+    layer.apply(checkInc, Matrix4f().perspective((fov * PI / 180f).toFloat(), aspect, zNear, zFar))
 
-fun MatrixLayerStack.applyTranslate(x: Float, y: Float, z: Float): Matrix4f =
-    apply(Matrix4f().translate(x, y, z))
+fun MatrixLayerStack.MatrixScope.applyTranslate(x: Float, y: Float, z: Float): Matrix4f =
+    layer.apply(checkInc, Matrix4f().translate(x, y, z))
 
-fun MatrixLayerStack.applyScale(x: Float, y: Float, z: Float): Matrix4f =
-    apply(Matrix4f().scale(x, y, z))
+fun MatrixLayerStack.MatrixScope.applyScale(x: Float, y: Float, z: Float): Matrix4f =
+    layer.apply(checkInc, Matrix4f().scale(x, y, z))
 
-fun MatrixLayerStack.applyRotate(angleDegree: Float, axis: Vector3f): Matrix4f =
-    apply(Matrix4f().rotate((angleDegree / (180f / PI)).toFloat(), axis))
+fun MatrixLayerStack.MatrixScope.applyRotate(angleDegree: Float, axis: Vector3f): Matrix4f =
+    layer.apply(checkInc, Matrix4f().rotate((angleDegree / (180f / PI)).toFloat(), axis))
 
 fun Matrix4f.getFloatArray() = floatArrayOf(
     m00(), m01(), m02(), m03(),
@@ -101,7 +101,7 @@ fun Matrix4f.getFloatArray() = floatArrayOf(
 )
 
 // Stack
-fun MatrixLayerStack.lookAtf(
+fun MatrixLayerStack.MatrixScope.lookAtf(
     eyeX: Float,
     eyeY: Float,
     eyeZ: Float,
@@ -111,40 +111,45 @@ fun MatrixLayerStack.lookAtf(
     upX: Float,
     upY: Float,
     upZ: Float,
-): MatrixLayerStack {
-    mul(Matrix4f().lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ))
+): MatrixLayerStack.MatrixScope {
+    layer.mul(checkInc, Matrix4f().lookAt(eyeX, eyeY, eyeZ, centerX, centerY, centerZ, upX, upY, upZ))
     return this
 }
 
-fun MatrixLayerStack.orthof(
+fun MatrixLayerStack.MatrixScope.orthof(
     left: Float,
     right: Float,
     bottom: Float,
     top: Float,
     near: Float,
     far: Float
-): MatrixLayerStack {
-    mul(Matrix4f().ortho(left, right, bottom, top, near, far))
+): MatrixLayerStack.MatrixScope {
+    layer.mul(checkInc, Matrix4f().ortho(left, right, bottom, top, near, far))
     return this
 }
 
-fun MatrixLayerStack.perspectivef(fov: Float, aspect: Float, zNear: Float, zFar: Float): MatrixLayerStack {
-    mul(Matrix4f().perspective((fov * PI / 180f).toFloat(), aspect, zNear, zFar))
+fun MatrixLayerStack.MatrixScope.perspectivef(
+    fov: Float,
+    aspect: Float,
+    zNear: Float,
+    zFar: Float
+): MatrixLayerStack.MatrixScope {
+    layer.mul(checkInc, Matrix4f().perspective((fov * PI / 180f).toFloat(), aspect, zNear, zFar))
     return this
 }
 
-fun MatrixLayerStack.translatef(x: Float, y: Float, z: Float): MatrixLayerStack {
-    mul(Matrix4f().translate(x, y, z))
+fun MatrixLayerStack.MatrixScope.translatef(x: Float, y: Float, z: Float): MatrixLayerStack.MatrixScope {
+    layer.mul(checkInc, Matrix4f().translate(x, y, z))
     return this
 }
 
-fun MatrixLayerStack.scalef(x: Float, y: Float, z: Float): MatrixLayerStack {
-    mul(Matrix4f().scale(x, y, z))
+fun MatrixLayerStack.MatrixScope.scalef(x: Float, y: Float, z: Float): MatrixLayerStack.MatrixScope {
+    layer.mul(checkInc, Matrix4f().scale(x, y, z))
     return this
 }
 
-fun MatrixLayerStack.rotatef(angleDegree: Float, axis: Vec3f): MatrixLayerStack {
-    mul(Matrix4f().rotate((angleDegree / (180f / PI)).toFloat(), Vector3f(axis.x, axis.y, axis.z)))
+fun MatrixLayerStack.MatrixScope.rotatef(angleDegree: Float, axis: Vec3f): MatrixLayerStack.MatrixScope {
+    layer.mul(checkInc, Matrix4f().rotate((angleDegree / (180f / PI)).toFloat(), Vector3f(axis.x, axis.y, axis.z)))
     return this
 }
 

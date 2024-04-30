@@ -37,7 +37,6 @@ import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.opengl.GL11.*
 
-
 /**
  * An engine based on OpenGL 4.5 Core Profile
  * Compatibility mode based on OpenGL 2.1 (Minimal requirements)

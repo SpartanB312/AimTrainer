@@ -10,7 +10,11 @@ object GL30VAO : IVAO {
     override fun glDeleteVertexArrays(array: Int) =
         GL30C.glDeleteVertexArrays(array)
 
-    override fun glBindVertexArray(array: Int) =
-        GL30C.glBindVertexArray(array)
+    override fun glBindVertexArray(array: Int) {
+        if (IVAO.currentVAO != array) {
+            GL30C.glBindVertexArray(array)
+            IVAO.currentVAO = array
+        }
+    }
 
 }

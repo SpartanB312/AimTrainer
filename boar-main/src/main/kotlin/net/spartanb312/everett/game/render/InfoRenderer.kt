@@ -21,7 +21,7 @@ object InfoRenderer {
 
     private val leftDownInfo = mutableListOf(
         {
-            when (Camera.Default.yaw % 360) {
+            when (Camera.HaloSeries.yaw % 360) {
                 in 0f..22.5f -> "East&f [+X]"
                 in 22.5f..67.5f -> "South East&f [+X +Z]"
                 in 67.5f..112.5f -> "South&f [+Z]"
@@ -34,9 +34,9 @@ object InfoRenderer {
             }
         },
         {
-            val x1 = Formatter().format("%.2f", Camera.Default.cameraPos.x).toString()
-            val y1 = Formatter().format("%.2f", Camera.Default.cameraPos.y).toString()
-            val z1 = Formatter().format("%.2f", Camera.Default.cameraPos.z).toString()
+            val x1 = Formatter().format("%.2f", Camera.HaloSeries.cameraPos.x).toString()
+            val y1 = Formatter().format("%.2f", Camera.HaloSeries.cameraPos.y).toString()
+            val z1 = Formatter().format("%.2f", Camera.HaloSeries.cameraPos.z).toString()
             "XYZ&f [$x1, $y1, $z1]"
         }
     )

@@ -4,6 +4,11 @@ import net.spartanb312.everett.graphics.compat.Delegate
 
 interface IVAO {
 
+    companion object {
+        @JvmStatic
+        var currentVAO = 0
+    }
+
     //GL30
     @Delegate
     fun glGenVertexArrays(): Int

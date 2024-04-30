@@ -10,7 +10,7 @@ import net.spartanb312.everett.utils.color.ColorRGB
 object CrosshairRenderer {
 
     var enabled = false; private set
-    val transparentAlphaRate = 0.627451f
+    val transparentAlphaRate = 0.727451f
     val currentCrosshair: Crosshairs get() = CrosshairOption.crosshairType.value
     val raytraced get() = Player.raytraced && SceneManager.inTraining
     val shadowColor = ColorRGB.DARK_GRAY.alpha(128)
@@ -29,7 +29,7 @@ object CrosshairRenderer {
             if (!checkEnabled || enabled) with(currentCrosshair.crosshair) {
                 if (CrosshairOption.shadow) {
                     onRender(centerX, centerY, fov, true, colorRGB)
-                    it.recover()
+                    recover()
                 }
                 onRender(centerX, centerY, fov, false, colorRGB)
             }

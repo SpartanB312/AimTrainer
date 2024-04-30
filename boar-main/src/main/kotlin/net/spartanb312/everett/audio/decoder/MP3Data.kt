@@ -41,7 +41,6 @@ class MP3Data(private val waveData: WaveData) : SoundData {
             return MP3Data(waveData)
         }
 
-
         @JvmStatic
         fun mp3ToWav(audioInputStream: AudioInputStream, targetFile: File) {
             val baseFormat = audioInputStream.format

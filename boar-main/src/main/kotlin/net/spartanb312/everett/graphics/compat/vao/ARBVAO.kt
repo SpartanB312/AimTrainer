@@ -10,7 +10,11 @@ object ARBVAO : IVAO {
     override fun glDeleteVertexArrays(array: Int) =
         ARBVertexArrayObject.glDeleteVertexArrays(array)
 
-    override fun glBindVertexArray(array: Int) =
-        ARBVertexArrayObject.glBindVertexArray(array)
+    override fun glBindVertexArray(array: Int) {
+        if (IVAO.currentVAO != array) {
+            ARBVertexArrayObject.glBindVertexArray(array)
+            IVAO.currentVAO = array
+        }
+    }
 
 }

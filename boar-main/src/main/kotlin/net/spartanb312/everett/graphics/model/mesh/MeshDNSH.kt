@@ -1,7 +1,7 @@
 package net.spartanb312.everett.graphics.model.mesh
 
 import net.spartanb312.everett.graphics.GLHelper
-import net.spartanb312.everett.graphics.OpenGL
+import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.VertexFormat
 import net.spartanb312.everett.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
@@ -10,10 +10,8 @@ import net.spartanb312.everett.graphics.model.Mesh
 import net.spartanb312.everett.graphics.model.MeshData
 import net.spartanb312.everett.graphics.model.MeshRenderer
 import net.spartanb312.everett.graphics.shader.Shader
+import net.spartanb312.everett.graphics.shader.glUniform
 import net.spartanb312.everett.utils.color.ColorRGB
-import org.lwjgl.opengl.GL11
-import org.lwjgl.opengl.GL20
-import org.lwjgl.opengl.GL30
 
 class MeshDNSH(meshData: MeshData) : Mesh(
     meshData.vertices,
@@ -39,37 +37,37 @@ class MeshDNSH(meshData: MeshData) : Mesh(
             if (mesh.textures.isEmpty()) return
 
             shader.bind()
-            GL20.glUniformMatrix4fv(matrixUniform, false, matrixArray)
+            matrixArray.glUniform(matrixUniform)
             mesh.diffuseTexture?.let {
-                GLHelper.glActiveTexture(GL30.GL_TEXTURE0)
-                GL30.glUniform1i(diffuse, 0)
+                GLHelper.glActiveTexture(GL_TEXTURE0)
+                glUniform1i(diffuse, 0)
                 it.bindTexture()
             }
 
             mesh.normalTexture?.let {
-                GLHelper.glActiveTexture(GL30.GL_TEXTURE1)
-                GL30.glUniform1i(normal, 1)
+                GLHelper.glActiveTexture(GL_TEXTURE1)
+                glUniform1i(normal, 1)
                 it.bindTexture()
             }
 
             mesh.specularTexture?.let {
-                GLHelper.glActiveTexture(GL30.GL_TEXTURE2)
-                GL30.glUniform1i(specular, 2)
+                GLHelper.glActiveTexture(GL_TEXTURE2)
+                glUniform1i(specular, 2)
                 it.bindTexture()
             }
 
             mesh.heightTexture?.let {
-                GLHelper.glActiveTexture(GL30.GL_TEXTURE3)
-                GL30.glUniform1i(height, 3)
+                GLHelper.glActiveTexture(GL_TEXTURE3)
+                glUniform1i(height, 3)
                 it.bindTexture()
             }
 
             // Draw mesh
             GLHelper.glBindVertexArray(mesh.vao)
-            OpenGL.glDrawElements(GL30.GL_TRIANGLES, mesh.vertices.size, GL30.GL_UNSIGNED_INT, 0)
-            GLHelper.glBindVertexArray(0)
+            glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
+            //GLHelper.glBindVertexArray(0)
 
-            GLHelper.glActiveTexture(GL30.GL_TEXTURE0)
+            GLHelper.glActiveTexture(GL_TEXTURE0)
             if (RS.compatMode) shader.unbind()
         }
 
@@ -85,7 +83,7 @@ class MeshDNSH(meshData: MeshData) : Mesh(
         GLHelper.texture2d = true
         diffuseTexture?.let {
             it.bindTexture()
-            GL11.GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
+            GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
                 for (i in indices) {
                     val vert = vertices[i]
                     v3Tex2fC(
@@ -101,7 +99,7 @@ class MeshDNSH(meshData: MeshData) : Mesh(
         }
         specularTexture?.let {
             it.bindTexture()
-            GL11.GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
+            GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
                 for (i in indices) {
                     val vert = vertices[i]
                     v3Tex2fC(
