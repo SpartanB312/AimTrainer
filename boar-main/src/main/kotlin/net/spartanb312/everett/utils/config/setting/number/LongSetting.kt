@@ -31,4 +31,7 @@ class LongSetting(
         return ((value - range.start) / (range.endInclusive - range.start).toDouble()).toFloat()
     }
 
+    override val defaultPercentBar: Float = ((defaultValue - range.first) / (range.last - range.first).toDouble()).toFloat()
+
+
 }

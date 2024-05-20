@@ -28,7 +28,6 @@ abstract class BallHitTraining(
     private val width: Int,
     private val height: Int,
     override val errorAngle: Float,
-    private val renderAngle: Float = errorAngle,
     private val horizontalOffset: Float = 0f,
     private val verticalOffset: Float = 0f,
     private val distanceRange: ClosedFloatingPointRange<Float> = 50f.asRange,
@@ -85,12 +84,15 @@ abstract class BallHitTraining(
         }
     }
 
-    private var displayed =false
+    private var displayed = false
     override fun render2D() {
         scene.getRayTracedResult(
             Player.offsetPos,
             Player.camera.front,
-            if (bulletAdsorption.value) renderAngle else 0f
+            if (bulletAdsorption.value) {
+                if (CrosshairRenderer.overrideErrorAngle != -1f) CrosshairRenderer.overrideErrorAngle
+                else errorAngle
+            } else 0f
         ) // Cache raytraced target
         var startY = 0f
         val color = ColorRGB.AQUA
@@ -154,12 +156,12 @@ abstract class BallHitTraining(
                 if (!displayed) {
                     displayed = true
                     RS.addRenderThreadJob {
-                        Render2DManager.displayScreen(scoreboardScreen.apply {
-                            scoreboard["Score"] = showingScore.toString()
-                            scoreboard["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
-                            scoreboard["Fired"] = shots.toString()
-                            scoreboard["Hits"] = hits.toString()
-                            scoreboard["Reaction Time"] = String.format("%.2f", reactionTimes.average())
+                        Render2DManager.displayScreen(scoreboardScreen.setScoreBoard {
+                            it["Score"] = showingScore.toString()
+                            it["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
+                            it["Fired"] = shots.toString()
+                            it["Hits"] = hits.toString()
+                            it["Reaction Time"] = String.format("%.2f", reactionTimes.average())
                         })
                     }
                 }
@@ -173,7 +175,10 @@ abstract class BallHitTraining(
         scene.getRayTracedResult(
             Player.offsetPos,
             Player.camera.front,
-            if (bulletAdsorption.value) errorAngle else 0f
+            if (bulletAdsorption.value) {
+                if (CrosshairRenderer.overrideErrorAngle != -1f) CrosshairRenderer.overrideErrorAngle
+                else errorAngle
+            } else 0f
         )?.let {
             if (it is Ball) {
                 hit = true

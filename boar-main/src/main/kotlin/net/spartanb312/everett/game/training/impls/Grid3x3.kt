@@ -17,9 +17,9 @@ class Grid3x3(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrainin
     3,
     3,
     1.5f,
-    1.5f,
     0f,
-    0.5f
+    0.5f,
+    fadeTime = 0
 ), TrainingInfoContainer by Companion {
 
     companion object : TrainingInfo("Grid 3x3", "") {

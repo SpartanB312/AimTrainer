@@ -41,6 +41,7 @@ object Radar : Configurable("Radar", Language) {
     private val centerVertices = RenderUtils.getArcVertices(0f, 0f, 7f, 0f..360f).reversed().toTypedArray()
     private val generalColor = ColorRGB(101, 176, 210)
     private val lightColor = ColorRGB(194, 247, 254)
+    private val vertices = RenderUtils.getArcVertices(0f, 0f, 1f, 0f..360f).reversed().toTypedArray()
 
     fun render2D() = RS.matrixLayer.scope {
         val scale = generalScale * max(RS.widthScale, RS.heightScale) * 2f
@@ -107,12 +108,12 @@ object Radar : Configurable("Radar", Language) {
             val highLightAlpha = 255 - 95 * abs(distance - pulseRadius) / 5f
             val renderPos = Vec3f(offsetVec.x, offsetVec.y, 0f).mul(rotateMat)
             val renderColor = color.alpha(if (highLight) highLightAlpha.toInt() else 160)
-            RenderUtils.drawPoint(
-                renderPos.x,
-                renderPos.y,
-                5f * scale,
-                renderColor
-            )
+
+            translatef(renderPos.x, renderPos.y, 0f)
+            scalef(2.5f, 2.5f, 1f)
+            RenderUtils.drawTriangleFan(0.0, 0.0, vertices, renderColor)
+            scalef(0.4f, 0.4f, 1f)
+            translatef(-renderPos.x, -renderPos.y, 0f)
 
             val hOffset = 2.5f
             val vOffset = 2.5f

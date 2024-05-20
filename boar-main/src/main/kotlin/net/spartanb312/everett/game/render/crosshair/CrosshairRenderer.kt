@@ -13,7 +13,9 @@ object CrosshairRenderer {
     val transparentAlphaRate = 0.727451f
     val currentCrosshair: Crosshairs get() = CrosshairOption.crosshairType.value
     val raytraced get() = Player.raytraced && SceneManager.inTraining
+    val errorAngle get() = (SceneManager.currentTraining?.errorAngle ?: currentCrosshair.crosshair.errorAngle)
     val shadowColor = ColorRGB.DARK_GRAY.alpha(128)
+    val overrideErrorAngle get() = currentCrosshair.crosshair.overrideErrorAngle
 
     fun onRender(fov: Float, colorRGB: ColorRGB = ColorRGB.WHITE) =
         onRender(true, RS.centerXF, RS.centerYF, fov, colorRGB)

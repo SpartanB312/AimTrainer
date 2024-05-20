@@ -13,7 +13,7 @@ class FloatSetting(
     visibility: (() -> Boolean) = { true }
 ) : NumberSetting<Float>(name, value, range, step, description, visibility) {
 
-    private val format = DecimalFormat("0.0")
+    override var format = DecimalFormat("0.0")
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
         value = (jsonObject[nameString]?.asFloat ?: value).coerceIn(range)
@@ -33,5 +33,7 @@ class FloatSetting(
     override fun getPercentBar(): Float {
         return ((value - range.start) / (range.endInclusive - range.start))
     }
+
+    override val defaultPercentBar: Float = (defaultValue - range.start) / (range.endInclusive - range.start)
 
 }

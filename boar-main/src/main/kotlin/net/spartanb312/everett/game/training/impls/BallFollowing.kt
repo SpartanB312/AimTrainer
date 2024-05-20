@@ -4,6 +4,7 @@ import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
 import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.BallRenderer
+import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
@@ -25,7 +26,6 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
     5,
     5,
     1f,
-    1f,
     0f,
     0.5f
 ), TrainingInfoContainer by Companion {
@@ -44,7 +44,10 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
         scene.getRayTracedResult(
             Player.offsetPos,
             Player.camera.front,
-            if (AimAssistOption.bulletAdsorption.value) errorAngle else 0f
+            if (AimAssistOption.bulletAdsorption.value) {
+                if (CrosshairRenderer.overrideErrorAngle != -1f) CrosshairRenderer.overrideErrorAngle
+                else errorAngle
+            } else 0f
         )?.let {
             if (it is Ball) hit = true
         }

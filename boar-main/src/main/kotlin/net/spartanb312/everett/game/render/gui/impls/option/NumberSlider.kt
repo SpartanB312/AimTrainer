@@ -1,9 +1,9 @@
 package net.spartanb312.everett.game.render.gui.impls.option
 
-import net.spartanb312.everett.utils.config.setting.number.NumberSetting
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.config.setting.number.NumberSetting
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.timing.Timer
 
@@ -51,29 +51,65 @@ class NumberSlider<T>(
 
         if (sliding && slideTimer.passed(150)) currentRate = setting.getPercentBar()
 
-        val boundLeft = sliderStartX + currentRate * sliderWidth - (if (isHoovered) this.height * 0.2f else 0f)
-        val boundRight = sliderStartX + currentRate * sliderWidth + (if (isHoovered) this.height * 0.2f else 0f)
-        if (boundLeft > sliderStartX) RenderUtils.drawRect(
-            sliderStartX,
-            y + this.height * 0.47f,
-            boundLeft,
-            y + this.height * 0.53f,
-            ColorRGB.WHITE.alpha(alpha.toInt())
-        )
-        if (boundRight < sliderEndX) RenderUtils.drawRect(
-            boundRight,
-            y + this.height * 0.47f,
-            sliderEndX,
-            y + this.height * 0.53f,
-            ColorRGB.WHITE.alpha((alpha * 0.4f).toInt()),
-        )
-        if (isHoovered) RenderUtils.drawRect(
-            boundLeft,
-            y + this.height * 0.1f,
-            boundRight,
-            y + this.height * 0.9f,
-            ColorRGB.WHITE.alpha((alpha * animatedAlphaRate).toInt())
-        )
+        val new = true
+
+        if (new) {
+            val valueX = sliderStartX + currentRate * sliderWidth
+            RenderUtils.drawRect(
+                sliderStartX,
+                y + this.height * 0.47f,
+                valueX,
+                y + this.height * 0.53f,
+                ColorRGB.WHITE.alpha(alpha.toInt())
+            )
+            RenderUtils.drawRect(
+                valueX,
+                y + this.height * 0.47f,
+                sliderEndX,
+                y + this.height * 0.53f,
+                ColorRGB.WHITE.alpha((alpha * 0.4f).toInt()),
+            )
+            if (isHoovered) {
+                val defaultValueX = sliderStartX + setting.defaultPercentBar * sliderWidth
+                RenderUtils.drawTriangle(
+                    valueX, y + this.height * 0.53f,
+                    valueX - this.height * 0.1f, y + this.height * 0.7f,
+                    valueX + this.height * 0.1f, y + this.height * 0.7f,
+                    ColorRGB.WHITE.alpha((alpha * animatedAlphaRate).toInt())
+                )
+                RenderUtils.drawTriangle(
+                    defaultValueX, y + this.height * 0.47f,
+                    defaultValueX + this.height * 0.1f, y + this.height * 0.3f,
+                    defaultValueX - this.height * 0.1f, y + this.height * 0.3f,
+                    ColorRGB.WHITE.alpha((alpha * animatedAlphaRate * 0.7f).toInt())
+                )
+            }
+        } else {
+            val boundLeft = sliderStartX + currentRate * sliderWidth - (if (isHoovered) this.height * 0.2f else 0f)
+            val boundRight = sliderStartX + currentRate * sliderWidth + (if (isHoovered) this.height * 0.2f else 0f)
+            if (boundLeft > sliderStartX) RenderUtils.drawRect(
+                sliderStartX,
+                y + this.height * 0.47f,
+                boundLeft,
+                y + this.height * 0.53f,
+                ColorRGB.WHITE.alpha(alpha.toInt())
+            )
+            if (boundRight < sliderEndX) RenderUtils.drawRect(
+                boundRight,
+                y + this.height * 0.47f,
+                sliderEndX,
+                y + this.height * 0.53f,
+                ColorRGB.WHITE.alpha((alpha * 0.4f).toInt()),
+            )
+            if (isHoovered) RenderUtils.drawRect(
+                boundLeft,
+                y + this.height * 0.1f,
+                boundRight,
+                y + this.height * 0.9f,
+                ColorRGB.WHITE.alpha((alpha * animatedAlphaRate).toInt())
+            )
+        }
+
         //display value
         val str = setting.getDisplay(currentRate)
         FontRendererBig.drawString(

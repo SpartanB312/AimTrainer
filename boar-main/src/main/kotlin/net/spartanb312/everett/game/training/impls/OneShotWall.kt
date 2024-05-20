@@ -17,7 +17,6 @@ class OneShotWall(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTra
     9,
     7,
     1.5f,
-    1.5f,
     0f,
     0.5f
 ), TrainingInfoContainer by Companion {

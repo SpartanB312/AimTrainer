@@ -9,7 +9,16 @@ import kotlin.math.min
 
 open class ScoreboardScreen : GuiScreen() {
 
-    val scoreboard = mutableMapOf<String, String>()
+    private val scoreboard = mutableMapOf<String, String>()
+
+    fun setScoreBoard(block: (ScoreboardScreen) -> Unit): ScoreboardScreen = apply {
+        scoreboard.clear()
+        block(this)
+    }
+
+    operator fun set(title: String, value: String) {
+        scoreboard[title] = value
+    }
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         RenderUtils.drawRect(0, 0, RS.width, RS.height, ColorRGB.BLACK.alpha(128))

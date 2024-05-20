@@ -59,12 +59,6 @@ object MainMenuScreen : GuiScreen() {
             shadowDepth = 2f * scale,
             scale = scale
         )
-        if (!Main.fullMode) FontRendererROG.drawString(
-            "Lite",
-            leftX + FontRendererROG.getWidth("Aim Trainer ", scale),
-            startY + FontRendererROG.getHeight(0.61f * scale),
-            scale = 0.3f * scale
-        )
 
         startY += FontRendererROG.getHeight()
         startY += 100 * scale

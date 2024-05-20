@@ -1,12 +1,12 @@
 package net.spartanb312.everett.game.render.crosshair.impls
 
-import net.spartanb312.everett.utils.config.setting.alias
-import net.spartanb312.everett.utils.config.setting.m
 import net.spartanb312.everett.game.render.crosshair.Crosshair
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.config.setting.alias
+import net.spartanb312.everett.utils.config.setting.m
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.timing.Timer
 
@@ -33,7 +33,7 @@ object CrosshairCircle : Crosshair(0f) {
             colorRate = colorRate.converge(if (CrosshairRenderer.raytraced) 100f else 0f, 0.25f)
         }
         val color = if (shadow) CrosshairRenderer.shadowColor
-        else colorRGB.mix(ColorRGB(255, 50, 60), colorRate / 100f)
+        else colorRGB.mix(ColorRGB(255, 20, 20), colorRate / 100f)
 
         val size = if (shadow) size * 1.03f else size
         RenderUtils.drawArcOutline(centerX, centerY, size, 0f..360f, 0, lineWidth, color)

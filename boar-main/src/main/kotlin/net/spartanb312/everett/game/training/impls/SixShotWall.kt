@@ -17,7 +17,6 @@ class SixShotWall(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTra
     9,
     7,
     1f,
-    1f,
     0f,
     0.5f
 ), TrainingInfoContainer by Companion {

@@ -10,9 +10,9 @@ import net.spartanb312.everett.utils.timing.Timer
 
 object BGMPlayer {
 
-    private val bgmList = if (Main.fullMode) mutableListOf(
+    private val bgmList = mutableListOf(
         Sound("assets/sound/background/overture.wav"),
-    ) else mutableListOf(Sound())
+    )
 
     var currentBGM = nextBGM()
 
@@ -38,7 +38,7 @@ object BGMPlayer {
     val timer = Timer()
 
     fun onTick() {
-        if (!Main.fullMode || !currentBGM.available) return
+        if (!currentBGM.available) return
         mute = (SceneManager.inTraining && !AudioOption.bgmInGame) || !AimTrainer.isReady
         currentBGM.updateStates()
 

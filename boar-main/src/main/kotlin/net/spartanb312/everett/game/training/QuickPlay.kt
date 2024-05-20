@@ -63,7 +63,7 @@ object QuickPlay {
             TextureManager.right,
             TextureManager.back
         )
-        private val training = TrainingScreen.trainings[defaultTraining].new(scoreboardScreen, this).apply { reset() }
+        val training = TrainingScreen.trainings[defaultTraining].new(scoreboardScreen, this).apply { reset() }
         val errorAngle = training.errorAngle
 
         override fun onInit() {

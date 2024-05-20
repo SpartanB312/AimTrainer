@@ -3,6 +3,7 @@ package net.spartanb312.everett.game.aimassist
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Entity
 import net.spartanb312.everett.game.option.impls.AimAssistOption
+import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.math.MathUtils.mul
@@ -15,7 +16,7 @@ import org.lwjgl.glfw.GLFW
 import kotlin.math.cos
 import kotlin.math.sin
 
-object HaloInfiniteAA : AimAssist {
+object MagnetismAA : AimAssist {
 
     private var locked: LockData? = null
 
@@ -39,7 +40,10 @@ object HaloInfiniteAA : AimAssist {
         val result = SceneManager.currentScene.getRayTracedResult(
             Player.offsetPos,
             Player.camera.front,
-            if (AimAssistOption.bulletAdsorption.value) AimAssistOption.errorAngle else 0f,
+            if (AimAssistOption.bulletAdsorption.value) {
+                if (CrosshairRenderer.overrideErrorAngle != -1f) CrosshairRenderer.overrideErrorAngle
+                else SceneManager.errorAngle
+            } else 0f
         )
         if (locked != null && result != null && locked.entity == result) {
             val facing = Vec3f(cos(Player.yaw.toRadian()), 0, sin(Player.yaw.toRadian()))

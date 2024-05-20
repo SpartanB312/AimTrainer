@@ -1,10 +1,10 @@
 package net.spartanb312.everett
 
 import net.spartanb312.everett.audio.AudioSystem
+import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.BGMPlayer
-import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.input.InputManager
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.ControlOption
@@ -49,7 +49,7 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240426"
+    const val AIM_TRAINER_VERSION = "1.0.0.240521"
 
     var isReady = false
     private val tickTimer = Timer()

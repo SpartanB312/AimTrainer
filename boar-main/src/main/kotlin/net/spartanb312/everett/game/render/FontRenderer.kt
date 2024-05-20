@@ -35,32 +35,20 @@ object FontCacheManager : CacheManager("FontRenderer") {
 
 }
 
-object FontRendererMain : FontRenderer by if (Main.fullMode) RTOFontRenderer(
+object FontRendererMain : FontRenderer by RTOFontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
-    50f,
-    scaleFactor = 0.5f,
-    chunkSize = 49,
-    textureLoader = TextureManager,
-) else LocalFontRenderer(
-    "Microsoft YaHei UI",
     50f,
     scaleFactor = 0.5f,
     chunkSize = 49,
     textureLoader = TextureManager,
 )
 
-object FontRendererBig : FontRenderer by if (Main.fullMode) RTOFontRenderer(
+object FontRendererBig : FontRenderer by RTOFontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,
     scaleFactor = 1f,
     chunkSize = 49,
     textureLoader = TextureManager
-) else LocalFontRenderer(
-    "Microsoft YaHei UI",
-    50f,
-    scaleFactor = 1f,
-    chunkSize = 49,
-    textureLoader = TextureManager,
 )
 
 object FontRendererROG : FontRenderer by FontRenderer(
@@ -80,13 +68,8 @@ object FontRendererIcon : FontRenderer by FontRenderer(
     textureLoader = TextureManager
 )
 
-object FontRendererASCII : FontRenderer by if (Main.fullMode) FontRenderer(
+object FontRendererASCII : FontRenderer by FontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
-    25f,
-    imgSize = 256,
-    chunkSize = 49
-) else LocalFontRenderer(
-    "Microsoft YaHei UI",
     25f,
     imgSize = 256,
     chunkSize = 49

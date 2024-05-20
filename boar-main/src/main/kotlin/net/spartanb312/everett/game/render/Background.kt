@@ -31,7 +31,7 @@ object Background {
 
     fun renderBackground(mouseX: Double, mouseY: Double) {
         if (SceneManager.currentScene != DummyScene) return
-        when (VideoOption.backgroundMode) {
+        when (VideoOption.backgroundMode.value) {
             Mode.Halo -> {
                 TextureManager.bg.drawBackground(mouseX, mouseY)
                 if (VideoOption.particle) particleSystem.render()

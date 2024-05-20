@@ -20,7 +20,6 @@ class OneBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
     5,
     5,
     1f,
-    1f,
     0f,
     0.5f,
     ballHP = 5

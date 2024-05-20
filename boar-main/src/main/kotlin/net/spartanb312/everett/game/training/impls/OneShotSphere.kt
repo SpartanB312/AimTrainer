@@ -17,7 +17,6 @@ class OneShotSphere(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
     19,
     19,
     1f,
-    1f,
     0f,
     0.5f,
     -50f..50f

@@ -17,7 +17,6 @@ class Grid(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
     6,
     5,
     1.5f,
-    1.5f,
     0f,
     0.5f
 ), TrainingInfoContainer by Companion {

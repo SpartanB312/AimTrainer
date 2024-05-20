@@ -15,18 +15,19 @@ import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.LinkedBlockingQueue
+import kotlin.math.sqrt
 
 typealias RS = RenderSystem
 
 @Module(
     name = "Everett's Sight",
     version = RenderSystem.ENGINE_VERSION,
-    description = "Core game engine based on OpenGL 4.5 Core Profile",
+    description = "Core game engine based on OpenGL 4.6 Core Profile",
     author = "B_312"
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.1.5"
+    const val ENGINE_VERSION = "1.1.6"
 
     init {
         name = "RenderThread"
@@ -44,8 +45,10 @@ object RenderSystem : Thread() {
     var height = 0; private set
     inline val widthF get() = width.toFloat()
     inline val heightF get() = height.toFloat()
+    inline val diagonalF get() = sqrt(widthF * widthF + heightF * heightF)
     inline val widthD get() = width.toDouble()
     inline val heightD get() = height.toDouble()
+    inline val diagonalD get() = sqrt(widthD * widthD + heightD * heightD)
     inline val aspect get() = widthF / heightF
     inline val aspectD get() = widthD / heightD
     inline val centerX get() = width / 2

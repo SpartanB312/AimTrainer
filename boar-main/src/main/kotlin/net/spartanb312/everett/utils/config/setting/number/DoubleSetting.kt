@@ -13,7 +13,7 @@ class DoubleSetting(
     visibility: (() -> Boolean) = { true }
 ) : NumberSetting<Double>(name, value, range, step, description, visibility) {
 
-    private val format = DecimalFormat("0.000")
+    override var format = DecimalFormat("0.000")
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
         value = (jsonObject[nameString]?.asDouble ?: value).coerceIn(range)
@@ -22,7 +22,8 @@ class DoubleSetting(
     override val width = range.endInclusive - range.start
 
     override fun setByPercent(percent: Float) {
-        value = (range.start + ((range.endInclusive - range.start) * percent / step).roundToInt() * step).coerceIn(range)
+        value =
+            (range.start + ((range.endInclusive - range.start) * percent / step).roundToInt() * step).coerceIn(range)
     }
 
     override fun getDisplay(percent: Float): String {
@@ -33,5 +34,8 @@ class DoubleSetting(
     override fun getPercentBar(): Float {
         return ((value - range.start) / (range.endInclusive - range.start)).toFloat()
     }
+
+    override val defaultPercentBar: Float =
+        ((defaultValue - range.start) / (range.endInclusive - range.start)).toFloat()
 
 }

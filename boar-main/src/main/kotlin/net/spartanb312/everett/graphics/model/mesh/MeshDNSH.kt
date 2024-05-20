@@ -62,13 +62,18 @@ class MeshDNSH(meshData: MeshData) : Mesh(
                 it.bindTexture()
             }
 
-            // Draw mesh
-            GLHelper.glBindVertexArray(mesh.vao)
-            glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
-            if (RS.compatMode) {
-                GLHelper.glBindVertexArray(0)
-                shader.unbind()
+            // Draw mesh via VAO
+            if (RS.compat.useVAO) {
+                GLHelper.glBindVertexArray(mesh.vao)
+                glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
+                if (RS.compatMode) {
+                    GLHelper.glBindVertexArray(0)
+                    shader.unbind()
+                }
+            } else {
+                TODO()
             }
+
             GLHelper.glActiveTexture(GL_TEXTURE0)
         }
 

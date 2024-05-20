@@ -114,10 +114,10 @@ class ReactionTest(
                 if (!displayed) {
                     displayed = true
                     RenderSystem.addRenderThreadJob {
-                        Render2DManager.displayScreen(scoreboardScreen.apply {
-                            scoreboard["Fastest Time"] = String.format("%.3f", reactionTimeList.min() / 1000000f)
-                            scoreboard["Slowest Time"] = String.format("%.3f", reactionTimeList.max() / 1000000f)
-                            scoreboard["Average Time"] = String.format("%.3f", reactionTimeList.average() / 1000000f)
+                        Render2DManager.displayScreen(scoreboardScreen.setScoreBoard {
+                            it["Fastest Time"] = String.format("%.3f", reactionTimeList.min() / 1000000f)
+                            it["Slowest Time"] = String.format("%.3f", reactionTimeList.max() / 1000000f)
+                            it["Average Time"] = String.format("%.3f", reactionTimeList.average() / 1000000f)
                         })
                     }
                 }

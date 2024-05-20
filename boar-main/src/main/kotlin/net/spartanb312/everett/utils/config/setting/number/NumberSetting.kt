@@ -1,6 +1,7 @@
 package net.spartanb312.everett.utils.config.setting.number
 
 import net.spartanb312.everett.utils.config.setting.MutableSetting
+import java.text.DecimalFormat
 
 abstract class NumberSetting<T>(
     name: String,
@@ -13,10 +14,13 @@ abstract class NumberSetting<T>(
         where T : Number, T : Comparable<T> {
 
     abstract val width: T
+    open var format = DecimalFormat("0")
 
     abstract fun getDisplay(percent: Float = 1.0f): String
     abstract fun getPercentBar(): Float
     abstract fun setByPercent(percent: Float)
+
+    abstract val defaultPercentBar: Float
 
     fun getMin(): Double {
         return range.start.toDouble()
@@ -26,4 +30,9 @@ abstract class NumberSetting<T>(
         return range.endInclusive.toDouble()
     }
 
+}
+
+fun <T> NumberSetting<T>.format(format: String): NumberSetting<T> where T : Number, T : Comparable<T> {
+    this.format = DecimalFormat(format)
+    return this
 }

@@ -30,6 +30,6 @@ object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { Acc
     val bg = lazyTexture("assets/texture/menu/halo_infinite_background.png")
 
     // Spartan
-    val everett = if (Main.fullMode) lazyTexture("assets/texture/EVRT.png") else null
+    val everett = lazyTexture("assets/texture/EVRT.png")
 
 }

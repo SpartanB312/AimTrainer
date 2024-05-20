@@ -6,16 +6,23 @@ import net.spartanb312.everett.graphics.matrix.cameraProject
 import net.spartanb312.everett.graphics.matrix.perspectivef
 import net.spartanb312.everett.utils.math.toRadian
 import net.spartanb312.everett.utils.math.vector.Vec3f
+import net.spartanb312.everett.utils.misc.DelegateValue
 import kotlin.math.cos
 import kotlin.math.sin
 
 abstract class Camera(
     open var fov: Float = 70f,
     open var zRange: ClosedFloatingPointRange<Float> = 0.01f..1000f,
-    open var yaw: Float = 0f,
-    open var pitch: Float = 0f,
+    yaw: Float = 0f,
+    pitch: Float = 0f,
     open var cameraPos: Vec3f = Vec3f()
 ) {
+
+    val yawDelegate = DelegateValue(yaw)
+    val pitchDelegate = DelegateValue(pitch)
+
+    var yaw by yawDelegate
+    var pitch by pitchDelegate
 
     val front
         get() = Vec3f(

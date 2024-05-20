@@ -1,7 +1,7 @@
 package net.spartanb312.everett.game
 
 import net.spartanb312.everett.game.aimassist.FrictionAA
-import net.spartanb312.everett.game.aimassist.HaloInfiniteAA
+import net.spartanb312.everett.game.aimassist.MagnetismAA
 import net.spartanb312.everett.game.entity.Entity
 import net.spartanb312.everett.game.entity.EntityPlayer
 import net.spartanb312.everett.game.option.impls.AimAssistOption
@@ -149,7 +149,7 @@ object Player : EntityPlayer(), Controller {
         block: Camera.() -> Unit
     ) {
         if (AimAssistOption.aimAssist.value) {
-            if (AimAssistOption.mcEnabled) HaloInfiniteAA.compensate(sensitivity)
+            if (AimAssistOption.mcEnabled) MagnetismAA.compensate(sensitivity)
             else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
         } else sensK = sensitivity * 1000.0
         with(camera) {
@@ -176,16 +176,7 @@ object Player : EntityPlayer(), Controller {
         pos = Vec3f.ZERO
     }
 
-    override var pitch: Float
-        get() = camera.pitch
-        set(value) {
-            camera.pitch = value
-        }
-
-    override var yaw: Float
-        get() = camera.yaw
-        set(value) {
-            camera.yaw = value
-        }
+    override var pitch by camera.pitchDelegate
+    override var yaw by camera.yawDelegate
 
 }

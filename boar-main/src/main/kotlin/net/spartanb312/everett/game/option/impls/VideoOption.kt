@@ -1,16 +1,17 @@
 package net.spartanb312.everett.game.option.impls
 
 import net.spartanb312.everett.game.Language.m
-import net.spartanb312.everett.utils.config.setting.atMode
-import net.spartanb312.everett.utils.config.setting.m
 import net.spartanb312.everett.game.option.Option
 import net.spartanb312.everett.game.render.Background
 import net.spartanb312.everett.game.render.Radar
 import net.spartanb312.everett.graphics.RS
+import net.spartanb312.everett.utils.config.setting.atMode
+import net.spartanb312.everett.utils.config.setting.m
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.math.MathUtils.d2vFOV
 import net.spartanb312.everett.utils.math.MathUtils.h2vFOV
 import net.spartanb312.everett.utils.math.MathUtils.v2dFOV
+import net.spartanb312.everett.utils.math.MathUtils.v2hFOV
 import net.spartanb312.everett.utils.misc.AliasNameable
 import net.spartanb312.everett.utils.misc.DisplayEnum
 
@@ -43,10 +44,11 @@ object VideoOption : Option("Video") {
     val shield by setting("Energy Shield", true)
         .m("能量护盾", "能量護盾")
 
-    val backgroundMode by setting("Background Mode", Background.Mode.Nebula)
+    val backgroundMode = setting("Background Mode", Background.Mode.Nebula)
         .m("背景模式", "背景模式")
     val particle by setting("Particle Background", true)
         .m("粒子效果", "粒子特效")
+        .atMode(backgroundMode, Background.Mode.Halo)
 
     val fov
         get() = when (fovMode.value) {
@@ -62,8 +64,10 @@ object VideoOption : Option("Video") {
             FOVMode.VFOV -> vFOV
         }
 
-    val fovType get() = fovMode.value.displayName
-    val dfov get() = fov.v2dFOV(RS.aspectD)
+    inline val fovType get() = fovMode.value.displayName
+    inline val dfov get() = fov.v2dFOV(RS.aspectD)
+    inline val hfov get() = fov.v2hFOV(RS.aspectD)
+    inline val vfov get() = fov
 
     enum class FOVMode(multiText: MultiText, override var aliasName: String) : DisplayEnum, AliasNameable {
         DFOV("D-FOV".m("对角FOV", "對角FOV"), "Diagonal"),

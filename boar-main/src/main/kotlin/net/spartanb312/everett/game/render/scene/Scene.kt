@@ -3,7 +3,6 @@ package net.spartanb312.everett.game.render.scene
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Entity
 import net.spartanb312.everett.game.input.interfaces.*
-import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.gui.SubscribedRenderer
 import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.math.vector.distanceTo
@@ -32,8 +31,8 @@ abstract class Scene :
     ): List<Entity> {
         val results = mutableListOf<Pair<Entity, Float>>()
         entities.forEach {
-            if (it.raytrace(origin, ray, errorAngle * AimAssistOption.errorAngleRate)) {
-                results.add(Pair(it, it.raytraceRate(origin, ray, errorAngle * AimAssistOption.errorAngleRate)))
+            if (it.raytrace(origin, ray, errorAngle)) {
+                results.add(Pair(it, it.raytraceRate(origin, ray, errorAngle)))
             }
         }
         results.sortBy { origin.distanceTo(it.first.pos) }
@@ -48,5 +47,5 @@ abstract class Scene :
         origin: Vec3f,
         ray: Vec3f,
         errorAngle: Float
-    ): Entity? = getRayTracedResults(origin, ray, errorAngle * AimAssistOption.errorAngleRate).firstOrNull()
+    ): Entity? = getRayTracedResults(origin, ray, errorAngle).firstOrNull()
 }
