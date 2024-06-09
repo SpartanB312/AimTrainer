@@ -2,6 +2,7 @@ package net.spartanb312.everett.game.input
 
 import net.spartanb312.everett.game.audio.BGMPlayer
 import net.spartanb312.everett.game.input.interfaces.*
+import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.OptionScreen
@@ -25,6 +26,7 @@ object InputManager {
         if (key == GLFW.GLFW_KEY_F2) Render2DManager.displayScreen(OptionScreen)
         if (key == GLFW.GLFW_KEY_F4) Render2DManager.displayScreen(SchulteGrid(5))
         if (key == GLFW.GLFW_KEY_F5) BGMPlayer.changeSound(BGMPlayer.nextBGM())
+        if (key == GLFW.GLFW_KEY_F11) VideoOption.fullScreen = !VideoOption.fullScreen
     }
 
     fun onKeyRepeating(key: Int, modifier: Int) {

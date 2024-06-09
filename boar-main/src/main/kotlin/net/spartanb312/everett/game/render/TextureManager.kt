@@ -7,7 +7,6 @@ import net.spartanb312.everett.graphics.texture.Texture
 import net.spartanb312.everett.graphics.texture.loader.AsyncTextureLoader
 import net.spartanb312.everett.graphics.texture.loader.LazyTextureContainer
 import net.spartanb312.everett.graphics.texture.loader.TextureLoader
-import net.spartanb312.everett.launch.Main
 
 object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { AccessibilityOption.threadsLimit }) {
 
@@ -19,6 +18,19 @@ object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { Acc
         qualityLevel: Int = 2
     ): Texture = LazyTextureContainer(path, format, levels, useMipmap, qualityLevel).register()
 
+    // Medals
+    val kill2 = lazyTexture("assets/texture/medals/double_kill.png", qualityLevel = 1)
+    val kill3 = lazyTexture("assets/texture/medals/triple_kill.png", qualityLevel = 1)
+    val kill4 = lazyTexture("assets/texture/medals/overkill.png", qualityLevel = 1)
+    val kill5 = lazyTexture("assets/texture/medals/killtacular.png", qualityLevel = 1)
+    val kill6 = lazyTexture("assets/texture/medals/killtrocity.png", qualityLevel = 1)
+    val kill7 = lazyTexture("assets/texture/medals/killamanjaro.png", qualityLevel = 1)
+    val kill8 = lazyTexture("assets/texture/medals/killtastrophe.png", qualityLevel = 1)
+    val kill9 = lazyTexture("assets/texture/medals/killpocalypse.png", qualityLevel = 1)
+    val kill10 = lazyTexture("assets/texture/medals/killionaire.png", qualityLevel = 1)
+    val perfect = lazyTexture("assets/texture/medals/perfect.png", qualityLevel = 1)
+
+    // Skybox
     val down = lazyTexture("assets/texture/skybox/1.png")
     val up = lazyTexture("assets/texture/skybox/2.png")
     val left = lazyTexture("assets/texture/skybox/3.png")

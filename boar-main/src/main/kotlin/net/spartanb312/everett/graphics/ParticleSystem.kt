@@ -1,10 +1,8 @@
 package net.spartanb312.everett.graphics
 
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer.draw
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.graphics.drawing.VertexFormat
-import net.spartanb312.everett.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
 import net.spartanb312.everett.utils.color.ColorHSB
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.vector.Vec2f
@@ -68,14 +66,9 @@ class ParticleSystem(
         for (size in particles.keys) {
             val list = particles[size]!!
             glPointSize(size)
-            GLHelper.pointSmooth = true
-            if (!RS.compatMode) GL_POINTS.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            GL_POINTS.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                 list.forEach {
                     universal(it.x, it.y, it.color.alpha(it.alpha.toInt().coerceIn(0, initialAlpha)))
-                }
-            } else GL_POINTS.buffer(VertexFormat.Pos2fColor, particleList.size) {
-                list.forEach {
-                    v2fc(it.x, it.y, it.color.alpha(it.alpha.toInt().coerceIn(0, initialAlpha)))
                 }
             }
         }

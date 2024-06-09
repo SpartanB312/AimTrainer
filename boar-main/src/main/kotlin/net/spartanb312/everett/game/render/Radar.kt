@@ -15,7 +15,7 @@ import net.spartanb312.everett.graphics.matrix.translatef
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.config.Configurable
 import net.spartanb312.everett.utils.config.setting.alias
-import net.spartanb312.everett.utils.config.setting.m
+import net.spartanb312.everett.utils.config.setting.lang
 import net.spartanb312.everett.utils.config.setting.whenTrue
 import net.spartanb312.everett.utils.math.MathUtils.mul
 import net.spartanb312.everett.utils.math.MathUtils.v2hFOV
@@ -30,10 +30,10 @@ import kotlin.math.max
 object Radar : Configurable("Radar", Language) {
 
     private var generalScale by setting("Radar-Scale", 1f, 0.1f..5.0f, 0.1f).alias("Radar Scale")
-        .m("雷达大小", "雷達尺寸")
+        .lang("雷达大小", "雷達尺寸")
         .whenTrue(VideoOption.radar)
     private var radarRange by setting("Radar-Range", 75, 1..200, 1).alias("Radar Range")
-        .m("雷达范围", "雷達範圍")
+        .lang("雷达范围", "雷達範圍")
         .whenTrue(VideoOption.radar)
 
     private val arc1Vertices = RenderUtils.getArcVertices(0f, 0f, 50f, 0f..360f).reversed().toTypedArray()

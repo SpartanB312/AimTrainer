@@ -1,7 +1,6 @@
 package net.spartanb312.everett.utils.math.vector
 
-import kotlin.math.acos
-import kotlin.math.sqrt
+import kotlin.math.*
 
 data class Vec3d(val x: Double = 0.0, val y: Double = 0.0, val z: Double = 0.0) {
 
@@ -88,4 +87,11 @@ data class Vec3d(val x: Double = 0.0, val y: Double = 0.0, val z: Double = 0.0) 
         val ZERO = Vec3d(0.0, 0.0)
     }
 
+}
+
+fun Vec3d(yaw: Double, pitch: Double): Vec3d {
+    val x = cos(yaw)
+    val z = sin(yaw)
+    val y = sqrt(x * x + z * z) * tan(pitch)
+    return Vec3d(x, y, z)
 }

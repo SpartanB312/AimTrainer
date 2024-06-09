@@ -3,10 +3,8 @@ package net.spartanb312.everett.graphics.font
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.graphics.drawing.VertexFormat
-import net.spartanb312.everett.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer.draw
 import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.matrix.translatef
@@ -38,6 +36,7 @@ class UnicodeFontRenderer(
     private val chunkSize: Int = 64,
     private val linearMag: Boolean = true,
     private val useMipmap: Boolean = true,
+    private val qualityLevel: Int = 3,
     override var scaleFactor: Float = 1f,
     private val textureLoader: TextureLoader? = null
 ) : FontRenderer {
@@ -141,7 +140,7 @@ class UnicodeFontRenderer(
             }
             val texture: Texture = if (!instantLoad && textureLoader != null) {
                 val texture = LazyTextureContainer(
-                    MipmapTexture.lateUpload(GL_RGBA, useMipmap = useMipmap),
+                    MipmapTexture.lateUpload(GL_RGBA, 3, useMipmap, qualityLevel),
                     asyncJob
                 ).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
@@ -150,7 +149,7 @@ class UnicodeFontRenderer(
                 texture
             } else {
                 val img = asyncJob.invoke()
-                MipmapTexture(img, GL_RGBA, useMipmap = useMipmap).useTexture {
+                MipmapTexture(img, GL_RGBA, 3, useMipmap, qualityLevel).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 }
             }
@@ -160,7 +159,7 @@ class UnicodeFontRenderer(
             Logger.debug("Init chunk $chunk from cache")
             val texture = if (!instantLoad && textureLoader != null) {
                 val texture = LazyTextureContainer(
-                    MipmapTexture.lateUpload(GL_RGBA, useMipmap = useMipmap)
+                    MipmapTexture.lateUpload(GL_RGBA, 3, useMipmap, qualityLevel)
                 ) {
                     val img = chunkImgSupplier.invoke()
                     loadedChunk[chunk] = img
@@ -173,7 +172,7 @@ class UnicodeFontRenderer(
             } else {
                 val img = chunkImgSupplier.invoke()
                 loadedChunk[chunk] = img
-                MipmapTexture(img, GL_RGBA, useMipmap = useMipmap).useTexture {
+                MipmapTexture(img, GL_RGBA, 3, useMipmap, qualityLevel).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 }
             }
@@ -239,10 +238,7 @@ class UnicodeFontRenderer(
         scale0: Float,
         shadow: Boolean,
     ) {
-        if (RS.compatMode) GLHelper.texture2d = true
-        GLHelper.smooth = true
         GLHelper.blend = true
-        GLHelper.alpha = true
         var startX = x
         var startY = y
 
@@ -335,7 +331,7 @@ class UnicodeFontRenderer(
                     rightColor = shadowColor.alpha(alpha)
                 }
 
-                if (!RS.compatMode) GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                     //RT
                     universal(
                         endX,
@@ -371,43 +367,6 @@ class UnicodeFontRenderer(
                         data.u,
                         data.v1,
                         leftColor
-                    )
-                } else GL_QUADS.buffer(VertexFormat.Pos3fColorTex, 4) {
-                    //RT
-                    v3Tex2fC(
-                        endX,
-                        startY,
-                        0f,
-                        data.u1,
-                        data.v,
-                        rightColor
-                    )
-                    //LT
-                    v3Tex2fC(
-                        startX,
-                        startY,
-                        0f,
-                        data.u,
-                        data.v,
-                        leftColor
-                    )
-                    //LB
-                    v3Tex2fC(
-                        startX,
-                        endY,
-                        0f,
-                        data.u,
-                        data.v1,
-                        leftColor
-                    )
-                    //RB
-                    v3Tex2fC(
-                        endX,
-                        endY,
-                        0f,
-                        data.u1,
-                        data.v1,
-                        rightColor
                     )
                 }
                 startX = endX
@@ -415,7 +374,6 @@ class UnicodeFontRenderer(
             }
             glBindTexture(GL_TEXTURE_2D, 0)
         }
-        if (RS.compatMode) GLHelper.texture2d = false
     }
 
 
@@ -464,7 +422,7 @@ class UnicodeFontRenderer(
      * FontRenderer cache
      */
     override val serialCode = AES.encode(
-        font.fontName + font.size + antiAlias + fractionalMetrics + imgSize + chunkSize + linearMag + useMipmap + scaleFactor,
+        font.fontName + font.size + antiAlias + fractionalMetrics + imgSize + chunkSize + linearMag + useMipmap + qualityLevel + scaleFactor,
         "spartan1186"
     ).replace("/", "s").replace("=", "e").replace("+", "p").limitLength(64)
 

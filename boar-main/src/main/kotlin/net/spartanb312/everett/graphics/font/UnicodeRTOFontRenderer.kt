@@ -20,7 +20,8 @@ class UnicodeRTOFontRenderer(
     imgSize: Int = 512,
     chunkSize: Int = 64,
     private val linearMag: Boolean = true,
-    private val useMipmap: Boolean = true,
+    private val useMipmap: Boolean = false, // Avoid glitching
+    private val qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
     private val textureLoader: TextureLoader? = null,
 ) : RTOFontRenderer {
@@ -38,6 +39,7 @@ class UnicodeRTOFontRenderer(
         chunkSize,
         linearMag,
         useMipmap,
+        qualityLevel,
         scaleFactor,
         textureLoader
     )
@@ -131,6 +133,7 @@ class UnicodeRTOFontRenderer(
                             (absoluteHeight * 1.2).toInt(),
                             linearMag,
                             useMipmap,
+                            qualityLevel,
                             0,
                             scaleFactor,
                             textureLoader

@@ -13,7 +13,7 @@ object Language : LanguageManager {
 
     override fun add(multiText: MultiText): Boolean = textContainers.add(multiText)
 
-    override fun String.m(cn: String, tw: String): MultiText {
+    override fun String.lang(cn: String, tw: String): MultiText {
         val multiText = MultiText(this)
         multiText.addLang(Languages.ChineseCN, cn)
         multiText.addLang(Languages.ChineseTW, tw)

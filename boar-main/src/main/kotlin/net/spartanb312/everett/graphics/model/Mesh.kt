@@ -1,10 +1,11 @@
 package net.spartanb312.everett.graphics.model
 
-import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.OpenGL.*
-import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.misc.createDirectByteBuffer
+import org.lwjgl.opengl.GL15
+import org.lwjgl.opengl.GL20
+import org.lwjgl.opengl.GL30
 
 abstract class Mesh(
     val vertices: MutableList<Vertex>,
@@ -16,7 +17,7 @@ abstract class Mesh(
 ) {
 
     // Nvidia GeForce 6000/7000 series supports VAO via ARB
-    val vao = if (RS.compat.useVAO) GLHelper.glGenVertexArrays() else 0
+    val vao = GL30.glGenVertexArrays()
 
     // Textures
     val diffuseTexture = diffuse.getOrNull(0)
@@ -37,61 +38,56 @@ abstract class Mesh(
     }
 
     open fun setupMesh() {
-        if (RS.compat.useVAO) {
-            val buffer = createDirectByteBuffer(vertices.size * 32).apply {
-                vertices.forEach {
-                    putFloat(it.position.x)
-                    putFloat(it.position.y)
-                    putFloat(it.position.z)
-                    putFloat(it.texCoords.x)
-                    putFloat(it.texCoords.y)
-                    putFloat(it.normal.x)
-                    putFloat(it.normal.y)
-                    putFloat(it.normal.z)
-                }
-                flip()
+        val buffer = createDirectByteBuffer(vertices.size * 32).apply {
+            vertices.forEach {
+                putFloat(it.position.x)
+                putFloat(it.position.y)
+                putFloat(it.position.z)
+                putFloat(it.texCoords.x)
+                putFloat(it.texCoords.y)
+                putFloat(it.normal.x)
+                putFloat(it.normal.y)
+                putFloat(it.normal.z)
             }
-
-            val indicesBuffer = createDirectByteBuffer(indices.size * 4).apply {
-                indices.forEach {
-                    putInt(it)
-                }
-                flip()
-            }
-            val vbo = GLHelper.glGenBuffers()
-            val ibo = GLHelper.glGenBuffers()
-
-            GLHelper.glBindVertexArray(vao)
-
-            // Buffer data
-            GLHelper.glBindBuffer(GL_ARRAY_BUFFER, vbo)
-            GLHelper.glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
-
-            // Vertex
-            GLHelper.glVertexAttribPointer(0, 3, GL_FLOAT, false, 32, 0)
-            GLHelper.glEnableVertexAttribArray(0)
-
-            // TexCoords
-            GLHelper.glVertexAttribPointer(1, 2, GL_FLOAT, false, 32, 12)
-            GLHelper.glEnableVertexAttribArray(1)
-
-            // Normal
-            GLHelper.glVertexAttribPointer(2, 3, GL_FLOAT, false, 32, 20)
-            GLHelper.glEnableVertexAttribArray(2)
-
-            // Buffer EBO
-            GLHelper.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo)
-            GLHelper.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW)
-
-            GLHelper.glBindVertexArray(0)
-            GLHelper.glBindBuffer(GL_ARRAY_BUFFER, 0)
-        } else {
-            TODO()
+            flip()
         }
+
+        val indicesBuffer = createDirectByteBuffer(indices.size * 4).apply {
+            indices.forEach {
+                putInt(it)
+            }
+            flip()
+        }
+        val vbo = GL15.glGenBuffers()
+        val ibo = GL15.glGenBuffers()
+
+        GL30.glBindVertexArray(vao)
+
+        // Buffer data
+        GL15.glBindBuffer(GL_ARRAY_BUFFER, vbo)
+        GL15.glBufferData(GL_ARRAY_BUFFER, buffer, GL_STATIC_DRAW)
+
+        // Vertex
+        GL20.glVertexAttribPointer(0, 3, GL_FLOAT, false, 32, 0)
+        GL20.glEnableVertexAttribArray(0)
+
+        // TexCoords
+        GL20.glVertexAttribPointer(1, 2, GL_FLOAT, false, 32, 12)
+        GL20.glEnableVertexAttribArray(1)
+
+        // Normal
+        GL20.glVertexAttribPointer(2, 3, GL_FLOAT, false, 32, 20)
+        GL20.glEnableVertexAttribArray(2)
+
+        // Buffer EBO
+        GL15.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo)
+        GL15.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW)
+
+        GL30.glBindVertexArray(0)
+        GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 
     abstract fun MatrixLayerStack.MatrixScope.draw()
-    abstract fun drawLegacy()
 
 }
 

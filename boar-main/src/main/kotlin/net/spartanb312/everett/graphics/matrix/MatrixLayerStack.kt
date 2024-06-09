@@ -1,10 +1,7 @@
 package net.spartanb312.everett.graphics.matrix
 
 import com.soywiz.kds.iterators.fastForEach
-import net.spartanb312.everett.graphics.GLHelper
-import net.spartanb312.everett.graphics.RS
 import org.joml.Matrix4f
-import org.lwjgl.opengl.GL11
 import java.util.*
 import java.util.concurrent.atomic.AtomicInteger
 
@@ -15,13 +12,11 @@ class MatrixLayerStack {
     var checkID = 0L
 
     fun pushMatrixLayer(matrix4f: Matrix4f = Matrix4f()) {
-        if (RS.compatMode) GLHelper.pushMatrixAll()
         stack.push(matrix4f)
         stateStack.push(getMatrixResult())
     }
 
     fun popMatrixLayer(): Matrix4f {
-        if (RS.compatMode) GLHelper.popMatrixAll()
         if (stateStack.isNotEmpty()) stateStack.pop()
         return if (stack.empty()) {
             throw Exception("Stack must has at least 1 matrix!")
@@ -52,13 +47,11 @@ class MatrixLayerStack {
 
     fun apply(checkInc: Int, matrix4f: Matrix4f): Matrix4f {
         checkID += checkInc
-        if (RS.compatMode) GL11.glLoadMatrixf(matrix4f.getFloatArray())
         return peek.set(matrix4f)
     }
 
     fun mul(checkInc: Int, matrix4f: Matrix4f): Matrix4f {
         checkID += checkInc
-        if (RS.compatMode) GL11.glMultMatrixf(matrix4f.getFloatArray())
         return peek.mul(matrix4f)
     }
 
@@ -85,14 +78,8 @@ inline fun MatrixLayerStack.useScope(
     block: MatrixLayerStack.MatrixScope.() -> Unit
 ) {
     val preCheckID = checkID
-    if (RS.compatMode) {
-        pushMatrixLayer()
-        scope.block()
-        popMatrixLayer()
-    } else {
-        scope.block()
-        scope.recover()
-    }
+    scope.block()
+    scope.recover()
     checkID = preCheckID
 }
 

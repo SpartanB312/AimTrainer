@@ -10,23 +10,23 @@ object Notification {
 
     private val notifications = mutableListOf<Notification>()
 
-    fun showCenter(message: String, duration: Long = 3000) {
-        Logger.info("[Notification-Center] $message")
+    fun showCenter(message: String, duration: Long = 3000, log: Boolean = true) {
+        if (log) Logger.info("[Notification-Center] $message")
         notifications.removeIf { it.type == Type.Center }
         notifications.add(Notification(Type.Center, message, duration, System.currentTimeMillis() + duration))
     }
 
-    fun showLeft(message: String, duration: Long = 5000) {
-        Logger.info("[Notification-Left] $message")
+    fun showLeft(message: String, duration: Long = 5000, log: Boolean = true) {
+        if (log) Logger.info("[Notification-Left] $message")
         notifications.add(Notification(Type.Center, message, duration, System.currentTimeMillis() + duration))
     }
 
-    fun showRight(message: String, duration: Long = 5000) {
-        Logger.info("[Notification-Right] $message")
+    fun showRight(message: String, duration: Long = 5000, log: Boolean = true) {
+        if (log) Logger.info("[Notification-Right] $message")
         notifications.add(Notification(Type.Center, message, duration, System.currentTimeMillis() + duration))
     }
 
-    fun render2D() {
+    fun onRender() {
         val current = System.currentTimeMillis()
         notifications.toList().forEach {
             if (current > it.endTime) notifications.remove(it)

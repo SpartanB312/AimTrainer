@@ -33,25 +33,26 @@ object ModuleScreen : GuiScreen() {
         modules.add(AimTrainer.javaClass.getAnnotation(Module::class.java))
     }
 
-    private val width2 = FontRendererMain.getWidth("Description: ")
-    private val width3 = FontRendererMain.getWidth("Author: ")
+    private val width2 = FontRendererMain.getWidth("Description: ", 1.25f)
+    private val width3 = FontRendererMain.getWidth("Author: ", 1.25f)
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         Background.renderBackground(mouseX, mouseY)
-        FontRendererROG.drawCenteredStringWithShadow("Modules", RS.width / 2f, RS.heightF * 0.05f, scale = 0.8f)
+        val scale = max(RS.widthF / 2560f, RS.heightF / 1369f)
+        FontRendererROG.drawCenteredStringWithShadow("Modules", RS.width / 2f, RS.heightF * 0.05f, scale = scale)
         val clampYT = RS.heightF * 0.1f
         val clampYB = RS.heightF * 0.9f
         RenderUtils.drawRect(0f, 0f, RS.widthF, RS.heightF, ColorRGB.BLACK.alpha(32))
         RenderUtils.drawRect(0f, clampYT, RS.widthF, clampYB, ColorRGB.DARK_GRAY.alpha(84))
 
         // Spartan
-        if (TextureManager.everett?.available == true) {
-            val scale = max(RS.widthScale, RS.heightScale) * 2.5f
+        if (TextureManager.everett.available) {
+            val scale1 = max(RS.widthScale, RS.heightScale) * 2.5f
             TextureManager.everett.drawTexture(
-                RS.centerXF - scale * 320f,
-                RS.centerYF - scale * 180f,
-                RS.centerXF + scale * 320f,
-                RS.centerYF + scale * 180f,
+                RS.centerXF - scale1 * 320f,
+                RS.centerYF - scale1 * 180f,
+                RS.centerXF + scale1 * 320f,
+                RS.centerYF + scale1 * 180f,
                 colorRGB = ColorRGB.WHITE.alpha(224)
             )
         }
@@ -75,42 +76,50 @@ object ModuleScreen : GuiScreen() {
                     startX,
                     startY,
                     endX,
-                    startY + FontRendererMain.getHeight() * 2,
+                    startY + FontRendererMain.getHeight(scale * 2.5f),
                     ColorRGB.WHITE.alpha(if (isHoovered) 128 else 64)
                 )
 
                 // Name
                 val nameStr = "$name "
-                val width1 = FontRendererMain.getWidth(nameStr)
-                FontRendererMain.drawStringWithShadow(nameStr, startX + 10f, startY)
+                val width1 = FontRendererMain.getWidth(nameStr, scale * 1.25f)
+                FontRendererMain.drawStringWithShadow(nameStr, startX + 10f, startY, scale = scale * 1.25f)
                 FontRendererMain.drawStringWithShadow(
                     version,
                     startX + 10f + width1,
                     startY,
-                    ColorRGB.GREEN
+                    ColorRGB.GREEN,
+                    scale = scale * 1.25f
                 )
-                startY += FontRendererMain.getHeight()
+                startY += FontRendererMain.getHeight(scale * 1.25f)
 
                 // Description
-                FontRendererMain.drawStringWithShadow("Description: ", startX + 10f, startY)
+                FontRendererMain.drawStringWithShadow("Description: ", startX + 10f, startY, scale = scale * 1.25f)
                 FontRendererMain.drawStringWithShadow(
                     desc,
-                    startX + 10f + width2,
+                    startX + 10f + width2 * scale,
                     startY,
-                    ColorRGB.AQUA
+                    ColorRGB.AQUA,
+                    scale = scale * 1.25f
                 )
 
                 // Author
                 val authorInfo = if (author == "") " Unknown" else author
-                val width4 = FontRendererMain.getWidth(authorInfo)
-                FontRendererMain.drawStringWithShadow("Author: ", endX - 10f - width3 - width4, startY)
+                val width4 = FontRendererMain.getWidth(authorInfo, 1.25f)
+                FontRendererMain.drawStringWithShadow(
+                    "Author: ",
+                    endX - (10f + width3 + width4) * scale,
+                    startY,
+                    scale = scale * 1.25f
+                )
                 FontRendererMain.drawStringWithShadow(
                     if (author == "") " Unknown" else author,
-                    endX - 10f - width4,
+                    endX - (10f + width4) * scale,
                     startY,
-                    ColorRGB.AQUA
+                    ColorRGB.AQUA,
+                    scale = scale * 1.25f
                 )
-                startY += FontRendererMain.getHeight(1.3f)
+                startY += FontRendererMain.getHeight(1.3f * scale * 1.25f)
             }
         }
 
@@ -118,11 +127,10 @@ object ModuleScreen : GuiScreen() {
         if (scrollOffset + 6 > modules.size) scrollOffset = modules.size - 6
         else if (scrollOffset < 0) scrollOffset = 0
 
-        val scale = max(RS.widthScale, RS.heightScale) * 1.5f
-        var sX = RS.centerXF - 245 * scale
+        var sX = RS.centerXF - 490 * scale
         buttons.forEach {
-            it.update(sX, RS.centerYF * 1.85f, 150f * scale, 40f * scale)
-            sX += 170 * scale
+            it.update(sX, RS.centerYF * 1.85f, 300f * scale, 70f * scale)
+            sX += 340 * scale
             it.onRender(mouseX, mouseY, scale)
         }
     }
@@ -154,7 +162,7 @@ object ModuleScreen : GuiScreen() {
                 this.text,
                 (endX + startX) / 2f,
                 (endY + this.startY) / 2f,
-                scale = scale
+                scale = scale * 2f
             )
         }
 

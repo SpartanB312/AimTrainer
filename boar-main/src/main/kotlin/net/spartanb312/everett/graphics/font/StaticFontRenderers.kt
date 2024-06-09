@@ -38,6 +38,7 @@ class CustomFont(override val font: Font, override val textureLoader: TextureLoa
         imgHeight: Int,
         linearMag: Boolean,
         useMipmap: Boolean,
+        qualityLevel: Int,
         offsetPixel: Int,
         scaleFactor: Float,
         textureLoader: TextureLoader?
@@ -50,6 +51,7 @@ class CustomFont(override val font: Font, override val textureLoader: TextureLoa
         imgHeight,
         linearMag,
         useMipmap,
+        qualityLevel,
         offsetPixel,
         scaleFactor,
         textureLoader
@@ -70,6 +72,7 @@ interface StaticFont {
         imgHeight: Int = 64,
         linearMag: Boolean = false,
         useMipmap: Boolean = true,
+        qualityLevel: Int = 3,
         offsetPixel: Int = 0,
         scaleFactor: Float = 1f,
         textureLoader: TextureLoader? = this.textureLoader
@@ -83,6 +86,7 @@ interface StaticFont {
         imgHeight: Int = 64,
         linearMag: Boolean = false,
         useMipmap: Boolean = true,
+        qualityLevel: Int = 3,
         offsetPixel: Int = 0,
         scaleFactor: Float = 1f,
         textureLoader: TextureLoader? = this.textureLoader
@@ -95,6 +99,7 @@ interface StaticFont {
             imgHeight,
             linearMag,
             useMipmap,
+            qualityLevel,
             offsetPixel,
             scaleFactor
         )

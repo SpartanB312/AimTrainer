@@ -8,6 +8,7 @@ import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
+import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.everett.game.training.BallHitTraining
 import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.game.training.TrainingInfo
@@ -71,6 +72,7 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
     }
 
     override fun render() {
+        AimTrainingScene.skybox.onRender3D()
         entities.forEach {
             if (it is Ball) BallRenderer.render(it.pos.x, it.pos.y, it.pos.z, it.size, ColorRGB.GREEN, false, outlineC)
         }

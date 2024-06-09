@@ -7,7 +7,7 @@ import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.game.Language.m
+import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.glfw.GLFW
@@ -15,7 +15,7 @@ import org.lwjgl.glfw.GLFW
 class PauseScreen(val scene: Scene) : GuiScreen() {
 
     val buttons = mutableListOf<Button>()
-    private val paused by "Paused".m("暂停", "暫停")
+    private val paused by "Paused".lang("暂停", "暫停")
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         val width = 320f

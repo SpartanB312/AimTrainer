@@ -1,7 +1,6 @@
 plugins {
     java
     kotlin("jvm")
-    id("dev.luna5ama.jar-optimizer") version "1.2-SNAPSHOT"
 }
 
 repositories {
@@ -53,6 +52,9 @@ dependencies {
     library("dev.luna5ama:kmogus-core:$kmogusVersion")
     library("dev.luna5ama:kmogus-struct-api:$kmogusVersion")
 
+    // Networking
+    library("io.netty:netty-all:4.1.110.Final")
+
     platforms.forEach {
         library("org.lwjgl", "lwjgl", classifier = it)
         library("org.lwjgl", "lwjgl-assimp", classifier = it)
@@ -100,31 +102,6 @@ val collectAssets = task("collectAssets", type = Copy::class) {
     into("$rootDir\\release\\assets")
 }
 
-val fatJar = task("FatJar", type = Jar::class) {
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    archiveFileName.set("fat.jar")
-    from(library.map { if (it.isDirectory) it else zipTree(it) })
-    from(projectModule.map { if (it.isDirectory) it else zipTree(it) })
-    from(zipTree(File("$buildDir\\libs\\boar-main.jar")))
-    from("$projectDir\\src\\main\\resources\\")
-    exclude("assets/sound/background/**")
-    exclude("assets/texture/EVRT.png")
-    exclude("assets/font/Microsoft YaHei UI.ttc")
-    exclude("linux/")
-    exclude("macos/")
-    exclude("windows/x86/")
-    exclude("windows/arm64/")
-    manifest {
-        attributes(
-            "Manifest-Version" to 1.0,
-            "Main-Class" to " net.spartanb312.everett.launch.MinimalLaunchKt"
-        )
-    }
-}
-val optimizeFatJar = jarOptimizer.register(fatJar, "net.spartanb312")
-
-val outputMinimal = false
-
 tasks {
     compileKotlin {
         kotlinOptions {
@@ -139,7 +116,6 @@ tasks {
 
     "build" {
         dependsOn(collectLibs, collectAssets)
-        if (outputMinimal) finalizedBy(collectModules, moveJar, optimizeFatJar)
-        else finalizedBy(collectModules, moveJar)
+        finalizedBy(collectModules, moveJar)
     }
 }

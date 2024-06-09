@@ -2,17 +2,18 @@ package net.spartanb312.everett.utils.timing
 
 /**
  * Created on 2/12/2023 by B312
+ * Updated on 6/3/2024 by B312
  */
 class Timer(val timeUnit: Duration = Duration.Millisecond) {
 
-    private var time = System.currentTimeMillis()
+    private var time = System.nanoTime()
 
     fun passed(interval: Int, timeUnit: Duration = this.timeUnit): Boolean {
-        return System.currentTimeMillis() - time * this.timeUnit.multiplier > interval * timeUnit.multiplier
+        return System.nanoTime() - time > interval * timeUnit.multiplier
     }
 
     fun reset() {
-        time = System.currentTimeMillis()
+        time = System.nanoTime()
     }
 
     fun passedAndReset(interval: Int, timeUnit: Duration = this.timeUnit): Boolean {
@@ -42,6 +43,12 @@ class Timer(val timeUnit: Duration = Duration.Millisecond) {
             if (reset) reset()
         }
         return result
+    }
+
+    // Tick per second
+    inline fun tps(tps: Int, block: () -> Unit) {
+        val interval = 1000000000 / tps
+        passedAndReset(interval, Duration.Nanosecond, block)
     }
 
 }

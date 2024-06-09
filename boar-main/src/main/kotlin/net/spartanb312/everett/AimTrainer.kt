@@ -5,14 +5,17 @@ import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.BGMPlayer
+import net.spartanb312.everett.game.audio.GunfireAudio
+import net.spartanb312.everett.game.event.ResolutionUpdateEvent
+import net.spartanb312.everett.game.event.TickEvent
 import net.spartanb312.everett.game.input.InputManager
-import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.DebugInfo
 import net.spartanb312.everett.game.render.FontCacheManager
 import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.gui.MedalRenderer
 import net.spartanb312.everett.game.render.gui.Notification
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.LoadingScreen
@@ -22,7 +25,7 @@ import net.spartanb312.everett.graphics.GameGraphics
 import net.spartanb312.everett.graphics.OpenGL.GL_COLOR_BUFFER_BIT
 import net.spartanb312.everett.graphics.OpenGL.glClear
 import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
 import net.spartanb312.everett.graphics.matrix.applyOrtho
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.model.Model
@@ -31,7 +34,6 @@ import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.Profiler
-import net.spartanb312.everett.utils.misc.createFile
 import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
@@ -39,7 +41,7 @@ import org.lwjgl.opengl.GL11.*
 
 /**
  * An engine based on OpenGL 4.5 Core Profile
- * Compatibility mode based on OpenGL 2.1 (Minimal requirements)
+ * OpenGL 2.1 is no longer supported
  */
 @Module(
     name = "Aim Trainer",
@@ -49,7 +51,7 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240521"
+    const val AIM_TRAINER_VERSION = "1.0.0.240610"
 
     var isReady = false
     private val tickTimer = Timer()
@@ -72,15 +74,13 @@ object AimTrainer : GameGraphics {
         FontCacheManager.initChunks()
         Runtime.getRuntime().addShutdownHook(Thread {
             FontCacheManager.saveCache()
-            val api = AccessibilityOption.getLaunchOGLVersion()
-            createFile("launch_option.cfg").apply {
-                writeText("API=$api")
-            }
         })
         Render2DManager.displayScreen(LoadingScreen)
         PhysicsSystem.launch(Player, 60, true)
         AudioSystem.start()
+        GunfireAudio
         model.loadModel()
+
     }
 
     override fun Profiler.onLoop() {
@@ -115,18 +115,23 @@ object AimTrainer : GameGraphics {
         // Render2D
         RS.matrixLayer.scope {
             applyOrtho(0.0f, RS.widthF, RS.heightF, 0.0f, -1.0f, 1.0f)
+            MedalRenderer.onRender()
             Render2DManager.onRender(RS.mouseXD, RS.mouseYD)
-            Notification.render2D()
+            Notification.onRender()
             CrosshairRenderer.onRender(VideoOption.dfov)
             DebugInfo.render2D()
         }
         profiler("Render 2D")
 
-        // Tick
-        tickTimer.passedAndReset(16) {
+        // Tick (60TPS)
+        tickTimer.tps(60) {
+            TickEvent.Pre.post()
+            Player.onTick()
             SceneManager.onTick()
             Render2DManager.onTick()
             BGMPlayer.onTick()
+            GunfireAudio.onTick()
+            TickEvent.Post.post()
         }
         profiler("Tick")
 
@@ -167,6 +172,7 @@ object AimTrainer : GameGraphics {
 
     override fun onResolutionUpdate(oldWith: Int, oldHeight: Int, newWidth: Int, newHeight: Int) {
         Logger.info("Resolution updated to $newWidth x $newHeight")
+        ResolutionUpdateEvent.post(ResolutionUpdateEvent(oldWith, oldHeight, newWidth, newHeight))
     }
 
 }

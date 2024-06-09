@@ -6,15 +6,13 @@ import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.utils.math.MathUtils.mul
+import net.spartanb312.everett.utils.math.Plane
+import net.spartanb312.everett.utils.math.toDegree
 import net.spartanb312.everett.utils.math.toRadian
 import net.spartanb312.everett.utils.math.vector.Vec3f
-import net.spartanb312.everett.utils.math.vector.distanceTo
-import org.joml.Matrix4d
-import org.joml.Vector3f
 import org.lwjgl.glfw.GLFW
+import kotlin.math.abs
 import kotlin.math.cos
-import kotlin.math.sin
 
 object MagnetismAA : AimAssist {
 
@@ -24,7 +22,13 @@ object MagnetismAA : AimAssist {
         locked = LockData(entity, entity.pos, Player.pos, Player.yaw, Player.pitch)
     }
 
-    class LockData(val entity: Entity, val entityPos: Vec3f, val playerPos: Vec3f, val yaw: Float, val pitch: Float)
+    class LockData(
+        val entity: Entity,
+        val entityPos: Vec3f,
+        val playerPos: Vec3f,
+        val yaw: Float,
+        val pitch: Float
+    )
 
     private val feedbackRate
         get() = if (GLFW.glfwGetMouseButton(
@@ -33,7 +37,6 @@ object MagnetismAA : AimAssist {
             ) == GLFW.GLFW_PRESS
         ) AimAssistOption.firingCompensation else AimAssistOption.moveCompensation
 
-    // TODO split yaw and pitch calc
     override fun compensate(sensitivity: Double) {
         if (!AimAssistOption.mcEnabled) return
         val locked = locked
@@ -46,15 +49,10 @@ object MagnetismAA : AimAssist {
             } else 0f
         )
         if (locked != null && result != null && locked.entity == result) {
-            val facing = Vec3f(cos(Player.yaw.toRadian()), 0, sin(Player.yaw.toRadian()))
-            val ref = Vec3f(1f, 0f, 0f)
-            val refAngle = facing.angle(ref)
-            val axis = ref cross facing
-            val rotateMat = Matrix4d().rotate(refAngle.toDouble(), Vector3f(axis.x, axis.y, axis.z))
             val lastPlayerPos = locked.playerPos
             val lastEntityPos = locked.entityPos
-            val preVec = (lastEntityPos - lastPlayerPos).mul(rotateMat)
-            val vec = (result.pos - Player.pos).mul(rotateMat)
+            val preVec = lastEntityPos - lastPlayerPos
+            val vec = result.pos - Player.pos
             val angle = vec.angle(preVec)
             val zeroAngle = vec == preVec
 
@@ -62,18 +60,29 @@ object MagnetismAA : AimAssist {
                 if (zeroAngle) {
                     if (AimAssistOption.zeroAngleFriction) FrictionAA.compensate(sensitivity, true)
                 } else {
-                    var feedbackAngle = angle * feedbackRate
-                    feedbackAngle *= 100f / Player.pos.distanceTo(result.pos).toFloat()
-                    val normal = preVec cross vec
-                    val mat = Matrix4d().rotate(feedbackAngle, Vector3f(normal.x, normal.y, normal.z))
-                    val feedbackVec = preVec.mul(mat)
-                    //println("Feedback Angle${feedbackVec.angle(vec).toDegree()}, Angle ${feedbackAngle.toDegree()}")
-                    val xzClampRange = -(feedbackRate.toFloat() / 10f)..(feedbackRate.toFloat() / 10f)
-                    val yClampRange = -(feedbackRate.toFloat() / 50f)..(feedbackRate.toFloat() / 50f)
-                    val yawOffset = (feedbackVec.yaw - preVec.yaw).coerceIn(xzClampRange)
-                    val pitchOffset = (feedbackVec.pitch - preVec.pitch).coerceIn(yClampRange)
-                    Player.yaw = locked.yaw + yawOffset * cos(Player.pitch.toRadian())
-                    Player.pitch = (locked.pitch - pitchOffset).coerceIn(-89.5f..89.5f)
+                    val facing = Vec3f(Player.yaw.toRadian(), Player.pitch.toRadian())
+
+                    // Clamp range
+                    val xzDelta = abs(vec.yaw - preVec.yaw).toDegree()
+                    val xzRange = -xzDelta..xzDelta
+                    val yDelta = abs(vec.pitch - preVec.pitch).toDegree()
+                    val yRange = -yDelta..yDelta
+
+                    // Vertical
+                    val vRefPlane = Plane(Vec3f(0f, 1f, 0f), facing)
+                    val vPre = vRefPlane.projectOnPlane(preVec)
+                    val vNow = vRefPlane.projectOnPlane(vec)
+                    val pitchOffset = ((vNow.pitch - vPre.pitch).toDegree() * feedbackRate).toFloat().coerceIn(yRange)
+                    if (!pitchOffset.isNaN()) Player.pitch = (locked.pitch + pitchOffset).coerceIn(-89.5f..89.5f)
+
+                    // Horizontal
+                    if (xzDelta <= 90.0) {
+                        val hRefPlane = Plane(Vec3f(1f, 0f, 0f), Vec3f(0f, 0f, 1f))
+                        val hPre = hRefPlane.projectOnPlane(preVec)
+                        val hNow = hRefPlane.projectOnPlane(vec)
+                        val yawOffset = ((hNow.yaw - hPre.yaw).toDegree() * feedbackRate).toFloat().coerceIn(xzRange)
+                        if (!yawOffset.isNaN()) Player.yaw = (locked.yaw + yawOffset * cos(Player.pitch.toRadian()))
+                    } // Cancel
                 }
             }
         } else FrictionAA.compensate(sensitivity)

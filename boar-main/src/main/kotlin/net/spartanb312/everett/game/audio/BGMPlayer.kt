@@ -4,7 +4,6 @@ import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.audio.Sound
 import net.spartanb312.everett.game.option.impls.AudioOption
 import net.spartanb312.everett.game.render.scene.SceneManager
-import net.spartanb312.everett.launch.Main
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.timing.Timer
 
@@ -14,16 +13,15 @@ object BGMPlayer {
         Sound("assets/sound/background/overture.wav"),
     )
 
-    var currentBGM = nextBGM()
+    var currentBGM = nextBGM(); private set
 
     fun nextBGM(): Sound {
         val bgm = bgmList.random()
-        if (bgmList.size < 2) return bgm
-        return if (currentBGM == bgm) nextBGM()
-        else {
-            Logger.info("Start playing BGM ${bgm.name}")
-            bgm
-        }
+        val returnBGM = if (bgmList.size < 2) bgm
+        else if (currentBGM == bgm) nextBGM()
+        else bgm
+        Logger.info("Start playing BGM ${returnBGM.name}")
+        return returnBGM
     }
 
     private var volume = 0f

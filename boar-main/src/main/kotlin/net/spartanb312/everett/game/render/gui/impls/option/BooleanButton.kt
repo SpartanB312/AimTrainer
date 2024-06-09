@@ -3,13 +3,13 @@ package net.spartanb312.everett.game.render.gui.impls.option
 import net.spartanb312.everett.utils.config.setting.primitive.BooleanSetting
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.game.Language.m
+import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.utils.color.ColorRGB
 
 class BooleanButton(setting: BooleanSetting) : AbstractSettingComponent<Boolean>(setting) {
 
-    private val on by "ON".m("开", "開")
-    private val off by "OFF".m("关", "關")
+    private val on by "ON".lang("开", "開")
+    private val off by "OFF".lang("关", "關")
 
     override fun onRender2D(mouseX: Double, mouseY: Double, scale: Float, alpha: Float) {
         val isHoovered = isHoovered(mouseX, mouseY)

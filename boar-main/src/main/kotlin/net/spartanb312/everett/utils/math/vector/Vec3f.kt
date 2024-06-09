@@ -121,3 +121,10 @@ data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
     }
 
 }
+
+fun Vec3f(yaw: Float, pitch: Float): Vec3f {
+    val x = cos(yaw)
+    val z = sin(yaw)
+    val y = sqrt(x * x + z * z) * tan(pitch)
+    return Vec3f(x, y, z)
+}

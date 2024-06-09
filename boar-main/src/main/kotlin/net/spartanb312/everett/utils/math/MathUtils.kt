@@ -98,6 +98,7 @@ object MathUtils {
     inline fun calcSegments(segmentsIn: Int, radius: Float, range: Float): Int {
         if (segmentsIn != -0) return segmentsIn
         val segments = radius * 0.5 * PI * (range / 360.0)
+        if (segments.isNaN()) return 16
         return max(segments.roundToInt(), 16)
     }
 

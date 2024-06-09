@@ -7,7 +7,7 @@ import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.config.setting.alias
-import net.spartanb312.everett.utils.config.setting.m
+import net.spartanb312.everett.utils.config.setting.lang
 import net.spartanb312.everett.utils.config.setting.number.format
 import net.spartanb312.everett.utils.config.setting.whenFalse
 import net.spartanb312.everett.utils.config.setting.whenTrue
@@ -20,16 +20,16 @@ import kotlin.math.tan
 object CrosshairMA40 : GunCrosshair, Crosshair(1.3f / 16f, errorAngle = 1.5f) {
 
     private val useSpecifiedAngle = setting("MA40-Specified Adsorption Angle", true)
-        .alias("Specified Adsorption Angle").m("指定吸附角", "指定吸附角")
+        .alias("Specified Adsorption Angle").lang("指定吸附角", "指定吸附角")
     private val errorAngle2 by setting("MA40-Adsorption Angle", errorAngle, 0f..10f, 0.05f).format("0.00")
-        .alias("Adsorption Angle").m("吸附角", "吸附角")
+        .alias("Adsorption Angle").lang("吸附角", "吸附角")
         .whenTrue(useSpecifiedAngle)
 
 
     private val followFOV = setting("MA40-Follow FOV", true)
-        .alias("Follow FOV").m("准星大小跟随FOV", "準星隨FOV變化")
+        .alias("Follow FOV").lang("准星大小跟随FOV", "準星隨FOV變化")
     private val size by setting("MA40-Specified FOV", 78f, 60f..150f)
-        .alias("Specified FOV").m("指定FOV的准星大小", "指定FOV下的準星")
+        .alias("Specified FOV").lang("指定FOV的准星大小", "指定FOV下的準星")
         .whenFalse(followFOV)
 
     override val syncFOV get() = followFOV.value

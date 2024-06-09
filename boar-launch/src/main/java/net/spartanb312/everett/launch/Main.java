@@ -7,11 +7,9 @@ import java.util.Arrays;
 public class Main {
 
     public static final String LAUNCH_WRAPPER_VERSION = "1.0.1";
-    public static boolean fullMode = false;
 
     public static void main(String[] args) throws Exception {
         LaunchLogger.info("Initializing launch wrapper...");
-        fullMode = true;
 
         // Detect system
         LaunchLogger.info("Running on platform: " + Platform.getPlatform().getPlatformName());

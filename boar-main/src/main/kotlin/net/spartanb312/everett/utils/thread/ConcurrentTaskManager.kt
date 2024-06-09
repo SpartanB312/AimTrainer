@@ -12,11 +12,17 @@ import java.util.concurrent.atomic.AtomicInteger
  * Lightweight concurrent task manager by using coroutine
  * Support Delay task and Repeat task
  */
-class ConcurrentTaskManager(
+fun ConcurrentTaskManager(
     name: String,
     threads: Int = Runtime.getRuntime().availableProcessors(),
     lite: Boolean = true
-) : CoroutineScope by newCoroutineScope(threads, name) {
+): ConcurrentTaskManager = ConcurrentTaskManager(name, lite, newCoroutineScope(threads, name))
+
+class ConcurrentTaskManager(
+    name: String,
+    lite: Boolean = true,
+    scope: CoroutineScope,
+) : CoroutineScope by scope {
 
     private val working = AtomicBoolean(true)
     private val scheduledTasks = CopyOnWriteArraySet<Pair<suspend CoroutineScope.() -> Unit, Long>>()//Task, StartTime

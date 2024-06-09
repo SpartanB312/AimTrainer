@@ -1,12 +1,10 @@
 package net.spartanb312.everett.game.render
 
-import net.spartanb312.everett.utils.config.setting.ListSetting
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.graphics.cache.CacheManager
 import net.spartanb312.everett.graphics.font.FontRenderer
-import net.spartanb312.everett.graphics.font.LocalFontRenderer
 import net.spartanb312.everett.graphics.font.RTOFontRenderer
-import net.spartanb312.everett.launch.Main
+import net.spartanb312.everett.utils.config.setting.ListSetting
 
 object FontCacheManager : CacheManager("FontRenderer") {
 
@@ -40,7 +38,7 @@ object FontRendererMain : FontRenderer by RTOFontRenderer(
     50f,
     scaleFactor = 0.5f,
     chunkSize = 49,
-    textureLoader = TextureManager,
+    textureLoader = TextureManager
 )
 
 object FontRendererBig : FontRenderer by RTOFontRenderer(
@@ -72,5 +70,6 @@ object FontRendererASCII : FontRenderer by FontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     25f,
     imgSize = 256,
-    chunkSize = 49
+    chunkSize = 49,
+    useMipmap = false
 )

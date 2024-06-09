@@ -1,8 +1,6 @@
 package net.spartanb312.everett.graphics.drawing
 
-import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.graphics.drawing.renderer.ArrayedRenderer2D
-import net.spartanb312.everett.graphics.drawing.renderer.PMVBORenderer2D
+import net.spartanb312.everett.graphics.drawing.pmvbo.PMVBORenderer2D
 import net.spartanb312.everett.utils.collection.mapArray
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.MathUtils
@@ -15,7 +13,7 @@ import kotlin.math.max
 import kotlin.math.min
 import kotlin.math.sin
 
-object RenderUtils : Renderer2D by if (RS.compatMode) ArrayedRenderer2D else PMVBORenderer2D {
+object RenderUtils : Renderer2D by PMVBORenderer2D {
 
     fun drawPoint(
         x: Double,

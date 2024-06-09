@@ -8,7 +8,7 @@ import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.config.setting.alias
-import net.spartanb312.everett.utils.config.setting.m
+import net.spartanb312.everett.utils.config.setting.lang
 import net.spartanb312.everett.utils.config.setting.number.format
 import net.spartanb312.everett.utils.config.setting.whenFalse
 import net.spartanb312.everett.utils.config.setting.whenTrue
@@ -21,15 +21,15 @@ import kotlin.math.tan
 object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f, errorAngle = 1f) {
 
     private val useSpecifiedAngle = setting("BR75-Specified Adsorption Angle", true)
-        .alias("Specified Adsorption Angle").m("指定吸附角", "指定吸附角")
+        .alias("Specified Adsorption Angle").lang("指定吸附角", "指定吸附角")
     private val errorAngle2 by setting("BR75-Adsorption Angle", errorAngle, 0f..10f, 0.05f).format("0.00")
-        .alias("Adsorption Angle").m("吸附角", "吸附角")
+        .alias("Adsorption Angle").lang("吸附角", "吸附角")
         .whenTrue(useSpecifiedAngle)
 
     private val followFOV = setting("BR75-Follow FOV", true)
-        .alias("Follow FOV").m("准星大小跟随FOV", "準星隨FOV變化")
+        .alias("Follow FOV").lang("准星大小跟随FOV", "準星隨FOV變化")
     private val size by setting("BR78-Specified FOV", 78f, 60f..150f)
-        .alias("Specified FOV").m("指定FOV的准星大小", "指定FOV下的準星")
+        .alias("Specified FOV").lang("指定FOV的准星大小", "指定FOV下的準星")
         .whenFalse(followFOV)
 
     override val syncFOV get() = followFOV.value
@@ -58,7 +58,8 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f, errorAngle = 1f) {
         if (shadow) scale *= 1.03f
 
         val transparentColor = color.alpha((color.a * transparentAlphaRate).toInt())
-        val actualFOV = if (followFOV.value) fov else size.inDFov
+        var actualFOV = if (followFOV.value) fov else size.inDFov
+        if (actualFOV < 100f) actualFOV = 100f
 
         // Outer circle
         val d = RS.diagonalF / 2f / tan((actualFOV / 2f).toRadian())
@@ -103,8 +104,8 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1.55f / 4f, errorAngle = 1f) {
         )
 
         // Cross
-        val fromRadius = outerRadius * 0.5f
-        val length = 20f * scale + (108 - actualFOV) * scale * 0.1f
+        val fromRadius = 7.35f * scale
+        val length = 20f * scale//20f * scale + (108 - actualFOV) * scale * 0.1f
         RenderUtils.drawLine(
             centerX,
             centerY - fromRadius,

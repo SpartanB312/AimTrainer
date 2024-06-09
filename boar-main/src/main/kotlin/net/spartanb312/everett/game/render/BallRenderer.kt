@@ -2,10 +2,8 @@ package net.spartanb312.everett.game.render
 
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.Sphere
-import net.spartanb312.everett.graphics.drawing.VertexFormat
-import net.spartanb312.everett.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer.draw
 import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.matrix.translatef
@@ -35,23 +33,14 @@ object BallRenderer {
             scalef(r, r, r)
             if (outline) {
                 GL11.glLineWidth(outlineWidth)
-                if (RS.compatMode) GL11.GL_LINE_STRIP.buffer(VertexFormat.Pos3fColor, vertices.size * 4) {
-                    vertices.forEach {
-                        v3fc(it.x, it.y, it.z, outlineColor)
-                    }
-                } else GL11.GL_LINE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+                GL11.GL_LINE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                     vertices.forEach {
                         universal(it.x, it.y, it.z, outlineColor)
                     }
                 }
             }
             var count = 0
-            if (RS.compatMode) GL11.GL_TRIANGLE_STRIP.buffer(VertexFormat.Pos3fColor, vertices.size * 4) {
-                vertices.forEach {
-                    v3fc(it.x, it.y, it.z, color)
-                    count++
-                }
-            } else GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                 vertices.forEach {
                     // TODO: GL_TRIANGLE_STRIP
                     universal(it.x, it.y, it.z, color)

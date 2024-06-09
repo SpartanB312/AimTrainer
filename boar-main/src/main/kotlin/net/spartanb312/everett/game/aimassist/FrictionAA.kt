@@ -17,14 +17,14 @@ object FrictionAA : AimAssist {
 
     override fun compensate(sensitivity: Double) = compensate(sensitivity, false)
 
-    fun compensate(sensitivity: Double, flag: Boolean) {
+    fun compensate(sensitivity: Double, forceEnabled: Boolean) {
         aaTimer.passedAndReset(5) {
             Player.sensK = if (Player.sensK == -1.0) sensitivity * 1000.0
             else {
                 val firing = !Render2DManager.displaying
                         && (SceneManager.currentScene == AimTrainingScene || SceneManager.currentScene is QuickPlay.QuickPlayScene)
                         && GLFW.glfwGetMouseButton(RS.window, GLFW.GLFW_MOUSE_BUTTON_1) == GLFW.GLFW_PRESS
-                val enableAA = flag || AimAssistOption.frEnabled
+                val enableAA = forceEnabled || AimAssistOption.frEnabled
                 val targetAA = when {
                     enableAA && Player.raytraced && firing -> AimAssistOption.firingCoefficient
                     enableAA && Player.raytraced && !firing -> AimAssistOption.raytraceCoefficient

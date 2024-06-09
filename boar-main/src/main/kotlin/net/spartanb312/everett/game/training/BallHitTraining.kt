@@ -10,6 +10,7 @@ import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
+import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
@@ -56,7 +57,7 @@ abstract class BallHitTraining(
         }
     }
 
-    override fun reset() {
+    override fun reset(): Training {
         super.reset()
         hitTime.clear()
         reactionTimes.clear()
@@ -64,9 +65,11 @@ abstract class BallHitTraining(
         repeat(amount) {
             entities.add(generateBall())
         }
+        return this
     }
 
     override fun render() {
+        AimTrainingScene.skybox.onRender3D()
         entities.forEach {
             if (it is Ball) BallRenderer.render(it.pos.x, it.pos.y, it.pos.z, it.size, color, true, outlineC)
         }
@@ -104,9 +107,9 @@ abstract class BallHitTraining(
         when (stage) {
             Stage.Prepare -> {
                 displayed = false
-                val seconds = ((5000 - timeLapsed) / 1000f).roundToInt()
+                val seconds = ((waitTime * 1000 - timeLapsed) / 1000f).roundToInt()
                 FontRendererBig.drawCenteredStringWithShadow(
-                    "0: 0$seconds",
+                    if (seconds < 10) "0: 0$seconds" else "0: $seconds",
                     RS.centerXF,
                     RS.centerYF - FontRendererBig.getHeight()
                 )
@@ -115,7 +118,7 @@ abstract class BallHitTraining(
             Stage.Training -> {
                 CrosshairRenderer.enable()
                 val scale = max(RS.widthScale, RS.heightScale)
-                val seconds = ((65000 - timeLapsed) / 1000f).roundToInt()
+                val seconds = ((60000 + waitTime * 1000 - timeLapsed) / 1000f).roundToInt()
                 val rate = seconds / 60f
                 RenderUtils.drawRect(
                     RS.centerXF - scale * 150f,
@@ -139,11 +142,6 @@ abstract class BallHitTraining(
                     1f * scale,
                     lightColor.alpha(192)
                 )
-                //FontRendererMain.drawCenteredStringWithShadow(
-                //    if (seconds >= 10) "0: $seconds" else "0: 0$seconds",
-                //    RS.centerXF,
-                //    RS.centerYF * 1.7f
-                //)
                 FontRendererMain.drawCenteredStringWithShadow(
                     showingScore.toString(),
                     RS.centerXF,
@@ -197,10 +195,11 @@ abstract class BallHitTraining(
         val lastShotTimeLapse = (currentTime - lastShotTime).toInt()
         if (hit) {
             score += onHit(lastHitTimeLapse)
-            hitTime.add(currentTime)
             reactionTimes.add(lastHitTimeLapse)
+            hitTime.add(currentTime)
             hits++
         } else score -= onMiss(lastShotTimeLapse)
+
         score = score.coerceAtLeast(0)
         lastShotTime = currentTime
     }

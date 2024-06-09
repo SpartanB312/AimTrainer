@@ -153,13 +153,14 @@ class ReactionTest(
         }
     }
 
-    override fun reset() {
+    override fun reset(): Training {
         state = States.Waiting
         nextTime = System.nanoTime() + Random.nextLong(2000000000, 5000000000)
         round = 1
         lastReactionTime = 0L
         reactionTimeList.clear()
         displayed = false
+        return this
     }
 
     override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {

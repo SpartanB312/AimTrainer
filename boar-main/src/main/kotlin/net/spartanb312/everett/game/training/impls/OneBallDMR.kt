@@ -1,9 +1,16 @@
 package net.spartanb312.everett.game.training.impls
 
+import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
+import net.spartanb312.everett.game.medal.MedalCounter
+import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.BallRenderer
+import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.gui.MedalRenderer
+import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
+import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.everett.game.training.BallHitTraining
 import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.game.training.TrainingInfo
@@ -32,6 +39,7 @@ class OneBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
     }
 
     override fun render() {
+        AimTrainingScene.skybox.onRender3D()
         entities.forEach {
             if (it is Ball) {
                 BallRenderer.render(
@@ -56,6 +64,49 @@ class OneBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
         }
     }
 
+    override fun onClick() {
+        if (stage != Stage.Training || Render2DManager.displaying) return
+        var hit = false
+        var killed = false
+        var firstShot = false
+        val result = scene.getRayTracedResult(
+            Player.offsetPos,
+            Player.camera.front,
+            if (AimAssistOption.bulletAdsorption.value) {
+                if (CrosshairRenderer.overrideErrorAngle != -1f) CrosshairRenderer.overrideErrorAngle
+                else errorAngle
+            } else 0f
+        )
+        result?.let {
+            if (it is Ball) {
+                hit = true
+                if (it.hp == 5) firstShot = true
+                it.hp -= 1
+                if (it.hp == 0) {
+                    killed = true
+                    entities.add(generateBall(it))
+                    entities.remove(it)
+                    fadeBalls[it] = System.currentTimeMillis()
+                }
+            }
+        }
+        medalCounter.perfectDMR(result)
+        shots++
+        val currentTime = System.currentTimeMillis()
+        val lastHitTime = hitTime.lastOrNull() ?: (currentTime - 50L)
+        val lastHitTimeLapse = (currentTime - lastHitTime).toInt()
+        if (firstShot) hitTime.add(currentTime)
+        if (hit) {
+            hits++
+            if (killed) {
+                score += onHit(lastHitTimeLapse)
+                reactionTimes.add(lastHitTimeLapse)
+            }
+        }
+        score = score.coerceAtLeast(0)
+        lastShotTime = currentTime
+    }
+
     override fun onTick() {
         super.onTick()
         entities.forEach {
@@ -63,12 +114,23 @@ class OneBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
         }
     }
 
+    private var medalCounter = MedalCounter(3000)
+
+    override fun reset(): Training {
+        medalCounter.reset()
+        return super.reset()
+    }
+
     override fun onHit(timeLapse: Int): Int {
-        return (10000f / timeLapse.coerceIn(50..2000)).toInt()
+        medalCounter.triggerKill()
+        val applyScore = (100000f / timeLapse.coerceIn(50..2000)).toInt()
+        MedalRenderer.pushScore(applyScore)
+        MedalRenderer.pushMessage("&fKilled &r${MedalRenderer.randomName}", color = ColorRGB(255, 20, 20))
+        return applyScore
     }
 
     override fun onMiss(timeLapse: Int): Int {
-        return (timeLapse.coerceIn(50..2000) / 30f).toInt()
+        return 0
     }
 
 }

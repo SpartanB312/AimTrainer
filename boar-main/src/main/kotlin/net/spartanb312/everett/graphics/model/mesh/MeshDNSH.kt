@@ -1,17 +1,14 @@
 package net.spartanb312.everett.graphics.model.mesh
 
-import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.OpenGL.*
-import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.graphics.drawing.VertexFormat
-import net.spartanb312.everett.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.model.Mesh
 import net.spartanb312.everett.graphics.model.MeshData
 import net.spartanb312.everett.graphics.model.MeshRenderer
 import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.graphics.shader.glUniform
-import net.spartanb312.everett.utils.color.ColorRGB
+import org.lwjgl.opengl.GL13
+import org.lwjgl.opengl.GL30
 
 class MeshDNSH(meshData: MeshData) : Mesh(
     meshData.vertices,
@@ -24,9 +21,7 @@ class MeshDNSH(meshData: MeshData) : Mesh(
 
     companion object DrawShader : MeshRenderer() {
 
-        override val shader =
-            if (RS.compatMode) Shader("assets/shader/model/210/MeshVertex.vsh", "assets/shader/model/210/MeshDNSH.fsh")
-            else Shader("assets/shader/model/450/MeshVertex.vsh", "assets/shader/model/450/MeshDNSH.fsh")
+        override val shader = Shader("assets/shader/model/MeshVertex.vsh", "assets/shader/model/MeshDNSH.fsh")
         private val matrixUniform = shader.getUniformLocation("matrix")
         private val diffuse = shader.getUniformLocation("diffuseTex")
         private val normal = shader.getUniformLocation("normalTex")
@@ -39,42 +34,33 @@ class MeshDNSH(meshData: MeshData) : Mesh(
             shader.bind()
             layer.matrixArray.glUniform(matrixUniform)
             mesh.diffuseTexture?.let {
-                GLHelper.glActiveTexture(GL_TEXTURE0)
+                GL13.glActiveTexture(GL_TEXTURE0)
                 glUniform1i(diffuse, 0)
                 it.bindTexture()
             }
 
             mesh.normalTexture?.let {
-                GLHelper.glActiveTexture(GL_TEXTURE1)
+                GL13.glActiveTexture(GL_TEXTURE1)
                 glUniform1i(normal, 1)
                 it.bindTexture()
             }
 
             mesh.specularTexture?.let {
-                GLHelper.glActiveTexture(GL_TEXTURE2)
+                GL13.glActiveTexture(GL_TEXTURE2)
                 glUniform1i(specular, 2)
                 it.bindTexture()
             }
 
             mesh.heightTexture?.let {
-                GLHelper.glActiveTexture(GL_TEXTURE3)
+                GL13.glActiveTexture(GL_TEXTURE3)
                 glUniform1i(height, 3)
                 it.bindTexture()
             }
 
             // Draw mesh via VAO
-            if (RS.compat.useVAO) {
-                GLHelper.glBindVertexArray(mesh.vao)
-                glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
-                if (RS.compatMode) {
-                    GLHelper.glBindVertexArray(0)
-                    shader.unbind()
-                }
-            } else {
-                TODO()
-            }
-
-            GLHelper.glActiveTexture(GL_TEXTURE0)
+            GL30.glBindVertexArray(mesh.vao)
+            glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
+            GL13.glActiveTexture(GL_TEXTURE0)
         }
 
     }
@@ -84,41 +70,5 @@ class MeshDNSH(meshData: MeshData) : Mesh(
     }
 
     override fun MatrixLayerStack.MatrixScope.draw() = draw(this@MeshDNSH)
-
-    override fun drawLegacy() {
-        GLHelper.texture2d = true
-        diffuseTexture?.let {
-            it.bindTexture()
-            GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
-                for (i in indices) {
-                    val vert = vertices[i]
-                    v3Tex2fC(
-                        vert.position.x,
-                        vert.position.y,
-                        vert.position.z,
-                        vert.texCoords.x,
-                        vert.texCoords.y,
-                        ColorRGB.WHITE
-                    )
-                }
-            }
-        }
-        specularTexture?.let {
-            it.bindTexture()
-            GL_TRIANGLES.buffer(VertexFormat.Pos3fColorTex, indices.size) {
-                for (i in indices) {
-                    val vert = vertices[i]
-                    v3Tex2fC(
-                        vert.position.x,
-                        vert.position.y,
-                        vert.position.z,
-                        vert.texCoords.x,
-                        vert.texCoords.y,
-                        ColorRGB.WHITE
-                    )
-                }
-            }
-        }
-    }
 
 }

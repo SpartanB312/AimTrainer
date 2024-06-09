@@ -1,7 +1,6 @@
 package net.spartanb312.everett.graphics
 
 import net.spartanb312.everett.graphics.OpenGL.*
-import net.spartanb312.everett.graphics.compat.GLCompatibility
 import net.spartanb312.everett.graphics.event.EngineLoopEvent
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.launch.Module
@@ -15,7 +14,9 @@ import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
 import java.util.concurrent.LinkedBlockingQueue
+import javax.swing.JOptionPane
 import kotlin.math.sqrt
+import kotlin.system.exitProcess
 
 typealias RS = RenderSystem
 
@@ -27,7 +28,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.1.6"
+    const val ENGINE_VERSION = "1.2.0"
 
     init {
         name = "RenderThread"
@@ -95,9 +96,6 @@ object RenderSystem : Thread() {
     private var initHeight = 900
     private var title = "Boar3D"
     private var graphics: Class<out GameGraphics>? = null
-    private var graphicsAPI = API.GL_210_COMPAT
-    val compatMode get() = graphicsAPI == API.GL_210_COMPAT
-    val using460 get() = graphicsAPI == API.GL_460_CORE
 
     private val memoryCheckUpdateTimer = Timer()
     private val profilerResultUpdateTimer = Timer()
@@ -115,9 +113,7 @@ object RenderSystem : Thread() {
         centered: Boolean = false,
         dedicateThread: Boolean = true,
         debugInfo: Boolean = false,
-        graphicsAPI: API = API.GL_450_CORE
     ) {
-        this.graphicsAPI = graphicsAPI
         this.graphics = graphics
         this.centered = centered
         this.initWidth = initWidth
@@ -138,30 +134,28 @@ object RenderSystem : Thread() {
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
 
-        var checkWindow = -1L
+        // check GL compat
+        val checkWindow = glfwCreateWindow(initWidth, initHeight, title, NULL, NULL)
+        glfwMakeContextCurrent(checkWindow)
 
-        if (graphicsAPI != API.GL_210_COMPAT) {
-            // check GL compat
-            checkWindow = glfwCreateWindow(initWidth, initHeight, title, NULL, NULL)
-            glfwMakeContextCurrent(checkWindow)
-            compat = GLCompatibility(createCapabilities())
+        compat = GLCompatibility(createCapabilities())
 
-            if (!compat.openGL45) {
-                Logger.error("OpenGL 4.5 is not supported by this device! using OpenGL 2.1 compat mode!")
-                graphicsAPI = API.GL_210_COMPAT
-            } else {
-                if (!compat.openGL46 && graphicsAPI == API.GL_460_CORE) {
-                    Logger.error("OpenGL 4.6 is not supported by this device! using OpenGL 4.5 Core Profile!")
-                    graphicsAPI = API.GL_450_CORE
-                }
-                glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API)
-                glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
-                glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, if (graphicsAPI == API.GL_460_CORE) 6 else 5)
-            }
+        if (!compat.openGL45) {
+            val result = JOptionPane.showConfirmDialog(
+                null,
+                "Your graphics card does not support OpenGL 4.5.\n" +
+                        "Continuing may face compatibility issues.\n" +
+                        "Do you still want to try launching?",
+                "Unsupported Graphics Card Detected",
+                JOptionPane.YES_NO_OPTION
+            )
+            if (result == JOptionPane.NO_OPTION) exitProcess(0)
         }
 
-        Logger.info("Using API: ${graphicsAPI.fullName}")
+        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API)
+        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
+        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, if (compat.openGL46) 6 else 5)
 
         window = glfwCreateWindow(initWidth, initHeight, title, NULL, NULL)
         if (window == NULL) throw RuntimeException("Failed to create the GLFW window")
@@ -184,8 +178,7 @@ object RenderSystem : Thread() {
         }
 
         glfwMakeContextCurrent(window)
-        if (graphicsAPI == API.GL_210_COMPAT) compat = GLCompatibility(createCapabilities())
-        if (checkWindow != -1L) glfwDestroyWindow(checkWindow)
+        glfwDestroyWindow(checkWindow)
 
         gameGraphics = graphics!!.instance!!
         if (gameGraphics == DummyGraphics) throw Exception("This GFX is not supported")
@@ -305,12 +298,6 @@ object RenderSystem : Thread() {
             totalMemory = Runtime.getRuntime().totalMemory() / 1048576
             freeMemory = Runtime.getRuntime().freeMemory() / 1048576
         }
-    }
-
-    enum class API(override val displayName: String, val saveName: String, val fullName: String) : DisplayEnum {
-        GL_210_COMPAT("OpenGL 2.1", "2.1", "OpenGL 2.1 Compatibility Profile"),
-        GL_450_CORE("OpenGL 4.5", "4.5", "OpenGL 4.5 Core Profile"),
-        GL_460_CORE("OpenGL 4.6", "4.6", "OpenGL 4.6 Core Profile")
     }
 
 }

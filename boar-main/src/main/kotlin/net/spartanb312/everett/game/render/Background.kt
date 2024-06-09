@@ -24,10 +24,7 @@ object Background {
         initialColor = ColorRGB(164, 255, 255).alpha(128)
     )
     private val initTime = System.currentTimeMillis()
-    private val nebula = GLSLSandbox(
-        if (RS.compatMode) "assets/shader/sandbox/210/Nebula.fsh"
-        else "assets/shader/sandbox/450/Nebula.fsh"
-    )
+    private val nebula = GLSLSandbox("assets/shader/sandbox/Nebula.fsh")
 
     fun renderBackground(mouseX: Double, mouseY: Double) {
         if (SceneManager.currentScene != DummyScene) return

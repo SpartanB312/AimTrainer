@@ -2,7 +2,7 @@ package net.spartanb312.everett.game.render.gui.impls
 
 import net.spartanb312.everett.AimTrainer.AIM_TRAINER_VERSION
 import net.spartanb312.everett.game.Language
-import net.spartanb312.everett.game.Language.m
+import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.forge.Forge
 import net.spartanb312.everett.game.render.*
 import net.spartanb312.everett.game.render.gui.GuiScreen
@@ -12,7 +12,6 @@ import net.spartanb312.everett.game.training.QuickPlay
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.font.drawColoredString
-import net.spartanb312.everett.launch.Main
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
@@ -25,11 +24,11 @@ import kotlin.system.exitProcess
 object MainMenuScreen : GuiScreen() {
 
     private val sideButtons = listOf(
-        SideButton("Quick Play".m("快速训练", "快速訓練")) { QuickPlay.start() },
-        SideButton("Trainings".m("训练场", "訓練場")) { Render2DManager.displayScreen(TrainingScreen) },
-        SideButton("Modules".m("模块", "模塊")) { Render2DManager.displayScreen(ModuleScreen) },
-        SideButton("Options".m("设定", "設定")) { Render2DManager.displayScreen(OptionScreen) },
-        SideButton("Exit".m("退出", "離開")) { exitProcess(0) }
+        SideButton("Quick Play".lang("快速训练", "快速訓練")) { QuickPlay.start() },
+        SideButton("Trainings".lang("训练场", "訓練場")) { Render2DManager.displayScreen(TrainingScreen) },
+        SideButton("Modules".lang("模块", "模塊")) { Render2DManager.displayScreen(ModuleScreen) },
+        SideButton("Options".lang("设定", "設定")) { Render2DManager.displayScreen(OptionScreen) },
+        SideButton("Exit".lang("退出", "離開")) { exitProcess(0) }
     )
     private val extendedButtons = listOf(
         ExtendedButton("s") { Forge.start() },
@@ -109,14 +108,6 @@ object MainMenuScreen : GuiScreen() {
         val width = FontRendererMain.getWidth("Version: $AIM_TRAINER_VERSION") + 10
         val height = FontRendererMain.getHeight()
         FontRendererMain.drawString("Version: $AIM_TRAINER_VERSION", RS.widthF - width, RS.heightF - height)
-        if (RS.compatMode) {
-            FontRendererMain.drawString(
-                "Running on compat mode. Graphics card with OpenGL 4.5 support is required in the future!",
-                0f,
-                RS.heightF - height,
-                ColorRGB.RED
-            )
-        }
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {

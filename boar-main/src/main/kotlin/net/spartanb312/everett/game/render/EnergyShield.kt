@@ -3,11 +3,9 @@ package net.spartanb312.everett.game.render
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.graphics.GLHelper.scissor
 import net.spartanb312.everett.graphics.RS
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer.draw
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.graphics.drawing.VertexFormat
-import net.spartanb312.everett.graphics.drawing.buffer.ArrayedVertexBuffer.buffer
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer
-import net.spartanb312.everett.graphics.drawing.buffer.PersistentMappedVertexBuffer.draw
 import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.matrix.translatef
@@ -55,17 +53,7 @@ object EnergyShield {
         val startX = (w - 80 * scale).floorToInt()
         val healthBound = startX + (160 * scale * (currentHealthRate / 100f)).ceilToInt()
         //RenderUtils.scissor(startX, 0, healthBound, 1000, ) {
-        if (RS.compatMode) GL11.GL_TRIANGLE_FAN.buffer(VertexFormat.Pos2fColor, 10) {
-            shieldOutline.forEachIndexed { index, it ->
-                val light = generalLightColor
-                val dark = generalColor
-                when (index) {
-                    0 -> v2fc(it.x, it.y, light.alpha(192))
-                    5 -> v2fc(it.x, it.y, light.mix(dark, 0.9f).alpha(192))
-                    else -> v2fc(it.x, it.y, dark.alpha(192))
-                }
-            }
-        } else GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+        GL11.GL_TRIANGLE_FAN.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
             shieldOutline.forEachIndexed { index, it ->
                 val light = generalLightColor
                 val dark = generalColor

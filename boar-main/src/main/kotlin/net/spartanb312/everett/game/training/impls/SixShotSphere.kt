@@ -1,5 +1,7 @@
 package net.spartanb312.everett.game.training.impls
 
+import net.spartanb312.everett.game.medal.MedalCounter
+import net.spartanb312.everett.game.render.gui.MedalRenderer
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.training.BallHitTraining
@@ -28,8 +30,18 @@ class SixShotSphere(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
         }
     }
 
+    private var medalCounter = MedalCounter(1500)
+
+    override fun reset(): Training {
+        medalCounter.reset()
+        return super.reset()
+    }
+
     override fun onHit(timeLapse: Int): Int {
-        return (10000f / timeLapse.coerceIn(50..2000)).toInt()
+        medalCounter.triggerKill()
+        val applyScore = (10000f / timeLapse.coerceIn(50..2000)).toInt()
+        MedalRenderer.pushScore(applyScore)
+        return applyScore
     }
 
     override fun onMiss(timeLapse: Int): Int {

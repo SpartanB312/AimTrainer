@@ -16,11 +16,21 @@ fun LocalFontRenderer(
     chunkSize: Int = 64,
     linearMag: Boolean = false,
     useMipmap: Boolean = true,
+    qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
     textureLoader: TextureLoader? = null
 ): FontRenderer = UnicodeFontRenderer(
     Font(name, style, size.toInt()),
-    size.toInt(), antiAlias, fractionalMetrics, imgSize, chunkSize, linearMag, useMipmap, scaleFactor, textureLoader
+    size.toInt(),
+    antiAlias,
+    fractionalMetrics,
+    imgSize,
+    chunkSize,
+    linearMag,
+    useMipmap,
+    qualityLevel,
+    scaleFactor,
+    textureLoader
 )
 
 fun FontRenderer(
@@ -34,13 +44,23 @@ fun FontRenderer(
     chunkSize: Int = 64,
     linearMag: Boolean = false,
     useMipmap: Boolean = true,
+    qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
     textureLoader: TextureLoader? = null
 ): FontRenderer = UnicodeFontRenderer(
     Font.createFont(type, ResourceHelper.getResourceStream(path)!!)!!
         .deriveFont(size)
         .deriveFont(style),
-    size.toInt(), antiAlias, fractionalMetrics, imgSize, chunkSize, linearMag, useMipmap, scaleFactor, textureLoader
+    size.toInt(),
+    antiAlias,
+    fractionalMetrics,
+    imgSize,
+    chunkSize,
+    linearMag,
+    useMipmap,
+    qualityLevel,
+    scaleFactor,
+    textureLoader
 )
 
 fun RTOFontRenderer(
@@ -53,14 +73,24 @@ fun RTOFontRenderer(
     imgSize: Int = 512,
     chunkSize: Int = 64,
     linearMag: Boolean = false,
-    useMipmap: Boolean = true,
+    useMipmap: Boolean = false, // Avoid glitching
+    qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
     textureLoader: TextureLoader? = null
 ): FontRenderer = UnicodeRTOFontRenderer(
     Font.createFont(type, ResourceHelper.getResourceStream(path)!!)!!
         .deriveFont(size)
         .deriveFont(style),
-    size.toInt(), antiAlias, fractionalMetrics, imgSize, chunkSize, linearMag, useMipmap, scaleFactor, textureLoader
+    size.toInt(),
+    antiAlias,
+    fractionalMetrics,
+    imgSize,
+    chunkSize,
+    linearMag,
+    useMipmap,
+    qualityLevel,
+    scaleFactor,
+    textureLoader
 )
 
 fun LazyFontRenderer(
@@ -74,6 +104,7 @@ fun LazyFontRenderer(
     chunkSize: Int = 64,
     linearMag: Boolean = false,
     useMipmap: Boolean = true,
+    qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
     textureLoader: TextureLoader? = null
 ): Lazy<FontRenderer> = lazy {
@@ -88,6 +119,7 @@ fun LazyFontRenderer(
         chunkSize,
         linearMag,
         useMipmap,
+        qualityLevel,
         scaleFactor,
         textureLoader
     )
@@ -104,13 +136,23 @@ fun LocalStaticFontRenderer(
     imgHeight: Int = 64,
     linearMag: Boolean = false,
     useMipmap: Boolean = true,
+    qualityLevel: Int = 3,
     offsetPixel: Int = 0,
     scaleFactor: Float = 1f,
     textureLoader: TextureLoader? = null
 ): StaticFontRenderer = UnicodeStaticFontRenderer(
     text,
     Font(name, style, size.toInt()),
-    antiAlias, fractionalMetrics, imgWidth, imgHeight, linearMag, useMipmap, offsetPixel, scaleFactor, textureLoader
+    antiAlias,
+    fractionalMetrics,
+    imgWidth,
+    imgHeight,
+    linearMag,
+    useMipmap,
+    qualityLevel,
+    offsetPixel,
+    scaleFactor,
+    textureLoader
 )
 
 fun StaticFontRenderer(
@@ -125,6 +167,7 @@ fun StaticFontRenderer(
     imgHeight: Int = 64,
     linearMag: Boolean = false,
     useMipmap: Boolean = true,
+    qualityLevel: Int = 3,
     offsetPixel: Int = 0,
     scaleFactor: Float = 1f,
     textureLoader: TextureLoader? = null
@@ -133,7 +176,16 @@ fun StaticFontRenderer(
     Font.createFont(type, ResourceHelper.getResourceStream(path)!!)!!
         .deriveFont(size)
         .deriveFont(style),
-    antiAlias, fractionalMetrics, imgWidth, imgHeight, linearMag, useMipmap, offsetPixel, scaleFactor, textureLoader
+    antiAlias,
+    fractionalMetrics,
+    imgWidth,
+    imgHeight,
+    linearMag,
+    useMipmap,
+    qualityLevel,
+    offsetPixel,
+    scaleFactor,
+    textureLoader
 )
 
 fun LazyStaticFontRenderer(
@@ -148,6 +200,7 @@ fun LazyStaticFontRenderer(
     imgHeight: Int = 64,
     linearMag: Boolean = false,
     useMipmap: Boolean = true,
+    qualityLevel: Int = 3,
     offsetPixel: Int = 0,
     scaleFactor: Float = 1f,
     textureLoader: TextureLoader? = null
@@ -164,6 +217,7 @@ fun LazyStaticFontRenderer(
         imgHeight,
         linearMag,
         useMipmap,
+        qualityLevel,
         offsetPixel,
         scaleFactor,
         textureLoader

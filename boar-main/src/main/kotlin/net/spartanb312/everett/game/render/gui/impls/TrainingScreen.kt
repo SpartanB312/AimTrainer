@@ -18,6 +18,7 @@ import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.glfw.GLFW
+import kotlin.math.max
 
 object TrainingScreen : GuiScreen() {
 
@@ -37,7 +38,14 @@ object TrainingScreen : GuiScreen() {
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         Background.renderBackground(mouseX, mouseY)
-        FontRendererROG.drawCenteredStringWithShadow("Trainings", RS.width / 2f, RS.heightF * 0.05f, scale = 0.8f)
+
+        val scale = max(RS.widthF / 2560f, RS.heightF / 1369f)
+        FontRendererROG.drawCenteredStringWithShadow(
+            "Trainings",
+            RS.width / 2f,
+            RS.heightF * 0.05f,
+            scale = scale
+        )
         val clampYT = RS.heightF * 0.1f
         val clampYB = RS.heightF * 0.9f
         RenderUtils.drawRect(0f, 0f, RS.widthF, RS.heightF, ColorRGB.BLACK.alpha(32))
@@ -47,7 +55,7 @@ object TrainingScreen : GuiScreen() {
         val clampXR = RS.widthF * 0.9f
         var startY = clampYT + 20f
         var startX = clampXL
-        val size = 290f
+        val size = 310f * scale
         clickArea.clear()
         trainings.forEachIndexed { index, it ->
             val range = Pair(
@@ -97,9 +105,7 @@ object TrainingScreen : GuiScreen() {
             if (mouseX.toFloat() in range.first && mouseY.toFloat() in range.second) {
                 if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
                     AimTrainingScene.entities.clear()
-                    AimTrainingScene.currentTraining = trainings[index].new(scoreboardScreen, AimTrainingScene).apply {
-                        reset()
-                    }
+                    AimTrainingScene.currentTraining = trainings[index].new(scoreboardScreen, AimTrainingScene).reset()
                     Render2DManager.closeAll()
                     SceneManager.switchScene(AimTrainingScene)
                 } else if (button == GLFW.GLFW_MOUSE_BUTTON_2) {

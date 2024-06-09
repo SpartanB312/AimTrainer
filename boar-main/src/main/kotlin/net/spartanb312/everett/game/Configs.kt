@@ -11,7 +11,12 @@ object Configs {
     private val configs = mutableListOf<Configurable>()
     private val gsonPretty: Gson = GsonBuilder().setPrettyPrinting().create()
 
+    object General : Configurable("General", Language) {
+        val server by setting("Server", "106.55.160.170")
+    }
+
     init {
+        configs.add(General)
         configs.add(ControlOption)
         configs.add(VideoOption)
         configs.add(AudioOption)

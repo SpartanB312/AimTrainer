@@ -7,7 +7,7 @@ import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.config.setting.alias
-import net.spartanb312.everett.utils.config.setting.m
+import net.spartanb312.everett.utils.config.setting.lang
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.timing.Timer
 import kotlin.math.min
@@ -15,7 +15,7 @@ import kotlin.math.min
 object CrosshairCross : Crosshair(0f) {
 
     private val size by setting("Cross-Size", 15f, 1f..50f, 0.5f)
-        .alias("Size").m("准星大小", "準星大小")
+        .alias("Size").lang("准星大小", "準星大小")
 
     override var clickTime = System.currentTimeMillis()
 

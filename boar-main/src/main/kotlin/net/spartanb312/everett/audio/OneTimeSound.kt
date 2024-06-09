@@ -21,7 +21,6 @@ class OneTimeSound(private val source: Sound) {
     }
 
     fun play() {
-        source.play()
 
     }
 

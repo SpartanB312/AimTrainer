@@ -1,5 +1,6 @@
 package net.spartanb312.everett.game.render.scene.impls
 
+import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
@@ -11,14 +12,13 @@ import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.graphics.Skybox
-import net.spartanb312.everett.game.Language.m
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 
 object AimTrainingScene : Scene() {
 
     private val tickTimer = Timer()
-    private val skybox = Skybox(
+    val skybox = Skybox(
         -200f,
         -200f,
         -200f,
@@ -35,23 +35,23 @@ object AimTrainingScene : Scene() {
     var currentTraining: Training? = null
 
     private val pauseScreen = PauseScreen(AimTrainingScene).apply {
-        buttons.add(PauseScreen.Button("Resume".m("继续", "繼續")) {
+        buttons.add(PauseScreen.Button("Resume".lang("继续", "繼續")) {
             Render2DManager.popScreen()
         })
-        buttons.add(PauseScreen.Button("Restart".m("重置", "重置")) {
+        buttons.add(PauseScreen.Button("Restart".lang("重置", "重置")) {
             currentTraining?.reset()
         })
-        buttons.add(PauseScreen.Button("Options".m("设置", "設定")) {
+        buttons.add(PauseScreen.Button("Options".lang("设置", "設定")) {
             Render2DManager.closeAll()
             Render2DManager.displayScreen(OptionScreen)
         })
-        buttons.add(PauseScreen.Button("Trainings".m("重选", "重選")) {
+        buttons.add(PauseScreen.Button("Trainings".lang("重选", "重選")) {
             SceneManager.switchScene(DummyScene)
             Render2DManager.closeAll()
             Render2DManager.displayScreen(TrainingScreen)
             CrosshairRenderer.disable()
         })
-        buttons.add(PauseScreen.Button("Menu".m("菜单", "菜單")) {
+        buttons.add(PauseScreen.Button("Menu".lang("菜单", "菜單")) {
             SceneManager.switchScene(DummyScene)
             Render2DManager.closeAll()
             Render2DManager.displayScreen(MainMenuScreen)
@@ -60,7 +60,6 @@ object AimTrainingScene : Scene() {
     }
 
     override fun render3D() {
-        skybox.onRender3D()
         currentTraining?.render()
     }
 

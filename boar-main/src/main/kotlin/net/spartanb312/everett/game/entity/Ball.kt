@@ -16,6 +16,11 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
         errorAngle: Float // DistanceToCenter, Radius
     ): Boolean = body.raytrace(origin, ray, errorAngle)
 
+    fun move(vec: Vec3f, reverse: Boolean) {
+        this.pos = if (reverse) this.pos - vec
+        else this.pos + vec
+    }
+
     fun randomMove(reverse: Boolean, moveSpeed: Float) {
         val scale = 0.01f * moveSpeed
         vec += Vec3f((-scale..scale).random(), (-scale..scale).random(), (-scale..scale).random())

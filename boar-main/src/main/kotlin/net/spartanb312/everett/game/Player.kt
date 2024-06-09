@@ -139,6 +139,10 @@ object Player : EntityPlayer(), Controller {
         camera.cameraPos = pos
     }
 
+    fun onTick() {
+        //if (AimAssistOption.mcEnabled) NewAA.compensate(ControlOption.sensitivity)
+    }
+
     fun project(
         fov: Float = camera.fov,
         sensitivity: Double = 2.2,
@@ -149,8 +153,9 @@ object Player : EntityPlayer(), Controller {
         block: Camera.() -> Unit
     ) {
         if (AimAssistOption.aimAssist.value) {
-            if (AimAssistOption.mcEnabled) MagnetismAA.compensate(sensitivity)
-            else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
+            if (AimAssistOption.mcEnabled) {
+                MagnetismAA.compensate(sensitivity)
+            } else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
         } else sensK = sensitivity * 1000.0
         with(camera) {
             RS.matrixLayer.newScope.project(

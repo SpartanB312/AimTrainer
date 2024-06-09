@@ -1,7 +1,7 @@
 package net.spartanb312.everett.game.render.crosshair.impls
 
 import net.spartanb312.everett.utils.config.setting.alias
-import net.spartanb312.everett.utils.config.setting.m
+import net.spartanb312.everett.utils.config.setting.lang
 import net.spartanb312.everett.utils.config.setting.whenTrue
 import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.game.render.crosshair.Crosshair
@@ -16,14 +16,14 @@ import kotlin.math.min
 object CrosshairCustom : Crosshair(0f) {
 
     private val size by setting("Custom-Size", 15f, 1f..50f, 0.5f)
-        .alias("Size").m("准星大小", "準星大小")
+        .alias("Size").lang("准星大小", "準星大小")
     val calibrate = setting("Custom-Calibrate", false)
-        .alias("Calibrate").m("校准准星", "準星校準")
+        .alias("Calibrate").lang("校准准星", "準星校準")
     private val offsetX by setting("Custom-Offset X", 0.0, -5.0..5.0, 0.005)
-        .alias("Offset X").m("X偏移", "X位移")
+        .alias("Offset X").lang("X偏移", "X位移")
         .whenTrue(calibrate)
     private val offsetY by setting("Custom-Offset Y", 0.0, -5.0..5.0, 0.005)
-        .alias("Offset Y").m("Y偏移", "Y位移")
+        .alias("Offset Y").lang("Y偏移", "Y位移")
         .whenTrue(calibrate)
 
     private val crosshair = TextureManager.lazyTexture("assets/CustomCrosshair.png")
