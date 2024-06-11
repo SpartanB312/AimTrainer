@@ -5,7 +5,6 @@ import net.spartanb312.everett.graphics.event.EngineLoopEvent
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.utils.Logger
-import net.spartanb312.everett.utils.collection.CircularArray
 import net.spartanb312.everett.utils.misc.*
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.Callbacks
@@ -28,17 +27,14 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.2.0"
+    const val ENGINE_VERSION = "1.2.1"
 
     init {
         name = "RenderThread"
     }
 
-    private val counter = Counter(1000)
-    private val countArray = CircularArray<Float>(8)
-    private val countTimer = Timer()
-    var rawFPS = 0; private set
-    var averageFPS = 0F; private set
+    private val fpsCounter = AverageCounter(1000, 8)
+    val averageFPS get() = fpsCounter.averageCPS
 
     var window = 0L; private set
     var monitor = 0L; private set
@@ -228,11 +224,7 @@ object RenderSystem : Thread() {
             profiler.start()
 
             // Pre-render
-            counter.invoke {
-                rawFPS = it
-                averageFPS = countArray.toList().sum() / 8f
-            }
-            countTimer.passedAndReset(125) { countArray.add(rawFPS) }
+            fpsCounter.invoke()
             updateResolution()
             updateMemory()
             EngineLoopEvent.Task.Pre.post()

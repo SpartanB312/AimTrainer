@@ -57,7 +57,6 @@ object Sync {
         } catch (ignored: InterruptedException) {
         }
 
-
         // schedule next frame, drop frame(s) if already too late for next frame
         nextFrame = (nextFrame + NANOS_IN_SECOND / fps).coerceAtLeast(time)
     }

@@ -17,7 +17,7 @@ import net.spartanb312.everett.game.render.FontCacheManager
 import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.MedalRenderer
-import net.spartanb312.everett.game.render.gui.Notification
+import net.spartanb312.everett.game.render.gui.NotificationRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.LoadingScreen
 import net.spartanb312.everett.game.render.scene.SceneManager
@@ -55,7 +55,7 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240610"
+    const val AIM_TRAINER_VERSION = "1.0.0.240612"
 
     var isReady = false
     private val tickTimer = Timer()
@@ -119,17 +119,14 @@ object AimTrainer : GameGraphics {
         profiler("Render 3D")
 
         // Render2D
-        glClearColor(0f, 0f, 0f, 1f)
         RS.matrixLayer.scope {
             GLHelper.blend = true
             applyOrtho(0.0f, RS.widthF, RS.heightF, 0.0f, -1.0f, 1.0f)
             MedalRenderer.onRender()
             Render2DManager.onRender(RS.mouseXD, RS.mouseYD)
-            Notification.onRender()
+            NotificationRenderer.onRender()
             CrosshairRenderer.onRender(VideoOption.dfov)
             DebugInfo.render2D()
-
-            BlurRenderer.render(400f, 400f, 900f, 900f, 10)
         }
         framebuffer.unbindFramebuffer()
         profiler("Render 2D")
@@ -157,7 +154,6 @@ object AimTrainer : GameGraphics {
         // Tick (60TPS)
         tickTimer.tps(60) {
             TickEvent.Pre.post()
-            Player.onTick()
             SceneManager.onTick()
             Render2DManager.onTick()
             BGMPlayer.onTick()

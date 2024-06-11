@@ -1,10 +1,10 @@
 package net.spartanb312.everett.game.render.gui.impls.option
 
-import net.spartanb312.everett.utils.config.setting.primitive.BooleanSetting
+import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.config.setting.primitive.BooleanSetting
 
 class BooleanButton(setting: BooleanSetting) : AbstractSettingComponent<Boolean>(setting) {
 
@@ -39,9 +39,14 @@ class BooleanButton(setting: BooleanSetting) : AbstractSettingComponent<Boolean>
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
-        if (button == 0 && isHoovered(mouseX.toDouble(), mouseY.toDouble())) {
-            setting.value = !setting.value
-            return true
+        if (isHoovered(mouseX.toDouble(), mouseY.toDouble())) {
+            if (button == 0) {
+                setting.value = !setting.value
+                return true
+            } else if (button == 1) {
+                setting.value = setting.defaultValue
+                return true
+            }
         }
         return false
     }

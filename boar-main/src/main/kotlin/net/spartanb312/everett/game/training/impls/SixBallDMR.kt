@@ -110,7 +110,7 @@ class SixBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
     override fun onTick() {
         super.onTick()
         entities.forEach {
-            if (it is Ball) it.randomMove(false, 1.5f)
+            if (it is Ball) it.randomMove(false, 2.5f)
         }
     }
 

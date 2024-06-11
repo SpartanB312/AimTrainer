@@ -3,7 +3,7 @@ package net.spartanb312.everett.game.option.impls
 import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.option.Option
 import net.spartanb312.everett.game.render.Background
-import net.spartanb312.everett.game.render.Radar
+import net.spartanb312.everett.game.render.hud.impls.Radar
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.config.setting.atMode

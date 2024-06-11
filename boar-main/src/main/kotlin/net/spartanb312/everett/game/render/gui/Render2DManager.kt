@@ -1,8 +1,8 @@
 package net.spartanb312.everett.game.render.gui
 
 import net.spartanb312.everett.game.option.impls.VideoOption
-import net.spartanb312.everett.game.render.EnergyShield
-import net.spartanb312.everett.game.render.Radar
+import net.spartanb312.everett.game.render.hud.impls.EnergyShield
+import net.spartanb312.everett.game.render.hud.impls.Radar
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS

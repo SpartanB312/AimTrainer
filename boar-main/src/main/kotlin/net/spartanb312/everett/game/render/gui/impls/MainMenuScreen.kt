@@ -6,7 +6,7 @@ import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.forge.Forge
 import net.spartanb312.everett.game.render.*
 import net.spartanb312.everett.game.render.gui.GuiScreen
-import net.spartanb312.everett.game.render.gui.Notification
+import net.spartanb312.everett.game.render.gui.NotificationRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.training.QuickPlay
 import net.spartanb312.everett.graphics.RS
@@ -37,7 +37,7 @@ object MainMenuScreen : GuiScreen() {
     )
 
     override fun onInit() {
-        Notification.clearAll()
+        NotificationRenderer.clearAll()
         Language.update(true)
         sideButtons.forEach { it.scale = 0f }
     }

@@ -1,9 +1,9 @@
 package net.spartanb312.everett.game.render.gui.impls.option
 
-import net.spartanb312.everett.utils.config.setting.primitive.EnumSetting
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.config.setting.primitive.EnumSetting
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.misc.DisplayEnum
 import net.spartanb312.everett.utils.timing.Timer
@@ -74,15 +74,20 @@ class EnumSwitcher<T : Enum<T>>(setting: EnumSetting<T>) : AbstractSettingCompon
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
-        if (button == 0 && isHoovered(mouseX.toDouble(), mouseY.toDouble())) {
-            val left = x + width * 0.2f
-            val center = x + width * 0.6f
-            val right = x + width
-            if (mouseX.toFloat() in left..center) {
-                (setting as EnumSetting).lastValue()
-                return true
-            } else if (mouseX.toFloat() in center..right) {
-                (setting as EnumSetting).nextValue()
+        if (isHoovered(mouseX.toDouble(), mouseY.toDouble())) {
+            if (button == 0) {
+                val left = x + width * 0.2f
+                val center = x + width * 0.6f
+                val right = x + width
+                if (mouseX.toFloat() in left..center) {
+                    (setting as EnumSetting).lastValue()
+                    return true
+                } else if (mouseX.toFloat() in center..right) {
+                    (setting as EnumSetting).nextValue()
+                    return true
+                }
+            } else if (button == 1) {
+                setting.value = setting.defaultValue
                 return true
             }
         }

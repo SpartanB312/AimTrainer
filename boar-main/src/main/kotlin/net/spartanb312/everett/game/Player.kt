@@ -16,6 +16,7 @@ import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.math.toRadian
 import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.math.vector.toVec3d
+import net.spartanb312.everett.utils.misc.AverageCounter
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import kotlin.math.cos
@@ -139,8 +140,15 @@ object Player : EntityPlayer(), Controller {
         camera.cameraPos = pos
     }
 
-    fun onTick() {
-        //if (AimAssistOption.mcEnabled) NewAA.compensate(ControlOption.sensitivity)
+    private val aaTickTimer = Timer()
+    private val aaTPSCounter = AverageCounter(1000, 8)
+    val aaTPS get() = aaTPSCounter.averageCPS
+
+    private fun aimAssist(sensitivity: Double) {
+        aaTPSCounter.invoke()
+        if (AimAssistOption.mcEnabled) {
+            MagnetismAA.compensate(sensitivity)
+        } else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
     }
 
     fun project(
@@ -153,9 +161,10 @@ object Player : EntityPlayer(), Controller {
         block: Camera.() -> Unit
     ) {
         if (AimAssistOption.aimAssist.value) {
-            if (AimAssistOption.mcEnabled) {
-                MagnetismAA.compensate(sensitivity)
-            } else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
+            if (AimAssistOption.noAATickLimit.value) aimAssist(sensitivity)
+            else aaTickTimer.tps(AimAssistOption.aaTPS) {
+                aimAssist(sensitivity)
+            }
         } else sensK = sensitivity * 1000.0
         with(camera) {
             RS.matrixLayer.newScope.project(

@@ -122,10 +122,15 @@ class NumberSlider<T>(
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
-        if (button == 0 && isHoovered(mouseX.toDouble(), mouseY.toDouble())) {
-            slideTimer.reset()
-            sliding = true
-            return true
+        if (isHoovered(mouseX.toDouble(), mouseY.toDouble())) {
+            if (button == 0) {
+                slideTimer.reset()
+                sliding = true
+                return true
+            } else if (button == 1) {
+                setting.value = setting.defaultValue
+                return true
+            }
         }
         return false
     }

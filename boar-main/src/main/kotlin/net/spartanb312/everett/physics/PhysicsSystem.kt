@@ -1,11 +1,13 @@
 package net.spartanb312.everett.physics
 
 import net.spartanb312.everett.utils.Logger
+import net.spartanb312.everett.utils.misc.AverageCounter
+import net.spartanb312.everett.utils.timing.Timer
 
 object PhysicsSystem {
 
-    private var delayNanoTime = 0L
-    private var lastUpdateNanoTime = System.nanoTime()
+    private var tps = 120
+    private val tpsLimiter = Timer()
     private var controller: Controller? = null
     private var updateThread = Thread.currentThread()
     private var mainThread = Thread.currentThread()
@@ -18,22 +20,24 @@ object PhysicsSystem {
     ) {
         this.controller = controller
         this.mainThread = mainThread
-        setTPS(tps)
+        this.tps = tps
         if (dedicateThread) changeThread(PhysicsThread())
     }
 
     fun setTPS(tps: Int) {
-        delayNanoTime = (1000000000.0 / tps).toLong()
+        this.tps = tps
     }
+
+    private val tpsCounter = AverageCounter(1000, 8)
+    val averageTPS get() = tpsCounter.averageCPS
 
     fun update() {
         if (!mainThread.isAlive) updateThread.interrupt()
         if (Thread.currentThread() == updateThread) { // Make sure on update thread
-            val currentNanoTime = System.nanoTime()
-            if (currentNanoTime - lastUpdateNanoTime >= delayNanoTime) {
-                lastUpdateNanoTime = currentNanoTime
-                controller?.update()
+             tpsLimiter.tps(tps){
+                tpsCounter.invoke()
                 // obj Updates
+                controller?.update()
             }
         } else {
             Logger.info("Physics system should be handled by physics thread")

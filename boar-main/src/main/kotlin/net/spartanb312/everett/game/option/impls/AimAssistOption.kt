@@ -3,10 +3,7 @@ package net.spartanb312.everett.game.option.impls
 import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.option.Option
 import net.spartanb312.everett.game.render.scene.SceneManager
-import net.spartanb312.everett.utils.config.setting.at
-import net.spartanb312.everett.utils.config.setting.atMode
-import net.spartanb312.everett.utils.config.setting.lang
-import net.spartanb312.everett.utils.config.setting.whenTrue
+import net.spartanb312.everett.utils.config.setting.*
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.misc.DisplayEnum
 
@@ -22,6 +19,15 @@ object AimAssistOption : Option("AimAssist") {
     private val aaType = setting("Aim Assist Type", AAType.Magnetism)
         .lang("辅助瞄准类型", "輔助瞄準類別")
         .whenTrue(aimAssist)
+
+    // AA tick
+    val noAATickLimit = setting("AA Tick Per Frame", false)
+        .lang("辅瞄Tick与帧数同步", "輔瞄Tick和幀數同步")
+        .whenTrue(aimAssist)
+    val aaTPS by setting("Aim Assist TPS", 240, 60..5000,10)
+        .lang("辅助瞄准TPS", "輔助瞄準TPS")
+        .whenTrue(aimAssist)
+        .whenFalse(noAATickLimit)
 
     // Move Compensation
     val moveCompensation by setting("Move Compensation", 0.14, 0.0..1.0, 0.01)

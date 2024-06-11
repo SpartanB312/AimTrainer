@@ -1,11 +1,12 @@
-package net.spartanb312.everett.game.render
+package net.spartanb312.everett.game.render.hud.impls
 
 import net.spartanb312.everett.game.Player
+import net.spartanb312.everett.game.render.FontRendererMain
 import net.spartanb312.everett.graphics.GLHelper.scissor
 import net.spartanb312.everett.graphics.RS
+import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer.draw
-import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.matrix.translatef

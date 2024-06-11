@@ -6,7 +6,7 @@ import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.color.ColorRGB
 
-object Notification {
+object NotificationRenderer {
 
     private val notifications = mutableListOf<Notification>()
 

@@ -3,20 +3,21 @@ package net.spartanb312.everett.game.training
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
-import net.spartanb312.everett.game.render.gui.Notification
+import net.spartanb312.everett.game.render.gui.NotificationRenderer
 import net.spartanb312.everett.game.render.gui.SubscribedRenderer
 import net.spartanb312.everett.graphics.RenderSystem
 import net.spartanb312.everett.graphics.texture.Texture
+import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.Logger
 
 abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     protected val leftUpInfo = mutableListOf(
-        { "FPS:&f ${RenderSystem.averageFPS}" },
-        { "Yaw:&f ${String.format("%.3f", Player.yaw)}" },
-        { "Pitch:&f ${String.format("%.3f", Player.pitch)}" },
-        { "Acc:&f ${String.format("%.2f", accuracy * 100)}% ($hits/$shots)" },
+        { "Average FPS:&f ${String.format("%.1f", RenderSystem.averageFPS)}" },
+        { "Physics TPS:&f ${String.format("%.1f", PhysicsSystem.averageTPS)}" },
+        { "AA TPS:&f ${String.format("%.1f", Player.aaTPS)}" },
+        { "Accuracy:&f ${String.format("%.2f", accuracy * 100)}% ($hits/$shots)" },
+        { "Sensitivity:&f ${String.format("%.3f", Player.sens)}" },
         { "Score:&f $showingScore" },
-        { "Sens:&f ${String.format("%.3f", Player.sens)}" },
     )
     protected var waitTime = AccessibilityOption.waitTime
     open val icon: Texture? = null
@@ -33,7 +34,7 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     }
 
     private fun showTitle() {
-        Notification.showCenter(trainingName, waitTime * 1000L, false)
+        NotificationRenderer.showCenter(trainingName, waitTime * 1000L, false)
     }
 
     open fun reset(): Training {

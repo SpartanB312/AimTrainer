@@ -19,15 +19,13 @@ object MagnetismAA : AimAssist {
     private var locked: LockData? = null
 
     private fun lockEntity(entity: Entity) {
-        locked = LockData(entity, entity.pos, Player.pos, Player.yaw, Player.pitch)
+        locked = LockData(entity, entity.pos, Player.pos)
     }
 
     class LockData(
         val entity: Entity,
         val entityPos: Vec3f,
         val playerPos: Vec3f,
-        val yaw: Float,
-        val pitch: Float
     )
 
     private val feedbackRate
@@ -73,7 +71,7 @@ object MagnetismAA : AimAssist {
                     val vPre = vRefPlane.projectOnPlane(preVec)
                     val vNow = vRefPlane.projectOnPlane(vec)
                     val pitchOffset = ((vNow.pitch - vPre.pitch).toDegree() * feedbackRate).toFloat().coerceIn(yRange)
-                    if (!pitchOffset.isNaN()) Player.pitch = (locked.pitch + pitchOffset).coerceIn(-89.5f..89.5f)
+                    if (!pitchOffset.isNaN()) Player.pitch = (Player.pitch + pitchOffset).coerceIn(-89.5f..89.5f)
 
                     // Horizontal
                     if (xzDelta <= 90.0) {
@@ -81,7 +79,7 @@ object MagnetismAA : AimAssist {
                         val hPre = hRefPlane.projectOnPlane(preVec)
                         val hNow = hRefPlane.projectOnPlane(vec)
                         val yawOffset = ((hNow.yaw - hPre.yaw).toDegree() * feedbackRate).toFloat().coerceIn(xzRange)
-                        if (!yawOffset.isNaN()) Player.yaw = locked.yaw +
+                        if (!yawOffset.isNaN()) Player.yaw = Player.yaw +
                                 yawOffset * if (AimAssistOption.pitchOptimization) cos(Player.pitch.toRadian()) else 1f
                     } // Cancel
                 }

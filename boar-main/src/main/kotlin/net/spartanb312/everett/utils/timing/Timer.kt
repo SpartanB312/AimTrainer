@@ -45,10 +45,18 @@ class Timer(val timeUnit: Duration = Duration.Millisecond) {
         return result
     }
 
+    private var offset = 0L
+
     // Tick per second
-    inline fun tps(tps: Int, block: () -> Unit) {
-        val interval = 1000000000 / tps
-        passedAndReset(interval, Duration.Nanosecond, block)
+    fun tps(tps: Int, block: () -> Unit) {
+        val currentNanoTime = System.nanoTime()
+        val delayNanoTime = (1000000000.0 / tps).toLong() - offset
+        val timeLapsed = currentNanoTime - time
+        if (timeLapsed >= delayNanoTime) {
+            offset = timeLapsed - delayNanoTime
+            time = currentNanoTime
+            block()
+        }
     }
 
 }
