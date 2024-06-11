@@ -64,7 +64,8 @@ object QuickPlay {
         }
 
         override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
-            training.onClick()
+            //training?.onClick() see @CrosshairRenderer
+            if (training is ReactionTest) training.onClick()
             return true
         }
 

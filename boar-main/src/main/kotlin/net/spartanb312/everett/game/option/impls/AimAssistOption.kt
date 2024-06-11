@@ -48,7 +48,7 @@ object AimAssistOption : Option("AimAssist") {
         .whenTrue(aimAssist)
 
     // Friction
-    private val raytraceAA by setting("Raytracing AA Value", 0.21, 0.0..1.0, 0.01)
+    private val raytraceAA by setting("Raytracing AA Value", 0.14, 0.0..1.0, 0.01)
         .lang("瞄准摩擦力", "瞄準摩擦係數")
         .at { aaType.value == AAType.Friction || zeroAngleFriction }
         .whenTrue(aimAssist)

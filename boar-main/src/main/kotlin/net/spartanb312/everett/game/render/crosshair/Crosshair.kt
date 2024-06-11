@@ -1,7 +1,9 @@
 package net.spartanb312.everett.game.render.crosshair
 
 import net.spartanb312.everett.game.Language
+import net.spartanb312.everett.game.option.impls.CrosshairOption
 import net.spartanb312.everett.game.option.impls.VideoOption
+import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.color.ColorRGB
@@ -13,7 +15,7 @@ import net.spartanb312.everett.utils.math.ceilToInt
 
 abstract class Crosshair(
     resetTime: Float,
-    private val errorRate: Float = 0f,
+    val errorRate: Float = 0f,
     val errorAngle: Float = 0f
 ) : SettingRegister<Crosshair> {
 
@@ -30,14 +32,13 @@ abstract class Crosshair(
         colorRGB: ColorRGB
     )
 
-    open fun onClick(): Boolean {
+    open fun onClick(force: Boolean = false): Boolean {
         val current = System.currentTimeMillis()
         val offset = current - clickTime
+        val resetTime = if (CrosshairOption.noCoolDown) 0 else this.resetTime
         return if (offset >= resetTime) {
             clickTime = current
-            true
-        } else if (offset / resetTime.toFloat() > 1f - errorRate) {
-            clickTime += resetTime
+            SceneManager.currentTraining?.onClick()
             true
         } else false
     }

@@ -1,9 +1,15 @@
 package net.spartanb312.everett.game.render.crosshair.impls.gun
 
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.GunfireAudio
+import net.spartanb312.everett.game.option.impls.CrosshairOption
 import net.spartanb312.everett.game.render.crosshair.Crosshair
 import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
+import net.spartanb312.everett.graphics.RenderSystem
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.matrix.rotatef
@@ -18,11 +24,12 @@ import net.spartanb312.everett.utils.config.setting.whenTrue
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.math.toRadian
 import net.spartanb312.everett.utils.math.vector.Vec3f
+import net.spartanb312.everett.utils.thread.MainScope
 import net.spartanb312.everett.utils.timing.Timer
 import kotlin.math.max
 import kotlin.math.tan
 
-object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.2f, 1.25f) {
+object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.25f) {
 
     private val useSpecifiedAngle = setting("M392E-Specified Adsorption Angle", true)
         .alias("Specified Adsorption Angle").lang("指定吸附角", "指定吸附角")
@@ -37,9 +44,8 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.2f, 1.25f) {
         .whenFalse(followFOV)
     private val animation by setting("M392E-Animation", false)
         .alias("Animation").lang("旋转动画", "準星旋轉動畫")
-
-    private val noSoundReset by setting("M392E-No Sound Reset", true)
-        .alias("No Sound Reset").lang("取消强制枪声间隔", "槍聲無間斷")
+    private val recoil by setting("M392E-Recoil", true)
+        .alias("Recoil").lang("后坐力", "後坐力")
 
     override val syncFOV get() = followFOV.value
     override var clickTime = 0L
@@ -50,10 +56,65 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.2f, 1.25f) {
     override val overrideErrorAngle: Float
         get() = if (useSpecifiedAngle.value) errorAngle2 else -1f
 
-    override fun onClick(): Boolean {
-        val result = super.onClick()
-        if (result || noSoundReset) GunfireAudio.playBandit()
-        return result
+    private var clickLocked = false
+
+    private fun calcRecoilAngle() {
+        if (!recoil || CrosshairOption.noCoolDown) Player.renderPitchOffset = 0f
+        val currentTime = System.currentTimeMillis()
+        if (currentTime - clickTime <= resetTime) {
+            when (val rate = (currentTime - clickTime) / resetTime.toDouble()) {
+                // stage 1
+                in 0.0..0.45 -> {
+                    val x = rate / 0.45
+                    val y = x * x
+                    Player.renderPitchOffset = (y * 0.4f).toFloat()
+                }
+                // stage 2
+                in 0.45..0.9 -> {
+                    val x = (rate - 0.45) / 0.45
+                    val y = 1 - x
+                    Player.renderPitchOffset = (y * 0.4f).toFloat()
+                }
+                // stage 3
+                else -> Player.renderPitchOffset = 0f
+            }
+        }
+    }
+
+    override fun onClick(force: Boolean): Boolean {
+        if (clickLocked && !force) return false
+        clickLocked = false
+        val current = System.currentTimeMillis()
+        val resetTime = if (CrosshairOption.noCoolDown) 0 else this.resetTime
+        val offset = current - clickTime
+        if (offset >= resetTime || force) {
+            clickTime = current
+            SceneManager.currentTraining?.onClick()
+            GunfireAudio.playBandit()
+            return true
+        } else if (offset / resetTime.toFloat() > 1f - errorRate) {
+            clickLocked = true
+            val triggerTime = clickTime + resetTime
+            MainScope.launch(Dispatchers.Default) {
+                while (true) {
+                    val currentTime = System.currentTimeMillis()
+                    val frameTime = 1000f / RenderSystem.averageFPS
+                    val nextFrameTime = RenderSystem.lastJobTime + frameTime
+                    val needTimeToTrigger = triggerTime - currentTime
+                    if (needTimeToTrigger <= 0) {
+                        // Late click
+                        RenderSystem.addRenderThreadJob { onClick(true) }
+                        break
+                    } else if (needTimeToTrigger <= frameTime / 2 && nextFrameTime >= triggerTime) {
+                        // Predict Late click to reduce input latency in low fps situation
+                        RenderSystem.addRenderThreadJob { onClick(true) }
+                        break
+                    }
+                }
+            }
+            return true
+        }
+        return false
     }
 
     override fun MatrixLayerStack.MatrixScope.onRender(
@@ -63,6 +124,7 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.2f, 1.25f) {
         shadow: Boolean,
         colorRGB: ColorRGB
     ) {
+        calcRecoilAngle()
         var scale = max(RS.widthF / 2560f, RS.heightF / 1369f)
         val progress =
             if (animation) ((System.currentTimeMillis() - clickTime) / resetTime.toFloat()).coerceIn(0f..1f)

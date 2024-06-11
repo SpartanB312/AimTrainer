@@ -17,7 +17,7 @@ import net.spartanb312.everett.utils.timing.Timer
 import kotlin.math.max
 import kotlin.math.tan
 
-object CrosshairMA40 : GunCrosshair, Crosshair(1.3f / 16f, errorAngle = 1.5f) {
+object CrosshairMA40 : GunCrosshair, Crosshair(1300f / 16f, errorAngle = 1.5f) {
 
     private val useSpecifiedAngle = setting("MA40-Specified Adsorption Angle", true)
         .alias("Specified Adsorption Angle").lang("指定吸附角", "指定吸附角")

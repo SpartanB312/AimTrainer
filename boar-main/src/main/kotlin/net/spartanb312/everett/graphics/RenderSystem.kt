@@ -35,6 +35,8 @@ object RenderSystem : Thread() {
 
     private val fpsCounter = AverageCounter(1000, 8)
     val averageFPS get() = fpsCounter.averageCPS
+    var lastFrameTime = 0L; private set
+    var lastJobTime = 0L; private set
 
     var window = 0L; private set
     var monitor = 0L; private set
@@ -234,6 +236,7 @@ object RenderSystem : Thread() {
                 if (task != null) task.run()
                 else break
             }
+            lastJobTime = System.currentTimeMillis()
             EngineLoopEvent.Task.Post.post()
             EngineLoopEvent.PollEvents.Pre.post()
             glfwPollEvents()
@@ -255,6 +258,7 @@ object RenderSystem : Thread() {
                 profilerResultUpdateTimer.reset()
                 lastProfilingResults = profiler.endWithResult()
             }
+            lastFrameTime = System.currentTimeMillis()
         }
 
         Callbacks.glfwFreeCallbacks(window)

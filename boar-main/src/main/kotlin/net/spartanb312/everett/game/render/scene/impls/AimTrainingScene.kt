@@ -10,6 +10,7 @@ import net.spartanb312.everett.game.render.gui.impls.PauseScreen
 import net.spartanb312.everett.game.render.gui.impls.TrainingScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.SceneManager
+import net.spartanb312.everett.game.training.ReactionTest
 import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.graphics.Skybox
 import net.spartanb312.everett.utils.timing.Timer
@@ -69,7 +70,8 @@ object AimTrainingScene : Scene() {
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
-        currentTraining?.onClick()
+        //currentTraining?.onClick() see @CrosshairRenderer
+        if (currentTraining is ReactionTest) currentTraining?.onClick()
         return true
     }
 

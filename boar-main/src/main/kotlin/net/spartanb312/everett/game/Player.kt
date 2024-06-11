@@ -33,6 +33,9 @@ object Player : EntityPlayer(), Controller {
     val sens get() = sensK / 1000.0
     val raytraced get() = lastRayTracedTarget != null
 
+    var renderYawOffset = 0f
+    var renderPitchOffset = 0f
+
     private var onGround = false
     val boundingBox
         get() = BoundingBox(
@@ -168,8 +171,8 @@ object Player : EntityPlayer(), Controller {
         } else sensK = sensitivity * 1000.0
         with(camera) {
             RS.matrixLayer.newScope.project(
-                yaw,
-                pitch,
+                yaw + renderYawOffset,
+                (pitch + renderPitchOffset).coerceIn(-89.9f..89.9f),
                 pos,
                 fov,
                 camera.zRange.start,
