@@ -2,6 +2,7 @@ package net.spartanb312.everett.game.render.crosshair.impls.gun
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.GunfireAudio
 import net.spartanb312.everett.game.option.impls.CrosshairOption
@@ -16,20 +17,25 @@ import net.spartanb312.everett.graphics.matrix.rotatef
 import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.translatef
 import net.spartanb312.everett.utils.color.ColorRGB
-import net.spartanb312.everett.utils.config.setting.alias
-import net.spartanb312.everett.utils.config.setting.lang
+import net.spartanb312.everett.utils.config.setting.*
 import net.spartanb312.everett.utils.config.setting.number.format
-import net.spartanb312.everett.utils.config.setting.whenFalse
-import net.spartanb312.everett.utils.config.setting.whenTrue
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.math.toRadian
 import net.spartanb312.everett.utils.math.vector.Vec3f
+import net.spartanb312.everett.utils.misc.DisplayEnum
 import net.spartanb312.everett.utils.thread.MainScope
 import net.spartanb312.everett.utils.timing.Timer
 import kotlin.math.max
 import kotlin.math.tan
 
-object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.25f) {
+object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.0f) {
+
+    private val outerCircle = setting("M392E-Outer Circle", OuterCircle.SpecifiedAngle)
+        .alias("Outer Circle").lang("准星外圈", "準星外圈")
+    private val specifiedAngle by setting("M392E-Specified Render Angle", 1.25f, 0f..10f, 0.05f).format("0.00")
+        .alias("Render Angle").lang("渲染角", "渲染角")
+        .atMode(outerCircle, OuterCircle.SpecifiedAngle)
 
     private val useSpecifiedAngle = setting("M392E-Specified Adsorption Angle", true)
         .alias("Specified Adsorption Angle").lang("指定吸附角", "指定吸附角")
@@ -44,8 +50,12 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.25f) {
         .whenFalse(followFOV)
     private val animation by setting("M392E-Animation", false)
         .alias("Animation").lang("旋转动画", "準星旋轉動畫")
-    private val recoil by setting("M392E-Recoil", true)
+
+    private val recoil = setting("M392E-Recoil", true)
         .alias("Recoil").lang("后坐力", "後坐力")
+    private val recoilAngle by setting("M392E-Recoil Angle", 0.5f, 0.0f..5.0f, 0.05f).format("0.00")
+        .alias("Recoil Angle").lang("后坐力角度", "後坐力角度")
+        .whenTrue(recoil)
 
     override val syncFOV get() = followFOV.value
     override var clickTime = 0L
@@ -59,7 +69,10 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.25f) {
     private var clickLocked = false
 
     private fun calcRecoilAngle() {
-        if (!recoil || CrosshairOption.noCoolDown) Player.renderPitchOffset = 0f
+        if (!recoil.value || CrosshairOption.noCoolDown) {
+            Player.renderPitchOffset = 0f
+            return
+        }
         val currentTime = System.currentTimeMillis()
         if (currentTime - clickTime <= resetTime) {
             when (val rate = (currentTime - clickTime) / resetTime.toDouble()) {
@@ -67,13 +80,13 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.25f) {
                 in 0.0..0.45 -> {
                     val x = rate / 0.45
                     val y = x * x
-                    Player.renderPitchOffset = (y * 0.4f).toFloat()
+                    Player.renderPitchOffset = (y * recoilAngle).toFloat()
                 }
                 // stage 2
                 in 0.45..0.9 -> {
                     val x = (rate - 0.45) / 0.45
                     val y = 1 - x
-                    Player.renderPitchOffset = (y * 0.4f).toFloat()
+                    Player.renderPitchOffset = (y * recoilAngle).toFloat()
                 }
                 // stage 3
                 else -> Player.renderPitchOffset = 0f
@@ -141,8 +154,9 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.25f) {
         var actualFOV = if (followFOV.value) fov else size.inDFov
         if (actualFOV < 100f) actualFOV = 100f
         val d = RS.diagonalF / 2f / tan((actualFOV / 2f).toRadian())
-        val errorAngle: Float = if (useSpecifiedAngle.value) errorAngle2 else CrosshairRenderer.errorAngle
-        val outerRadius = d * tan(errorAngle.toRadian())
+        val errorAngle = if (useSpecifiedAngle.value) errorAngle2 else CrosshairRenderer.errorAngle
+        val actualRenderAngle = if (outerCircle.value == OuterCircle.SpecifiedAngle) specifiedAngle else errorAngle
+        val outerRadius = d * tan(actualRenderAngle.toRadian())
         RenderUtils.drawArcOutline(
             centerX,
             centerY,
@@ -168,6 +182,13 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.25f) {
         RenderUtils.drawArcOutline(0f, 0f, innerRadius, 90f + gap..180f - gap, 0, 2.5f * scale, color)
         RenderUtils.drawArcOutline(0f, 0f, innerRadius, 180f + gap..270f - gap, 0, 2.5f * scale, color)
         RenderUtils.drawArcOutline(0f, 0f, innerRadius, 270f + gap..360f - gap, 0, 2.5f * scale, color)
+    }
+
+    enum class OuterCircle(multiText: MultiText) : DisplayEnum {
+        SpecifiedAngle("Specified".lang("指定角度", "指定角度")),
+        AdsorptionAngle("Adsorption".lang("吸附角度", "吸附角度"));
+
+        override val displayName by multiText
     }
 
 }

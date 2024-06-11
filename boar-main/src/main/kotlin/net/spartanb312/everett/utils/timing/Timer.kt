@@ -50,7 +50,7 @@ class Timer(val timeUnit: Duration = Duration.Millisecond) {
     // Tick per second
     fun tps(tps: Int, block: () -> Unit) {
         val currentNanoTime = System.nanoTime()
-        val delayNanoTime = (1000000000.0 / tps).toLong() - offset
+        val delayNanoTime = ((1000000000.0 / tps).toLong() - offset).coerceAtLeast(0)
         val timeLapsed = currentNanoTime - time
         if (timeLapsed >= delayNanoTime) {
             offset = timeLapsed - delayNanoTime

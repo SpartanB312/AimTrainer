@@ -14,7 +14,7 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     protected val leftUpInfo = mutableListOf(
         { "Average FPS:&f ${String.format("%.1f", RenderSystem.averageFPS)}" },
         { "Physics TPS:&f ${String.format("%.1f", PhysicsSystem.averageTPS)}" },
-        { "AA TPS:&f ${String.format("%.1f", Player.aaTPS)}" },
+        { "AimAssist TPS:&f ${String.format("%.1f", Player.aaTPS)}" },
         { "Accuracy:&f ${String.format("%.2f", accuracy * 100)}% ($hits/$shots)" },
         { "Sensitivity:&f ${String.format("%.3f", Player.sens)}" },
         { "Score:&f $showingScore" },
