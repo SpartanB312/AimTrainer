@@ -6,7 +6,7 @@ import org.lwjgl.opengl.GL20.glVertexAttribPointer
 import org.lwjgl.opengl.GL30.glVertexAttribIPointer
 import org.lwjgl.opengl.GL33.glVertexAttribDivisor
 
-class VertexAttribute private constructor(private val stride: Int, private val entries: List<Entry>) {
+class VertexAttribute private constructor(val stride: Int, private val entries: List<Entry>) {
     fun apply() = entries.forEach {
         it.apply(stride)
     }

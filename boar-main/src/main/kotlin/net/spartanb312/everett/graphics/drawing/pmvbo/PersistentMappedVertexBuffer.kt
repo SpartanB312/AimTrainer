@@ -20,27 +20,27 @@ object PersistentMappedVertexBuffer {
         VertexMode.values.forEach { it.onSync() }
     }
 
-    sealed class VertexMode(val format: VertexFormat, val shader: Shader) {
+    open class VertexMode(val format: VertexAttribute, val shader: Shader) {
         companion object {
             val values = listOf(Pos2fColor, Pos3fColor, Pos2fColorTex, Pos3fColorTex, Universal)
         }
 
         data object Pos2fColor : VertexMode(
-            VertexFormat.Pos2fColor, Shader(
+            VertexFormat.Pos2fColor.attribute, Shader(
                 "assets/shader/general/Pos2fColor.vsh",
                 "assets/shader/general/Pos2fColor.fsh"
             )
         )
 
         data object Pos3fColor : VertexMode(
-            VertexFormat.Pos3fColor, Shader(
+            VertexFormat.Pos3fColor.attribute, Shader(
                 "assets/shader/general/Pos3fColor.vsh",
                 "assets/shader/general/Pos3fColor.fsh"
             )
         )
 
         data object Pos2fColorTex : VertexMode(
-            VertexFormat.Pos2fColorTex, Shader(
+            VertexFormat.Pos2fColorTex.attribute, Shader(
                 "assets/shader/general/Pos2fColorTex.vsh",
                 "assets/shader/general/Pos2fColorTex.fsh"
             ).apply {
@@ -49,7 +49,7 @@ object PersistentMappedVertexBuffer {
         )
 
         data object Pos3fColorTex : VertexMode(
-            VertexFormat.Pos3fColorTex, Shader(
+            VertexFormat.Pos3fColorTex.attribute, Shader(
                 "assets/shader/general/Pos3fColorTex.vsh",
                 "assets/shader/general/Pos3fColorTex.fsh"
             ).apply
@@ -59,7 +59,7 @@ object PersistentMappedVertexBuffer {
         )
 
         data object Pos3fTex : VertexMode(
-            VertexFormat.Pos3fTex, Shader(
+            VertexFormat.Pos3fTex.attribute, Shader(
                 "assets/shader/general/Pos3fTex.vsh",
                 "assets/shader/general/Pos3fTex.fsh"
             ).apply {
@@ -68,7 +68,7 @@ object PersistentMappedVertexBuffer {
         )
 
         data object Universal : VertexMode(
-            VertexFormat.Pos3fColorTex, Shader(
+            VertexFormat.Pos3fColorTex.attribute, Shader(
                 "assets/shader/general/UniversalDraw.vsh",
                 "assets/shader/general/UniversalDraw.fsh"
             ).apply {
@@ -132,8 +132,8 @@ object PersistentMappedVertexBuffer {
         }
 
         private var vertexSize = 0
-        private val vao = createVao(format.attribute, vbo)
-        private val stride = format.totalLength
+        private val vao = createVao(format, vbo)
+        private val stride = format.stride
 
         fun universal(posX: Float, posY: Float, color: ColorRGB) {
             val pointer = arr.ptr

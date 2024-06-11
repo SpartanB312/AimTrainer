@@ -38,7 +38,7 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
         if (pos.x !in range) notInRange++
         if (pos.y !in range) notInRange++
         if (pos.z !in range) notInRange++
-        if (notInRange >= 2) randomMove(true, moveSpeed)
+        if (notInRange >= 2) randomMove(!reverse, moveSpeed)
         else pos = Vec3f(pos.x.coerceIn(range), pos.y.coerceIn(range), pos.z.coerceIn(range))
     }
 

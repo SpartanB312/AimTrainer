@@ -27,8 +27,8 @@ OFFSET_5
 );
 
 void calcOffset(int index, vec2 texelSize) {
-    float offset = OFFSETS[index] * texelSize.y;
-    coords[index] = vec4(coord0.x, coord0.y - offset, coord0.x, coord0.y + offset);
+    float offset = OFFSETS[index] * texelSize.x;
+    coords[index] = vec4(coord0.x - offset, coord0.y, coord0.x + offset, coord0.y);
 }
 
 void main() {

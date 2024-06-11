@@ -81,11 +81,12 @@ object MagnetismAA : AimAssist {
                         val hPre = hRefPlane.projectOnPlane(preVec)
                         val hNow = hRefPlane.projectOnPlane(vec)
                         val yawOffset = ((hNow.yaw - hPre.yaw).toDegree() * feedbackRate).toFloat().coerceIn(xzRange)
-                        if (!yawOffset.isNaN()) Player.yaw = (locked.yaw + yawOffset * cos(Player.pitch.toRadian()))
+                        if (!yawOffset.isNaN()) Player.yaw = locked.yaw +
+                                yawOffset * if (AimAssistOption.pitchOptimization) cos(Player.pitch.toRadian()) else 1f
                     } // Cancel
                 }
             }
-        } else FrictionAA.compensate(sensitivity)
+        } else Player.sensK = sensitivity * 1000.0
         if (result != null) lockEntity(result)
         else this.locked = null
     }
