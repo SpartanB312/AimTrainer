@@ -41,6 +41,13 @@ object VideoOption : Option("Video") {
         .lang("垂直FOV", "垂直FOV")
         .atMode(fovMode, FOVMode.VFOV)
 
+    val ping by setting("Ping", true)
+        .lang("延迟信息", "延遲顯示")
+    val fps by setting("FPS", true)
+        .lang("帧数信息", "幀數顯示")
+    val info by setting("Stat Info", false)
+        .lang("统计信息", "統計信息")
+
     val radar = setting("Radar", true).lang("雷达", "雷達")
 
     init {

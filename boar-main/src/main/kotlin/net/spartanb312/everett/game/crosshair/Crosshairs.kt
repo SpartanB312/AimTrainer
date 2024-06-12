@@ -1,12 +1,12 @@
-package net.spartanb312.everett.game.render.crosshair
+package net.spartanb312.everett.game.crosshair
 
-import net.spartanb312.everett.game.render.crosshair.impls.CrosshairCircle
-import net.spartanb312.everett.game.render.crosshair.impls.CrosshairCross
-import net.spartanb312.everett.game.render.crosshair.impls.CrosshairCustom
-import net.spartanb312.everett.game.render.crosshair.impls.CrosshairDot
-import net.spartanb312.everett.game.render.crosshair.impls.gun.CrosshairBR75
-import net.spartanb312.everett.game.render.crosshair.impls.gun.CrosshairM392E
-import net.spartanb312.everett.game.render.crosshair.impls.gun.CrosshairMA40
+import net.spartanb312.everett.game.crosshair.impls.CrosshairCircle
+import net.spartanb312.everett.game.crosshair.impls.CrosshairCross
+import net.spartanb312.everett.game.crosshair.impls.CrosshairCustom
+import net.spartanb312.everett.game.crosshair.impls.CrosshairDot
+import net.spartanb312.everett.game.crosshair.impls.gun.CrosshairBR75
+import net.spartanb312.everett.game.crosshair.impls.gun.CrosshairM392E
+import net.spartanb312.everett.game.crosshair.impls.gun.CrosshairMA40
 import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.misc.DisplayEnum

@@ -1,7 +1,7 @@
-package net.spartanb312.everett.game.render.crosshair.impls
+package net.spartanb312.everett.game.crosshair.impls
 
-import net.spartanb312.everett.game.render.crosshair.Crosshair
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.crosshair.Crosshair
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack

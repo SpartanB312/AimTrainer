@@ -11,11 +11,7 @@ import net.spartanb312.everett.game.event.TickEvent
 import net.spartanb312.everett.game.input.InputManager
 import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.game.option.impls.VideoOption
-import net.spartanb312.everett.game.render.BlurRenderer
-import net.spartanb312.everett.game.render.DebugInfo
-import net.spartanb312.everett.game.render.FontCacheManager
-import net.spartanb312.everett.game.render.TextureManager
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.*
 import net.spartanb312.everett.game.render.gui.MedalRenderer
 import net.spartanb312.everett.game.render.gui.NotificationRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
@@ -38,6 +34,7 @@ import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.Profiler
+import net.spartanb312.everett.utils.thread.ConcurrentTaskManager
 import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
@@ -63,6 +60,7 @@ object AimTrainer : GameGraphics {
     val model = Model("assets/everett/Everett.obj", TextureManager) { MeshDNSH(it) }
 
     lateinit var framebuffer: ResizableFramebuffer
+    val taskManager = ConcurrentTaskManager("AimTrainer TaskManager")
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
@@ -126,7 +124,8 @@ object AimTrainer : GameGraphics {
             Render2DManager.onRender(RS.mouseXD, RS.mouseYD)
             NotificationRenderer.onRender()
             CrosshairRenderer.onRender(VideoOption.dfov)
-            DebugInfo.render2D()
+            DebugInfoRenderer.onRender()
+            StatRenderer.onRender()
         }
         framebuffer.unbindFramebuffer()
         profiler("Render 2D")
@@ -170,7 +169,7 @@ object AimTrainer : GameGraphics {
     override fun onKeyCallback(key: Int, action: Int, modifier: Int) {
         when (action) {
             GLFW.GLFW_PRESS -> {
-                if (key == GLFW.GLFW_KEY_F3) DebugInfo.enabled = !DebugInfo.enabled
+                if (key == GLFW.GLFW_KEY_F3) DebugInfoRenderer.enabled = !DebugInfoRenderer.enabled
                 InputManager.onKeyTyped(key, modifier)
             }
 

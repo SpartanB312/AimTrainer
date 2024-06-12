@@ -7,7 +7,7 @@ import net.spartanb312.everett.launch.Platform
 import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.opengl.GL11.glGetString
 
-object DebugInfo {
+object DebugInfoRenderer {
 
     var enabled = false
 
@@ -29,7 +29,7 @@ object DebugInfo {
         { "FPS: $fps" }
     )
 
-    fun render2D() {
+    fun onRender() {
         if (!enabled) return
         var startY = 0f
         val backgroundColor = ColorRGB.GRAY.alpha(64)

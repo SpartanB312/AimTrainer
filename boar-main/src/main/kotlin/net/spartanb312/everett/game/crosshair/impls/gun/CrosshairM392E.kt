@@ -1,13 +1,13 @@
-package net.spartanb312.everett.game.render.crosshair.impls.gun
+package net.spartanb312.everett.game.crosshair.impls.gun
 
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.GunfireAudio
+import net.spartanb312.everett.game.crosshair.Crosshair
 import net.spartanb312.everett.game.option.impls.CrosshairOption
-import net.spartanb312.everett.game.render.crosshair.Crosshair
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.RenderSystem

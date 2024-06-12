@@ -10,6 +10,8 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
     private val body = Sphere(this, size)
     private var vec = Vec3f(0f, 0f, 0f)
 
+    var isAlive = true
+
     override fun raytrace(
         origin: Vec3f,
         ray: Vec3f,

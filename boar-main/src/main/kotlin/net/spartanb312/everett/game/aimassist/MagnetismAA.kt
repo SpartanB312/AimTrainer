@@ -3,7 +3,7 @@ package net.spartanb312.everett.game.aimassist
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Entity
 import net.spartanb312.everett.game.option.impls.AimAssistOption
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.math.Plane

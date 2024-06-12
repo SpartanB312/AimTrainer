@@ -1,12 +1,15 @@
 package net.spartanb312.everett.game.training
 
+import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
+import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.AimAssistOption.bulletAdsorption
+import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.BallRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.game.render.FontRendererMain
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
@@ -99,7 +102,7 @@ abstract class BallHitTraining(
         ) // Cache raytraced target
         var startY = 0f
         val color = ColorRGB.AQUA
-        leftUpInfo.forEach {
+        if (VideoOption.info) leftUpInfo.forEach {
             val str = it.invoke()
             FontRendererMain.drawStringWithShadow(str, 0f, startY, color)
             startY += FontRendererMain.getHeight()
@@ -179,12 +182,23 @@ abstract class BallHitTraining(
             } else 0f
         )?.let {
             if (it is Ball) {
-                hit = true
+                if (it.hp > 0) hit = true
                 it.hp -= 1
                 if (it.hp == 0) {
-                    entities.add(generateBall(it))
-                    entities.remove(it)
-                    fadeBalls[it] = System.currentTimeMillis()
+                    // latency
+                    if (AccessibilityOption.pingSimulate.value) {
+                        AimTrainer.taskManager.runLater(AccessibilityOption.ping * 2) {
+                            RS.addRenderThreadJob {
+                                entities.add(generateBall(it))
+                                entities.remove(it)
+                                fadeBalls[it] = System.currentTimeMillis()
+                            }
+                        }
+                    } else {
+                        entities.add(generateBall(it))
+                        entities.remove(it)
+                        fadeBalls[it] = System.currentTimeMillis()
+                    }
                 }
             }
         }

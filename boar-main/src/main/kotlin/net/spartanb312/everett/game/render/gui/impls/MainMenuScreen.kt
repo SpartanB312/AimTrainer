@@ -80,7 +80,7 @@ object MainMenuScreen : GuiScreen() {
         // Nameplate
         val nameplateWidth = 360f * scale * 1.35f
         val nameplateHeight = 52f * scale * 1.35f
-        Nameplates.currentNameplate.onRender(
+        NameplatesRenderer.currentNameplate.onRender(
             RS.widthF * 0.93f - nameplateWidth,
             0.115f * RS.heightF,
             RS.widthF * 0.93f,

@@ -1,6 +1,7 @@
-package net.spartanb312.everett.game.render.crosshair
+package net.spartanb312.everett.game.render
 
 import net.spartanb312.everett.game.Player
+import net.spartanb312.everett.game.crosshair.Crosshairs
 import net.spartanb312.everett.game.option.impls.CrosshairOption
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS

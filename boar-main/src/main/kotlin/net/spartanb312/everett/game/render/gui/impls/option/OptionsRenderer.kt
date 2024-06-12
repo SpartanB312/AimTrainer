@@ -10,10 +10,10 @@ import net.spartanb312.everett.game.option.Option
 import net.spartanb312.everett.game.option.impls.CrosshairOption
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.FontRendererBig
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
-import net.spartanb312.everett.game.render.crosshair.Crosshairs
-import net.spartanb312.everett.game.render.crosshair.impls.CrosshairCustom
-import net.spartanb312.everett.game.render.crosshair.impls.gun.GunCrosshair
+import net.spartanb312.everett.game.render.CrosshairRenderer
+import net.spartanb312.everett.game.crosshair.Crosshairs
+import net.spartanb312.everett.game.crosshair.impls.CrosshairCustom
+import net.spartanb312.everett.game.crosshair.impls.gun.GunCrosshair
 import net.spartanb312.everett.graphics.GLHelper.scissor
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils

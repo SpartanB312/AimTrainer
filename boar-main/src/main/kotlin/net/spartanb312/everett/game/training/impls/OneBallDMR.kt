@@ -1,11 +1,13 @@
 package net.spartanb312.everett.game.training.impls
 
+import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
 import net.spartanb312.everett.game.medal.MedalCounter
+import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.BallRenderer
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.MedalRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
@@ -15,6 +17,7 @@ import net.spartanb312.everett.game.training.BallHitTraining
 import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.game.training.TrainingInfo
 import net.spartanb312.everett.game.training.TrainingInfoContainer
+import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.misc.asRange
 
@@ -77,34 +80,44 @@ class OneBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
                 else errorAngle
             } else 0f
         )
-        result?.let {
-            if (it is Ball) {
-                hit = true
-                if (it.hp == 5) firstShot = true
-                it.hp -= 1
-                if (it.hp == 0) {
-                    killed = true
-                    entities.add(generateBall(it))
-                    entities.remove(it)
-                    fadeBalls[it] = System.currentTimeMillis()
+
+        fun solve() {
+            result?.let {
+                if (it is Ball) {
+                    if (it.hp == 5) firstShot = true
+                    if (it.hp > 0) {
+                        hit = true
+                        it.hp -= 1
+                    }
+                    if (it.hp == 0) {
+                        killed = true
+                        entities.add(generateBall(it))
+                        entities.remove(it)
+                        fadeBalls[it] = System.currentTimeMillis()
+                    }
                 }
             }
-        }
-        medalCounter.perfectDMR(result)
-        shots++
-        val currentTime = System.currentTimeMillis()
-        val lastHitTime = hitTime.lastOrNull() ?: (currentTime - 50L)
-        val lastHitTimeLapse = (currentTime - lastHitTime).toInt()
-        if (firstShot) hitTime.add(currentTime)
-        if (hit) {
-            hits++
-            if (killed) {
-                score += onHit(lastHitTimeLapse)
-                reactionTimes.add(lastHitTimeLapse)
+            medalCounter.perfectDMR(result)
+            shots++
+            val currentTime = System.currentTimeMillis()
+            val lastHitTime = hitTime.lastOrNull() ?: (currentTime - 50L)
+            val lastHitTimeLapse = (currentTime - lastHitTime).toInt()
+            if (firstShot) hitTime.add(currentTime)
+            if (hit) {
+                hits++
+                if (killed) {
+                    score += onHit(lastHitTimeLapse)
+                    reactionTimes.add(lastHitTimeLapse)
+                }
             }
+            score = score.coerceAtLeast(0)
+            lastShotTime = currentTime
         }
-        score = score.coerceAtLeast(0)
-        lastShotTime = currentTime
+        if (AccessibilityOption.pingSimulate.value) {
+            AimTrainer.taskManager.runLater(AccessibilityOption.ping * 2) {
+                RS.addRenderThreadJob { solve() }
+            }
+        } else solve()
     }
 
     override fun onTick() {

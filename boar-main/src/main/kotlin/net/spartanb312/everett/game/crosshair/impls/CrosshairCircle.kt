@@ -1,7 +1,7 @@
-package net.spartanb312.everett.game.render.crosshair.impls
+package net.spartanb312.everett.game.crosshair.impls
 
-import net.spartanb312.everett.game.render.crosshair.Crosshair
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.crosshair.Crosshair
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.color.ColorRGB
@@ -10,10 +10,12 @@ import net.spartanb312.everett.utils.config.setting.lang
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.timing.Timer
 
-object CrosshairDot : Crosshair(0f) {
+object CrosshairCircle : Crosshair(0f) {
 
-    private val size by setting("Dot-Size", 10f, 1f..20f, 0.25f)
+    private val size by setting("Circle-Size", 10f, 1f..20f, 0.25f)
         .alias("Size").lang("准星大小", "準星大小")
+    private val lineWidth by setting("Circle-LineWidth", 2f, 0.1f..5f, step = 0.05f)
+        .alias("Line Width").lang("线宽度", "綫寬度")
 
     override var clickTime = System.currentTimeMillis()
 
@@ -32,8 +34,9 @@ object CrosshairDot : Crosshair(0f) {
         }
         val color = if (shadow) CrosshairRenderer.shadowColor
         else colorRGB.mix(ColorRGB(255, 20, 20), colorRate / 100f)
+
         val size = if (shadow) size * 1.03f else size
-        RenderUtils.drawPoint(centerX, centerY, size, color)
+        RenderUtils.drawArcOutline(centerX, centerY, size, 0f..360f, 0, lineWidth, color)
     }
 
 }

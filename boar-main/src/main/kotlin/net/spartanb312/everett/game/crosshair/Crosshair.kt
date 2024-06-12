@@ -1,4 +1,4 @@
-package net.spartanb312.everett.game.render.crosshair
+package net.spartanb312.everett.game.crosshair
 
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.option.impls.CrosshairOption

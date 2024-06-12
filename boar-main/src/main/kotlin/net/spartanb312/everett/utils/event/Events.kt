@@ -16,34 +16,8 @@ open class Cancellable : ICancellable {
 }
 
 open class ListenerOwner : IListenerOwner {
-    private val listeners = ArrayList<Listener>()
-    private val parallelListeners = ArrayList<ParallelListener>()
-
-    override fun register(listener: Listener) {
-        listeners.add(listener)
-    }
-
-    override fun register(listener: ParallelListener) {
-        parallelListeners.add(listener)
-    }
-
-    override fun subscribe() {
-        for (listener in listeners) {
-            listener.eventBus.subscribe(listener)
-        }
-        for (listener in parallelListeners) {
-            listener.eventBus.subscribe(listener)
-        }
-    }
-
-    override fun unsubscribe() {
-        for (listener in listeners) {
-            listener.eventBus.unsubscribe(listener)
-        }
-        for (listener in parallelListeners) {
-            listener.eventBus.unsubscribe(listener)
-        }
-    }
+    override val listeners = ArrayList<Listener>()
+    override val parallelListeners = ArrayList<ParallelListener>()
 }
 
 interface AlwaysListening : IListenerOwner {
@@ -65,13 +39,34 @@ interface AlwaysListening : IListenerOwner {
 }
 
 interface IListenerOwner {
-    fun register(listener: Listener)
+    val listeners: ArrayList<Listener>
+    val parallelListeners: ArrayList<ParallelListener>
 
-    fun register(listener: ParallelListener)
+    fun register(listener: Listener) {
+        listeners.add(listener)
+    }
 
-    fun subscribe()
+    fun register(listener: ParallelListener) {
+        parallelListeners.add(listener)
+    }
 
-    fun unsubscribe()
+    fun subscribe() {
+        for (listener in listeners) {
+            listener.eventBus.subscribe(listener)
+        }
+        for (listener in parallelListeners) {
+            listener.eventBus.subscribe(listener)
+        }
+    }
+
+    fun unsubscribe() {
+        for (listener in listeners) {
+            listener.eventBus.unsubscribe(listener)
+        }
+        for (listener in parallelListeners) {
+            listener.eventBus.unsubscribe(listener)
+        }
+    }
 }
 
 interface Event : EventPosting {

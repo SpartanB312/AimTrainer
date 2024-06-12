@@ -5,6 +5,7 @@ import net.spartanb312.everett.graphics.cache.CacheManager
 import net.spartanb312.everett.graphics.font.FontRenderer
 import net.spartanb312.everett.graphics.font.RTOFontRenderer
 import net.spartanb312.everett.utils.config.setting.ListSetting
+import java.awt.Font
 
 object FontCacheManager : CacheManager("FontRenderer") {
 
@@ -33,6 +34,7 @@ object FontCacheManager : CacheManager("FontRenderer") {
 
 }
 
+
 object FontRendererMain : FontRenderer by RTOFontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,
@@ -47,6 +49,16 @@ object FontRendererBig : FontRenderer by RTOFontRenderer(
     scaleFactor = 1f,
     chunkSize = 49,
     textureLoader = TextureManager
+)
+
+object FontRendererBold : FontRenderer by FontRenderer(
+    "assets/font/Microsoft YaHei UI.ttc",
+    25f,
+    scaleFactor = 0.5f,
+    chunkSize = 49,
+    textureLoader = TextureManager,
+    style = Font.BOLD,
+    useMipmap = false
 )
 
 object FontRendererROG : FontRenderer by FontRenderer(

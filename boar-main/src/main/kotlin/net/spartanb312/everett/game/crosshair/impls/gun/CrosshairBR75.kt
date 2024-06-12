@@ -1,8 +1,8 @@
-package net.spartanb312.everett.game.render.crosshair.impls.gun
+package net.spartanb312.everett.game.crosshair.impls.gun
 
-import net.spartanb312.everett.game.render.crosshair.Crosshair
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer.transparentAlphaRate
+import net.spartanb312.everett.game.crosshair.Crosshair
+import net.spartanb312.everett.game.render.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer.transparentAlphaRate
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack

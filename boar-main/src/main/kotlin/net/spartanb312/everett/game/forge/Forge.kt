@@ -3,7 +3,7 @@ package net.spartanb312.everett.game.forge
 import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.render.TextureManager
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.MainMenuScreen
 import net.spartanb312.everett.game.render.gui.impls.OptionScreen

@@ -3,7 +3,7 @@ package net.spartanb312.everett.game.input
 import net.spartanb312.everett.game.audio.BGMPlayer
 import net.spartanb312.everett.game.input.interfaces.*
 import net.spartanb312.everett.game.option.impls.VideoOption
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.OptionScreen
 import net.spartanb312.everett.game.training.SchulteGrid

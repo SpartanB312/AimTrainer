@@ -3,7 +3,7 @@ package net.spartanb312.everett.game.training
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.option.impls.ControlOption.defaultTraining
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.*
 import net.spartanb312.everett.game.render.scene.Scene

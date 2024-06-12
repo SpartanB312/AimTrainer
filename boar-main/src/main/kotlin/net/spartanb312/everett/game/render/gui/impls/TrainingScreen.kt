@@ -5,7 +5,7 @@ import net.spartanb312.everett.game.option.impls.ControlOption.defaultTraining
 import net.spartanb312.everett.game.render.Background
 import net.spartanb312.everett.game.render.FontRendererMain
 import net.spartanb312.everett.game.render.FontRendererROG
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.GuiScreen
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.SceneManager

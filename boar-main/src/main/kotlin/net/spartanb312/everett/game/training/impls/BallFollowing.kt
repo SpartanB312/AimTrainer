@@ -4,7 +4,7 @@ import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
 import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.BallRenderer
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene

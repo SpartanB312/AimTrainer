@@ -3,7 +3,6 @@ package net.spartanb312.everett.game.render
 import com.soywiz.kds.iterators.fastForEachReverse
 import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.game.option.impls.VideoOption
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
 import net.spartanb312.everett.graphics.Camera
 import net.spartanb312.everett.graphics.RenderSystem
 import net.spartanb312.everett.launch.Platform
@@ -53,7 +52,7 @@ object InfoRenderer {
         { CrosshairRenderer.currentCrosshair.nameString }
     )
 
-    fun render2D() {
+    fun renderInfo() {
         var startY = 0f
         val color = ColorRGB.AQUA
         leftUpInfo.forEach {

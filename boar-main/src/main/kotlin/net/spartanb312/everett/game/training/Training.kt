@@ -2,7 +2,7 @@ package net.spartanb312.everett.game.training
 
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
-import net.spartanb312.everett.game.render.crosshair.CrosshairRenderer
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.NotificationRenderer
 import net.spartanb312.everett.game.render.gui.SubscribedRenderer
 import net.spartanb312.everett.graphics.RenderSystem

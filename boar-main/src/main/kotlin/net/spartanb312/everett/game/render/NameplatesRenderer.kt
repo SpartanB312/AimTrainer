@@ -4,7 +4,7 @@ import net.spartanb312.everett.game.render.TextureManager.lazyTexture
 import net.spartanb312.everett.graphics.texture.drawTexture
 import net.spartanb312.everett.utils.color.ColorRGB
 
-object Nameplates {
+object NameplatesRenderer {
 
     sealed class Plate {
         data object TheMaw : Plate() {
