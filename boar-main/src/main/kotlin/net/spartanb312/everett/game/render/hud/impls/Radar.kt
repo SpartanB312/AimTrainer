@@ -25,7 +25,6 @@ import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.math.vector.distanceTo
 import org.joml.Matrix4f
 import kotlin.math.abs
-import kotlin.math.max
 
 object Radar : Configurable("Radar", Language) {
 
@@ -43,109 +42,110 @@ object Radar : Configurable("Radar", Language) {
     private val lightColor = ColorRGB(194, 247, 254)
     private val vertices = RenderUtils.getArcVertices(0f, 0f, 1f, 0f..360f).reversed().toTypedArray()
 
-    fun render2D() = RS.matrixLayer.scope {
-        val scale = generalScale * max(RS.widthScale, RS.heightScale) * 2f
-        val h = RS.heightF - 70f * scale
-        translatef(70f * scale, h, 0f)
-        scalef(scale, scale, scale)
+    fun render2D() {
+        RS.matrixLayer.scope {
+            val scale = generalScale * RS.generalScale * 2f
+            val h = RS.heightF - 70f * scale
+            translatef(70f * scale, h, 0f)
+            scalef(scale, scale, scale)
 
-        RenderUtils.drawTriangleFan(0.0, 0.0, arc1Vertices, generalColor.alpha(64))
-        RenderUtils.drawArcOutline(arc1Vertices, 2f, lightColor.alpha(128))
-        RenderUtils.drawArcOutline(arc2Vertices, 2f, lightColor.alpha(128))
+            RenderUtils.drawTriangleFan(0.0, 0.0, arc1Vertices, generalColor.alpha(64))
+            RenderUtils.drawArcOutline(arc1Vertices,  scale, lightColor.alpha(128))
+            RenderUtils.drawArcOutline(arc2Vertices, scale, lightColor.alpha(128))
 
-        // pulse
-        val time = System.currentTimeMillis() % 3000
-        val rate = (time / 1000f).coerceIn(0f..1f)
-        val pulseRadius = 7 + 43 * rate
-        val alpha = when (time) {
-            in 0..1000 -> 64
-            in 1000..2000 -> ((1 - (time - 1000) / 1000f) * 64).toInt()
-            else -> 0
-        }
-        RenderUtils.drawArc(
-            Vec2f.ZERO,
-            pulseRadius,
-            0f..360f,
-            color = generalColor.alpha(alpha / 2)
-        )
-        RenderUtils.drawArcOutline(
-            Vec2f.ZERO,
-            pulseRadius,
-            0f..360f,
-            lineWidth = 5f,
-            color = generalColor.alpha(alpha)
-        )
-
-        // cross
-        val angle = (Player.yaw + 360 + 90) % 360
-        rotatef(-angle, Vec3f(0f, 0f, 1f))
-        RenderUtils.drawLine(Vec2f(0f, 50f), Vec2f(0f, -50f), 1.5f, lightColor.alpha(96))
-        RenderUtils.drawLine(Vec2f(50f, 0f), Vec2f(-50f, 0f), 1.5f, lightColor.alpha(96))
-        rotatef(angle, Vec3f(0f, 0f, 1f))
-
-        // fov
-        val fovAngle = VideoOption.fov.v2hFOV(RS.aspectD) / 2
-        RenderUtils.drawArc(Vec2f.ZERO, 50f, -fovAngle..fovAngle, color = generalColor.alpha(96))
-
-        // center
-        RenderUtils.drawTriangleFan(0.0, 0.0, centerVertices, lightColor, generalColor)
-        RenderUtils.drawArcOutline(centerVertices, 2f, generalColor)
-
-        // entities
-        val playerVec = Vec2f(Player.pos.x, Player.pos.z)
-        val rotateMat = Matrix4f().rotate(-angle.toRadian(), 0f, 0f, 1f)
-        for (it in SceneManager.currentScene.entities) {
-            if (it == Player) continue
-            val color = when (it) {
-                is Ball -> ColorRGB(255, 30, 0)
-                is EntityPlayer -> lightColor
-                else -> continue
+            // pulse
+            val time = System.currentTimeMillis() % 3000
+            val rate = (time / 1000f).coerceIn(0f..1f)
+            val pulseRadius = 7 + 43 * rate
+            val alpha = when (time) {
+                in 0..1000 -> 64
+                in 1000..2000 -> ((1 - (time - 1000) / 1000f) * 64).toInt()
+                else -> 0
             }
-            val offsetVec = (Vec2f(it.pos.x, it.pos.z) - playerVec) * (50f / radarRange)
-            val distance = offsetVec.distanceTo(Vec2f.ZERO)
-            if (distance > 47.5) continue
-            val highLight = (rate < 1) && (abs(distance - pulseRadius) < 5f)
-            val highLightAlpha = 255 - 95 * abs(distance - pulseRadius) / 5f
-            val renderPos = Vec3f(offsetVec.x, offsetVec.y, 0f).mul(rotateMat)
-            val renderColor = color.alpha(if (highLight) highLightAlpha.toInt() else 160)
+            RenderUtils.drawArc(
+                Vec2f.ZERO,
+                pulseRadius,
+                0f..360f,
+                color = generalColor.alpha(alpha / 2)
+            )
+            RenderUtils.drawArcOutline(
+                Vec2f.ZERO,
+                pulseRadius,
+                0f..360f,
+                lineWidth = 2f * scale,
+                color = generalColor.alpha(alpha)
+            )
 
-            translatef(renderPos.x, renderPos.y, 0f)
-            scalef(2.5f, 2.5f, 1f)
-            RenderUtils.drawTriangleFan(0.0, 0.0, vertices, renderColor)
-            scalef(0.4f, 0.4f, 1f)
-            translatef(-renderPos.x, -renderPos.y, 0f)
+            // cross
+            val angle = (Player.yaw + 360 + 90) % 360
+            rotatef(-angle, Vec3f(0f, 0f, 1f))
+            RenderUtils.drawLine(Vec2f(0f, 50f), Vec2f(0f, -50f), scale, lightColor.alpha(96))
+            RenderUtils.drawLine(Vec2f(50f, 0f), Vec2f(-50f, 0f), scale, lightColor.alpha(96))
+            rotatef(angle, Vec3f(0f, 0f, 1f))
 
-            val hOffset = 2.5f
-            val vOffset = 2.5f
-            if (it.pos.y >= Player.pos.y) {
-                RenderUtils.drawLine(
-                    renderPos.x, renderPos.y - vOffset * 2f,
-                    renderPos.x - hOffset * 1f, renderPos.y - vOffset * 1f,
-                    1f * scale,
-                    renderColor
-                )
-                RenderUtils.drawLine(
-                    renderPos.x, renderPos.y - vOffset * 2f,
-                    renderPos.x + hOffset * 1f, renderPos.y - vOffset * 1f,
-                    1f * scale,
-                    renderColor
-                )
-            } else {
-                RenderUtils.drawLine(
-                    renderPos.x, renderPos.y + vOffset * 2f,
-                    renderPos.x - hOffset * 1f, renderPos.y + vOffset * 1f,
-                    1f * scale,
-                    renderColor
-                )
-                RenderUtils.drawLine(
-                    renderPos.x, renderPos.y + vOffset * 2f,
-                    renderPos.x + hOffset * 1f, renderPos.y + vOffset * 1f,
-                    1f * scale,
-                    renderColor
-                )
+            // fov
+            val fovAngle = VideoOption.fov.v2hFOV(RS.aspectD) / 2
+            RenderUtils.drawArc(Vec2f.ZERO, 50f, -fovAngle..fovAngle, color = generalColor.alpha(96))
+
+            // center
+            RenderUtils.drawTriangleFan(0.0, 0.0, centerVertices, lightColor, generalColor)
+            RenderUtils.drawArcOutline(centerVertices, 2f * scale, generalColor)
+
+            // entities
+            val playerVec = Vec2f(Player.pos.x, Player.pos.z)
+            val rotateMat = Matrix4f().rotate(-angle.toRadian(), 0f, 0f, 1f)
+            for (it in SceneManager.currentScene.entities) {
+                if (it == Player) continue
+                val color = when (it) {
+                    is Ball -> ColorRGB(255, 30, 0)
+                    is EntityPlayer -> lightColor
+                    else -> continue
+                }
+                val offsetVec = (Vec2f(it.pos.x, it.pos.z) - playerVec) * (50f / radarRange)
+                val distance = offsetVec.distanceTo(Vec2f.ZERO)
+                if (distance > 47.5) continue
+                val highLight = (rate < 1) && (abs(distance - pulseRadius) < 5f)
+                val highLightAlpha = 255 - 95 * abs(distance - pulseRadius) / 5f
+                val renderPos = Vec3f(offsetVec.x, offsetVec.y, 0f).mul(rotateMat)
+                val renderColor = color.alpha(if (highLight) highLightAlpha.toInt() else 160)
+
+                translatef(renderPos.x, renderPos.y, 0f)
+                scalef(2.5f, 2.5f, 1f)
+                RenderUtils.drawTriangleFan(0.0, 0.0, vertices, renderColor)
+                scalef(0.4f, 0.4f, 1f)
+                translatef(-renderPos.x, -renderPos.y, 0f)
+
+                val hOffset = 2.5f
+                val vOffset = 2.5f
+                if (it.pos.y >= Player.pos.y) {
+                    RenderUtils.drawLine(
+                        renderPos.x, renderPos.y - vOffset * 2f,
+                        renderPos.x - hOffset * 1f, renderPos.y - vOffset * 1f,
+                        1f * scale,
+                        renderColor
+                    )
+                    RenderUtils.drawLine(
+                        renderPos.x, renderPos.y - vOffset * 2f,
+                        renderPos.x + hOffset * 1f, renderPos.y - vOffset * 1f,
+                        1f * scale,
+                        renderColor
+                    )
+                } else {
+                    RenderUtils.drawLine(
+                        renderPos.x, renderPos.y + vOffset * 2f,
+                        renderPos.x - hOffset * 1f, renderPos.y + vOffset * 1f,
+                        1f * scale,
+                        renderColor
+                    )
+                    RenderUtils.drawLine(
+                        renderPos.x, renderPos.y + vOffset * 2f,
+                        renderPos.x + hOffset * 1f, renderPos.y + vOffset * 1f,
+                        1f * scale,
+                        renderColor
+                    )
+                }
             }
         }
     }
-
 
 }

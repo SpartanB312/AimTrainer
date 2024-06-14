@@ -1,5 +1,6 @@
 package net.spartanb312.everett.graphics.font
 
+import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.cache.CacheSavable
 import net.spartanb312.everett.utils.color.ColorRGB
 
@@ -75,7 +76,7 @@ interface FontRenderer : CacheSavable {
         y: Float,
         colors: Array<ColorRGB>,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         _drawString(text, x + shadowDepth, y + shadowDepth, colors, scale, true)
         _drawString(text, x, y, colors, scale, false)
@@ -123,7 +124,7 @@ interface FontRenderer : CacheSavable {
         y: Float,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         _drawString(text, x + shadowDepth, y + shadowDepth, color, scale, true)
         _drawString(text, x, y, color, scale, false)
@@ -135,7 +136,7 @@ interface FontRenderer : CacheSavable {
         y: Double,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         _drawString(text, (x + shadowDepth).toFloat(), (y + shadowDepth).toFloat(), color, scale, true)
         _drawString(text, x.toFloat(), y.toFloat(), color, scale, false)
@@ -147,7 +148,7 @@ interface FontRenderer : CacheSavable {
         y: Int,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         _drawString(text, x + shadowDepth, y + shadowDepth, color, scale, true)
         _drawString(text, x.toFloat(), y.toFloat(), color, scale, false)
@@ -259,7 +260,7 @@ interface FontRenderer : CacheSavable {
         y: Float,
         colors: Array<ColorRGB>,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
         sliceMode: Boolean = true
     ) {
         _drawString(text, x + shadowDepth, y + shadowDepth, colors, sliceMode, scale, true)

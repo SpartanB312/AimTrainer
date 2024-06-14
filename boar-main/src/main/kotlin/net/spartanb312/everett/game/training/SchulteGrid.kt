@@ -8,7 +8,6 @@ import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.glfw.GLFW
-import kotlin.math.min
 
 class SchulteGrid(private val size: Int) : GuiScreen() {
 
@@ -21,7 +20,7 @@ class SchulteGrid(private val size: Int) : GuiScreen() {
     private var current = 1
 
     override fun onRender(mouseX: Double, mouseY: Double) {
-        val scale = min(RS.widthScale, RS.heightScale)
+        val scale = RS.generalScale
         val blockSize = 1000f * scale / size
         val gap = 2f * scale
         Background.renderBackground(mouseX, mouseY)

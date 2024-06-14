@@ -20,7 +20,6 @@ import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.misc.asRange
 import net.spartanb312.everett.utils.misc.random
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 abstract class BallHitTraining(
@@ -110,17 +109,19 @@ abstract class BallHitTraining(
         when (stage) {
             Stage.Prepare -> {
                 displayed = false
+                val scale = RS.generalScale
                 val seconds = ((waitTime * 1000 - timeLapsed) / 1000f).roundToInt()
                 FontRendererBig.drawCenteredStringWithShadow(
                     if (seconds < 10) "0: 0$seconds" else "0: $seconds",
                     RS.centerXF,
-                    RS.centerYF - FontRendererBig.getHeight()
+                    RS.centerYF - FontRendererBig.getHeight(scale),
+                    scale = scale
                 )
             }
 
             Stage.Training -> {
                 CrosshairRenderer.enable()
-                val scale = max(RS.widthScale, RS.heightScale)
+                val scale = RS.generalScale
                 val seconds = ((60000 + waitTime * 1000 - timeLapsed) / 1000f).roundToInt()
                 val rate = seconds / 60f
                 RenderUtils.drawRect(
@@ -172,6 +173,7 @@ abstract class BallHitTraining(
 
     override fun onClick() {
         if (stage != Stage.Training || Render2DManager.displaying) return
+        if (AccessibilityOption.shouldPktLoss) return
         var hit = false
         scene.getRayTracedResult(
             Player.offsetPos,

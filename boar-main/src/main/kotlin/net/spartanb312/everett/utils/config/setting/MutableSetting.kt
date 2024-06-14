@@ -25,6 +25,7 @@ abstract class MutableSetting<T : Any>(
                 field = new
                 valueListeners.forEach { it(prev, field) }
                 listeners.forEach { it() }
+                updateTimer.reset()
             }
         }
 

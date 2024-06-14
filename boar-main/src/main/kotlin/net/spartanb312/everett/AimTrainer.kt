@@ -12,8 +12,8 @@ import net.spartanb312.everett.game.input.InputManager
 import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.*
-import net.spartanb312.everett.game.render.gui.MedalRenderer
-import net.spartanb312.everett.game.render.gui.NotificationRenderer
+import net.spartanb312.everett.game.render.MedalRenderer
+import net.spartanb312.everett.game.render.NotificationRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.LoadingScreen
 import net.spartanb312.everett.game.render.scene.SceneManager
@@ -52,7 +52,7 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240612"
+    const val AIM_TRAINER_VERSION = "1.0.0.240614"
 
     var isReady = false
     private val tickTimer = Timer()
@@ -136,12 +136,13 @@ object AimTrainer : GameGraphics {
             GLHelper.blend = true
             //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
             glClearColor(1f, 1f, 1f, 1f)
-            applyOrtho(0.0f, RS.widthF, RS.heightF, 0.0f, -1.0f, 1.0f)
+            glViewport(0, 0, RS.displayWidth, RS.displayHeight)
+            applyOrtho(0.0f, RS.displayWidthF, RS.displayHeightF, 0.0f, -1.0f, 1.0f)
             framebuffer.texture.drawTexture(
                 0f,
                 0f,
-                RS.widthF,
-                RS.heightF,
+                RS.displayWidthF,
+                RS.displayHeightF,
                 0,
                 framebuffer.height,
                 framebuffer.width,
@@ -190,6 +191,14 @@ object AimTrainer : GameGraphics {
     }
 
     override fun onSync() {
+        if (VideoOption.renderScale.updateTimer.passed(200)
+            && GLFW.glfwGetMouseButton(
+                RS.window,
+                GLFW.GLFW_MOUSE_BUTTON_1
+            ) != GLFW.GLFW_PRESS
+        ) {
+            RS.setRenderScale(VideoOption.renderScale.value / 100f)
+        }
         val vSync = VideoOption.videoMode.value == VideoOption.VideoMode.VSync
         GLHelper.vSync = vSync
         if (!vSync && VideoOption.videoMode.value != VideoOption.VideoMode.Unlimited) Sync.sync(VideoOption.fpsLimit)

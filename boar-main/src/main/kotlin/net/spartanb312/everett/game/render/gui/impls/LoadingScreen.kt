@@ -22,32 +22,34 @@ object LoadingScreen : GuiScreen() {
         }
         bg.drawBackground(mouseX, mouseY, 0f)
         val rate = TextureManager.loadedCount / TextureManager.totalCount.toFloat()
+        val scale = RS.generalScale
         RenderUtils.drawRect(
             RS.widthF * 0.3f,
             RS.heightF * 0.7f,
             RS.widthF * 0.7f,
-            RS.heightF * 0.7f + 40f,
+            RS.heightF * 0.7f + 40f * scale,
             ColorRGB.GRAY.alpha(64)
         )
         RenderUtils.drawRect(
             RS.widthF * 0.3f,
             RS.heightF * 0.7f,
             RS.widthF * (0.3f + 0.4f * rate),
-            RS.heightF * 0.7f + 40f,
+            RS.heightF * 0.7f + 40f * scale,
             ColorRGB(30, 90, 255).alpha(128)
         )
         RenderUtils.drawRectOutline(
             RS.widthF * 0.3f,
             RS.heightF * 0.7f,
             RS.widthF * 0.7f,
-            RS.heightF * 0.7f + 40f,
-            2f,
+            RS.heightF * 0.7f + 40f * scale,
+            2f * scale,
             ColorRGB.WHITE
         )
         FontRendererASCII.drawCenteredString(
             "${TextureManager.loadedCount}/${TextureManager.totalCount}",
             RS.centerXF,
-            RS.heightF * 0.7f + 20f
+            RS.heightF * 0.7f + 20f * scale,
+            scale = scale
         )
     }
 

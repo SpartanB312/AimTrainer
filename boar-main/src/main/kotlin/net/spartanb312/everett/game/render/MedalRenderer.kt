@@ -1,10 +1,8 @@
-package net.spartanb312.everett.game.render.gui
+package net.spartanb312.everett.game.render
 
 import com.soywiz.kds.iterators.fastForEachReverse
 import net.spartanb312.everett.game.medal.EmptyMedal
 import net.spartanb312.everett.game.medal.Medal
-import net.spartanb312.everett.game.render.FontRendererBig
-import net.spartanb312.everett.game.render.FontRendererMain
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.texture.drawTexture

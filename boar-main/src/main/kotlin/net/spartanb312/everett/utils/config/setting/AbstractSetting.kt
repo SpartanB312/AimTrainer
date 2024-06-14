@@ -4,6 +4,7 @@ import com.google.gson.JsonObject
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.misc.AliasNameable
 import net.spartanb312.everett.utils.misc.Nameable
+import net.spartanb312.everett.utils.timing.Timer
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -20,6 +21,7 @@ abstract class AbstractSetting<T> : Nameable, AliasNameable, ReadWriteProperty<A
     val isVisible get() = visibilities.all { it.invoke() }
 
     val isModified get() = this.value != this.defaultValue
+    val updateTimer = Timer()
 
     val listeners = ArrayList<() -> Unit>()
     val valueListeners = ArrayList<(prev: T, input: T) -> Unit>()

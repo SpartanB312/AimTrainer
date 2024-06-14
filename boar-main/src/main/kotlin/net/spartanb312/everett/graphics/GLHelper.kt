@@ -58,8 +58,8 @@ object GLHelper {
             GLFW.glfwSetInputMode(RenderSystem.window, GLFW.GLFW_CURSOR, mode)
             if (mode == GLFW.GLFW_CURSOR_NORMAL) GLFW.glfwSetCursorPos(
                 RenderSystem.window,
-                RenderSystem.centerXD,
-                RenderSystem.centerYD
+                RenderSystem.displayWidthD / 2.0,
+                RenderSystem.displayHeightD / 2.0
             )
         }
     }

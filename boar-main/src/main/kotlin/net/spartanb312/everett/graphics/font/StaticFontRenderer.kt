@@ -1,5 +1,6 @@
 package net.spartanb312.everett.graphics.font
 
+import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.cache.CacheSavable
 import net.spartanb312.everett.utils.color.ColorRGB
 
@@ -35,7 +36,7 @@ interface StaticFontRenderer : CacheSavable {
         y: Float,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         _drawString(x + shadowDepth, y + shadowDepth, color, color, color, color, scale, true)
         _drawString(x, y, color, color, color, color, scale, false)
@@ -59,7 +60,7 @@ interface StaticFontRenderer : CacheSavable {
         y: Float,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         val width = getWidth(scale)
         val height = this.absoluteHeight * scale * scaleFactor
@@ -85,7 +86,7 @@ interface StaticFontRenderer : CacheSavable {
         y: Float,
         colors: Array<ColorRGB>,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         assert(colors.size == 4) { "ColorArray size should be 4" }
         _drawString(x + shadowDepth, y + shadowDepth, colors[0], colors[1], colors[2], colors[3], scale, true)
@@ -111,7 +112,7 @@ interface StaticFontRenderer : CacheSavable {
         y: Float,
         colors: Array<ColorRGB>,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         assert(colors.size == 4) { "ColorArray size should be 4" }
         val width = getWidth(scale)
@@ -139,7 +140,7 @@ interface StaticFontRenderer : CacheSavable {
         leftColor: ColorRGB = ColorRGB.WHITE,
         rightColor: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         _drawString(x + shadowDepth, y + shadowDepth, rightColor, leftColor, leftColor, rightColor, scale, true)
         _drawString(x, y, rightColor, leftColor, leftColor, rightColor, scale, false)
@@ -165,7 +166,7 @@ interface StaticFontRenderer : CacheSavable {
         leftColor: ColorRGB = ColorRGB.WHITE,
         rightColor: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         val width = getWidth(scale)
         val height = this.absoluteHeight * scale * scaleFactor
@@ -192,7 +193,7 @@ interface StaticFontRenderer : CacheSavable {
         topColor: ColorRGB = ColorRGB.WHITE,
         bottomColor: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         _drawString(x + shadowDepth, y + shadowDepth, topColor, topColor, bottomColor, bottomColor, scale, true)
         _drawString(x, y, topColor, topColor, bottomColor, bottomColor, scale, false)
@@ -218,7 +219,7 @@ interface StaticFontRenderer : CacheSavable {
         topColor: ColorRGB = ColorRGB.WHITE,
         bottomColor: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f,
+        shadowDepth: Float = 1f * RS.generalScale,
     ) {
         val width = getWidth(scale)
         val height = this.absoluteHeight * scale * scaleFactor

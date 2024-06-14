@@ -1,7 +1,7 @@
 package net.spartanb312.everett.game.training.impls
 
 import net.spartanb312.everett.game.medal.MedalCounter
-import net.spartanb312.everett.game.render.gui.MedalRenderer
+import net.spartanb312.everett.game.render.MedalRenderer
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.training.BallHitTraining

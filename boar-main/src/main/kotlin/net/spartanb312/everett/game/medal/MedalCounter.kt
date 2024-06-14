@@ -1,7 +1,7 @@
 package net.spartanb312.everett.game.medal
 
 import net.spartanb312.everett.game.entity.Entity
-import net.spartanb312.everett.game.render.gui.MedalRenderer
+import net.spartanb312.everett.game.render.MedalRenderer
 import net.spartanb312.everett.utils.timing.Timer
 
 class MedalCounter(

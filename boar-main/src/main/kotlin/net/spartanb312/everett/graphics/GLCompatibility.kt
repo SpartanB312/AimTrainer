@@ -8,10 +8,21 @@ class GLCompatibility(context: GLCapabilities) {
     // OpenGL version
     val glVersion = glGetString(GL_VERSION) ?: ""
     val gpuManufacturer = glGetString(GL_VENDOR) ?: ""
-    val gpuName = glGetString(GL_RENDERER)?.substringBefore("/")?: ""
+    val gpuName = glGetString(GL_RENDERER)?.substringBefore("/") ?: ""
+
     val intelGraphics = glVersion.lowercase().contains("intel")
             || gpuManufacturer.lowercase().contains("intel")
             || gpuName.lowercase().contains("intel")
+
+    val amdGraphics = glVersion.lowercase().contains("amd")
+            || gpuManufacturer.lowercase().contains("amd")
+            || gpuName.lowercase().contains("amd")
+
+    val nvidiaGraphics = glVersion.lowercase().contains("nvidia")
+            || gpuManufacturer.lowercase().contains("nvidia")
+            || gpuName.lowercase().contains("nvidia")
+
+    val otherGraphics = !intelGraphics && !amdGraphics && !nvidiaGraphics
 
     val openGL11 = context.OpenGL11
     val openGL12 = context.OpenGL12

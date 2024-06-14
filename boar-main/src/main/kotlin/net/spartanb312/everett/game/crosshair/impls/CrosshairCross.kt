@@ -10,7 +10,6 @@ import net.spartanb312.everett.utils.config.setting.alias
 import net.spartanb312.everett.utils.config.setting.lang
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.timing.Timer
-import kotlin.math.min
 
 object CrosshairCross : Crosshair(0f) {
 
@@ -29,7 +28,7 @@ object CrosshairCross : Crosshair(0f) {
         shadow: Boolean,
         colorRGB: ColorRGB
     ) {
-        var scaledSize = min(RS.widthScale, RS.heightScale) * size
+        var scaledSize = RS.generalScale * size
         colorTimer.passedAndReset(10) {
             colorRate = colorRate.converge(if (CrosshairRenderer.raytraced) 100f else 0f, 0.25f)
         }

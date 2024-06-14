@@ -4,7 +4,7 @@ import java.util.function.Predicate;
 
 public final class Platform {
 
-    enum OS {
+    public enum OS {
         Linux,
         MacOS,
         Windows

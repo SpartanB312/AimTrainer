@@ -4,6 +4,7 @@ import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.event.EngineLoopEvent
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.launch.Module
+import net.spartanb312.everett.launch.Platform
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.*
 import net.spartanb312.everett.utils.timing.Timer
@@ -12,8 +13,11 @@ import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL.createCapabilities
 import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.NVXGPUMemoryInfo
+import org.lwjgl.opengl.WGLAMDGPUAssociation
 import java.util.concurrent.LinkedBlockingQueue
 import javax.swing.JOptionPane
+import kotlin.math.max
 import kotlin.math.sqrt
 import kotlin.system.exitProcess
 
@@ -58,6 +62,13 @@ object RenderSystem : Thread() {
     inline val centerYD get() = heightD / 2.0
     inline val maxThreads get() = Runtime.getRuntime().availableProcessors()
 
+    var displayWidth = 0; private set
+    var displayHeight = 0; private set
+    inline val displayWidthF get() = displayWidth.toFloat()
+    inline val displayHeightF get() = displayHeight.toFloat()
+    inline val displayWidthD get() = displayWidth.toDouble()
+    inline val displayHeightD get() = displayHeight.toDouble()
+
     const val initialMouseValue = Int.MIN_VALUE.toDouble()
     var mouseXD = initialMouseValue; private set
     var mouseYD = initialMouseValue; private set
@@ -65,9 +76,16 @@ object RenderSystem : Thread() {
     inline val mouseYF get() = mouseYD.toFloat()
     inline val mouseX get() = mouseXD.toInt()
     inline val mouseY get() = mouseYD.toInt()
+    var originMouseXD = initialMouseValue; private set
+    var originMouseYD = initialMouseValue; private set
+    inline val originMouseXF get() = originMouseXD.toFloat()
+    inline val originMouseYF get() = originMouseYD.toFloat()
+    inline val originMouseX get() = originMouseXD.toInt()
+    inline val originMouseY get() = originMouseYD.toInt()
 
     val widthScale get() = widthF / 1920f
     val heightScale get() = heightF / 1080f
+    var generalScale = max(widthScale, heightScale)
     var frames = 0L; private set
     var activeFrames = 0L; private set
     var rto = true
@@ -101,7 +119,9 @@ object RenderSystem : Thread() {
     var lastProfilingResults: MutableMap<String, Long> = mutableMapOf(); private set
     var totalMemory = 0L; private set
     var freeMemory = 0L; private set
+    var totalVRam = 0; private set
     val usedMemory get() = totalMemory - freeMemory
+    private var renderScale = 1f
 
     fun <T : GameGraphics> launch(
         graphics: Class<T>,
@@ -188,8 +208,10 @@ object RenderSystem : Thread() {
 
         // Mouse callback
         glfwSetCursorPosCallback(window) { _: Long, x: Double, y: Double ->
-            mouseXD = x
-            mouseYD = y
+            originMouseXD = x
+            originMouseYD = y
+            mouseXD = x * renderScale
+            mouseYD = y * renderScale
         }
 
         glfwSetScrollCallback(window) { _: Long, _: Double, y: Double ->
@@ -199,6 +221,25 @@ object RenderSystem : Thread() {
         glfwSetMouseButtonCallback(window) { _: Long, button: Int, action: Int, mods: Int ->
             gameGraphics.onMouseClicked(button, action, mods)
         }
+
+        totalVRam =
+            if (compat.nvidiaGraphics) GL11.glGetInteger(NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX) / 1024
+            else if (compat.amdGraphics) {
+                if (Platform.getPlatform().os == Platform.OS.Windows) {
+                    val array = IntArray(8)
+                    val numOfGPU = WGLAMDGPUAssociation.wglGetGPUIDsAMD(array)
+                    if (numOfGPU > 0) {
+                        val mem = IntArray(1)
+                        WGLAMDGPUAssociation.wglGetGPUInfoAMD(
+                            array[0],
+                            WGLAMDGPUAssociation.WGL_GPU_RAM_AMD,
+                            GL_UNSIGNED_INT,
+                            mem
+                        )
+                        mem[0]
+                    } else 1
+                } else 1 // TODO: AMD on Linux
+            } else 1 // TODO: Intel on Windows & Linux
 
         // Preparing depth test
         glClearDepth(1.0)
@@ -215,6 +256,7 @@ object RenderSystem : Thread() {
 
         while (!glfwWindowShouldClose(window)) {
             frames++
+            generalScale = max(widthScale, heightScale)
             val rtoLimit = (averageFPS * rtoTime).toLong()
             if (activeFrames < rtoLimit) {
                 activeFrames++
@@ -277,14 +319,21 @@ object RenderSystem : Thread() {
 
     private fun updateResolution(updateBlock: Boolean = true) {
         glfwGetFramebufferSize(window, widthArray, heightArray)
-        val newWidth = widthArray[0]
-        val newHeight = heightArray[0]
-        if (updateBlock && (newWidth != width || newHeight != height)) gameGraphics.onResolutionUpdate(
+        val displayWidth = widthArray[0]
+        val displayHeight = heightArray[0]
+
+        val newWidth = (displayWidth * renderScale).toInt()
+        val newHeight = (displayHeight * renderScale).toInt()
+
+        if (updateBlock && (width != newWidth || height != newHeight)) gameGraphics.onResolutionUpdate(
             width,
             height,
             newWidth,
             newHeight
         )
+
+        this.displayWidth = displayWidth
+        this.displayHeight = displayHeight
         width = newWidth
         height = newHeight
     }
@@ -293,6 +342,15 @@ object RenderSystem : Thread() {
         memoryCheckUpdateTimer.passedAndReset(1000) {
             totalMemory = Runtime.getRuntime().totalMemory() / 1048576
             freeMemory = Runtime.getRuntime().freeMemory() / 1048576
+        }
+    }
+
+    fun setRenderScale(scale: Float) {
+        if (renderScale != scale) {
+            renderScale = scale
+            updateResolution()
+            mouseXD = originMouseXD * renderScale
+            mouseYD = originMouseYD * renderScale
         }
     }
 

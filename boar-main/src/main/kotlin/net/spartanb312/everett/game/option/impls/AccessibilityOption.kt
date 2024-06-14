@@ -12,24 +12,34 @@ import kotlin.random.Random
 
 object AccessibilityOption : Option("Accessibility") {
 
-    val waitTime by setting("Wait Time", 5, 0..10)
-        .lang("等待时间", "等待時間")
-    val pingSimulate = setting("Ping Simulate", false)
-        .lang("延迟模拟", "延遲模擬")
-    val simulatedPing by setting("Simulated Ping", 0, 0..500, 5)
-        .lang("目标延迟", "目標延遲")
-        .whenTrue(pingSimulate)
-    val jitter by setting("Jitter Simulate", false)
-        .lang("抖动模拟", "顫動模擬")
-        .whenTrue(pingSimulate)
-    val jitterRange by setting("Jitter Range", 0, 0..100)
-        .lang("抖动幅度", "顫動幅度")
     val language by setting("Language", Languages.English)
         .lang("显示语言", "語言")
     val chunkCache by setting("Font Cache Preload", true)
         .lang("字体缓存预加载", "字型緩存預載入")
     val threadsLimit by setting("Max Threads", RS.maxThreads, 1..RS.maxThreads, 1)
         .lang("最大线程数量", "最大線程數量")
+    val waitTime by setting("Wait Time", 5, 0..10)
+        .lang("等待时间", "等待時間")
+
+    val pingSimulate = setting("Ping Simulate", false)
+        .lang("延迟模拟", "延遲模擬")
+    val simulatedPing by setting("Simulated Ping", 0, 0..500, 5)
+        .lang("目标延迟", "目標延遲")
+        .whenTrue(pingSimulate)
+    val jitter = setting("Jitter Simulate", false)
+        .lang("抖动模拟", "顫動模擬")
+        .whenTrue(pingSimulate)
+    val jitterRange by setting("Jitter Range", 10, 0..100)
+        .lang("抖动幅度", "顫動幅度")
+        .whenTrue(pingSimulate)
+        .whenTrue(jitter)
+    val pktLossSimulate = setting("Packet Loss Simulate", false)
+        .lang("封包丢失模拟", "封包丟失模擬")
+    val pktLossRate by setting("Packet Loss Rate", 0, 0..100)
+        .lang("丟包率", "丟包率")
+        .whenTrue(pktLossSimulate)
+
+    val shouldPktLoss get() = Random.nextInt(0, 99) < if (pktLossSimulate.value) pktLossRate else 0
 
     var ping = 0; private set
     private val jitterTimer = Timer()
@@ -39,7 +49,7 @@ object AccessibilityOption : Option("Accessibility") {
             jitterTimer.tps(10) {
                 ping = if (!pingSimulate.value) 0
                 else {
-                    if (!jitter) simulatedPing
+                    if (!jitter.value) simulatedPing
                     else {
                         val range = (simulatedPing - jitterRange)..(simulatedPing + jitterRange)
                         val base = ping.coerceIn(range)
@@ -53,4 +63,5 @@ object AccessibilityOption : Option("Accessibility") {
         }
         subscribe()
     }
+
 }

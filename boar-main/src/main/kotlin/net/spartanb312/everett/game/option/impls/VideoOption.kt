@@ -23,6 +23,8 @@ object VideoOption : Option("Video") {
         .valueListen { prev, input ->
             if (input != prev) GLHelper.fullScreen = input
         }
+    val renderScale = setting("Render Scale", 100, 50..400)
+        .lang("渲染比例", "渲染比率")
     val videoMode = setting("Video Mode", VideoMode.VSync)
         .lang("视频模式", "視訊模式")
     val fpsLimit by setting("FPS Limit", 120, 30..2000, 10)

@@ -1,5 +1,6 @@
 package net.spartanb312.everett.game.render.gui.impls
 
+import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.render.Component2D
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.game.render.gui.GuiScreen
@@ -7,9 +8,8 @@ import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.game.Language.lang
-import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.language.MultiText
 import org.lwjgl.glfw.GLFW
 
 class PauseScreen(val scene: Scene) : GuiScreen() {
@@ -18,17 +18,20 @@ class PauseScreen(val scene: Scene) : GuiScreen() {
     private val paused by "Paused".lang("暂停", "暫停")
 
     override fun onRender(mouseX: Double, mouseY: Double) {
-        val width = 320f
-        val height = (buttons.size + 1) * 80f
-        val startX = RS.centerX - 160f
+        val scale = RS.generalScale
+        val width = 320f * scale
+        val height = (buttons.size + 1) * 80f * scale
+        val startX = RS.centerX - width / 2f
         var startY = RS.centerY - height / 2f
         RenderUtils.drawRect(startX, startY, startX + width, startY + height, ColorRGB.BLACK.alpha(25))
-        FontRendererBig.drawCenteredString(paused, RS.centerXF, startY + 40f)
-        startY += 80f
+        FontRendererBig.drawCenteredString(paused, RS.centerXF, startY + 40f * scale, scale = scale)
+        startY += 80f * scale
         buttons.forEach {
-            it.x = startX + 10
+            it.width = 300f * scale
+            it.height = 70f * scale
+            it.x = startX + 10 * scale
             it.y = startY
-            startY += 80f
+            startY += 80f * scale
             it.onRender2D(mouseX, mouseY, 255f)
         }
 
@@ -57,12 +60,19 @@ class PauseScreen(val scene: Scene) : GuiScreen() {
         private val string by str
         override fun onRender2D(mouseX: Double, mouseY: Double, alpha: Float) {
             val isHoovered = isHoovered(mouseX.toInt(), mouseY.toInt())
+            val width = width
+            val height = height
             RenderUtils.drawRect(
                 x, y, x + width, y + height,
                 if (isHoovered) ColorRGB.WHITE.alpha((255 * 0.25f).toInt())
                 else ColorRGB.WHITE.alpha((255 * 0.1f).toInt())
             )
-            FontRendererBig.drawCenteredString(string, x + width / 2f, y + height / 2f)
+            FontRendererBig.drawCenteredString(
+                string,
+                x + width / 2f,
+                y + height / 2f,
+                scale = RS.generalScale
+            )
         }
 
         override fun onMouseClicked(mouseX: Int, mouseY: Int, mouseButton: Int): Boolean {

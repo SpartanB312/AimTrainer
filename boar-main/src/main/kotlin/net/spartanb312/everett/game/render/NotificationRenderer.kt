@@ -1,7 +1,6 @@
-package net.spartanb312.everett.game.render.gui
+package net.spartanb312.everett.game.render
 
 
-import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.color.ColorRGB
@@ -41,13 +40,15 @@ object NotificationRenderer {
     sealed class Type {
         data object Center : Type() {
             override fun onRender(message: String, duration: Long, timeLeft: Long) {
+                val scale = RS.generalScale
                 val stage = timeLeft / duration.toDouble()
                 val alpha = if (stage < 0.2) stage / 0.2 else if (stage > 0.8) (1.0 - stage) / 0.2 else 1.0
                 FontRendererBig.drawCenteredString(
                     message,
                     RS.centerX,
                     RS.centerY,
-                    ColorRGB.WHITE.alpha((255 * alpha).toInt())
+                    ColorRGB.WHITE.alpha((255 * alpha).toInt()),
+                    scale = scale
                 )
             }
         }

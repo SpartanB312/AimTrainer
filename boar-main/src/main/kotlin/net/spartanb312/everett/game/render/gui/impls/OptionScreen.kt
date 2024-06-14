@@ -1,6 +1,8 @@
 package net.spartanb312.everett.game.render.gui.impls
 
 import net.spartanb312.everett.game.Configs
+import net.spartanb312.everett.game.Language
+import net.spartanb312.everett.game.Language.lang
 import net.spartanb312.everett.game.option.impls.*
 import net.spartanb312.everett.game.render.Background
 import net.spartanb312.everett.game.render.Component2D
@@ -13,10 +15,8 @@ import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
-import net.spartanb312.everett.game.Language
-import net.spartanb312.everett.game.Language.lang
-import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.misc.Limiter
 import net.spartanb312.everett.utils.timing.Timer
@@ -76,7 +76,7 @@ object OptionScreen : GuiScreen() {
             }
         }
         val lineStartY = startY + FontRendererBig.getHeight(scale) * 1.05f
-        val lineEndY = lineStartY + RS.heightF * 0.006f * scale
+        val lineEndY = lineStartY + 8f * scale
         RenderUtils.drawRect(leftSideX, lineStartY, rightSideX, lineEndY, ColorRGB.WHITE.alpha(alpha.toInt()))
         currentSelected.optionsRenderer.onRender2D(mouseX, mouseY, scale, alpha)
     }

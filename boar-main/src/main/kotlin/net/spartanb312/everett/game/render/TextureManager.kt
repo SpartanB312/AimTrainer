@@ -44,4 +44,7 @@ object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { Acc
     // Spartan
     val everett = lazyTexture("assets/texture/EVRT.png")
 
+    // Misc
+    val warning = lazyTexture("assets/texture/misc/warning.png")
+
 }

@@ -18,7 +18,6 @@ import net.spartanb312.everett.utils.math.vector.Vec2f
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.opengl.GL11
 import kotlin.math.abs
-import kotlin.math.max
 
 object EnergyShield {
 
@@ -31,7 +30,7 @@ object EnergyShield {
     private val updateTimer = Timer()
 
     fun render2D() = RS.matrixLayer.scope {
-        val rate = max(RS.widthScale, RS.heightScale)
+        val rate = RS.generalScale
         val scale = 3f * rate
         val w = RS.widthF / 2f
         val h = 40f * scale
@@ -65,7 +64,7 @@ object EnergyShield {
                 }
             }
         }
-        RenderUtils.drawLinesLoop(shieldOutline, 1.5f, generalColor.alpha(192))
+        RenderUtils.drawLinesLoop(shieldOutline, 0.5f * scale, generalColor.alpha(192))
     }
 
     private fun renderCompass(scale: Float) {
@@ -84,7 +83,7 @@ object EnergyShield {
                     RenderUtils.drawLine(
                         Vec2f(renderX, -5f + offsetY),
                         Vec2f(renderX, -2f + offsetY),
-                        2f,
+                        scale * 0.5f,
                         generalLightColor.alpha(alpha)
                     )
                 } else FontRendererMain.drawCenteredString(
@@ -100,7 +99,7 @@ object EnergyShield {
 
     private fun renderOutline() {
         // left outline
-        val lineWidth = 2f
+        val lineWidth = 1.5f * RS.generalScale
         RenderUtils.drawLine(
             Vec2f(95f, 7.5f),
             Vec2f(140f, 5.5f),

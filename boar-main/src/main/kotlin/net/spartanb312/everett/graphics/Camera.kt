@@ -60,8 +60,8 @@ abstract class Camera(
     }
 
     object HaloSeries : Camera() {
-        private var lastMouseX = RenderSystem.mouseXD
-        private var lastMouseY = RenderSystem.mouseYD
+        private var lastMouseX = RenderSystem.originMouseXD
+        private var lastMouseY = RenderSystem.originMouseYD
         override fun onUpdate(
             sensitivity: Double,
             dpiModifier: Double,
@@ -69,18 +69,18 @@ abstract class Camera(
             hRate: Float,
             updateCamera: Boolean
         ) {
-            val mouseX = RenderSystem.mouseXD
-            val mouseY = RenderSystem.mouseYD
+            val mouseX = RenderSystem.originMouseXD
+            val mouseY = RenderSystem.originMouseYD
             if (updateCamera) {
                 if (lastMouseX == initialMouseValue || lastMouseY == initialMouseValue) {
                     lastMouseX = mouseX
                     lastMouseY = mouseY
                 }
                 if (mouseX != lastMouseX || mouseY != lastMouseY) {
-                    val diffX = RenderSystem.mouseXD - lastMouseX
-                    val diffY = RenderSystem.mouseYD - lastMouseY
-                    lastMouseX = RenderSystem.mouseXD
-                    lastMouseY = RenderSystem.mouseYD
+                    val diffX = RenderSystem.originMouseXD - lastMouseX
+                    val diffY = RenderSystem.originMouseYD - lastMouseY
+                    lastMouseX = RenderSystem.originMouseXD
+                    lastMouseY = RenderSystem.originMouseYD
                     yaw += (diffX * 0.0371248537 * sensitivity * hRate * dpiModifier).toFloat()
                     pitch -= (diffY * 0.0371248537 * sensitivity * vRate * dpiModifier).toFloat()
                     while (true) {

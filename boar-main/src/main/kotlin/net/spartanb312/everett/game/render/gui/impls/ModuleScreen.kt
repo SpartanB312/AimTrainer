@@ -47,7 +47,7 @@ object ModuleScreen : GuiScreen() {
 
         // Spartan
         if (TextureManager.everett.available) {
-            val scale1 = max(RS.widthScale, RS.heightScale) * 2.5f
+            val scale1 = RS.generalScale * 2.5f
             TextureManager.everett.drawTexture(
                 RS.centerXF - scale1 * 320f,
                 RS.centerYF - scale1 * 180f,

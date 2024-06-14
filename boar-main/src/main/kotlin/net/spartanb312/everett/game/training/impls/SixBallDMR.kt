@@ -8,7 +8,7 @@ import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.BallRenderer
 import net.spartanb312.everett.game.render.CrosshairRenderer
-import net.spartanb312.everett.game.render.gui.MedalRenderer
+import net.spartanb312.everett.game.render.MedalRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
@@ -69,6 +69,7 @@ class SixBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
 
     override fun onClick() {
         if (stage != Stage.Training || Render2DManager.displaying) return
+        if (AccessibilityOption.shouldPktLoss) return
         var hit = false
         var killed = false
         var firstShot = false
@@ -85,10 +86,8 @@ class SixBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
             result?.let {
                 if (it is Ball) {
                     if (it.hp == 5) firstShot = true
-                    if (it.hp > 0) {
-                        hit = true
-                        it.hp -= 1
-                    }
+                    if (it.hp > 0) hit = true
+                    it.hp -= 1
                     if (it.hp == 0) {
                         killed = true
                         entities.add(generateBall(it))

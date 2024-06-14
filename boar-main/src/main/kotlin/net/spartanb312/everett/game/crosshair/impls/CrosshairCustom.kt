@@ -1,17 +1,16 @@
 package net.spartanb312.everett.game.crosshair.impls
 
-import net.spartanb312.everett.utils.config.setting.alias
-import net.spartanb312.everett.utils.config.setting.lang
-import net.spartanb312.everett.utils.config.setting.whenTrue
-import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.game.crosshair.Crosshair
+import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.translatef
 import net.spartanb312.everett.graphics.texture.drawTexture
 import net.spartanb312.everett.utils.color.ColorRGB
-import kotlin.math.min
+import net.spartanb312.everett.utils.config.setting.alias
+import net.spartanb312.everett.utils.config.setting.lang
+import net.spartanb312.everett.utils.config.setting.whenTrue
 
 object CrosshairCustom : Crosshair(0f) {
 
@@ -38,7 +37,7 @@ object CrosshairCustom : Crosshair(0f) {
         colorRGB: ColorRGB
     ) {
         if (shadow) return
-        val scaledSize = min(RS.widthScale, RS.heightScale) * size
+        val scaledSize = RS.generalScale * size
         val cx = centerX + offsetX.toFloat()
         val cy = centerY + offsetY.toFloat()
         translatef(cx, cy, 0.0f)
