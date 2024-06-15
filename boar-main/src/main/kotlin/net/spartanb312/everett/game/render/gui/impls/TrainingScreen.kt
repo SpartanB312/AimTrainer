@@ -3,9 +3,9 @@ package net.spartanb312.everett.game.render.gui.impls
 import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.option.impls.ControlOption.defaultTraining
 import net.spartanb312.everett.game.render.Background
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.FontRendererMain
 import net.spartanb312.everett.game.render.FontRendererROG
-import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.GuiScreen
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.SceneManager
@@ -13,6 +13,7 @@ import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.game.training.ReactionTest
 import net.spartanb312.everett.game.training.TrainingInfo
+import net.spartanb312.everett.game.training.custom.CustomBallHit
 import net.spartanb312.everett.game.training.impls.*
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
@@ -32,7 +33,8 @@ object TrainingScreen : GuiScreen() {
         OneShotWall,
         OneShotSphere,
         OneBallDMR,
-        ReactionTest
+        ReactionTest,
+        CustomBallHit
     )
     private var clickArea = mutableListOf<Pair<ClosedFloatingPointRange<Float>, ClosedFloatingPointRange<Float>>>()
 
@@ -53,7 +55,7 @@ object TrainingScreen : GuiScreen() {
 
         val clampXL = RS.widthF * 0.1f
         val clampXR = RS.widthF * 0.9f
-        var startY = clampYT + 20f
+        var startY = clampYT + 20f * scale
         var startX = clampXL
         val size = 310f * scale
         clickArea.clear()
@@ -72,16 +74,22 @@ object TrainingScreen : GuiScreen() {
                 ColorRGB.WHITE.alpha(if (hoovered) 128 else 64)
             )
             if (defaultTraining == index) {
-                FontRendererMain.drawString(it.trainingName, startX + size * 0.07f, startY + size * 0.8f, ColorRGB.RED)
+                FontRendererMain.drawString(
+                    it.trainingName,
+                    startX + size * 0.07f,
+                    startY + size * 0.8f,
+                    ColorRGB.RED,
+                    scale = scale
+                )
             } else {
-                FontRendererMain.drawString(it.trainingName, startX + size * 0.07f, startY + size * 0.8f)
+                FontRendererMain.drawString(it.trainingName, startX + size * 0.07f, startY + size * 0.8f, scale = scale)
             }
             startX += size
-            startX += 10f
+            startX += 10f * scale
             if (startX + size > clampXR) {
                 startX = clampXL
                 startY += size
-                startY += 10f
+                startY += 10f * scale
             }
         }
     }

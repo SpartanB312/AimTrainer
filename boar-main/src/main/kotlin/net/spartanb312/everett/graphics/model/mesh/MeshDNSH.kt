@@ -1,5 +1,6 @@
 package net.spartanb312.everett.graphics.model.mesh
 
+import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.model.Mesh
@@ -8,7 +9,6 @@ import net.spartanb312.everett.graphics.model.MeshRenderer
 import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.graphics.shader.glUniform
 import org.lwjgl.opengl.GL13
-import org.lwjgl.opengl.GL30
 
 class MeshDNSH(meshData: MeshData) : Mesh(
     meshData.vertices,
@@ -58,7 +58,7 @@ class MeshDNSH(meshData: MeshData) : Mesh(
             }
 
             // Draw mesh via VAO
-            GL30.glBindVertexArray(mesh.vao)
+            GLHelper.bindVertexArray(mesh.vao)
             glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
             GL13.glActiveTexture(GL_TEXTURE0)
         }

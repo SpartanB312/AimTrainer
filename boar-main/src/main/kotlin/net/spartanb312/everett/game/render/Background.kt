@@ -34,7 +34,9 @@ object Background {
                 if (VideoOption.particle) particleSystem.render()
             }
 
-            Mode.Nebula -> nebula.render(RS.widthF, RS.heightF, mouseX.toFloat(), mouseY.toFloat(), initTime)
+            Mode.Nebula -> RS.matrixLayer.scope {
+                nebula.render(RS.widthF, RS.heightF, mouseX.toFloat(), mouseY.toFloat(), initTime)
+            }
         }
     }
 

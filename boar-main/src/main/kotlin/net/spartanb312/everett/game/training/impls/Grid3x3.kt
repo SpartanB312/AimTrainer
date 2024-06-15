@@ -4,10 +4,7 @@ import net.spartanb312.everett.game.medal.MedalCounter
 import net.spartanb312.everett.game.render.MedalRenderer
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
-import net.spartanb312.everett.game.training.BallHitTraining
-import net.spartanb312.everett.game.training.Training
-import net.spartanb312.everett.game.training.TrainingInfo
-import net.spartanb312.everett.game.training.TrainingInfoContainer
+import net.spartanb312.everett.game.training.*
 import net.spartanb312.everett.utils.misc.asRange
 
 class Grid3x3(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
@@ -22,7 +19,7 @@ class Grid3x3(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrainin
     0f,
     0.5f,
     fadeTime = 0
-), TrainingInfoContainer by Companion {
+), MedalContainer, TrainingInfoContainer by Companion {
 
     companion object : TrainingInfo("Grid 3x3", "") {
         override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
@@ -30,7 +27,7 @@ class Grid3x3(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrainin
         }
     }
 
-    private var medalCounter = MedalCounter(300)
+    override val medalCounter = MedalCounter(300)
 
     override fun reset(): Training {
         medalCounter.reset()

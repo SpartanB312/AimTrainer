@@ -10,7 +10,6 @@ import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.graphics.shader.glUniform
 import org.lwjgl.opengl.GL13
 import org.lwjgl.opengl.GL20
-import org.lwjgl.opengl.GL30
 
 class MeshBasic(meshData: MeshData) : Mesh(
     meshData.vertices,
@@ -40,7 +39,7 @@ class MeshBasic(meshData: MeshData) : Mesh(
             }
 
             // Draw mesh via VAO
-            GL30.glBindVertexArray(mesh.vao)
+            GLHelper.bindVertexArray(mesh.vao)
             glDrawElements(GL_TRIANGLES, mesh.vertices.size, GL_UNSIGNED_INT, 0)
             GL13.glActiveTexture(GL_TEXTURE0)
         }

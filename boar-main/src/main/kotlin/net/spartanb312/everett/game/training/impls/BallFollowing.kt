@@ -37,6 +37,15 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
         }
     }
 
+    override fun displayScoreboard() {
+        Render2DManager.displayScreen(scoreboardScreen.setScoreBoard {
+            it["Score"] = showingScore.toString()
+            it["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
+            it["Fired"] = shots.toString()
+            it["Hits"] = hits.toString()
+        })
+    }
+
     private val reverseTimer = Timer()
 
     private fun click() {
@@ -68,7 +77,7 @@ class BallFollowing(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitT
     }
 
     override fun onClick() {
-
+        // NOTHING HERE
     }
 
     override fun render() {

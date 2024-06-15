@@ -13,10 +13,7 @@ import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
-import net.spartanb312.everett.game.training.BallHitTraining
-import net.spartanb312.everett.game.training.Training
-import net.spartanb312.everett.game.training.TrainingInfo
-import net.spartanb312.everett.game.training.TrainingInfoContainer
+import net.spartanb312.everett.game.training.*
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.misc.asRange
@@ -33,12 +30,22 @@ class OneBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
     0f,
     0.5f,
     ballHP = 5
-), TrainingInfoContainer by Companion {
+), MedalContainer, TrainingInfoContainer by Companion {
 
     companion object : TrainingInfo("1-Ball DMR", "") {
         override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
             return OneBallDMR(scoreboardScreen, scene)
         }
+    }
+
+    override fun displayScoreboard() {
+        Render2DManager.displayScreen(scoreboardScreen.setScoreBoard {
+            it["Score"] = showingScore.toString()
+            it["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
+            it["Fired"] = shots.toString()
+            it["Hits"] = hits.toString()
+            it["Time to kill"] = String.format("%.2f", reactionTimes.average())
+        })
     }
 
     override fun render() {
@@ -126,7 +133,7 @@ class OneBallDMR(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTrai
         }
     }
 
-    private var medalCounter = MedalCounter(3000)
+    override val medalCounter = MedalCounter(3000)
 
     override fun reset(): Training {
         medalCounter.reset()

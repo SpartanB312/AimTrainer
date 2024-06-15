@@ -2,6 +2,7 @@ package net.spartanb312.everett.graphics.drawing.pmvbo
 
 import dev.luna5ama.kmogus.Arr
 import dev.luna5ama.kmogus.asMutable
+import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.drawing.VertexAttribute
 import org.lwjgl.opengl.*
 import java.nio.ByteBuffer
@@ -53,10 +54,10 @@ object PersistentMappedVBO  {
 
     fun createVao(vertexAttribute: VertexAttribute): Int {
         val vaoID = GL30.glGenVertexArrays()
-        GL30.glBindVertexArray(vaoID)
+        GLHelper.bindVertexArray(vaoID)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, vbo)
         vertexAttribute.apply()
-        GL30.glBindVertexArray(0)
+        GLHelper.bindVertexArray(0)
         GL15.glBindBuffer(GL15.GL_ARRAY_BUFFER, 0)
         return vaoID
     }

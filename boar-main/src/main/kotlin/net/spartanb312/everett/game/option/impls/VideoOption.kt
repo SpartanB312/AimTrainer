@@ -8,6 +8,7 @@ import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.config.setting.atMode
 import net.spartanb312.everett.utils.config.setting.lang
+import net.spartanb312.everett.utils.config.setting.whenTrue
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.math.MathUtils.d2vFOV
 import net.spartanb312.everett.utils.math.MathUtils.h2vFOV
@@ -23,8 +24,12 @@ object VideoOption : Option("Video") {
         .valueListen { prev, input ->
             if (input != prev) GLHelper.fullScreen = input
         }
-    val renderScale = setting("Render Scale", 100, 50..400)
+    val useFramebuffer = setting("Use Framebuffer", true)
+        .lang("使用帧缓冲", "使用幀緩衝")
+        .valueListen { _, input -> if (!input) RS.setRenderScale(1f) }
+    val renderRate = setting("Render Scale", 100, 50..400)
         .lang("渲染比例", "渲染比率")
+        .whenTrue(useFramebuffer)
     val videoMode = setting("Video Mode", VideoMode.VSync)
         .lang("视频模式", "視訊模式")
     val fpsLimit by setting("FPS Limit", 120, 30..2000, 10)
@@ -79,6 +84,8 @@ object VideoOption : Option("Video") {
             FOVMode.VFOV -> vFOV
         }
 
+    val framebuffer get() = useFramebuffer.value
+    val renderScale get() = if (framebuffer) renderRate.value else 100
     inline val fovType get() = fovMode.value.displayName
     inline val dfov get() = fov.v2dFOV(RS.aspectD)
     inline val hfov get() = fov.v2hFOV(RS.aspectD)

@@ -23,7 +23,7 @@ import net.spartanb312.everett.utils.misc.random
 import kotlin.math.roundToInt
 
 abstract class BallHitTraining(
-    private val scoreboardScreen: ScoreboardScreen,
+    protected val scoreboardScreen: ScoreboardScreen,
     protected val scene: Scene,
     private val amount: Int,
     private val sizeRange: ClosedFloatingPointRange<Float>,
@@ -157,18 +157,20 @@ abstract class BallHitTraining(
             else -> {
                 if (!displayed) {
                     displayed = true
-                    RS.addRenderThreadJob {
-                        Render2DManager.displayScreen(scoreboardScreen.setScoreBoard {
-                            it["Score"] = showingScore.toString()
-                            it["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
-                            it["Fired"] = shots.toString()
-                            it["Hits"] = hits.toString()
-                            it["Reaction Time"] = String.format("%.2f", reactionTimes.average())
-                        })
-                    }
+                    RS.addRenderThreadJob { displayScoreboard() }
                 }
             }
         }
+    }
+
+    open fun displayScoreboard() {
+        Render2DManager.displayScreen(scoreboardScreen.setScoreBoard {
+            it["Score"] = showingScore.toString()
+            it["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
+            it["Fired"] = shots.toString()
+            it["Hits"] = hits.toString()
+            it["Reaction Time"] = String.format("%.2f", reactionTimes.average())
+        })
     }
 
     override fun onClick() {

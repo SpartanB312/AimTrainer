@@ -12,15 +12,12 @@ import net.spartanb312.everett.game.input.InputManager
 import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.*
-import net.spartanb312.everett.game.render.MedalRenderer
-import net.spartanb312.everett.game.render.NotificationRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.LoadingScreen
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.GameGraphics
-import net.spartanb312.everett.graphics.OpenGL.GL_COLOR_BUFFER_BIT
-import net.spartanb312.everett.graphics.OpenGL.glClear
+import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVBO
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
@@ -38,10 +35,9 @@ import net.spartanb312.everett.utils.thread.ConcurrentTaskManager
 import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
-import org.lwjgl.opengl.GL11.*
 
 /**
- * An engine based on OpenGL 4.5 Core Profile
+ * Requires OpenGL 4.5 Core Profile
  * OpenGL 2.1 is no longer supported
  */
 @Module(
@@ -52,7 +48,7 @@ import org.lwjgl.opengl.GL11.*
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240614"
+    const val AIM_TRAINER_VERSION = "1.0.0.240616"
 
     var isReady = false
     private val tickTimer = Timer()
@@ -60,7 +56,9 @@ object AimTrainer : GameGraphics {
     val model = Model("assets/everett/Everett.obj", TextureManager) { MeshDNSH(it) }
 
     lateinit var framebuffer: ResizableFramebuffer
+    lateinit var renderLayer: ResizableFramebuffer.ResizableColorLayer
     val taskManager = ConcurrentTaskManager("AimTrainer TaskManager")
+    var useFramebuffer = false
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
@@ -84,19 +82,30 @@ object AimTrainer : GameGraphics {
         GunfireAudio
         model.loadModel()
         framebuffer = ResizableFramebuffer(RS.width, RS.height, true)
+        renderLayer = framebuffer.generateColorLayer()
     }
 
     override fun Profiler.onLoop() {
+        useFramebuffer = VideoOption.framebuffer
         TextureManager.renderThreadHook(5)
         Language.update()
 
         // Start rendering
         profiler("Render Hook")
+        if (useFramebuffer) {
+            framebuffer.bindFramebuffer()
+            renderLayer.bindLayer()
+            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
+            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+        } else {
+            RS.setRenderScale(1f)
+            GLHelper.bindFramebuffer(0)
+            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+            glViewport(0, 0, RS.width, RS.height)
+        }
 
         // Render3D
-        framebuffer.bindFramebuffer()
-        glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
         RS.matrixLayer.scope {
             GLHelper.blend = true
             GLHelper.depth = true
@@ -127,29 +136,31 @@ object AimTrainer : GameGraphics {
             DebugInfoRenderer.onRender()
             StatRenderer.onRender()
         }
-        framebuffer.unbindFramebuffer()
+        if (useFramebuffer) framebuffer.unbindFramebuffer()
         profiler("Render 2D")
 
         // Framebuffer
-        glClear(GL_COLOR_BUFFER_BIT)
-        RS.matrixLayer.scope {
-            GLHelper.blend = true
-            //glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
-            glClearColor(1f, 1f, 1f, 1f)
-            glViewport(0, 0, RS.displayWidth, RS.displayHeight)
-            applyOrtho(0.0f, RS.displayWidthF, RS.displayHeightF, 0.0f, -1.0f, 1.0f)
-            framebuffer.texture.drawTexture(
-                0f,
-                0f,
-                RS.displayWidthF,
-                RS.displayHeightF,
-                0,
-                framebuffer.height,
-                framebuffer.width,
-                0
-            )
+        if (useFramebuffer) {
+            //glClear(GL_COLOR_BUFFER_BIT)
+            RS.matrixLayer.scope {
+                GLHelper.blend = true
+                glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
+                glClearColor(0f, 0f, 0f, 1f)
+                glViewport(0, 0, RS.displayWidth, RS.displayHeight)
+                applyOrtho(0.0f, RS.displayWidthF, RS.displayHeightF, 0.0f, -1.0f, 1.0f)
+                renderLayer.drawTexture(
+                    0f,
+                    0f,
+                    RS.displayWidthF,
+                    RS.displayHeightF,
+                    0,
+                    framebuffer.height,
+                    framebuffer.width,
+                    0
+                )
+            }
+            profiler("Framebuffer")
         }
-        profiler("Framebuffer")
 
         // Tick (60TPS)
         tickTimer.tps(60) {
@@ -191,13 +202,13 @@ object AimTrainer : GameGraphics {
     }
 
     override fun onSync() {
-        if (VideoOption.renderScale.updateTimer.passed(200)
+        if (VideoOption.renderRate.updateTimer.passed(200)
             && GLFW.glfwGetMouseButton(
                 RS.window,
                 GLFW.GLFW_MOUSE_BUTTON_1
             ) != GLFW.GLFW_PRESS
         ) {
-            RS.setRenderScale(VideoOption.renderScale.value / 100f)
+            RS.setRenderScale(VideoOption.renderScale / 100f)
         }
         val vSync = VideoOption.videoMode.value == VideoOption.VideoMode.VSync
         GLHelper.vSync = vSync
@@ -208,7 +219,6 @@ object AimTrainer : GameGraphics {
 
     override fun onResolutionUpdate(oldWith: Int, oldHeight: Int, newWidth: Int, newHeight: Int) {
         Logger.info("Resolution updated to $newWidth x $newHeight")
-        BlurRenderer.updateResolution(newWidth, newHeight)
         framebuffer.resize(newWidth, newHeight)
         ResolutionUpdateEvent.post(ResolutionUpdateEvent(oldWith, oldHeight, newWidth, newHeight))
     }

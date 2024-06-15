@@ -1,6 +1,5 @@
 package net.spartanb312.everett.graphics.font
 
-import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.cache.CacheSavable
 import net.spartanb312.everett.utils.color.ColorRGB
 
@@ -76,9 +75,9 @@ interface FontRenderer : CacheSavable {
         y: Float,
         colors: Array<ColorRGB>,
         scale: Float = 1f,
-        shadowDepth: Float = 1f * RS.generalScale,
+        shadowDepth: Float = 1f,
     ) {
-        _drawString(text, x + shadowDepth, y + shadowDepth, colors, scale, true)
+        _drawString(text, x + shadowDepth * scale, y + shadowDepth * scale, colors, scale, true)
         _drawString(text, x, y, colors, scale, false)
     }
 
@@ -124,9 +123,9 @@ interface FontRenderer : CacheSavable {
         y: Float,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f * RS.generalScale,
+        shadowDepth: Float = 1f,
     ) {
-        _drawString(text, x + shadowDepth, y + shadowDepth, color, scale, true)
+        _drawString(text, x + shadowDepth * scale, y + shadowDepth * scale, color, scale, true)
         _drawString(text, x, y, color, scale, false)
     }
 
@@ -136,9 +135,9 @@ interface FontRenderer : CacheSavable {
         y: Double,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f * RS.generalScale,
+        shadowDepth: Float = 1f,
     ) {
-        _drawString(text, (x + shadowDepth).toFloat(), (y + shadowDepth).toFloat(), color, scale, true)
+        _drawString(text, (x + shadowDepth * scale).toFloat(), (y + shadowDepth * scale).toFloat(), color, scale, true)
         _drawString(text, x.toFloat(), y.toFloat(), color, scale, false)
     }
 
@@ -148,9 +147,9 @@ interface FontRenderer : CacheSavable {
         y: Int,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
-        shadowDepth: Float = 1f * RS.generalScale,
+        shadowDepth: Float = 1f,
     ) {
-        _drawString(text, x + shadowDepth, y + shadowDepth, color, scale, true)
+        _drawString(text, x + shadowDepth * scale, y + shadowDepth * scale, color, scale, true)
         _drawString(text, x.toFloat(), y.toFloat(), color, scale, false)
     }
 
@@ -205,12 +204,13 @@ interface FontRenderer : CacheSavable {
         y: Float,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
+        shadowDepth: Float = 1f,
     ) {
         val width = getWidth(text, scale)
         val height = this.absoluteHeight * scale * scaleFactor
         val x1 = x - width / 2f
         val y1 = y - height / 2f
-        drawStringWithShadow(text, x1, y1, color, scale)
+        drawStringWithShadow(text, x1, y1, color, scale, shadowDepth)
     }
 
     fun drawCenteredStringWithShadow(
@@ -219,12 +219,13 @@ interface FontRenderer : CacheSavable {
         y: Double,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
+        shadowDepth: Float = 1f,
     ) {
         val width = getWidth(text, scale)
         val height = this.absoluteHeight * scale * scaleFactor
         val x1 = x - width / 2f
         val y1 = y - height / 2f
-        drawStringWithShadow(text, x1, y1, color, scale)
+        drawStringWithShadow(text, x1, y1, color, scale, shadowDepth)
     }
 
     fun drawCenteredStringWithShadow(
@@ -233,12 +234,13 @@ interface FontRenderer : CacheSavable {
         y: Int,
         color: ColorRGB = ColorRGB.WHITE,
         scale: Float = 1f,
+        shadowDepth: Float = 1f,
     ) {
         val width = getWidth(text, scale)
         val height = this.absoluteHeight * scale * scaleFactor
         val x1 = x - width / 2f
         val y1 = y - height / 2f
-        drawStringWithShadow(text, x1, y1, color, scale)
+        drawStringWithShadow(text, x1, y1, color, scale, shadowDepth)
     }
 
     fun drawGradientString(
@@ -260,10 +262,10 @@ interface FontRenderer : CacheSavable {
         y: Float,
         colors: Array<ColorRGB>,
         scale: Float = 1f,
-        shadowDepth: Float = 1f * RS.generalScale,
+        shadowDepth: Float = 1f,
         sliceMode: Boolean = true
     ) {
-        _drawString(text, x + shadowDepth, y + shadowDepth, colors, sliceMode, scale, true)
+        _drawString(text, x + shadowDepth * scale, y + shadowDepth * scale, colors, sliceMode, scale, true)
         _drawString(text, x, y, colors, sliceMode, scale, false)
     }
 

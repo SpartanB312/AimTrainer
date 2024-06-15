@@ -3,6 +3,7 @@ package net.spartanb312.everett.graphics
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.utils.misc.NULL
 import org.lwjgl.glfw.GLFW
+import org.lwjgl.opengl.GL30
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 
@@ -42,8 +43,24 @@ object GLHelper {
     private var windowedYPos = 0
     private var windowedWidth = 0
     private var windowedHeight = 0
-    var bindProgram = 0; private set
+    var bindProgram = -1; private set
+    var bindFBO = -1; private set
+    var bindVAO = -1; private set
     var mouseMode = GLFW.GLFW_CURSOR_NORMAL; private set
+
+    fun bindVertexArray(vao: Int, force: Boolean = false) {
+        if (force || vao != bindVAO) {
+            GL30.glBindVertexArray(vao)
+            bindVAO = vao
+        }
+    }
+
+    fun bindFramebuffer(fbo: Int, force: Boolean = false) {
+        if (force || fbo != bindFBO) {
+            GL30.glBindFramebuffer(GL30.GL_FRAMEBUFFER, fbo)
+            bindFBO = fbo
+        }
+    }
 
     fun useProgram(id: Int, force: Boolean = false) {
         if (force || id != bindProgram) {

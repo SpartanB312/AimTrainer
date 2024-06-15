@@ -19,6 +19,7 @@ object Language : LanguageManager {
         multiText.addLang(Languages.ChineseTW, tw)
         //multiText.addLang()
         textContainers.add(multiText)
+        multiText.update(currentLang)
         return multiText
     }
 

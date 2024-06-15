@@ -2,6 +2,7 @@ package net.spartanb312.everett.graphics.drawing.pmvbo
 
 import dev.luna5ama.kmogus.Arr
 import dev.luna5ama.kmogus.asMutable
+import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.VertexAttribute
 import net.spartanb312.everett.graphics.drawing.VertexFormat
@@ -23,6 +24,7 @@ object PersistentMappedVertexBuffer {
     open class VertexMode(val format: VertexAttribute, val shader: Shader) {
         companion object {
             val values = listOf(Pos2fColor, Pos3fColor, Pos2fColorTex, Pos3fColorTex, Universal)
+            var lastUpdatedShader: VertexMode? = null
         }
 
         data object Pos2fColor : VertexMode(
@@ -81,7 +83,8 @@ object PersistentMappedVertexBuffer {
 
         fun updateMatrix(stack: MatrixLayerStack) {
             val checkID = stack.checkID
-            if (checkID != currentCheckID) {
+            if (checkID != currentCheckID || lastUpdatedShader != this) {
+                lastUpdatedShader = this
                 currentCheckID = checkID
                 GL20.glUniformMatrix4fv(matrixUniform, false, stack.matrixArray)
             }
@@ -240,7 +243,7 @@ object PersistentMappedVertexBuffer {
             if (vertexSize == 0) return
             shader.bind()
             vertexMode.updateMatrix(RS.matrixLayer)
-            GL30.glBindVertexArray(vertexMode.vao)
+            GLHelper.bindVertexArray(vertexMode.vao)
             GL11C.glDrawArrays(mode, drawOffset, vertexSize)
             end(vertexMode.stride)
             vertexSize = 0

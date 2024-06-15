@@ -60,9 +60,10 @@ object ModuleScreen : GuiScreen() {
         scrollOffset = 2
         val startX = RS.widthF * 0.2f
         val endX = RS.widthF * 0.8f
-        var startY = clampYT + FontRendererMain.getHeight(0.3f)
+        var startY = clampYT + FontRendererMain.getHeight(0.3f * scale)
         var index = -1
         var count = 0
+        val stepIn = scale * 10f
         modules.forEach { module ->
             val name = module.name
             val version = module.version
@@ -71,22 +72,23 @@ object ModuleScreen : GuiScreen() {
             index++
             if ((modules.size - index <= 6 || index >= scrollOffset) && count < 6) {
                 count++
-                val isHoovered = mouseX in startX..endX && mouseY in startY..(startY + FontRendererMain.getHeight() * 2)
+                val endY = startY + FontRendererMain.getHeight(scale * 2.5f)
+                val isHoovered = mouseX in startX..endX && mouseY in startY..endY
                 RenderUtils.drawRect(
                     startX,
                     startY,
                     endX,
-                    startY + FontRendererMain.getHeight(scale * 2.5f),
+                    endY,
                     ColorRGB.WHITE.alpha(if (isHoovered) 128 else 64)
                 )
 
                 // Name
                 val nameStr = "$name "
                 val width1 = FontRendererMain.getWidth(nameStr, scale * 1.25f)
-                FontRendererMain.drawStringWithShadow(nameStr, startX + 10f, startY, scale = scale * 1.25f)
+                FontRendererMain.drawStringWithShadow(nameStr, startX + stepIn, startY, scale = scale * 1.25f)
                 FontRendererMain.drawStringWithShadow(
                     version,
-                    startX + 10f + width1,
+                    startX + stepIn + width1,
                     startY,
                     ColorRGB.GREEN,
                     scale = scale * 1.25f
@@ -94,10 +96,15 @@ object ModuleScreen : GuiScreen() {
                 startY += FontRendererMain.getHeight(scale * 1.25f)
 
                 // Description
-                FontRendererMain.drawStringWithShadow("Description: ", startX + 10f, startY, scale = scale * 1.25f)
+                FontRendererMain.drawStringWithShadow(
+                    "Description: ",
+                    startX + stepIn,
+                    startY,
+                    scale = scale * 1.25f
+                )
                 FontRendererMain.drawStringWithShadow(
                     desc,
-                    startX + 10f + width2 * scale,
+                    startX + stepIn + width2 * scale,
                     startY,
                     ColorRGB.AQUA,
                     scale = scale * 1.25f

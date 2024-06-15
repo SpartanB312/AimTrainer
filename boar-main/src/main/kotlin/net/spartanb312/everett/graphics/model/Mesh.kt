@@ -1,5 +1,6 @@
 package net.spartanb312.everett.graphics.model
 
+import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.misc.createDirectByteBuffer
@@ -61,7 +62,7 @@ abstract class Mesh(
         val vbo = GL15.glGenBuffers()
         val ibo = GL15.glGenBuffers()
 
-        GL30.glBindVertexArray(vao)
+        GLHelper.bindVertexArray(vao)
 
         // Buffer data
         GL15.glBindBuffer(GL_ARRAY_BUFFER, vbo)
@@ -83,7 +84,7 @@ abstract class Mesh(
         GL15.glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo)
         GL15.glBufferData(GL_ELEMENT_ARRAY_BUFFER, indicesBuffer, GL_STATIC_DRAW)
 
-        GL30.glBindVertexArray(0)
+        GLHelper.bindVertexArray(0)
         GL15.glBindBuffer(GL_ARRAY_BUFFER, 0)
     }
 

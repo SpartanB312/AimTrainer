@@ -4,10 +4,7 @@ import net.spartanb312.everett.game.medal.MedalCounter
 import net.spartanb312.everett.game.render.MedalRenderer
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
-import net.spartanb312.everett.game.training.BallHitTraining
-import net.spartanb312.everett.game.training.Training
-import net.spartanb312.everett.game.training.TrainingInfo
-import net.spartanb312.everett.game.training.TrainingInfoContainer
+import net.spartanb312.everett.game.training.*
 import net.spartanb312.everett.utils.misc.asRange
 
 class SixShotWall(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTraining(
@@ -21,7 +18,7 @@ class SixShotWall(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTra
     1f,
     0f,
     0.5f
-), TrainingInfoContainer by Companion {
+), MedalContainer, TrainingInfoContainer by Companion {
 
     companion object : TrainingInfo("6-Shot", "") {
         override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
@@ -29,7 +26,7 @@ class SixShotWall(scoreboardScreen: ScoreboardScreen, scene: Scene) : BallHitTra
         }
     }
 
-    private var medalCounter = MedalCounter(500)
+    override val medalCounter = MedalCounter(500)
 
     override fun reset(): Training {
         medalCounter.reset()

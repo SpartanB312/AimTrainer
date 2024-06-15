@@ -23,9 +23,9 @@ import kotlin.system.exitProcess
 object MainMenuScreen : GuiScreen() {
 
     private val sideButtons = listOf(
-        SideButton("Quick Play".lang("快速训练", "快速訓練")) { QuickPlay.start() },
+        SideButton("Quick Start".lang("快速训练", "快速訓練")) { QuickPlay.start() },
+        SideButton("Customize".lang("自定训练", "自訂訓練")) { Render2DManager.displayScreen(CustomGameScreen) },
         SideButton("Trainings".lang("训练场", "訓練場")) { Render2DManager.displayScreen(TrainingScreen) },
-        SideButton("Modules".lang("模块", "模塊")) { Render2DManager.displayScreen(ModuleScreen) },
         SideButton("Options".lang("设定", "設定")) { Render2DManager.displayScreen(OptionScreen) },
         SideButton("Exit".lang("退出", "離開")) { exitProcess(0) }
     )
@@ -146,7 +146,7 @@ object MainMenuScreen : GuiScreen() {
             //RenderUtils.drawRect(x, y, x + width, y + height, ColorRGB.BLUE)
             val offset = ((System.currentTimeMillis() - startTime) % 5000) / 5000f
             val color = ColorRGB(0, 186, 253)
-            FontRendererMain.drawGradientStringWithShadow(
+            FontRendererBig.drawGradientStringWithShadow(
                 text,
                 x,
                 y,
@@ -155,7 +155,7 @@ object MainMenuScreen : GuiScreen() {
                     ColorRGB.WHITE.circle(color, offset - 0.125f),
                     ColorRGB.WHITE.circle(color, offset - 0.25f),
                 ),
-                scale = scale * generalScale
+                scale = scale * generalScale * 0.5f
             )
         }
 

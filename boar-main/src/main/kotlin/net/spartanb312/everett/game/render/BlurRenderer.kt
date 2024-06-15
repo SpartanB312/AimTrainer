@@ -16,7 +16,6 @@ import org.joml.Matrix4f
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
 import org.lwjgl.opengl.GL20
-import org.lwjgl.opengl.GL30
 import org.lwjgl.opengl.GL45.glTextureParameteri
 
 object BlurRenderer {
@@ -49,7 +48,7 @@ object BlurRenderer {
         passH.updateMatrix(RS.matrixLayer.matrixArray)
         passV.updateMatrix(RS.matrixLayer.matrixArray)
 
-        GL30.glBindVertexArray(vao)
+        GLHelper.bindVertexArray(vao)
 
         var extend = pass - 1f
         bindFbo(AimTrainer.framebuffer, fbo1)
@@ -70,7 +69,7 @@ object BlurRenderer {
         fbo1.texture.unbindTexture()
         GLHelper.blend = true
         PersistentMappedVBO.end(16)
-        GL30.glBindVertexArray(0)
+        //GLHelper.bindVertexArray(0)
     }
 
     private fun setTextureParam(textureID: Int) {

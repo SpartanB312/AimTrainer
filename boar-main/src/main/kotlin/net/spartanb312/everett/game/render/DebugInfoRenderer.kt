@@ -4,8 +4,11 @@ import net.spartanb312.everett.graphics.OpenGL
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.launch.Platform
+import net.spartanb312.everett.utils.collection.CircularArray
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.opengl.GL11.glGetString
+import java.text.DecimalFormat
 
 object DebugInfoRenderer {
 
@@ -21,16 +24,26 @@ object DebugInfoRenderer {
                 if (x64) "ARM 64 Bit" else "ARM 32 Bit"
             } else if (x64) "64 Bit" else "32 Bit"
 
+    private val throttleTimer = Timer()
+    private val array = CircularArray<Double>(100)
+    private val format = DecimalFormat("0.0")
+    private var throttleRate = ""
+
     private val debugInfos: MutableList<() -> String> = mutableListOf(
         { "OpenGL: $glContextVersion" },
         { "GPU: $gpuName" },
         { "System: $system" },
         { "Java: $jreVersion" },
+        { "GPU Throttle: $throttleRate" },
         { "FPS: $fps" }
     )
 
     fun onRender() {
         if (!enabled) return
+        array.add(RS.gpuTime / RS.frameTime.toDouble() * 100.0)
+        throttleTimer.passedAndReset(1000) {
+            throttleRate = format.format(array.toList().average())
+        }
         var startY = 0f
         val backgroundColor = ColorRGB.GRAY.alpha(64)
         debugInfos.forEach {

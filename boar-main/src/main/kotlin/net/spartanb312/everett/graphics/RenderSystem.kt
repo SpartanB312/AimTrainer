@@ -31,7 +31,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.2.1"
+    const val ENGINE_VERSION = "1.2.3"
 
     init {
         name = "RenderThread"
@@ -39,7 +39,6 @@ object RenderSystem : Thread() {
 
     private val fpsCounter = AverageCounter(1000, 8)
     val averageFPS get() = fpsCounter.averageCPS
-    var lastFrameTime = 0L; private set
     var lastJobTime = 0L; private set
 
     var window = 0L; private set
@@ -113,6 +112,8 @@ object RenderSystem : Thread() {
     private var title = "Boar3D"
     private var graphics: Class<out GameGraphics>? = null
 
+    var gpuTime = 0L; private set
+    var frameTime = 0L; private set
     private val memoryCheckUpdateTimer = Timer()
     private val profilerResultUpdateTimer = Timer()
     private val profiler = Profiler()
@@ -255,6 +256,7 @@ object RenderSystem : Thread() {
         glfwShowWindow(window)
 
         while (!glfwWindowShouldClose(window)) {
+            val frameStartTime = System.nanoTime()
             frames++
             generalScale = max(widthScale, heightScale)
             val rtoLimit = (averageFPS * rtoTime).toLong()
@@ -293,14 +295,16 @@ object RenderSystem : Thread() {
             }
 
             EngineLoopEvent.SwapBuffer.Pre.post()
+            val gpuStartTime = System.nanoTime()
             glfwSwapBuffers(window)
+            gpuTime = System.nanoTime() - gpuStartTime
             EngineLoopEvent.SwapBuffer.Post.post()
             profiler.profiler("Swap Buffer")
             if (profilerResultUpdateTimer.passed(1000)) {
                 profilerResultUpdateTimer.reset()
                 lastProfilingResults = profiler.endWithResult()
             }
-            lastFrameTime = System.currentTimeMillis()
+            frameTime = System.nanoTime() - frameStartTime
         }
 
         Callbacks.glfwFreeCallbacks(window)
