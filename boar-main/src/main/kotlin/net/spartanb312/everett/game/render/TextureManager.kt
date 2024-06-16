@@ -29,6 +29,8 @@ object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { Acc
     val kill9 = lazyTexture("assets/texture/medals/killpocalypse.png", qualityLevel = 1)
     val kill10 = lazyTexture("assets/texture/medals/killionaire.png", qualityLevel = 1)
     val perfect = lazyTexture("assets/texture/medals/perfect.png", qualityLevel = 1)
+    val clockStop = lazyTexture("assets/texture/medals/clock_stop.png", qualityLevel = 1)
+    val flawlessVictory = lazyTexture("assets/texture/medals/flawless_victory.png", qualityLevel = 1)
 
     // Skybox
     val down = lazyTexture("assets/texture/skybox/1.png")

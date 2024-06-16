@@ -37,7 +37,7 @@ object StatRenderer {
                 "${RS.averageFPS.toInt()} FPS",
                 startX - width / 2f,
                 startY + height / 2f,
-                scale = scale * 1.2f
+                scale = scale * 0.6f
             )
             startX -= width * 1.05f
         }
@@ -54,7 +54,7 @@ object StatRenderer {
                 "$ping ms",
                 startX - width / 2f,
                 startY + height / 2f,
-                scale = scale * 1.2f
+                scale = scale * 0.6f
             )
             startX -= width * 1.05f
 
@@ -77,7 +77,7 @@ object StatRenderer {
                     str,
                     startX - barWidth,
                     centerY - FontRendererBold.getHeight(scale * 0.6f),
-                    scale = scale * if (bold) 1.2f else 0.6f,
+                    scale = scale * 0.6f,
                     color = ColorRGB.RED
                 )
             }

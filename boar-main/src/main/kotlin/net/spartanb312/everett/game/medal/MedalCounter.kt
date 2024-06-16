@@ -8,7 +8,7 @@ class MedalCounter(
     private val killResetTime: Int = 300
 ) {
 
-    private val medals = mutableMapOf<Medal, Int>()
+    val medals = mutableMapOf<Medal, Int>()
 
     fun reset() {
         medals.clear()
@@ -48,10 +48,14 @@ class MedalCounter(
         if (dmrShots == 5) {
             dmrShots = 0
             dmrEntity = null
-            val originCount = medals.getOrPut(Perfect) { 0 }
-            medals[Perfect] = originCount + 1
-            MedalRenderer.pushMedal(Perfect)
+            pushMedal(Perfect)
         }
+    }
+
+    fun pushMedal(medal: Medal) {
+        val originCount = medals.getOrPut(medal) { 0 }
+        medals[medal] = originCount + 1
+        MedalRenderer.pushMedal(medal)
     }
 
 }

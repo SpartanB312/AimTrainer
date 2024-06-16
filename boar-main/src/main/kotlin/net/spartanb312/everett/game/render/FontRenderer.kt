@@ -53,7 +53,7 @@ object FontRendererBig : FontRenderer by RTOFontRenderer(
 
 object FontRendererBold : FontRenderer by FontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
-    25f,
+    50f,
     scaleFactor = 0.5f,
     chunkSize = 49,
     textureLoader = TextureManager,
