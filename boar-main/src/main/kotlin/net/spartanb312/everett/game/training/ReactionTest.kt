@@ -1,9 +1,12 @@
 package net.spartanb312.everett.game.training
 
+import net.spartanb312.everett.game.medal.ClockStop
+import net.spartanb312.everett.game.medal.FlawlessVictory
 import net.spartanb312.everett.game.medal.MedalCounter
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
+import net.spartanb312.everett.game.render.gui.impls.TrainingScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
@@ -12,15 +15,15 @@ import kotlin.random.Random
 
 class ReactionTest : Training(), TrainingInfoContainer by Companion {
 
-    override val trainingName = "Reaction Test"
-    override val description = "Test your reaction"
     override val errorAngle = 0f
     override val showingScore = 0
     override var shots = 0
     override var hits = 0
     override var score = 0
 
-    companion object : TrainingInfo("Reaction Test", "Test your reaction") {
+    private val medalCounter = MedalCounter(500)
+
+    companion object : TrainingInfo("Reaction Test", "Test your reaction", "Miscellaneous") {
         override fun new(scene: Scene): Training {
             return ReactionTest()
         }
@@ -44,6 +47,7 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
     private var lastReactionTime = 0L
     private val reactionTimeList = mutableListOf<Int>()
     private var displayed = false
+    private var predict = 0
 
     override fun render2D() {
         if (round == 6) state = States.Finished
@@ -110,6 +114,7 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
                 )
                 if (!displayed) {
                     displayed = true
+                    TrainingScreen.endTraining()
                     displayScoreboard()
                 }
             }
@@ -118,22 +123,46 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
     }
 
     private fun displayScoreboard() {
-        this["Fastest Time"] = String.format("%.3f", reactionTimeList.min() / 1000000f)
-        this["Slowest Time"] = String.format("%.3f", reactionTimeList.max() / 1000000f)
-        this["Average Time"] = String.format("%.3f", reactionTimeList.average() / 1000000f)
-        Render2DManager.displayScreen(ScoreboardScreen(results, MedalCounter(0)))
+        this["Clock Stop"] = medalCounter.medals.getOrDefault(ClockStop, 0).toString()
+        this["Fastest"] = String.format("%.3f", reactionTimeList.min() / 1000000f)
+        this["Slowest"] = String.format("%.3f", reactionTimeList.max() / 1000000f)
+        this["Average"] = String.format("%.3f", reactionTimeList.average() / 1000000f)
+        this["Predict"] = predict.toString()
+        var score = predict * -100
+        reactionTimeList.forEach {
+            val ms = it / 1000000f
+            score += if (ms < 180) (20000 / ms).toInt()
+            else if (ms < 250) (15000 / ms).toInt()
+            else (20000 / ms).toInt()
+        }
+        if (predict == 0) medalCounter.pushMedal(FlawlessVictory)
+        Render2DManager.displayScreen(
+            ScoreboardScreen(
+                score,
+                category,
+                trainingName,
+                (timeLapsed / 1000f).toInt(),
+                results,
+                medalCounter
+            )
+        )
     }
 
     override fun onClick() {
         if (Render2DManager.currentScreen != null) return
         val currentTime = System.nanoTime()
         when (state) {
-            States.Waiting -> state = States.TooFast
+            States.Waiting -> {
+                predict++
+                state = States.TooFast
+            }
+
             States.Click -> {
                 round++
                 val took = currentTime - nextTime
                 lastReactionTime = took
                 reactionTimeList.add(took.toInt())
+                if (took < 160000000) medalCounter.pushMedal(ClockStop)
                 state = States.Clicked
             }
 
@@ -153,7 +182,9 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
 
     override fun reset(): Training {
         state = States.Waiting
+        medalCounter.reset()
         nextTime = System.nanoTime() + Random.nextLong(2000000000, 5000000000)
+        predict = 0
         round = 1
         lastReactionTime = 0L
         reactionTimeList.clear()

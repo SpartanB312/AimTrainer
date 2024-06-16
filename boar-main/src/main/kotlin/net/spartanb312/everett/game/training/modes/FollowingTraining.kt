@@ -38,11 +38,19 @@ abstract class FollowingTraining(
 ) {
 
     override fun displayScoreboard() {
-        this["Score"] = showingScore.toString()
         this["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
         this["Fired"] = shots.toString()
         this["Hits"] = hits.toString()
-        Render2DManager.displayScreen(ScoreboardScreen(results, medalCounter))
+        Render2DManager.displayScreen(
+            ScoreboardScreen(
+                showingScore,
+                category,
+                trainingName,
+                (timeLapsed / 1000f).toInt(),
+                results,
+                medalCounter
+            )
+        )
     }
 
     private val reverseTimer = Timer()

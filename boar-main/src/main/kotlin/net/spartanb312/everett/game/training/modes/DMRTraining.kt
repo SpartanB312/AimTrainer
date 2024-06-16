@@ -44,16 +44,23 @@ abstract class DMRTraining(
     distanceRange,
     ballHP,
     fadeTime,
-    3000
+    2500
 ) {
 
     override fun displayScoreboard() {
-        this["Score"] = showingScore.toString()
         this["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
         this["Fired"] = shots.toString()
         this["Hits"] = hits.toString()
         this["Time to kill"] = String.format("%.2f", reactionTimes.average())
-        Render2DManager.displayScreen(ScoreboardScreen(results, medalCounter))
+        Render2DManager.displayScreen(
+            ScoreboardScreen(
+                showingScore, category,
+                trainingName,
+                (timeLapsed / 1000f).toInt(),
+                results,
+                medalCounter
+            )
+        )
     }
 
     override fun render() {

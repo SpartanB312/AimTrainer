@@ -13,6 +13,7 @@ import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.game.render.FontRendererMain
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
+import net.spartanb312.everett.game.render.gui.impls.TrainingScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.everett.graphics.RS
@@ -39,6 +40,7 @@ abstract class BallHitTraining(
     killResetTime: Int = 0
 ) : Training() {
 
+    override val category = "AIM TRAINING"
     protected val entities get() = scene.entities
     protected val fadeBalls = mutableMapOf<Ball, Long>()
     protected val color = ColorRGB(255, 31, 63, 200) //ColorRGB(0, 220, 200, 192)
@@ -160,6 +162,7 @@ abstract class BallHitTraining(
             else -> {
                 if (!displayed) {
                     displayed = true
+                    TrainingScreen.endTraining()
                     RS.addRenderThreadJob { displayScoreboard() }
                 }
             }
@@ -167,12 +170,11 @@ abstract class BallHitTraining(
     }
 
     open fun displayScoreboard() {
-        this["Score"] = showingScore.toString()
         this["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
         this["Fired"] = shots.toString()
         this["Hits"] = hits.toString()
         this["Reaction Time"] = String.format("%.2f", reactionTimes.average())
-        Render2DManager.displayScreen(ScoreboardScreen(results, medalCounter))
+        Render2DManager.displayScreen(ScoreboardScreen(showingScore, category, trainingName, 0, results, medalCounter))
     }
 
     override fun onClick() {

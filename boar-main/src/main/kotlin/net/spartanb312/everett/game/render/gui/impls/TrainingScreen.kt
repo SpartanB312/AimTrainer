@@ -3,12 +3,14 @@ package net.spartanb312.everett.game.render.gui.impls
 import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.option.impls.ControlOption.defaultTraining
 import net.spartanb312.everett.game.render.Background
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.FontRendererMain
 import net.spartanb312.everett.game.render.FontRendererROG
 import net.spartanb312.everett.game.render.gui.GuiScreen
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
+import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.game.training.ReactionTest
 import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.game.training.TrainingInfo
@@ -118,6 +120,14 @@ object TrainingScreen : GuiScreen() {
     fun quickStart() {
         val training = trainings[defaultTraining].new(AimTrainingScene)
         startTraining(training)
+    }
+
+    fun endTraining() {
+        AimTrainingScene.currentTraining = null
+        Render2DManager.closeAll()
+        SceneManager.switchScene(DummyScene)
+        Render2DManager.displayScreen(MainMenuScreen)
+        CrosshairRenderer.disable()
     }
 
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
