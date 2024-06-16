@@ -59,7 +59,6 @@ class SchulteGrid(private val size: Int) : GuiScreen() {
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
-        println(current)
         if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
             num.forEach {
                 if (mouseX.toFloat() in it.xRange && mouseY.toFloat() in it.yRange) {

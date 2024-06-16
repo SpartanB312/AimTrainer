@@ -5,7 +5,6 @@ import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
-import net.spartanb312.everett.game.training.QuickPlay
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.timing.Timer
@@ -22,7 +21,7 @@ object FrictionAA : AimAssist {
             Player.sensK = if (Player.sensK == -1.0) sensitivity * 1000.0
             else {
                 val firing = !Render2DManager.displaying
-                        && (SceneManager.currentScene == AimTrainingScene || SceneManager.currentScene is QuickPlay.QuickPlayScene)
+                        && SceneManager.currentScene == AimTrainingScene
                         && GLFW.glfwGetMouseButton(RS.window, GLFW.GLFW_MOUSE_BUTTON_1) == GLFW.GLFW_PRESS
                 val enableAA = forceEnabled || AimAssistOption.frEnabled
                 val targetAA = when {

@@ -1,24 +1,23 @@
 package net.spartanb312.everett.game.render.gui.impls
 
+import net.spartanb312.everett.game.medal.MedalCounter
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.game.render.gui.GuiScreen
+import net.spartanb312.everett.game.render.gui.Render2DManager
+import net.spartanb312.everett.game.render.scene.SceneManager
+import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
+import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
+import org.lwjgl.glfw.GLFW
 import kotlin.math.min
 
-open class ScoreboardScreen : GuiScreen() {
-
-    private val scoreboard = mutableMapOf<String, String>()
-
-    fun setScoreBoard(block: (ScoreboardScreen) -> Unit): ScoreboardScreen = apply {
-        scoreboard.clear()
-        block(this)
-    }
-
-    operator fun set(title: String, value: String) {
-        scoreboard[title] = value
-    }
+open class ScoreboardScreen(
+    private val scoreboard: Map<String, String>,
+    private val medalCounter: MedalCounter
+) : GuiScreen() {
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         RenderUtils.drawRect(0, 0, RS.width, RS.height, ColorRGB.BLACK.alpha(128))
@@ -56,6 +55,18 @@ open class ScoreboardScreen : GuiScreen() {
             startX += blockWidth
         }
 
+    }
+
+    override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
+        if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
+            AimTrainingScene.currentTraining = null
+            Render2DManager.closeAll()
+            SceneManager.switchScene(DummyScene)
+            Render2DManager.displayScreen(MainMenuScreen)
+            CrosshairRenderer.disable()
+            return true
+        }
+        return false
     }
 
 }

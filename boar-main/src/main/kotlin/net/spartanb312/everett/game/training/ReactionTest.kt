@@ -1,19 +1,16 @@
 package net.spartanb312.everett.game.training
 
+import net.spartanb312.everett.game.medal.MedalCounter
 import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.graphics.RenderSystem
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
 import kotlin.random.Random
 
-class ReactionTest(
-    private val scoreboardScreen: ScoreboardScreen,
-    private val scene: Scene
-) : Training(), TrainingInfoContainer by Companion {
+class ReactionTest : Training(), TrainingInfoContainer by Companion {
 
     override val trainingName = "Reaction Test"
     override val description = "Test your reaction"
@@ -24,8 +21,8 @@ class ReactionTest(
     override var score = 0
 
     companion object : TrainingInfo("Reaction Test", "Test your reaction") {
-        override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
-            return ReactionTest(scoreboardScreen, scene)
+        override fun new(scene: Scene): Training {
+            return ReactionTest()
         }
     }
 
@@ -113,17 +110,18 @@ class ReactionTest(
                 )
                 if (!displayed) {
                     displayed = true
-                    RenderSystem.addRenderThreadJob {
-                        Render2DManager.displayScreen(scoreboardScreen.setScoreBoard {
-                            it["Fastest Time"] = String.format("%.3f", reactionTimeList.min() / 1000000f)
-                            it["Slowest Time"] = String.format("%.3f", reactionTimeList.max() / 1000000f)
-                            it["Average Time"] = String.format("%.3f", reactionTimeList.average() / 1000000f)
-                        })
-                    }
+                    displayScoreboard()
                 }
             }
         }
 
+    }
+
+    private fun displayScoreboard() {
+        this["Fastest Time"] = String.format("%.3f", reactionTimeList.min() / 1000000f)
+        this["Slowest Time"] = String.format("%.3f", reactionTimeList.max() / 1000000f)
+        this["Average Time"] = String.format("%.3f", reactionTimeList.average() / 1000000f)
+        Render2DManager.displayScreen(ScoreboardScreen(results, MedalCounter(0)))
     }
 
     override fun onClick() {
@@ -161,10 +159,6 @@ class ReactionTest(
         reactionTimeList.clear()
         displayed = false
         return this
-    }
-
-    override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
-        return ReactionTest(scoreboardScreen, scene)
     }
 
 }

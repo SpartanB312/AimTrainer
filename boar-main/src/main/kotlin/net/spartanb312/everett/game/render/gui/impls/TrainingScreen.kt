@@ -3,15 +3,14 @@ package net.spartanb312.everett.game.render.gui.impls
 import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.option.impls.ControlOption.defaultTraining
 import net.spartanb312.everett.game.render.Background
-import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.FontRendererMain
 import net.spartanb312.everett.game.render.FontRendererROG
 import net.spartanb312.everett.game.render.gui.GuiScreen
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
-import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.game.training.ReactionTest
+import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.game.training.TrainingInfo
 import net.spartanb312.everett.game.training.custom.CustomBallHit
 import net.spartanb312.everett.game.training.impls.*
@@ -94,28 +93,11 @@ object TrainingScreen : GuiScreen() {
         }
     }
 
-    private val scoreboardScreen = object : ScoreboardScreen() {
-        override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
-            if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
-                AimTrainingScene.currentTraining = null
-                Render2DManager.closeAll()
-                SceneManager.switchScene(DummyScene)
-                Render2DManager.displayScreen(TrainingScreen)
-                CrosshairRenderer.disable()
-                return true
-            }
-            return false
-        }
-    }
-
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
         clickArea.forEachIndexed { index, range ->
             if (mouseX.toFloat() in range.first && mouseY.toFloat() in range.second) {
                 if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
-                    AimTrainingScene.entities.clear()
-                    AimTrainingScene.currentTraining = trainings[index].new(scoreboardScreen, AimTrainingScene).reset()
-                    Render2DManager.closeAll()
-                    SceneManager.switchScene(AimTrainingScene)
+                    startTraining(trainings[index].new(AimTrainingScene))
                 } else if (button == GLFW.GLFW_MOUSE_BUTTON_2) {
                     defaultTraining = index
                     Configs.saveConfig("configs.json")
@@ -124,6 +106,18 @@ object TrainingScreen : GuiScreen() {
             }
         }
         return false
+    }
+
+    private fun startTraining(training: Training) {
+        AimTrainingScene.entities.clear()
+        AimTrainingScene.currentTraining = training.reset()
+        Render2DManager.closeAll()
+        SceneManager.switchScene(AimTrainingScene)
+    }
+
+    fun quickStart() {
+        val training = trainings[defaultTraining].new(AimTrainingScene)
+        startTraining(training)
     }
 
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {

@@ -3,6 +3,7 @@ package net.spartanb312.everett.game.training
 import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
+import net.spartanb312.everett.game.medal.MedalCounter
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.AimAssistOption.bulletAdsorption
 import net.spartanb312.everett.game.option.impls.VideoOption
@@ -23,7 +24,6 @@ import net.spartanb312.everett.utils.misc.random
 import kotlin.math.roundToInt
 
 abstract class BallHitTraining(
-    protected val scoreboardScreen: ScoreboardScreen,
     protected val scene: Scene,
     private val amount: Int,
     private val sizeRange: ClosedFloatingPointRange<Float>,
@@ -36,6 +36,7 @@ abstract class BallHitTraining(
     private val distanceRange: ClosedFloatingPointRange<Float> = 50f.asRange,
     protected val ballHP: Int = 1,
     protected val fadeTime: Int = 100,
+    killResetTime: Int = 0
 ) : Training() {
 
     protected val entities get() = scene.entities
@@ -49,6 +50,7 @@ abstract class BallHitTraining(
     protected val hitTime = mutableListOf<Long>()
     protected var lastShotTime = 0L
     protected val reactionTimes = mutableListOf<Int>()
+    open val medalCounter = MedalCounter(killResetTime)
     override val showingScore get() = if (score > 0) (score * accuracy).roundToInt() else score
     private val generalColor = ColorRGB(101, 176, 210)
     private val lightColor = ColorRGB(194, 247, 254)
@@ -61,6 +63,7 @@ abstract class BallHitTraining(
 
     override fun reset(): Training {
         super.reset()
+        medalCounter.reset()
         hitTime.clear()
         reactionTimes.clear()
         entities.clear()
@@ -164,13 +167,12 @@ abstract class BallHitTraining(
     }
 
     open fun displayScoreboard() {
-        Render2DManager.displayScreen(scoreboardScreen.setScoreBoard {
-            it["Score"] = showingScore.toString()
-            it["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
-            it["Fired"] = shots.toString()
-            it["Hits"] = hits.toString()
-            it["Reaction Time"] = String.format("%.2f", reactionTimes.average())
-        })
+        this["Score"] = showingScore.toString()
+        this["Accuracy"] = String.format("%.2f", accuracy * 100) + "%"
+        this["Fired"] = shots.toString()
+        this["Hits"] = hits.toString()
+        this["Reaction Time"] = String.format("%.2f", reactionTimes.average())
+        Render2DManager.displayScreen(ScoreboardScreen(results, medalCounter))
     }
 
     override fun onClick() {

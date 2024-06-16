@@ -11,6 +11,7 @@ import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.Logger
 
 abstract class Training : SubscribedRenderer, TrainingInfoContainer {
+
     protected val leftUpInfo = mutableListOf(
         { "Average FPS:&f ${String.format("%.1f", RenderSystem.averageFPS)}" },
         { "Physics TPS:&f ${String.format("%.1f", PhysicsSystem.averageTPS)}" },
@@ -19,6 +20,7 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
         { "Sensitivity:&f ${String.format("%.3f", Player.sens)}" },
         { "Score:&f $showingScore" },
     )
+
     protected var waitTime = AccessibilityOption.waitTime
     open val icon: Texture? = null
     val timeLapsed get() = System.currentTimeMillis() - startTime
@@ -27,6 +29,7 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     abstract val errorAngle: Float
     abstract fun render()
     abstract fun onClick()
+
     open fun onTick() {
         stage = if (timeLapsed <= waitTime * 1000) Stage.Prepare
         else if (timeLapsed <= waitTime * 1000 + 60000) Stage.Training
@@ -39,6 +42,7 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
 
     open fun reset(): Training {
         Logger.info("Start training: $trainingName")
+        results.clear()
         waitTime = AccessibilityOption.waitTime
         Player.reset()
         CrosshairRenderer.disable()
@@ -57,9 +61,16 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     abstract val showingScore: Int
     val accuracy get() = hits / shots.coerceAtLeast(1).toFloat()
 
+    protected val results = mutableMapOf<String, String>()
+
+    operator fun set(title: String, value: String) {
+        results[title] = value
+    }
+
     enum class Stage {
         Prepare,
         Training,
         Finished
     }
+
 }

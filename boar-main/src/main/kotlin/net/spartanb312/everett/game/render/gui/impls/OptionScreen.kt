@@ -169,7 +169,8 @@ object OptionScreen : GuiScreen() {
         Audio(SelectButton("Audio".lang("音频设置", "音頻設定"), OptionsRenderer(AudioOption))),
         Crosshair(SelectButton("Crosshair".lang("准星调整", "準星設定"), OptionsRenderer(CrosshairOption))),
         AimAssist(SelectButton("AimAssist".lang("辅助瞄准", "輔助瞄準"), OptionsRenderer(AimAssistOption))),
-        Accessibility(SelectButton("Accessibility".lang("辅助功能", "輔助功能"), OptionsRenderer(AccessibilityOption)))
+        Accessibility(SelectButton("Accessibility".lang("辅助功能", "輔助功能"), OptionsRenderer(AccessibilityOption))),
+        Custom(SelectButton("Custom".lang(), OptionsRenderer(CustomOption)))
     }
 
 }

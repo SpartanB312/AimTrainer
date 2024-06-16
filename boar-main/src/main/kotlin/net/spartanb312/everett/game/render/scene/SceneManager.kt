@@ -4,24 +4,21 @@ import net.spartanb312.everett.game.input.InputManager
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
-import net.spartanb312.everett.game.training.QuickPlay
 import net.spartanb312.everett.game.training.Training
 
 object SceneManager {
 
     var currentScene: Scene = DummyScene
-    val inTraining get() = currentScene == AimTrainingScene || currentScene is QuickPlay.QuickPlayScene
+    val inTraining get() = currentScene == AimTrainingScene
     val currentTraining: Training?
-        get() = when (val current = currentScene) {
+        get() = when (currentScene) {
             AimTrainingScene -> AimTrainingScene.currentTraining
-            is QuickPlay.QuickPlayScene -> current.training
             else -> null
         }
 
     val errorAngle
         get() = when (currentScene) {
             AimTrainingScene -> AimTrainingScene.currentTraining?.errorAngle ?: 0f
-            is QuickPlay.QuickPlayScene -> (currentScene as QuickPlay.QuickPlayScene).errorAngle
             else -> 0f
         }
 

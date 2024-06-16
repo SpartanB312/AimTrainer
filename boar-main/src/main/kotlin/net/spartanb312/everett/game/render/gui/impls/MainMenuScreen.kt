@@ -7,7 +7,6 @@ import net.spartanb312.everett.game.forge.Forge
 import net.spartanb312.everett.game.render.*
 import net.spartanb312.everett.game.render.gui.GuiScreen
 import net.spartanb312.everett.game.render.gui.Render2DManager
-import net.spartanb312.everett.game.training.QuickPlay
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.font.drawColoredString
@@ -23,7 +22,7 @@ import kotlin.system.exitProcess
 object MainMenuScreen : GuiScreen() {
 
     private val sideButtons = listOf(
-        SideButton("Quick Start".lang("快速训练", "快速訓練")) { QuickPlay.start() },
+        SideButton("Quick Start".lang("快速训练", "快速訓練")) { TrainingScreen.quickStart() },
         SideButton("Customize".lang("自定训练", "自訂訓練")) { Render2DManager.displayScreen(CustomGameScreen) },
         SideButton("Trainings".lang("训练场", "訓練場")) { Render2DManager.displayScreen(TrainingScreen) },
         SideButton("Options".lang("设定", "設定")) { Render2DManager.displayScreen(OptionScreen) },

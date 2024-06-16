@@ -1,12 +1,9 @@
 package net.spartanb312.everett.game.training.custom
 
 import com.google.common.primitives.Ints.min
-import net.spartanb312.everett.game.medal.MedalCounter
 import net.spartanb312.everett.game.render.MedalRenderer
-import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.training.BallHitTraining
-import net.spartanb312.everett.game.training.MedalContainer
 import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.utils.misc.asRange
 
@@ -18,17 +15,16 @@ object CustomBallHit : CustomTraining("Ball Hit Training", "Custom Game") {
     private val width by setting("Width", 5, 2..20, 1)
     private val height by setting("Height", 5, 2..20, 1)
     private val defaultErrorAngle by setting("Default Error Angle", 1f, 0f..10f, 0.1f)
-    private val distance by setting("Distance", 50f, 10f..100f, 0.5f)
+    private val distance by setting("Distance", 50f, 10f..150f, 0.5f)
     private val killResetTime by setting("Continuous Kill Reset", 300, 0..10000, 50)
     private val scoreBase by setting("Score Base", 1f, 0.1f..10f, 0.1f)
     private val punishmentBase by setting("Punishment Base", 1f, 0.1f..10f, 0.1f)
     private val minKillTime by setting("Min Kill Time", 50, 10..1000, 10)
     private val maxKillTime by setting("Max Kill Time", 2000, 1000..10000, 50)
 
-    override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
+    override fun new(scene: Scene): Training {
         val maxAmount = min(width * height - 1, amount)
         return Impl(
-            scoreboardScreen,
             scene,
             maxAmount,
             size,
@@ -46,7 +42,6 @@ object CustomBallHit : CustomTraining("Ball Hit Training", "Custom Game") {
     }
 
     class Impl(
-        scoreboardScreen: ScoreboardScreen,
         scene: Scene,
         amount: Int,
         size: Float,
@@ -61,7 +56,6 @@ object CustomBallHit : CustomTraining("Ball Hit Training", "Custom Game") {
         private val minKillTime: Int = 50,
         private val maxKillTime: Int = 2000,
     ) : BallHitTraining(
-        scoreboardScreen,
         scene,
         amount,
         size.asRange,
@@ -73,20 +67,15 @@ object CustomBallHit : CustomTraining("Ball Hit Training", "Custom Game") {
         0f,
         distance.asRange,
         1,
-        100
-    ), MedalContainer {
+        100,
+        killResetTime
+    ) {
 
         override val trainingName = CustomBallHit.trainingName
         override val description = CustomBallHit.description
-        override val medalCounter = MedalCounter(killResetTime)
 
-        override fun new(scoreboardScreen: ScoreboardScreen, scene: Scene): Training {
+        override fun new(scene: Scene): Training {
             throw Exception("This method shouldn't be reached!")
-        }
-
-        override fun reset(): Training {
-            medalCounter.reset()
-            return super.reset()
         }
 
         override fun onHit(timeLapse: Int): Int {
