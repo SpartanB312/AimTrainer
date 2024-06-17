@@ -63,7 +63,7 @@ object StatRenderer {
                 val renderer = if (bold) FontRendererBold else FontRendererMain
                 val texW = scale * 8f
                 val centerY = startY + height / 2f
-                val barWidth = renderer.getWidth(str, scale * if (bold) 1.2f else 0.6f) + texW * 4.5f
+                val barWidth = renderer.getWidth(str, scale * 0.6f) + texW * 4.5f
                 RenderUtils.drawRect(startX - barWidth, startY, startX, startY + height, ColorRGB.BLACK.alpha(32))
                 TextureManager.warning.drawTexture(
                     startX - barWidth + texW,
@@ -76,7 +76,7 @@ object StatRenderer {
                 renderer.drawString(
                     str,
                     startX - barWidth,
-                    centerY - FontRendererBold.getHeight(scale * 0.6f),
+                    centerY - FontRendererBold.getHeight(scale * 0.3f),
                     scale = scale * 0.6f,
                     color = ColorRGB.RED
                 )

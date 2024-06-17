@@ -68,11 +68,11 @@ open class ScoreboardScreen(
                     startY + blockHeight,
                     ColorRGB.WHITE.alpha(32)
                 )
-                FontRendererBig.drawCenteredString(
+                FontRendererBold.drawCenteredString(
                     type.uppercase(),
                     startX + blockWidth / 2f,
                     startY + blockHeight * 0.15f,
-                    scale = scale * 0.6f
+                    scale = scale
                 )
                 FontRendererBig.drawCenteredString(
                     score,
@@ -116,7 +116,7 @@ open class ScoreboardScreen(
         for ((medal, amount) in medalCounter.medals.toList().sortedByDescending { it.first.priority }) {
             renderCount++
             if (renderCount > 8) continue
-            val topColor = ColorRGB.BLACK.alpha(32)
+            val topColor = ColorRGB.DARK_GRAY.alpha(32)
             val bottomColor = medal.level.color.alpha(64)
             RenderUtils.drawRect(
                 startX,

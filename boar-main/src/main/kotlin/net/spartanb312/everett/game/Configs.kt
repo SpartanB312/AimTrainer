@@ -23,6 +23,7 @@ object Configs {
         configs.add(CrosshairOption)
         configs.add(AimAssistOption)
         configs.add(AccessibilityOption)
+        configs.add(CustomOption)
     }
 
     fun loadConfig(path: String) {

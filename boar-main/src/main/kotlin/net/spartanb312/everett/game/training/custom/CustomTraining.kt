@@ -9,6 +9,7 @@ import net.spartanb312.everett.utils.language.LanguageManager
 abstract class CustomTraining(
     trainingName: String,
     description: String,
+    override val category: String,
     private val languageManager: LanguageManager = Language
 ) : TrainingInfo(trainingName, description), SettingRegister<CustomTraining> {
 

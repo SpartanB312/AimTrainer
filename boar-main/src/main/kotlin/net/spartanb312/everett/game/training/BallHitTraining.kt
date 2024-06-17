@@ -40,7 +40,6 @@ abstract class BallHitTraining(
     killResetTime: Int = 0
 ) : Training() {
 
-    override val category = "AIM TRAINING"
     protected val entities get() = scene.entities
     protected val fadeBalls = mutableMapOf<Ball, Long>()
     protected val color = ColorRGB(255, 31, 63, 200) //ColorRGB(0, 220, 200, 192)
@@ -174,7 +173,16 @@ abstract class BallHitTraining(
         this["Fired"] = shots.toString()
         this["Hits"] = hits.toString()
         this["Reaction Time"] = String.format("%.2f", reactionTimes.average())
-        Render2DManager.displayScreen(ScoreboardScreen(showingScore, category, trainingName, 0, results, medalCounter))
+        Render2DManager.displayScreen(
+            ScoreboardScreen(
+                showingScore,
+                category,
+                trainingName,
+                (timeLapsed / 1000f).toInt(),
+                results,
+                medalCounter
+            )
+        )
     }
 
     override fun onClick() {
@@ -231,16 +239,19 @@ abstract class BallHitTraining(
         val yRange = 1..height
         val zOffset = width * gap / 2f - horizontalOffset * gap
         val yOffset = height * gap / 2f - verticalOffset * gap
-        val ball = Ball(
-            Vec3f(
-                distanceRange.random(),
-                -yOffset + yRange.random() * gap - gap / 2f,
-                -zOffset + zRange.random() * gap - gap / 2f
-            ), sizeRange.random(),
-            ballHP
-        )
-        return if (ball == hitOn || entities.contains(ball) || fadeBalls.keys.contains(ball)) generateBall(hitOn)
-        else ball
+        while (true) {
+            val ball = Ball(
+                Vec3f(
+                    distanceRange.random(),
+                    -yOffset + yRange.random() * gap - gap / 2f,
+                    -zOffset + zRange.random() * gap - gap / 2f
+                ), sizeRange.random(),
+                ballHP
+            )
+            if (ball != hitOn && !entities.contains(ball) && !fadeBalls.keys.contains(ball)) {
+                return ball
+            }
+        }
     }
 
     abstract fun onHit(timeLapse: Int): Int

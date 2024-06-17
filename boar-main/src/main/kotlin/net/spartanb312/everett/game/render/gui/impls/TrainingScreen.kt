@@ -110,7 +110,7 @@ object TrainingScreen : GuiScreen() {
         return false
     }
 
-    private fun startTraining(training: Training) {
+    fun startTraining(training: Training) {
         AimTrainingScene.entities.clear()
         AimTrainingScene.currentTraining = training.reset()
         Render2DManager.closeAll()
