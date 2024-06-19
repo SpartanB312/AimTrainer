@@ -14,7 +14,8 @@ import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.game.training.ReactionTest
 import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.game.training.TrainingInfo
-import net.spartanb312.everett.game.training.custom.CustomBallHit
+import net.spartanb312.everett.game.training.custom.CustomTraining
+import net.spartanb312.everett.game.training.custom.CustomTrainingFlag
 import net.spartanb312.everett.game.training.impls.*
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
@@ -35,7 +36,7 @@ object TrainingScreen : GuiScreen() {
         OneShotSphere,
         OneBallDMR,
         ReactionTest,
-        CustomBallHit
+        CustomTraining
     )
     private var clickArea = mutableListOf<Pair<ClosedFloatingPointRange<Float>, ClosedFloatingPointRange<Float>>>()
 
@@ -99,7 +100,7 @@ object TrainingScreen : GuiScreen() {
         clickArea.forEachIndexed { index, range ->
             if (mouseX.toFloat() in range.first && mouseY.toFloat() in range.second) {
                 if (button == GLFW.GLFW_MOUSE_BUTTON_1) {
-                    startTraining(trainings[index].new(AimTrainingScene))
+                    startTraining(trainings[index].new(AimTrainingScene), TrainingScreen)
                 } else if (button == GLFW.GLFW_MOUSE_BUTTON_2) {
                     defaultTraining = index
                     Configs.saveConfig("configs.json")
@@ -110,8 +111,9 @@ object TrainingScreen : GuiScreen() {
         return false
     }
 
-    fun startTraining(training: Training) {
+    fun startTraining(training: Training, jumpBack: GuiScreen) {
         AimTrainingScene.entities.clear()
+        AimTrainingScene.jumBack = jumpBack
         AimTrainingScene.currentTraining = training.reset()
         Render2DManager.closeAll()
         SceneManager.switchScene(AimTrainingScene)
@@ -119,7 +121,7 @@ object TrainingScreen : GuiScreen() {
 
     fun quickStart() {
         val training = trainings[defaultTraining].new(AimTrainingScene)
-        startTraining(training)
+        startTraining(training, if (training is CustomTrainingFlag) CustomGameScreen else TrainingScreen)
     }
 
     fun endTraining() {

@@ -11,6 +11,8 @@ class LongSetting(
     visibility: (() -> Boolean) = { true }
 ) : NumberSetting<Long>(name, value, range, step, description, visibility) {
 
+    override val displayValue: String get() = format.format(value)
+
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
         value = (jsonObject[nameString]?.asLong ?: value).coerceIn(range)

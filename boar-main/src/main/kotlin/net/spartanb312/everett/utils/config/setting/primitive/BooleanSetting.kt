@@ -9,6 +9,7 @@ open class BooleanSetting(
     description: String = "",
     visibility: (() -> Boolean) = { true }
 ) : MutableSetting<Boolean>(name, value, description, visibility) {
+    override val displayValue: String get() = value.toString()
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
         value = jsonObject[nameString]?.asBoolean ?: value

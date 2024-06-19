@@ -25,6 +25,13 @@ abstract class FollowingTraining(
     errorAngle: Float = 1f,
     horizontalOffset: Float = 0f,
     verticalOffset: Float = 0.5f,
+    distanceRange: ClosedFloatingPointRange<Float> = 50f.asRange,
+    xOffset: Float = 0f,
+    yOffset: Float = 0f,
+    zOffset: Float = 0f,
+    private val moveSpeed: Float = 2f,
+    private val scoreBase: Float = 1f,
+    private val punishmentBase: Float = 1f
 ) : BallHitTraining(
     scene,
     amount,
@@ -32,9 +39,13 @@ abstract class FollowingTraining(
     gap,
     width,
     height,
+    xOffset,
+    yOffset,
+    zOffset,
     errorAngle,
     horizontalOffset,
-    verticalOffset
+    verticalOffset,
+    distanceRange
 ) {
 
     override fun displayScoreboard() {
@@ -114,16 +125,16 @@ abstract class FollowingTraining(
         }
         click()
         entities.forEach {
-            if (it is Ball) it.randomMove(reverse, 2.5f)
+            if (it is Ball) it.randomMove(reverse, moveSpeed)
         }
     }
 
     override fun onHit(timeLapse: Int): Int {
-        return (400f / timeLapse.coerceIn(50..2000)).toInt()
+        return (scoreBase * 400f / timeLapse.coerceIn(50..2000)).toInt()
     }
 
     override fun onMiss(timeLapse: Int): Int {
-        return (timeLapse.coerceIn(50..2000) / 10f).toInt()
+        return (punishmentBase * timeLapse.coerceIn(50..2000) / 10f).toInt()
     }
 
 }

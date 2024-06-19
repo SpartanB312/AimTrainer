@@ -2,6 +2,7 @@ package net.spartanb312.everett.utils.config.setting.primitive
 
 import com.google.gson.JsonObject
 import net.spartanb312.everett.utils.config.setting.MutableSetting
+import net.spartanb312.everett.utils.misc.DisplayEnum
 import net.spartanb312.everett.utils.misc.last
 import net.spartanb312.everett.utils.misc.next
 
@@ -14,6 +15,11 @@ class EnumSetting<T : Enum<T>>(
 
     private val enumClass: Class<T> = value.declaringJavaClass
     private val enumValues: Array<out T> = enumClass.enumConstants
+    override val displayValue: String
+        get() {
+            val value = value
+            return if (value is DisplayEnum) value.displayString else nameString
+        }
 
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value.name)
     override fun readValue(jsonObject: JsonObject) {

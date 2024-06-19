@@ -9,6 +9,7 @@ class ListSetting(
     description: String = "",
     visibility: (() -> Boolean) = { true }
 ) : MutableSetting<List<String>>(name, value, description, visibility) {
+    override val displayValue: String get() = value.toString()
 
     override fun saveValue(jsonObject: JsonObject) = jsonObject.add(nameString, JsonArray().apply {
         value.forEach { add(it) }

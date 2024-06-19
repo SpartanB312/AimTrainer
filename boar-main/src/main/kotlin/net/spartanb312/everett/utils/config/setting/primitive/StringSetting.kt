@@ -9,6 +9,7 @@ class StringSetting(
     description: String = "",
     visibility: (() -> Boolean) = { true }
 ) : MutableSetting<String>(name, value, description, visibility) {
+    override val displayValue get(): String = value
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
         value = jsonObject[nameString]?.asString ?: value

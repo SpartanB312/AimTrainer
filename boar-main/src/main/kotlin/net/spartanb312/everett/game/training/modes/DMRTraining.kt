@@ -28,9 +28,15 @@ abstract class DMRTraining(
     horizontalOffset: Float = 0f,
     verticalOffset: Float = 0.5f,
     distanceRange: ClosedFloatingPointRange<Float> = 50f.asRange,
-    ballHP: Int = 5,
     fadeTime: Int = 100,
+    xOffset: Float = 0f,
+    yOffset: Float = 0f,
+    zOffset: Float = 0f,
+    killResetTime: Int = 2500,
     private val moveSpeed: Float = 2f,
+    private val scoreBase: Float = 1f,
+    private val minKillTime: Int = 50,
+    private val maxKillTime: Int = 2000
 ) : BallHitTraining(
     scene,
     amount,
@@ -38,13 +44,16 @@ abstract class DMRTraining(
     gap,
     width,
     height,
+    xOffset,
+    yOffset,
+    zOffset,
     errorAngle,
     horizontalOffset,
     verticalOffset,
     distanceRange,
-    ballHP,
+    5,
     fadeTime,
-    2500
+    killResetTime
 ) {
 
     override fun displayScoreboard() {
@@ -150,7 +159,8 @@ abstract class DMRTraining(
 
     override fun onHit(timeLapse: Int): Int {
         medalCounter.triggerKill()
-        val applyScore = (100000f / timeLapse.coerceIn(50..2000)).toInt()
+        val killTimeRange = minKillTime..maxKillTime.coerceAtLeast(minKillTime + 1)
+        val applyScore = (scoreBase * 100000f / timeLapse.coerceIn(killTimeRange)).toInt()
         MedalRenderer.pushScore(applyScore)
         MedalRenderer.pushMessage("&fKilled &r${MedalRenderer.randomName}", color = ColorRGB(255, 20, 20))
         return applyScore

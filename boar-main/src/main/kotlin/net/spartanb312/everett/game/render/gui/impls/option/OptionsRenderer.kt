@@ -31,7 +31,7 @@ class OptionsRenderer(private val options: Option) : MouseClickListener, MouseRe
 
         scissor(
             RS.widthF * 0.04f,
-            RS.heightF * 0.18f,
+            RS.heightF * 0.22f,
             RS.widthF * 0.58f,
             RS.heightF * 0.9f
         ) {
@@ -71,8 +71,12 @@ class OptionsRenderer(private val options: Option) : MouseClickListener, MouseRe
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
-        buttons.forEach {
-            if (it.setting.isVisible && it.onMouseClicked(mouseX, mouseY, button)) return true
+        val xRange = (RS.widthF * 0.04f)..(RS.widthF * 0.58f)
+        val yRange = (RS.heightF * 0.22f)..(RS.heightF * 0.9f)
+        if (mouseX.toFloat() in xRange && mouseY.toFloat() in yRange) {
+            buttons.forEach {
+                if (it.setting.isVisible && it.onMouseClicked(mouseX, mouseY, button)) return true
+            }
         }
         return false
     }

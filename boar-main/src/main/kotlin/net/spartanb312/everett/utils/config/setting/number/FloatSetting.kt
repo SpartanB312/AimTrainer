@@ -14,6 +14,8 @@ class FloatSetting(
 ) : NumberSetting<Float>(name, value, range, step, description, visibility) {
 
     override var format = DecimalFormat("0.0")
+    override val displayValue: String get() = format.format(value)
+
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
         value = (jsonObject[nameString]?.asFloat ?: value).coerceIn(range)

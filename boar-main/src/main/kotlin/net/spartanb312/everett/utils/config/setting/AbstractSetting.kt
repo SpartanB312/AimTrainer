@@ -16,6 +16,7 @@ abstract class AbstractSetting<T> : Nameable, AliasNameable, ReadWriteProperty<A
     abstract var value: T
     abstract val multiText: MultiText
     abstract val displayName: String
+    abstract val displayValue: String
 
     val visibilities = mutableListOf<() -> Boolean>()
     val isVisible get() = visibilities.all { it.invoke() }

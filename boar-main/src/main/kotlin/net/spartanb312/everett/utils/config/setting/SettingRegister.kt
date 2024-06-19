@@ -112,6 +112,10 @@ fun <U, T : Enum<T>> AbstractSetting<U>.atMode(setting: AbstractSetting<T>, valu
     visibilities.add { setting.value == value }
 }
 
+fun <U, T : Enum<T>> AbstractSetting<U>.allowedModes(setting: AbstractSetting<T>, vararg modes: Enum<T>) = this.apply {
+    visibilities.add { modes.any { it == setting.value } }
+}
+
 fun <T : Comparable<T>> AbstractSetting<T>.inRange(range: ClosedRange<T>) = this.apply {
     visibilities.add { this.value in range }
 }

@@ -1,8 +1,9 @@
 package net.spartanb312.everett.game.render.scene.impls
 
 import net.spartanb312.everett.game.Language.lang
-import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.game.render.CrosshairRenderer
+import net.spartanb312.everett.game.render.TextureManager
+import net.spartanb312.everett.game.render.gui.GuiScreen
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.MainMenuScreen
 import net.spartanb312.everett.game.render.gui.impls.OptionScreen
@@ -34,6 +35,7 @@ object AimTrainingScene : Scene() {
         TextureManager.back
     )
     var currentTraining: Training? = null
+    var jumBack: GuiScreen = TrainingScreen
 
     private val pauseScreen = PauseScreen(AimTrainingScene).apply {
         buttons.add(PauseScreen.Button("Resume".lang("继续", "繼續")) {
@@ -49,7 +51,7 @@ object AimTrainingScene : Scene() {
         buttons.add(PauseScreen.Button("Trainings".lang("重选", "重選")) {
             SceneManager.switchScene(DummyScene)
             Render2DManager.closeAll()
-            Render2DManager.displayScreen(TrainingScreen)
+            Render2DManager.displayScreen(jumBack)
             CrosshairRenderer.disable()
         })
         buttons.add(PauseScreen.Button("Menu".lang("菜单", "菜單")) {

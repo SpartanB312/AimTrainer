@@ -6,12 +6,23 @@ import net.spartanb312.everett.utils.config.setting.SettingRegister
 import net.spartanb312.everett.utils.language.LanguageManager
 
 open class Configurable(
-    var name: String,
+    override var name: String,
     private val languageManager: LanguageManager
-) : SettingRegister<Configurable> {
+) : IConfigurable<Configurable> {
 
-    val settings = mutableListOf<AbstractSetting<*>>()
+    override val settings = mutableListOf<AbstractSetting<*>>()
 
+    override fun <S : AbstractSetting<*>> Configurable.setting(setting: S): S {
+        settings.add(setting)
+        languageManager.add(setting.multiText)
+        return setting
+    }
+
+}
+
+interface IConfigurable<T> : SettingRegister<T> {
+    var name: String
+    val settings: MutableList<AbstractSetting<*>>
     fun saveValue(): JsonObject {
         return JsonObject().apply {
             settings.forEach { it.saveValue(this) }
@@ -21,11 +32,4 @@ open class Configurable(
     fun readValue(jsonObject: JsonObject) {
         settings.forEach { it.readValue(jsonObject) }
     }
-
-    override fun <S : AbstractSetting<*>> Configurable.setting(setting: S): S {
-        settings.add(setting)
-        languageManager.add(setting.multiText)
-        return setting
-    }
-
 }

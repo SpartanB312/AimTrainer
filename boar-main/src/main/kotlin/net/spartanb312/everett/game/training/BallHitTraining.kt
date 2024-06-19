@@ -23,6 +23,7 @@ import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.misc.asRange
 import net.spartanb312.everett.utils.misc.random
 import kotlin.math.roundToInt
+import kotlin.random.Random
 
 abstract class BallHitTraining(
     protected val scene: Scene,
@@ -31,6 +32,9 @@ abstract class BallHitTraining(
     private val gap: Float,
     private val width: Int,
     private val height: Int,
+    private val xOffset: Float,
+    private val yOffset: Float,
+    private val zOffset: Float,
     override val errorAngle: Float,
     private val horizontalOffset: Float = 0f,
     private val verticalOffset: Float = 0f,
@@ -239,12 +243,15 @@ abstract class BallHitTraining(
         val yRange = 1..height
         val zOffset = width * gap / 2f - horizontalOffset * gap
         val yOffset = height * gap / 2f - verticalOffset * gap
+        val xModifier = if (this.xOffset != 0f) Random.nextDouble(0.0, this.xOffset.toDouble()) else 0.0
+        val yModifier = if (this.yOffset != 0f) Random.nextDouble(0.0, this.yOffset.toDouble()) else 0.0
+        val zModifier = if (this.zOffset != 0f) Random.nextDouble(0.0, this.zOffset.toDouble()) else 0.0
         while (true) {
             val ball = Ball(
                 Vec3f(
-                    distanceRange.random(),
-                    -yOffset + yRange.random() * gap - gap / 2f,
-                    -zOffset + zRange.random() * gap - gap / 2f
+                    distanceRange.random() + xModifier,
+                    -yOffset + yRange.random() * gap - gap / 2f + yModifier,
+                    -zOffset + zRange.random() * gap - gap / 2f + zModifier
                 ), sizeRange.random(),
                 ballHP
             )

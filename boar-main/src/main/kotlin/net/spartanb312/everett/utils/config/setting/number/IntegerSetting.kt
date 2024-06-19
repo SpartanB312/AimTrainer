@@ -11,6 +11,8 @@ class IntegerSetting(
     visibility: (() -> Boolean) = { true }
 ) : NumberSetting<Int>(name, value, range, step, description, visibility) {
 
+    override val displayValue: String get() = format.format(value)
+
     override fun saveValue(jsonObject: JsonObject) = jsonObject.addProperty(nameString, value)
     override fun readValue(jsonObject: JsonObject) {
         value = (jsonObject[nameString]?.asInt ?: value).coerceIn(range)
