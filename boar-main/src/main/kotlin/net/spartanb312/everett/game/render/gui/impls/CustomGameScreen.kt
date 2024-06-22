@@ -85,7 +85,7 @@ object CustomGameScreen : GuiScreen() {
         settingGroup.settings.forEach {
             if (it.isModified && it.isVisible) {
                 if (renderCount < 5) {
-                    FontRendererMain.drawString("${it.displayName}:", startX + scale * 50f, startY, scale = scale)
+                    FontRendererMain.drawString(it.displayName, startX + scale * 50f, startY, scale = scale)
                     FontRendererMain.drawString(
                         it.displayValue,
                         endX - FontRendererMain.getWidth(it.displayValue, scale) - scale * 50f,
@@ -129,7 +129,7 @@ object CustomGameScreen : GuiScreen() {
             startY += FontRendererMain.getHeight(scale * 1.1f)
         } else {
             FontRendererMain.drawString(
-                "NO CONFLICT DETECTED",
+                "NO CONFLICTS DETECTED",
                 startX + scale * 50f,
                 startY,
                 scale = scale
@@ -224,7 +224,6 @@ object CustomGameScreen : GuiScreen() {
     override fun onMouseReleased(mouseX: Int, mouseY: Int, button: Int) {
         optionsRenderer.onMouseReleased(mouseX, mouseY, button)
     }
-
 
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {

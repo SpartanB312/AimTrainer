@@ -48,7 +48,7 @@ import org.lwjgl.glfw.GLFW
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240619"
+    const val AIM_TRAINER_VERSION = "1.0.0.240621"
 
     var isReady = false
     private val tickTimer = Timer()
@@ -58,7 +58,7 @@ object AimTrainer : GameGraphics {
     lateinit var framebuffer: ResizableFramebuffer
     lateinit var renderLayer: ResizableFramebuffer.ResizableColorLayer
     val taskManager = ConcurrentTaskManager("AimTrainer TaskManager")
-    var useFramebuffer = false
+    var useFramebuffer = false; private set
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
