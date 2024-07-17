@@ -1,6 +1,5 @@
 package net.spartanb312.everett.graphics
 
-import net.spartanb312.everett.graphics.RenderSystem.initialMouseValue
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.matrix.cameraProject
 import net.spartanb312.everett.graphics.matrix.perspectivef
@@ -57,44 +56,6 @@ abstract class Camera(
         perspectivef(fov, RenderSystem.widthF / RenderSystem.heightF, zNear, zFar)
         cameraProject(yaw, pitch, position)
         block.invoke(this@Camera)
-    }
-
-    object HaloSeries : Camera() {
-        private var lastMouseX = RenderSystem.originMouseXD
-        private var lastMouseY = RenderSystem.originMouseYD
-        override fun onUpdate(
-            sensitivity: Double,
-            dpiModifier: Double,
-            vRate: Float,
-            hRate: Float,
-            updateCamera: Boolean
-        ) {
-            val mouseX = RenderSystem.originMouseXD
-            val mouseY = RenderSystem.originMouseYD
-            if (updateCamera) {
-                if (lastMouseX == initialMouseValue || lastMouseY == initialMouseValue) {
-                    lastMouseX = mouseX
-                    lastMouseY = mouseY
-                }
-                if (mouseX != lastMouseX || mouseY != lastMouseY) {
-                    val diffX = RenderSystem.originMouseXD - lastMouseX
-                    val diffY = RenderSystem.originMouseYD - lastMouseY
-                    lastMouseX = RenderSystem.originMouseXD
-                    lastMouseY = RenderSystem.originMouseYD
-                    yaw += (diffX * 0.0371248537 * sensitivity * hRate * dpiModifier).toFloat()
-                    pitch -= (diffY * 0.0371248537 * sensitivity * vRate * dpiModifier).toFloat()
-                    while (true) {
-                        if (yaw > 360f) yaw -= 360f
-                        else if (yaw < 0f) yaw += 360f
-                        else break
-                    }
-                    pitch = pitch.coerceIn(-89.5f..89.5f)
-                }
-            } else {
-                lastMouseX = mouseX
-                lastMouseY = mouseY
-            }
-        }
     }
 
     companion object {

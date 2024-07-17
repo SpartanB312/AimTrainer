@@ -8,6 +8,7 @@ import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.game.training.custom.impls.CustomDMR
 import net.spartanb312.everett.game.training.custom.impls.CustomFollowing
 import net.spartanb312.everett.game.training.custom.impls.CustomNormal
+import net.spartanb312.everett.game.training.custom.impls.CustomReaction
 import net.spartanb312.everett.utils.config.Configurable
 import net.spartanb312.everett.utils.config.setting.AbstractSetting
 import net.spartanb312.everett.utils.config.setting.at
@@ -23,10 +24,22 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
     private val settingGroups = arrayOf(
         SettingGroup(Modes.Normal, "Custom-Normal"),
         SettingGroup(Modes.DMR, "Custom-DMR"),
-        SettingGroup(Modes.Following, "Custom-Following")
+        SettingGroup(Modes.Following, "Custom-Following"),
+        SettingGroup(Modes.ReactionTest, "Custom-Reaction")
     )
 
     class SettingGroup(private val mode: Modes, classifier: String) : Configurable(classifier, Language) {
+
+        // Reaction
+        val rounds by setting("Rounds", 5, 1..20, 1)
+            .lang("回合数", "回合數")
+            .limit(Modes.ReactionTest)
+        val minInterval by setting("Min Interval", 2000, 1000..5000, 100)
+            .lang("最小间隔", "最小間隔")
+            .limit(Modes.ReactionTest)
+        val randomGap by setting("Random Gap", 3000, 1000..5000, 100)
+            .lang("随机增量", "隨機增量")
+            .limit(Modes.ReactionTest)
 
         // Shared setting
         val amount by setting("Amount", 6, 0..50, 1)
@@ -160,7 +173,12 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
                     punishmentBase
                 )
 
-            }.reset()
+                Modes.ReactionTest -> CustomReaction(
+                    rounds,
+                    minInterval,
+                    randomGap
+                )
+            }
         }
     }
 
@@ -168,7 +186,8 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
     enum class Modes(private val settingGroupIndex: Int = 0) {
         Normal(0),
         DMR(1),
-        Following(2);
+        Following(2),
+        ReactionTest(3);
 
         val settingGroup: SettingGroup get() = settingGroups[settingGroupIndex]
     }

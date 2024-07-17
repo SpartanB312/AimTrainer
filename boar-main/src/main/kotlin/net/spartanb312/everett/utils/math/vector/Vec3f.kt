@@ -38,7 +38,7 @@ data class Vec3f(val x: Float = 0f, val y: Float = 0f, val z: Float = 0f) {
 
     operator fun times(multiplier: Float) = times(multiplier, multiplier, multiplier)
 
-    fun times(x: Float, y: Float, z: Float) = Vec3f(this.x * x, this.y * y, this.y * z)
+    fun times(x: Float, y: Float, z: Float) = Vec3f(this.x * x, this.y * y, this.z * z)
 
     // Minus
     operator fun minus(vec3f: Vec3f) = minus(vec3f.x, vec3f.y, vec3f.z)

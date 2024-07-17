@@ -13,7 +13,11 @@ import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
 import kotlin.random.Random
 
-class ReactionTest : Training(), TrainingInfoContainer by Companion {
+open class ReactionTest(
+    private val rounds: Int,
+    private val start: Long,
+    private val gap: Long
+) : Training(), TrainingInfoContainer by Companion {
 
     override val errorAngle = 0f
     override val showingScore = 0
@@ -25,7 +29,7 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
 
     companion object : TrainingInfo("Reaction Test", "Test your reaction", "Miscellaneous") {
         override fun new(scene: Scene): Training {
-            return ReactionTest()
+            return ReactionTest(5, 2000, 5000)
         }
     }
 
@@ -41,16 +45,18 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
         Finished
     }
 
+    private val interval get() = Random.nextLong(start * 1000000, (start + gap) * 1000000)
+
     private var state = States.Waiting
     private var round = 1
-    private var nextTime = System.nanoTime() + Random.nextLong(2000000000, 5000000000)
+    private var nextTime = System.nanoTime() + interval
     private var lastReactionTime = 0L
     private val reactionTimeList = mutableListOf<Int>()
     private var displayed = false
     private var predict = 0
 
     override fun render2D() {
-        if (round == 6) state = States.Finished
+        if (round == rounds + 1) state = States.Finished
         if (state == States.Waiting && System.nanoTime() >= nextTime) state = States.Click
         when (state) {
             States.Waiting -> {
@@ -61,7 +67,7 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
                     RS.height,
                     ColorRGB.DARK_RED.mix(ColorRGB.BLACK)
                 )
-                FontRendererBig.drawCenteredStringWithShadow("Waiting for green($round/5).", RS.centerX, RS.centerY)
+                FontRendererBig.drawCenteredStringWithShadow("Waiting for green($round/$rounds).", RS.centerX, RS.centerY)
             }
 
             States.Click -> {
@@ -168,12 +174,12 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
 
             States.TooFast -> {
                 state = States.Waiting
-                nextTime = currentTime + Random.nextLong(2000000000, 5000000000)
+                nextTime = currentTime + interval
             }
 
             States.Clicked -> {
                 state = States.Waiting
-                nextTime = currentTime + Random.nextLong(2000000000, 5000000000)
+                nextTime = currentTime + interval
             }
 
             States.Finished -> {}
@@ -183,7 +189,7 @@ class ReactionTest : Training(), TrainingInfoContainer by Companion {
     override fun reset(): Training {
         state = States.Waiting
         medalCounter.reset()
-        nextTime = System.nanoTime() + Random.nextLong(2000000000, 5000000000)
+        nextTime = System.nanoTime() + interval
         predict = 0
         round = 1
         lastReactionTime = 0L

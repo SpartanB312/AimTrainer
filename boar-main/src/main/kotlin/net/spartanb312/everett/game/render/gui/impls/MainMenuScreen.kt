@@ -87,7 +87,7 @@ object MainMenuScreen : GuiScreen() {
         val nameStartXOffset = 300f * scale * 1.35f
         FontRendererMain.drawColoredString(
             //"A&bg&fe&bn&rt4&b1&f6&bS&rHD",
-            "FluixCarvin1186",
+            "Spartan1186",
             RS.widthF * 0.93f - nameStartXOffset,
             RS.heightF * 0.115f + 34f * scale,
             //ColorRGB(255, 105, 180).alpha(224),

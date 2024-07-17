@@ -256,6 +256,7 @@ class UnicodeFontRenderer(
 
         //Scale
         val scale = scale0 * this.scaleFactor
+        var isReady = false
 
         RS.matrixLayer.scope {
             if (scale != 1f) {
@@ -293,7 +294,7 @@ class UnicodeFontRenderer(
                 if (currentChunk != chunk) {
                     chunk = currentChunk
                     val texture = textures[chunk]
-                    if (texture == null) {
+                    isReady = if (texture == null) {
                         // If this is a bad chunk then we skip it
                         if (badChunks[chunk] == 1) continue
                         val newTexture = try {
@@ -307,8 +308,12 @@ class UnicodeFontRenderer(
                         } else {
                             textures[chunk] = newTexture
                             newTexture.bindTexture()
+                            newTexture.available
                         }
-                    } else texture.bindTexture()
+                    } else {
+                        texture.bindTexture()
+                        texture.available
+                    }
                 }
                 val data = charDataArray.getOrNull(char.code) ?: continue
 
@@ -337,7 +342,7 @@ class UnicodeFontRenderer(
                         endX,
                         startY,
                         0f,
-                        data.u1,
+                        if (!isReady) -233333f else data.u1,
                         data.v,
                         rightColor
                     )
@@ -346,7 +351,7 @@ class UnicodeFontRenderer(
                         startX,
                         startY,
                         0f,
-                        data.u,
+                        if (!isReady) -233333f else data.u,
                         data.v,
                         leftColor
                     )
@@ -355,7 +360,7 @@ class UnicodeFontRenderer(
                         endX,
                         endY,
                         0f,
-                        data.u1,
+                        if (!isReady) -233333f else data.u1,
                         data.v1,
                         rightColor
                     )
@@ -364,7 +369,7 @@ class UnicodeFontRenderer(
                         startX,
                         endY,
                         0f,
-                        data.u,
+                        if (!isReady) -233333f else data.u,
                         data.v1,
                         leftColor
                     )

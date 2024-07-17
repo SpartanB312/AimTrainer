@@ -19,12 +19,10 @@ import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.GameGraphics
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVBO
-import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
 import net.spartanb312.everett.graphics.framebuffer.ResizableFramebuffer
 import net.spartanb312.everett.graphics.matrix.applyOrtho
 import net.spartanb312.everett.graphics.matrix.scope
-import net.spartanb312.everett.graphics.model.Model
+import net.spartanb312.everett.graphics.model.impls.ExternalModel
 import net.spartanb312.everett.graphics.model.mesh.MeshDNSH
 import net.spartanb312.everett.graphics.texture.drawTexture
 import net.spartanb312.everett.launch.Module
@@ -43,17 +41,17 @@ import org.lwjgl.glfw.GLFW
 @Module(
     name = "Aim Trainer",
     version = AimTrainer.AIM_TRAINER_VERSION,
-    description = "An aim trainer for Halo Infinite",
+    description = "An aim trainer originally for Halo Infinite",
     author = "B_312"
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240621"
+    const val AIM_TRAINER_VERSION = "1.0.0.240718"
 
     var isReady = false
     private val tickTimer = Timer()
 
-    val model = Model("assets/everett/Everett.obj", TextureManager) { MeshDNSH(it) }
+    val model = ExternalModel("assets/everett/Everett.obj", TextureManager) { MeshDNSH(it) }
 
     lateinit var framebuffer: ResizableFramebuffer
     lateinit var renderLayer: ResizableFramebuffer.ResizableColorLayer
@@ -213,8 +211,6 @@ object AimTrainer : GameGraphics {
         val vSync = VideoOption.videoMode.value == VideoOption.VideoMode.VSync
         GLHelper.vSync = vSync
         if (!vSync && VideoOption.videoMode.value != VideoOption.VideoMode.Unlimited) Sync.sync(VideoOption.fpsLimit)
-        PersistentMappedVertexBuffer.onSync()
-        PersistentMappedVBO.onSync()
     }
 
     override fun onResolutionUpdate(oldWith: Int, oldHeight: Int, newWidth: Int, newHeight: Int) {

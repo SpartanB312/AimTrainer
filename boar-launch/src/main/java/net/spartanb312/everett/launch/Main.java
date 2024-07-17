@@ -1,12 +1,13 @@
 package net.spartanb312.everett.launch;
 
-import java.io.File;
+import java.io.*;
+import java.net.URL;
 import java.util.Arrays;
 
 @Module(name = "Launch Wrapper", version = Main.LAUNCH_WRAPPER_VERSION, description = "Bootstrap launch wrapper", author = "B_312")
 public class Main {
 
-    public static final String LAUNCH_WRAPPER_VERSION = "1.0.1";
+    public static final String LAUNCH_WRAPPER_VERSION = "1.0.2";
 
     public static void main(String[] args) throws Exception {
         LaunchLogger.info("Initializing launch wrapper...");
@@ -32,10 +33,30 @@ public class Main {
                 }
             });
             LaunchClassLoader.loadJarFile("engine/boar-main.jar");
-            LaunchClassLoader.INSTANCE.initKotlinObject("net.spartanb312.everett.launch.Entry");
+            URL manifest = LaunchClassLoader.INSTANCE.findResource("META-INF/MANIFEST.MF");
+            LaunchClassLoader.INSTANCE.initKotlinObject(findEntry(manifest));
         } else {
-            ExternalClassLoader.invokeKotlinObjectField(Class.forName("net.spartanb312.everett.launch.Entry"));
+            URL manifest = Main.class.getResource("/META-INF/MANIFEST.MF");
+            assert manifest != null;
+            ExternalClassLoader.invokeKotlinObjectField(Class.forName(findEntry(manifest)));
         }
+    }
+
+    private static String findEntry(URL manifest) {
+        var entry = "net.spartanb312.everett.launch.Entry";
+        try {
+            InputStreamReader ir = new InputStreamReader(manifest.openStream());
+            BufferedReader br = new BufferedReader(ir);
+            String line;
+            while ((line = br.readLine()) != null) {
+                if (line.startsWith("Launch-Entry: ")) {
+                    entry = line.substring(14);
+                }
+            }
+        } catch (IOException ignored) {
+        }
+        LaunchLogger.info("Using Entry: " + entry);
+        return entry;
     }
 
     private interface FileTask {

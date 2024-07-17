@@ -1,13 +1,14 @@
 package net.spartanb312.everett.graphics.framebuffer
 
 import net.spartanb312.everett.graphics.GLHelper
+import net.spartanb312.everett.graphics.GLObject
 import net.spartanb312.everett.graphics.texture.Texture
 import net.spartanb312.everett.graphics.texture.delegate.FramebufferTexture
 import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.opengl.GL11
 import org.lwjgl.opengl.GL30
 
-interface Framebuffer {
+interface Framebuffer : GLObject {
 
     val width: Int
     val height: Int
@@ -18,6 +19,7 @@ interface Framebuffer {
     val colorAttachments: MutableList<ColorLayer>
 
     val texture get() = colorAttachments[0].texture
+    override val id get() = fbo
 
     fun bindFramebuffer(viewPort: Boolean = true) {
         GLHelper.bindFramebuffer(fbo)

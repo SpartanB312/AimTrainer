@@ -8,7 +8,6 @@ import net.spartanb312.everett.game.render.gui.SubscribedRenderer
 import net.spartanb312.everett.graphics.RenderSystem
 import net.spartanb312.everett.graphics.texture.Texture
 import net.spartanb312.everett.physics.PhysicsSystem
-import net.spartanb312.everett.utils.Logger
 
 abstract class Training : SubscribedRenderer, TrainingInfoContainer {
 
@@ -41,7 +40,6 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     }
 
     open fun reset(): Training {
-        Logger.info("Start training: $trainingName")
         results.clear()
         waitTime = AccessibilityOption.waitTime
         Player.reset()

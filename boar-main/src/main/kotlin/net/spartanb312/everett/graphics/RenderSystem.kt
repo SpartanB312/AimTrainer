@@ -1,6 +1,8 @@
 package net.spartanb312.everett.graphics
 
 import net.spartanb312.everett.graphics.OpenGL.*
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVBO
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
 import net.spartanb312.everett.graphics.event.EngineLoopEvent
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.launch.Module
@@ -265,6 +267,8 @@ object RenderSystem : Thread() {
                 activeFrames = activeFrames.coerceAtMost(rtoLimit)
             }
             EngineLoopEvent.Sync.Pre.post()
+            PersistentMappedVertexBuffer.onSync()
+            PersistentMappedVBO.onSync()
             gameGraphics.onSync()
             EngineLoopEvent.Sync.Post.post()
             profiler.start()

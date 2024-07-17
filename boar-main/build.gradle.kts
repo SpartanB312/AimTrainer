@@ -112,6 +112,11 @@ tasks {
 
     jar {
         exclude("assets/**")
+        manifest {
+            attributes(
+                "Launch-Entry" to "net.spartanb312.everett.launch.Entry"
+            )
+        }
     }
 
     "build" {

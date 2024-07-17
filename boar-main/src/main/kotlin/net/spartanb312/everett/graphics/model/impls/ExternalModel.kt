@@ -1,6 +1,7 @@
-package net.spartanb312.everett.graphics.model
+package net.spartanb312.everett.graphics.model.impls
 
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
+import net.spartanb312.everett.graphics.model.*
 import net.spartanb312.everett.graphics.texture.MipmapTexture
 import net.spartanb312.everett.graphics.texture.loader.TextureLoader
 import net.spartanb312.everett.utils.Logger
@@ -11,15 +12,13 @@ import org.lwjgl.system.MemoryUtil
 import java.io.File
 import java.nio.IntBuffer
 
-class Model(
+class ExternalModel(
     private val path: String,
     private val textureLoader: TextureLoader? = null,
     private val processMesh: (MeshData) -> Mesh
-) {
+) : AbstractModel() {
 
     private val dir = path.substringBeforeLast("/")
-    private val textures = mutableListOf<ModelTexture>()
-    private val meshes = mutableListOf<Mesh>()
 
     fun drawModel(scope: MatrixLayerStack.MatrixScope) {
         meshes.forEach { with(it) { scope.draw() } }

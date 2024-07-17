@@ -24,7 +24,7 @@ import kotlin.math.sin
 
 object Player : EntityPlayer(), Controller {
 
-    val camera: Camera = Camera.HaloSeries
+    val camera: Camera = CameraImpl
     var lastRayTracedTarget: Entity? = null
     var rayTracedRate: Float = 0f
     val offsetPos get() = pos.plus(0.001f, 0.001f, 0.001f)

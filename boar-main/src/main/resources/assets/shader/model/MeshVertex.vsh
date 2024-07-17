@@ -7,8 +7,12 @@ layout (location = 2) in vec3 normal;
 uniform mat4 matrix;
 
 out vec2 uv;
+out vec3 fragPosVec;
+out vec3 normaVec;
 
 void main() {
     gl_Position = matrix * vec4(position, 1.0);
     uv = texCoords;
+    fragPosVec = position;
+    normaVec = normal;
 }

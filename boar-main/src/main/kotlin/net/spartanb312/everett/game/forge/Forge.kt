@@ -3,8 +3,8 @@ package net.spartanb312.everett.game.forge
 import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Language.lang
+import net.spartanb312.everett.game.render.BallRenderer
 import net.spartanb312.everett.game.render.CrosshairRenderer
-import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.MainMenuScreen
 import net.spartanb312.everett.game.render.gui.impls.OptionScreen
@@ -13,11 +13,15 @@ import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
 import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.graphics.Skybox
-import net.spartanb312.everett.graphics.matrix.newScope
+import net.spartanb312.everett.graphics.matrix.scalef
+import net.spartanb312.everett.graphics.matrix.scope
+import net.spartanb312.everett.graphics.matrix.translatef
+import net.spartanb312.everett.graphics.model.mesh.lightPosition
+import net.spartanb312.everett.graphics.scene.Scene3D
+import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.glfw.GLFW
 
-object Forge {
+object Forge : Scene3D() {
 
     fun start() {
         SceneManager.switchScene(ForgeScene)
@@ -31,6 +35,23 @@ object Forge {
         CrosshairRenderer.disable()
     }
 
+    //private val attribute = buildAttribute(24) {
+    //    float(0, 3, GLDataType.GL_FLOAT, false) // Pos
+    //    float(1, 4, GLDataType.GL_UNSIGNED_BYTE, true) // Color
+    //    float(2, 2, GLDataType.GL_FLOAT, false) // UV
+    //    float(3,)
+    //}
+    //private val vao = PersistentMappedVBO.createVao(attribute)
+    //private val shader = Shader("assets/shader/lighting/test.vsh", "assets/shader/lighting/test.fsh")
+
+    override fun onRender() {
+        RS.matrixLayer.scope {
+            scalef(10f, 10f, 10f)
+            translatef(0f,-0.55f,0f)
+            AimTrainer.model.drawModel(this)
+        }
+    }
+
     object ForgeScene : Scene() {
 
         private val pauseScreen = PauseScreen(this).apply {
@@ -42,33 +63,23 @@ object Forge {
             buttons.add(PauseScreen.Button("Menu".lang("菜单", "菜單")) { close() })
         }
 
-        private val skybox = Skybox(
-            -200f,
-            -200f,
-            -200f,
-            200f,
-            200f,
-            200f,
-            TextureManager.down,
-            TextureManager.up,
-            TextureManager.left,
-            TextureManager.front,
-            TextureManager.right,
-            TextureManager.back
-        )
-
         override fun onInit() {
             Language.update(true)
         }
 
         override fun render2D() {
-            //Radar.render2D()
-            //EnergyShield.render2D()
+
         }
 
         override fun render3D() {
-            skybox.onRender3D()
-            AimTrainer.model.drawModel(RS.matrixLayer.newScope)
+            BallRenderer.render(
+                lightPosition.x,
+                lightPosition.y,
+                lightPosition.z,
+                0.5f,
+                ColorRGB.GOLD.mix(ColorRGB.WHITE, 0.5f)
+            )
+            onRender()
         }
 
         override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
