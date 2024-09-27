@@ -6,9 +6,9 @@ uniform vec2 resolution;
 
 out vec4 FragColor;
 
-float mod289(float x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 mod289(vec4 x){ return x - floor(x * (1.0 / 289.0)) * 289.0; }
-vec4 perm(vec4 x){ return mod289(((x * 34.0) + 1.0) * x); }
+float mod289(float x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 mod289(vec4 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
+vec4 perm(vec4 x) { return mod289(((x * 34.0) + 1.0) * x); }
 
 float noise(vec3 p){
     vec3 a = floor(p);
@@ -31,6 +31,7 @@ float noise(vec3 p){
 
     return o4.y * d.y + o4.x * (1.0 - d.y);
 }
+
 float field(in vec3 p, float s) {
     float strength = 7. + .03 * log(1.e-6 + fract(sin(time) * 4373.11));
     float accum = s/4.;
@@ -47,7 +48,6 @@ float field(in vec3 p, float s) {
     return max(0., 5. * accum / tw - .7);
 }
 
-// Less iterations for second layer
 float field2(in vec3 p, float s) {
     float strength = 7. + .03 * log(1.e-6 + fract(sin(time) * 4373.11));
     float accum = s/4.;
@@ -64,8 +64,7 @@ float field2(in vec3 p, float s) {
     return max(0., 5. * accum / tw - .7);
 }
 
-vec3 nrand3(vec2 co)
-{
+vec3 nrand3(vec2 co) {
     vec3 a = fract(cos(co.x*8.3e-3 + co.y)*vec3(1.3e5, 4.7e5, 2.9e5));
     vec3 b = fract(sin(co.x*0.3e-3 + co.y)*vec3(8.1e5, 1.0e5, 0.1e5));
     vec3 c = mix(a, b, 0.5);
@@ -77,27 +76,20 @@ void main(void) {
     vec2 uvs = uv * resolution.xy / max(resolution.x, resolution.y);
     vec3 p = vec3(uvs / 4., 0) + vec3(1., -1.3, 0.);
     p += .2 * vec3(sin(time / 16.), sin(time / 12.), sin(time / 128.));
-
     float freqs[4];
-    //Sound
     freqs[0] = noise(vec3(0.01*100.0, 0.25, time/10.0));
     freqs[1] = noise(vec3(0.07*100.0, 0.25, time/10.0));
     freqs[2] = noise(vec3(0.15*100.0, 0.25, time/10.0));
     freqs[3] = noise(vec3(0.30*100.0, 0.25, time/10.0));
-
     float t = field(p, freqs[2]);
     float v = (1. - exp((abs(uv.x) - 1.) * 6.)) * (1. - exp((abs(uv.y) - 1.) * 6.));
-
-    //Lop Tinh Van
     vec3 p2 = vec3(uvs / (4.+sin(time*0.11)*0.2+0.2+sin(time*0.15)*0.3+0.4), 1.5) + vec3(2., -1.3, -1.);
     p2 += 0.25 * vec3(sin(time / 16.), sin(time / 12.), sin(time / 128.));
     float t2 = field2(p2, freqs[3]);
     vec4 c2 = mix(.4, 1., v) * vec4(1.3 * t2 * t2 * t2, 1.8  * t2 * t2, t2* freqs[0], t2);
-
     vec2 seed = p.xy * 2.0;
     seed = floor(seed * resolution.x);
     vec3 rnd = nrand3(seed);
     vec4 starcolor = vec4(pow(rnd.y, 30.0));
-
     FragColor = mix(freqs[3]-.3, 1., v) * vec4(1.5*freqs[2] * t * t* t, 1.2*freqs[1] * t * t, freqs[3]*t, 1.0)+c2+starcolor;
 }

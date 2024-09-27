@@ -20,7 +20,7 @@ abstract class Crosshair(
 ) : SettingRegister<Crosshair> {
 
     val settings = mutableListOf<AbstractSetting<*>>()
-    val resetTime = resetTime.ceilToInt()
+    open val resetTime = resetTime.ceilToInt()
     protected abstract var clickTime: Long
     open val overrideErrorAngle = -1f
 

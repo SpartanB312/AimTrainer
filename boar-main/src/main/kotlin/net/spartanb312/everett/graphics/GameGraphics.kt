@@ -7,6 +7,8 @@ interface GameGraphics {
 
     fun Profiler.onLoop() {}
 
+    fun onFramebufferDrawing() {}
+
     fun onKeyCallback(key: Int, action: Int, modifier: Int) {}
 
     fun onScrollCallback(direction: Int) {}

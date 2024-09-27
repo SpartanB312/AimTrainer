@@ -59,4 +59,15 @@ class Timer(val timeUnit: Duration = Duration.Millisecond) {
         }
     }
 
+    fun tps(tps: Int, block: () -> Unit, elseBlock: (() -> Unit)) {
+        val currentNanoTime = System.nanoTime()
+        val delayNanoTime = ((1000000000.0 / tps).toLong() - offset).coerceAtLeast(0)
+        val timeLapsed = currentNanoTime - time
+        if (timeLapsed >= delayNanoTime) {
+            offset = timeLapsed - delayNanoTime
+            time = currentNanoTime
+            block()
+        } else elseBlock.invoke()
+    }
+
 }

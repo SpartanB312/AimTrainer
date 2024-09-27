@@ -46,12 +46,12 @@ import org.lwjgl.glfw.GLFW
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240718"
+    const val AIM_TRAINER_VERSION = "1.0.0.240928"
 
     var isReady = false
     private val tickTimer = Timer()
 
-    val model = ExternalModel("assets/everett/Everett.obj", TextureManager) { MeshDNSH(it) }
+    val model = ExternalModel("assets/everett/everett.obj", TextureManager) { MeshDNSH(it) }
 
     lateinit var framebuffer: ResizableFramebuffer
     lateinit var renderLayer: ResizableFramebuffer.ResizableColorLayer
@@ -137,6 +137,23 @@ object AimTrainer : GameGraphics {
         if (useFramebuffer) framebuffer.unbindFramebuffer()
         profiler("Render 2D")
 
+        // Tick (60TPS)
+        tickTimer.tps(60) {
+            TickEvent.Pre.post()
+            SceneManager.onTick()
+            Render2DManager.onTick()
+            BGMPlayer.onTick()
+            GunfireAudio.onTick()
+            TickEvent.Post.post()
+        }
+        profiler("Tick")
+
+        // Physics
+        ControlOption.checkPhysicsThread()
+        profiler("Physics")
+    }
+
+    override fun onFramebufferDrawing() {
         // Framebuffer
         if (useFramebuffer) {
             //glClear(GL_COLOR_BUFFER_BIT)
@@ -157,23 +174,7 @@ object AimTrainer : GameGraphics {
                     0
                 )
             }
-            profiler("Framebuffer")
         }
-
-        // Tick (60TPS)
-        tickTimer.tps(60) {
-            TickEvent.Pre.post()
-            SceneManager.onTick()
-            Render2DManager.onTick()
-            BGMPlayer.onTick()
-            GunfireAudio.onTick()
-            TickEvent.Post.post()
-        }
-        profiler("Tick")
-
-        // Physics
-        ControlOption.checkPhysicsThread()
-        profiler("Physics")
     }
 
     override fun onKeyCallback(key: Int, action: Int, modifier: Int) {
@@ -210,7 +211,8 @@ object AimTrainer : GameGraphics {
         }
         val vSync = VideoOption.videoMode.value == VideoOption.VideoMode.VSync
         GLHelper.vSync = vSync
-        if (!vSync && VideoOption.videoMode.value != VideoOption.VideoMode.Unlimited) Sync.sync(VideoOption.fpsLimit)
+        if (!vSync && VideoOption.videoMode.value == VideoOption.VideoMode.Custom) Sync.sync(VideoOption.fpsLimit)
+        RS.flexSync = VideoOption.videoMode.value == VideoOption.VideoMode.FlexSync
     }
 
     override fun onResolutionUpdate(oldWith: Int, oldHeight: Int, newWidth: Int, newHeight: Int) {

@@ -40,11 +40,11 @@ object Render2DManager {
     }
 
     fun onRender(mouseX: Double, mouseY: Double) {
+        subscribedRenderers.forEach { it.render2D() }
         if (SceneManager.inTraining) {
             if (VideoOption.radar.value) Radar.render2D()
             if (VideoOption.shield) EnergyShield.render2D()
         }
-        subscribedRenderers.forEach { it.render2D() }
         val currentScreen = currentScreen
         if (currentScreen != null) {
             currentScreen.onRender(mouseX, mouseY)

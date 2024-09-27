@@ -25,7 +25,7 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
 
     fun randomMove(reverse: Boolean, moveSpeed: Float) {
         val scale = 0.01f * moveSpeed
-        vec += Vec3f((-scale..scale).random(), (-scale..scale).random(), (-scale..scale).random())
+        vec += Vec3f((-scale..scale).random(), (-scale..scale).random() * 0.1f, (-scale..scale).random())
         fun Float.correct(): Float {
             val temp = this.coerceIn((-10 * scale)..(10 * scale))
             return if (temp.absoluteValue <= 3 * scale) (temp / temp.absoluteValue) * 3 * scale else temp

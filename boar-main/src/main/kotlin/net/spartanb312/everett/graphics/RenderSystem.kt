@@ -9,6 +9,7 @@ import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.launch.Platform
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.*
+import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW.*
@@ -19,6 +20,7 @@ import org.lwjgl.opengl.NVXGPUMemoryInfo
 import org.lwjgl.opengl.WGLAMDGPUAssociation
 import java.util.concurrent.LinkedBlockingQueue
 import javax.swing.JOptionPane
+import kotlin.math.E
 import kotlin.math.max
 import kotlin.math.sqrt
 import kotlin.system.exitProcess
@@ -69,6 +71,7 @@ object RenderSystem : Thread() {
     inline val displayHeightF get() = displayHeight.toFloat()
     inline val displayWidthD get() = displayWidth.toDouble()
     inline val displayHeightD get() = displayHeight.toDouble()
+    var refreshRate = 0; private set
 
     const val initialMouseValue = Int.MIN_VALUE.toDouble()
     var mouseXD = initialMouseValue; private set
@@ -92,6 +95,13 @@ object RenderSystem : Thread() {
     var rto = true
     const val rtoTime = 5
     val matrixLayer = MatrixLayerStack()
+
+    private val flexTimer = Timer()
+    var flexSync = false
+        set(value) {
+            if (value) flexTimer.reset()
+            field = value
+        }
 
     private val renderThreadJob = LinkedBlockingQueue<Runnable>()
     fun addRenderThreadJob(runnable: Runnable) = renderThreadJob.add(runnable)
@@ -146,6 +156,10 @@ object RenderSystem : Thread() {
             this.start()
         } else this.run()
     }
+
+    private val limitTimer = Timer()
+    private val cps = Counter(1000)
+    private val mps = Counter(1000)
 
     override fun run() {
         actualRenderThread = currentThread()
@@ -300,7 +314,10 @@ object RenderSystem : Thread() {
 
             EngineLoopEvent.SwapBuffer.Pre.post()
             val gpuStartTime = System.nanoTime()
-            glfwSwapBuffers(window)
+            if (flexSync) flexSync() else {
+                gameGraphics.onFramebufferDrawing()
+                glfwSwapBuffers(window)
+            }
             gpuTime = System.nanoTime() - gpuStartTime
             EngineLoopEvent.SwapBuffer.Post.post()
             profiler.profiler("Swap Buffer")
@@ -340,6 +357,10 @@ object RenderSystem : Thread() {
             newHeight
         )
 
+        val monitor = glfwGetPrimaryMonitor()
+        val mode = glfwGetVideoModes(monitor)!!.last()
+        refreshRate = mode.refreshRate()
+
         this.displayWidth = displayWidth
         this.displayHeight = displayHeight
         width = newWidth
@@ -360,6 +381,21 @@ object RenderSystem : Thread() {
             mouseXD = originMouseXD * renderScale
             mouseYD = originMouseYD * renderScale
         }
+    }
+
+    private fun flexSync() {
+        var flag = false
+        limitTimer.tps((refreshRate * E).toInt()) {
+            limitTimer.reset()
+            flag = true
+        }
+        if (flag) {
+            gameGraphics.onFramebufferDrawing()
+            glfwSwapBuffers(window)
+        } else Sync.sync(
+            if (!flexTimer.passed(1000)) Int.MAX_VALUE
+            else refreshRate + (averageFPS * 1.2f).toInt()
+        )
     }
 
 }

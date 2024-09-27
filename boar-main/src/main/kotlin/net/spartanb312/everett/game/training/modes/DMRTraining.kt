@@ -7,6 +7,7 @@ import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.render.BallRenderer
 import net.spartanb312.everett.game.render.CrosshairRenderer
+import net.spartanb312.everett.game.render.HitEffectsRenderer
 import net.spartanb312.everett.game.render.MedalRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
@@ -138,16 +139,17 @@ abstract class DMRTraining(
                 if (killed) {
                     score += onHit(lastHitTimeLapse)
                     reactionTimes.add(lastHitTimeLapse)
-                }
+                    HitEffectsRenderer.killCounter++
+                } else HitEffectsRenderer.hitCounter++
             }
             score = score.coerceAtLeast(0)
             lastShotTime = currentTime
         }
         if (AccessibilityOption.pingSimulate.value) {
-            AimTrainer.taskManager.runLater(AccessibilityOption.ping * 2) {
+            AimTrainer.taskManager.runLater(AccessibilityOption.ping) {
                 RS.addRenderThreadJob { solve() }
             }
-        } else solve()
+        } else { solve() }
     }
 
     override fun onTick() {

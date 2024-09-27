@@ -7,10 +7,7 @@ import net.spartanb312.everett.game.medal.MedalCounter
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.AimAssistOption.bulletAdsorption
 import net.spartanb312.everett.game.option.impls.VideoOption
-import net.spartanb312.everett.game.render.BallRenderer
-import net.spartanb312.everett.game.render.CrosshairRenderer
-import net.spartanb312.everett.game.render.FontRendererBig
-import net.spartanb312.everett.game.render.FontRendererMain
+import net.spartanb312.everett.game.render.*
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.gui.impls.TrainingScreen
@@ -207,14 +204,16 @@ abstract class BallHitTraining(
                 if (it.hp == 0) {
                     // latency
                     if (AccessibilityOption.pingSimulate.value) {
-                        AimTrainer.taskManager.runLater(AccessibilityOption.ping * 2) {
+                        AimTrainer.taskManager.runLater(AccessibilityOption.ping) {
                             RS.addRenderThreadJob {
+                                HitEffectsRenderer.killCounter++
                                 entities.add(generateBall(it))
                                 entities.remove(it)
                                 fadeBalls[it] = System.currentTimeMillis()
                             }
                         }
                     } else {
+                        HitEffectsRenderer.killCounter++
                         entities.add(generateBall(it))
                         entities.remove(it)
                         fadeBalls[it] = System.currentTimeMillis()

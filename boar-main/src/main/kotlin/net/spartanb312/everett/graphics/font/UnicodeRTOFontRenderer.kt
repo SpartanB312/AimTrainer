@@ -122,7 +122,7 @@ class UnicodeRTOFontRenderer(
         if (maxFreq < freq) maxFreq = freq
         if (freq >= (RS.activeFrames).toInt()) {
             cacheL1.getOrPut(code) {
-                val width = _getWidth(text)
+                val width by lazy { _getWidth(text) }
                 StaticText(
                     lazy {
                         linkedStaticFontRenderer.create(

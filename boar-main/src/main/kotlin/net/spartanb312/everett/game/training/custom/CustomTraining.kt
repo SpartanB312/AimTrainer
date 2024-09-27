@@ -34,10 +34,10 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
         val rounds by setting("Rounds", 5, 1..20, 1)
             .lang("回合数", "回合數")
             .limit(Modes.ReactionTest)
-        val minInterval by setting("Min Interval", 2000, 1000..5000, 100)
+        val minInterval by setting("Min Interval", 2000, 500..5000, 100)
             .lang("最小间隔", "最小間隔")
             .limit(Modes.ReactionTest)
-        val randomGap by setting("Random Gap", 3000, 1000..5000, 100)
+        val randomGap by setting("Random Gap", 3000, 500..5000, 100)
             .lang("随机增量", "隨機增量")
             .limit(Modes.ReactionTest)
 

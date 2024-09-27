@@ -8,6 +8,7 @@ import net.spartanb312.everett.game.audio.GunfireAudio
 import net.spartanb312.everett.game.crosshair.Crosshair
 import net.spartanb312.everett.game.option.impls.CrosshairOption
 import net.spartanb312.everett.game.render.CrosshairRenderer
+import net.spartanb312.everett.game.render.HitEffectsRenderer
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.RenderSystem
@@ -21,6 +22,7 @@ import net.spartanb312.everett.utils.config.setting.*
 import net.spartanb312.everett.utils.config.setting.number.format
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.math.ConvergeUtil.converge
+import net.spartanb312.everett.utils.math.ceilToInt
 import net.spartanb312.everett.utils.math.toRadian
 import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.misc.DisplayEnum
@@ -29,8 +31,10 @@ import net.spartanb312.everett.utils.timing.Timer
 import kotlin.math.max
 import kotlin.math.tan
 
-object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.0f) {
+object CrosshairM392E : GunCrosshair, Crosshair(1000f / 2.715f, 0.5f, 1.0f) {
 
+    private val resetMode by setting("M392E-Firing Rate", M392ResetTime.NewBandit)
+        .alias("Firing Rate").lang("开火速率", "開火速率")
     private val outerCircle = setting("M392E-Outer Circle", OuterCircle.SpecifiedAngle)
         .alias("Outer Circle").lang("准星外圈", "準星外圈")
     private val specifiedAngle by setting("M392E-Specified Render Angle", 1.25f, 0f..10f, 0.05f).format("0.00")
@@ -62,6 +66,8 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.0f) {
 
     private val colorTimer = Timer()
     private var colorRate = 0F
+
+    override val resetTime get() = resetMode.time
 
     override val overrideErrorAngle: Float
         get() = if (useSpecifiedAngle.value) errorAngle2 else -1f
@@ -172,7 +178,12 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.0f) {
         else 1f + ((1f - progress) / 0.5f) * 0.25f
         val angle = progress * -90f + 45f
         translatef(centerX, centerY, 0f)
-        rotatef(angle + 45f, Vec3f(0f, 0f, 1f))
+
+        rotatef(45f, Vec3f(0f, 0f, 1f))
+        HitEffectsRenderer.acceptCount(outerRadius, scale, 500)
+        if (!shadow) HitEffectsRenderer.onRender(layer, color)
+
+        rotatef(angle, Vec3f(0f, 0f, 1f))
         scalef(scale2, scale2, scale2)
 
         // Inner circle
@@ -189,6 +200,12 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 3f, 0.5f, 1.0f) {
         AdsorptionAngle("Adsorption".lang("吸附角度", "吸附角度"));
 
         override val displayName by multiText
+    }
+
+    enum class M392ResetTime(override val displayName: CharSequence, val time: Int) : DisplayEnum {
+        OldBandit("Old M932(3.0)", (1000f / 3.0f).ceilToInt()),
+        OldM392Evo("Old EVO(2.9)", (1000f / 2.9f).ceilToInt()),
+        NewBandit("New EVO(2.715)", (1000f / 2.715f).ceilToInt())
     }
 
 }

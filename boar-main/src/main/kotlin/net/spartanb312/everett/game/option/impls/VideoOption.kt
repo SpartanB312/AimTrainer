@@ -102,7 +102,8 @@ object VideoOption : Option("Video") {
     enum class VideoMode(multiText: MultiText) : DisplayEnum {
         VSync("Vertical Sync".lang("垂直同步", "垂直同步")),
         Custom("Custom".lang("自定义", "自訂")),
-        Unlimited("Unlimited".lang("解锁", "無上限"));
+        Unlimited("Unlimited".lang("解锁", "無上限")),
+        FlexSync("Flex Sync".lang("Flex同步", "Flex同步"));
 
         override val displayName by multiText
     }
