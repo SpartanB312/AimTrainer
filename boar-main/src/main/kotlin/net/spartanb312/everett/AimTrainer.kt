@@ -156,7 +156,7 @@ object AimTrainer : GameGraphics {
     override fun onFramebufferDrawing() {
         // Framebuffer
         if (useFramebuffer) {
-            //glClear(GL_COLOR_BUFFER_BIT)
+            glClear(GL_COLOR_BUFFER_BIT)
             RS.matrixLayer.scope {
                 GLHelper.blend = true
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
