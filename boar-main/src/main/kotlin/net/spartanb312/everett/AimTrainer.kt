@@ -46,7 +46,7 @@ import org.lwjgl.glfw.GLFW
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.240928"
+    const val AIM_TRAINER_VERSION = "1.0.0.241002"
 
     var isReady = false
     private val tickTimer = Timer()

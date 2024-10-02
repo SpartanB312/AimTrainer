@@ -32,15 +32,23 @@ object FontCacheManager : CacheManager("FontRenderer") {
         }
     }
 
-}
+    fun reset() {
+        FontRendererMain.reset()
+        FontRendererBig.reset()
+        FontRendererROG.reset()
+        FontRendererBold.reset()
+        FontRendererIcon.reset()
+    }
 
+}
 
 object FontRendererMain : FontRenderer by RTOFontRenderer(
     "assets/font/Microsoft YaHei UI.ttc",
     50f,
     scaleFactor = 0.5f,
     chunkSize = 49,
-    textureLoader = TextureManager
+    textureLoader = TextureManager,
+    asyncLoad = { AccessibilityOption.asyncFontLoad }
 )
 
 object FontRendererBig : FontRenderer by RTOFontRenderer(
@@ -48,7 +56,8 @@ object FontRendererBig : FontRenderer by RTOFontRenderer(
     50f,
     scaleFactor = 1f,
     chunkSize = 49,
-    textureLoader = TextureManager
+    textureLoader = TextureManager,
+    asyncLoad = { AccessibilityOption.asyncFontLoad }
 )
 
 object FontRendererBold : FontRenderer by FontRenderer(
@@ -58,7 +67,8 @@ object FontRendererBold : FontRenderer by FontRenderer(
     chunkSize = 49,
     textureLoader = TextureManager,
     style = Font.BOLD,
-    useMipmap = false
+    useMipmap = false,
+    asyncLoad = { AccessibilityOption.asyncFontLoad }
 )
 
 object FontRendererROG : FontRenderer by FontRenderer(
@@ -67,7 +77,8 @@ object FontRendererROG : FontRenderer by FontRenderer(
     scaleFactor = 1f,
     imgSize = 1024,
     chunkSize = 49,
-    textureLoader = TextureManager
+    textureLoader = TextureManager,
+    asyncLoad = { AccessibilityOption.asyncFontLoad }
 )
 
 object FontRendererIcon : FontRenderer by FontRenderer(
@@ -75,7 +86,8 @@ object FontRendererIcon : FontRenderer by FontRenderer(
     50f,
     scaleFactor = 1f,
     chunkSize = 49,
-    textureLoader = TextureManager
+    textureLoader = TextureManager,
+    asyncLoad = { AccessibilityOption.asyncFontLoad }
 )
 
 object FontRendererASCII : FontRenderer by FontRenderer(

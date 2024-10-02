@@ -18,7 +18,8 @@ fun LocalFontRenderer(
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
-    textureLoader: TextureLoader? = null
+    textureLoader: TextureLoader? = null,
+    asyncLoad: () -> Boolean = { true }
 ): FontRenderer = UnicodeFontRenderer(
     Font(name, style, size.toInt()),
     size.toInt(),
@@ -30,7 +31,8 @@ fun LocalFontRenderer(
     useMipmap,
     qualityLevel,
     scaleFactor,
-    textureLoader
+    textureLoader,
+    asyncLoad
 )
 
 fun FontRenderer(
@@ -46,7 +48,8 @@ fun FontRenderer(
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
-    textureLoader: TextureLoader? = null
+    textureLoader: TextureLoader? = null,
+    asyncLoad: () -> Boolean = { true }
 ): FontRenderer = UnicodeFontRenderer(
     Font.createFont(type, ResourceHelper.getResourceStream(path)!!)!!
         .deriveFont(size)
@@ -60,7 +63,8 @@ fun FontRenderer(
     useMipmap,
     qualityLevel,
     scaleFactor,
-    textureLoader
+    textureLoader,
+    asyncLoad
 )
 
 fun RTOFontRenderer(
@@ -76,7 +80,8 @@ fun RTOFontRenderer(
     useMipmap: Boolean = false, // Avoid glitching
     qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
-    textureLoader: TextureLoader? = null
+    textureLoader: TextureLoader? = null,
+    asyncLoad: () -> Boolean = { true }
 ): FontRenderer = UnicodeRTOFontRenderer(
     Font.createFont(type, ResourceHelper.getResourceStream(path)!!)!!
         .deriveFont(size)
@@ -90,7 +95,8 @@ fun RTOFontRenderer(
     useMipmap,
     qualityLevel,
     scaleFactor,
-    textureLoader
+    textureLoader,
+    asyncLoad
 )
 
 fun LazyFontRenderer(
@@ -106,7 +112,8 @@ fun LazyFontRenderer(
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
-    textureLoader: TextureLoader? = null
+    textureLoader: TextureLoader? = null,
+    asyncLoad: () -> Boolean = { true }
 ): Lazy<FontRenderer> = lazy {
     FontRenderer(
         path,
@@ -121,7 +128,8 @@ fun LazyFontRenderer(
         useMipmap,
         qualityLevel,
         scaleFactor,
-        textureLoader
+        textureLoader,
+        asyncLoad
     )
 }
 
@@ -139,7 +147,8 @@ fun LocalStaticFontRenderer(
     qualityLevel: Int = 3,
     offsetPixel: Int = 0,
     scaleFactor: Float = 1f,
-    textureLoader: TextureLoader? = null
+    textureLoader: TextureLoader? = null,
+    asyncLoad: () -> Boolean = { true }
 ): StaticFontRenderer = UnicodeStaticFontRenderer(
     text,
     Font(name, style, size.toInt()),
@@ -152,7 +161,8 @@ fun LocalStaticFontRenderer(
     qualityLevel,
     offsetPixel,
     scaleFactor,
-    textureLoader
+    textureLoader,
+    asyncLoad
 )
 
 fun StaticFontRenderer(
@@ -170,7 +180,8 @@ fun StaticFontRenderer(
     qualityLevel: Int = 3,
     offsetPixel: Int = 0,
     scaleFactor: Float = 1f,
-    textureLoader: TextureLoader? = null
+    textureLoader: TextureLoader? = null,
+    asyncLoad: () -> Boolean = { true }
 ): StaticFontRenderer = UnicodeStaticFontRenderer(
     text,
     Font.createFont(type, ResourceHelper.getResourceStream(path)!!)!!
@@ -185,7 +196,8 @@ fun StaticFontRenderer(
     qualityLevel,
     offsetPixel,
     scaleFactor,
-    textureLoader
+    textureLoader,
+    asyncLoad
 )
 
 fun LazyStaticFontRenderer(
@@ -203,7 +215,8 @@ fun LazyStaticFontRenderer(
     qualityLevel: Int = 3,
     offsetPixel: Int = 0,
     scaleFactor: Float = 1f,
-    textureLoader: TextureLoader? = null
+    textureLoader: TextureLoader? = null,
+    asyncLoad: () -> Boolean = { true }
 ): Lazy<StaticFontRenderer> = lazy {
     StaticFontRenderer(
         text,
@@ -220,7 +233,8 @@ fun LazyStaticFontRenderer(
         qualityLevel,
         offsetPixel,
         scaleFactor,
-        textureLoader
+        textureLoader,
+        asyncLoad
     )
 }
 

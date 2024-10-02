@@ -26,6 +26,7 @@ import java.awt.RenderingHints
 import java.awt.image.BufferedImage
 import java.io.File
 import javax.imageio.ImageIO
+import kotlin.math.max
 
 class UnicodeFontRenderer(
     private val font: Font,
@@ -38,7 +39,8 @@ class UnicodeFontRenderer(
     private val useMipmap: Boolean = true,
     private val qualityLevel: Int = 3,
     override var scaleFactor: Float = 1f,
-    private val textureLoader: TextureLoader? = null
+    private val textureLoader: TextureLoader? = null,
+    override val asyncLoad: () -> Boolean = { true }
 ) : FontRenderer {
 
     private val shadowColor = ColorRGB.BLACK.alpha(128)
@@ -47,11 +49,13 @@ class UnicodeFontRenderer(
     override var absoluteHeight = 0
 
     private val chunkAmount = 65536 / chunkSize
-    private val textures = arrayOfNulls<Texture>(chunkAmount)
+    val textures = arrayOfNulls<Texture>(chunkAmount)
     private val badChunks = Array(chunkAmount) { 0 }
     private val loadedChunk = arrayOfNulls<BufferedImage>(chunkAmount)
     override val loadedChunks = mutableSetOf<Int>()
     private val chunkCaches = mutableMapOf<Int, ChunkCache>() // ID, Cache
+
+    private val useAsyncLoader get() = textureLoader != null && asyncLoad.invoke()
 
     fun setScale(scale: Float): UnicodeFontRenderer {
         this.scaleFactor = scale
@@ -61,8 +65,22 @@ class UnicodeFontRenderer(
     init {
         // Init ASCII chunks
         for (chunk in 0 until (256 / chunkSize)) {
-            initChunk(chunk)
+            initChunk(chunk, true)
         }
+    }
+
+    override fun reset() {
+        for (i in 0 until 65536) {
+            charDataArray[i] = null
+        }
+        for (i in 0 until chunkAmount) {
+            textures[i] = null
+            badChunks[i] = 0
+            loadedChunk[i] = null
+        }
+        loadedChunks.clear()
+        chunkCaches.clear()
+        absoluteHeight = 0
     }
 
     override fun initChunkForce(chunk: Int, instantLoad: Boolean) {
@@ -101,51 +119,53 @@ class UnicodeFontRenderer(
                         else RenderingHints.VALUE_ANTIALIAS_OFF
                     )
                     val metrics = it.fontMetrics
-                    var charHeight = 0
+                    val ascent = metrics.ascent
                     var posX = 0
                     var posY = 1
+                    var rowHeight = 0
                     for (index in 0 until chunkSize) {
-                        val dimension = metrics.getStringBounds((chunk * chunkSize + index).toChar().toString(), it)
-                        CharData(
-                            dimension.bounds.width,
-                            dimension.bounds.height
-                        ).also { charData ->
-                            val imgWidth = charData.width + scaledOffset * 2
-                            if (charData.height > charHeight) {
-                                charHeight = charData.height
-                                if (charHeight > absoluteHeight) absoluteHeight =
-                                    charHeight // Set the max height as Font height
-                            }
-                            if (posX + imgWidth > imgSize) {
-                                posX = 0
-                                posY += charHeight
-                                charHeight = 0
-                            }
-                            charData.u = (posX + scaledOffset) / imgSize.toFloat()
-                            charData.v = posY / imgSize.toFloat()
-                            charData.u1 = (posX + scaledOffset + charData.width) / imgSize.toFloat()
-                            charData.v1 = (posY + charData.height) / imgSize.toFloat()
-                            charDataArray[chunk * chunkSize + index] = charData
-                            it.drawString(
-                                (chunk * chunkSize + index).toChar().toString(),
-                                posX + scaledOffset,
-                                posY + metrics.ascent
-                            )
-                            posX += imgWidth
+                        val char = (chunk * chunkSize + index).toChar()
+                        val charWidth = metrics.charWidth(char)
+                        val charHeight = metrics.height
+
+                        val imgWidth = charWidth + scaledOffset * 2
+
+                        if (posX + imgWidth > imgSize) {
+                            posX = 0
+                            posY += rowHeight
+                            rowHeight = 0
                         }
+
+                        if (rowHeight < charHeight) {
+                            rowHeight = charHeight
+                            absoluteHeight = max(absoluteHeight, rowHeight)
+                        }
+
+                        val charData = CharData(charWidth, charHeight)
+                        charData.u = (posX + scaledOffset) / imgSize.toFloat()
+                        charData.v = posY / imgSize.toFloat()
+                        charData.u1 = (posX + scaledOffset + charData.width) / imgSize.toFloat()
+                        charData.v1 = (posY + charData.height) / imgSize.toFloat()
+                        charDataArray[chunk * chunkSize + index] = charData
+                        it.drawString(
+                            char.toString(),
+                            posX + scaledOffset,
+                            posY + ascent
+                        )
+                        posX += imgWidth
                     }
                 }
                 loadedChunk[chunk] = img
                 img
             }
-            val texture: Texture = if (!instantLoad && textureLoader != null) {
+            val texture: Texture = if (!instantLoad && useAsyncLoader) {
                 val texture = LazyTextureContainer(
                     MipmapTexture.lateUpload(GL_RGBA, 3, useMipmap, qualityLevel),
                     asyncJob
                 ).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 }
-                textureLoader.add(texture)
+                textureLoader!!.add(texture)
                 texture
             } else {
                 val img = asyncJob.invoke()
@@ -157,7 +177,7 @@ class UnicodeFontRenderer(
             return texture
         } else {
             Logger.debug("Init chunk $chunk from cache")
-            val texture = if (!instantLoad && textureLoader != null) {
+            val texture = if (!instantLoad && useAsyncLoader) {
                 val texture = LazyTextureContainer(
                     MipmapTexture.lateUpload(GL_RGBA, 3, useMipmap, qualityLevel)
                 ) {
@@ -167,7 +187,7 @@ class UnicodeFontRenderer(
                 }.useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 }
-                textureLoader.add(texture)
+                textureLoader!!.add(texture)
                 texture
             } else {
                 val img = chunkImgSupplier.invoke()
@@ -208,7 +228,7 @@ class UnicodeFontRenderer(
             if (badChunks[chunk] == 1) continue
             if (textures.getOrNull(chunk) == null) {
                 val newTexture = try {
-                    initChunk(chunk)
+                    initChunk(chunk, true)
                 } catch (ignore: Exception) {
                     badChunks[chunk] = 1
                     null
@@ -239,8 +259,6 @@ class UnicodeFontRenderer(
         shadow: Boolean,
     ) {
         GLHelper.blend = true
-        var startX = x
-        var startY = y
 
         //Color
         val alpha = color0.a
@@ -259,12 +277,10 @@ class UnicodeFontRenderer(
         var isReady = false
 
         RS.matrixLayer.scope {
-            if (scale != 1f) {
-                translatef(x, y, 0f)
-                scalef(scale, scale, 1f)
-                startX = 0f
-                startY = 0f
-            }
+            translatef(x, y, 0f)
+            scalef(scale, scale, 1f)
+            var startX = 0f
+            var startY = 0f
             var chunk = -1
             var shouldSkip = false
             for (index in text.indices) {
@@ -326,7 +342,7 @@ class UnicodeFontRenderer(
                         if (missingLastColor && index == text.length - 1) colors[0]
                         else colors[index + 1]
                     } else {
-                        val ratio = ((endX - x) / width).coerceAtMost(colors.size - 1f).coerceAtLeast(0f)
+                        val ratio = (endX / width).coerceAtMost(colors.size - 1f).coerceAtLeast(0f)
                         colors[ratio.floorToInt()].mix(colors[ratio.ceilToInt()], ratio - ratio.floorToInt())
                     }
                 } else currentColor
@@ -598,7 +614,6 @@ class UnicodeFontRenderer(
                             v = data[2].toFloat()
                             v1 = data[3].toFloat()
                         }
-                        //if (imgSize == 1536) println(charData.height)
                         charDataMap[charIndex] = charData
                     }
                     charDataMap

@@ -64,11 +64,14 @@ object VideoOption : Option("Video") {
     val shield by setting("Energy Shield", true)
         .lang("能量护盾", "能量護盾")
 
-    val backgroundMode = setting("Background Mode", Background.Mode.Nebula)
+    val backgroundMode = setting("Background Mode", Background.Mode.Sandbox)
         .lang("背景模式", "背景模式")
     val particle by setting("Particle Background", true)
         .lang("粒子效果", "粒子特效")
-        .atMode(backgroundMode, Background.Mode.Halo)
+        .atMode(backgroundMode, Background.Mode.Default)
+    val sandbox by setting("Sandbox", Background.ShaderMode.Nebula)
+        .lang("沙盒渲染", "沙盒渲染")
+        .atMode(backgroundMode, Background.Mode.Sandbox)
 
     val fov
         get() = when (fovMode.value) {

@@ -41,7 +41,8 @@ class CustomFont(override val font: Font, override val textureLoader: TextureLoa
         qualityLevel: Int,
         offsetPixel: Int,
         scaleFactor: Float,
-        textureLoader: TextureLoader?
+        textureLoader: TextureLoader?,
+        asyncLoad: () -> Boolean
     ): StaticFontRenderer = UnicodeStaticFontRenderer(
         text,
         font,
@@ -54,7 +55,8 @@ class CustomFont(override val font: Font, override val textureLoader: TextureLoa
         qualityLevel,
         offsetPixel,
         scaleFactor,
-        textureLoader
+        textureLoader,
+        asyncLoad
     )
 
 }
@@ -75,7 +77,8 @@ interface StaticFont {
         qualityLevel: Int = 3,
         offsetPixel: Int = 0,
         scaleFactor: Float = 1f,
-        textureLoader: TextureLoader? = this.textureLoader
+        textureLoader: TextureLoader? = this.textureLoader,
+        asyncLoad: () -> Boolean = { true }
     ): StaticFontRenderer
 
     fun lazyCreate(
@@ -89,7 +92,8 @@ interface StaticFont {
         qualityLevel: Int = 3,
         offsetPixel: Int = 0,
         scaleFactor: Float = 1f,
-        textureLoader: TextureLoader? = this.textureLoader
+        textureLoader: TextureLoader? = this.textureLoader,
+        asyncLoad: () -> Boolean = { true }
     ): Lazy<StaticFontRenderer> = lazy {
         create(
             text,
@@ -101,7 +105,9 @@ interface StaticFont {
             useMipmap,
             qualityLevel,
             offsetPixel,
-            scaleFactor
+            scaleFactor,
+            textureLoader,
+            asyncLoad
         )
     }
 

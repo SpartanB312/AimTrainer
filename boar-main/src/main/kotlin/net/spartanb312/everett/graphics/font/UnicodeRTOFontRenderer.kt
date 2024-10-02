@@ -24,6 +24,7 @@ class UnicodeRTOFontRenderer(
     private val qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
     private val textureLoader: TextureLoader? = null,
+    override val asyncLoad: () -> Boolean = { true },
 ) : RTOFontRenderer {
 
     companion object {
@@ -41,8 +42,14 @@ class UnicodeRTOFontRenderer(
         useMipmap,
         qualityLevel,
         scaleFactor,
-        textureLoader
+        textureLoader,
+        asyncLoad,
     )
+
+    override fun reset() {
+        dynamicFontRenderer.reset()
+        clearCache()
+    }
 
     // Delegates
     override val serialCode get() = dynamicFontRenderer.serialCode
@@ -136,7 +143,8 @@ class UnicodeRTOFontRenderer(
                             qualityLevel,
                             0,
                             scaleFactor,
-                            textureLoader
+                            textureLoader,
+                            asyncLoad,
                         )
                     }
                 )

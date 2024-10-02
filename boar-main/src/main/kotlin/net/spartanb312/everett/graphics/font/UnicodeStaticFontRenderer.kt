@@ -39,7 +39,8 @@ class UnicodeStaticFontRenderer(
     private val qualityLevel: Int = 3,
     private val offsetPixel: Int = 0,
     override var scaleFactor: Float = 1f,
-    private val textureLoader: TextureLoader? = null
+    private val textureLoader: TextureLoader? = null,
+    override val asyncLoad: () -> Boolean = { true }
 ) : StaticFontRenderer {
 
     private val shadowColor = ColorRGB.BLACK.alpha(128)
@@ -47,6 +48,8 @@ class UnicodeStaticFontRenderer(
     override var absoluteWidth = 0
     override var absoluteHeight = 0
     override val isReady get() = texture.available
+
+    private val useAsyncLoader get() = textureLoader != null && asyncLoad.invoke()
 
     fun setScale(scale: Float): UnicodeStaticFontRenderer {
         this.scaleFactor = scale
@@ -57,14 +60,14 @@ class UnicodeStaticFontRenderer(
         Logger.debug("Init static texture")
         val imgSupplier = imgSupplier
         if (imgSupplier != null) {
-            val texture: Texture = if (!instantLoad && textureLoader != null) {
+            val texture: Texture = if (!instantLoad && useAsyncLoader) {
                 val texture = LazyTextureContainer(
                     MipmapTexture.lateUpload(GL_RGBA, 3, useMipmap, qualityLevel),
                     imgSupplier
                 ).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
                 }
-                textureLoader.add(texture)
+                textureLoader!!.add(texture)
                 texture
             } else {
                 val img = imgSupplier.invoke()
@@ -129,14 +132,14 @@ class UnicodeStaticFontRenderer(
             image0 = img
             img
         }
-        val texture: Texture = if (!instantLoad && textureLoader != null) {
+        val texture: Texture = if (!instantLoad && useAsyncLoader) {
             val texture = LazyTextureContainer(
                 MipmapTexture.lateUpload(GL_RGBA, 3, useMipmap, qualityLevel),
                 asyncJob
             ).useTexture {
                 if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
             }
-            textureLoader.add(texture)
+            textureLoader!!.add(texture)
             texture
         } else {
             val img = asyncJob.invoke()

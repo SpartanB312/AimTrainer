@@ -7,6 +7,9 @@ interface FontRenderer : CacheSavable {
 
     var absoluteHeight: Int
     var scaleFactor: Float
+    val asyncLoad: () -> Boolean
+
+    fun reset() {}
 
     fun _getWidth(text: String): Int
 

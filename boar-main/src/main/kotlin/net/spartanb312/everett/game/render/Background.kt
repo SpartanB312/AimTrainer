@@ -24,18 +24,17 @@ object Background {
         initialColor = ColorRGB(164, 255, 255).alpha(128)
     )
     private val initTime = System.currentTimeMillis()
-    private val nebula = GLSLSandbox("assets/shader/sandbox/Nebula.fsh")
 
     fun renderBackground(mouseX: Double, mouseY: Double) {
         if (SceneManager.currentScene != DummyScene) return
         when (VideoOption.backgroundMode.value) {
-            Mode.Halo -> {
+            Mode.Default -> {
                 TextureManager.bg.drawBackground(mouseX, mouseY)
                 if (VideoOption.particle) particleSystem.render()
             }
 
-            Mode.Nebula -> RS.matrixLayer.scope {
-                nebula.render(RS.widthF, RS.heightF, mouseX.toFloat(), mouseY.toFloat(), initTime)
+            Mode.Sandbox -> RS.matrixLayer.scope {
+                VideoOption.sandbox.shader.render(RS.widthF, RS.heightF, mouseX.toFloat(), mouseY.toFloat(), initTime)
             }
         }
     }
@@ -72,8 +71,17 @@ object Background {
     }
 
     enum class Mode(override val displayName: CharSequence) : DisplayEnum {
-        Halo("Halo"),
-        Nebula("Nebula")
+        Default("Default"),
+        Sandbox("Sandbox")
+    }
+
+    enum class ShaderMode(override val displayName: CharSequence, fsh: String) : DisplayEnum {
+        BlackHole("BlackHole", "assets/shader/sandbox/BlackHole.fsh"),
+        Galaxy("Galaxy", "assets/shader/sandbox/Galaxy.fsh"),
+        Nebula("Nebula", "assets/shader/sandbox/Nebula.fsh"),
+        Planet("Planet", "assets/shader/sandbox/Planet.fsh");
+
+        val shader by lazy { GLSLSandbox(fsh) }
     }
 
 }
