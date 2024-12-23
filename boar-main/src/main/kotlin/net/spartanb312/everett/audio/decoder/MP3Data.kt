@@ -31,7 +31,6 @@ class MP3Data(private val waveData: WaveData) : SoundData {
                 .replace("+", "p")
                 .limitLength(64)
             val file = File("disk_cache/$relatedWavName")
-            println(name)
             if (!file.exists()) {
                 file.parentFile.mkdirs()
                 file.createNewFile()

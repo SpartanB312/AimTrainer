@@ -25,6 +25,7 @@ open class ScoreboardScreen(
 ) : GuiScreen() {
 
     override fun onRender(mouseX: Double, mouseY: Double) {
+        Background.update()
         Background.renderBackground(mouseX, mouseY)
         RenderUtils.drawRect(0, 0, RS.width, RS.height, ColorRGB.BLACK.alpha(128))
         val scale = min(RS.widthScale, RS.heightScale)

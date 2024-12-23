@@ -2,19 +2,19 @@ package net.spartanb312.everett.graphics.uniform
 
 import net.spartanb312.everett.utils.math.ceilToInt
 
+fun main() {
+    UniformBlock {
+        vec3("pos")
+        vec2("uv")
+        int("color")
+        vec3("normal")
+    }.also { println(it.desc) }
+}
+
 /**
  * Using std140 storage layout
  * Notice: please check the max caps of alignOffset of current device
  */
-fun main() {
-    val a = UniformBlock {
-        vec3("position") // 16
-        float("constant") // 4
-    }
-    println(a.desc)
-    println(a.size)
-}
-
 class UniformBlock(builder: Struct.() -> Unit) : IStruct by Struct.build(builder = builder)
 
 interface Attribute {

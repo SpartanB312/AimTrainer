@@ -25,9 +25,4 @@ class MultiText(private val english: String) : ReadOnlyProperty<Any?, String> {
         return displaying
     }
 
-    fun print() {
-        map.forEach { println(it.value) }
-        println()
-    }
-
 }

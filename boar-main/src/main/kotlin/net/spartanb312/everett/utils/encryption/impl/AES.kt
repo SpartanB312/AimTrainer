@@ -5,8 +5,7 @@ import java.util.*
 import javax.crypto.Cipher
 import javax.crypto.spec.SecretKeySpec
 
-object
-AES : Encryptor {
+object AES : Encryptor {
 
     private const val STANDARD_NAME = "AES"
     private const val SPARTAN_KEY = "spartanb312isgod"

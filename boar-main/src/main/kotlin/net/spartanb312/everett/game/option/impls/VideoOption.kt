@@ -6,9 +6,13 @@ import net.spartanb312.everett.game.render.Background
 import net.spartanb312.everett.game.render.hud.impls.Radar
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
+import net.spartanb312.everett.graphics.event.EngineLoopEvent
+import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.config.setting.atMode
 import net.spartanb312.everett.utils.config.setting.lang
 import net.spartanb312.everett.utils.config.setting.whenTrue
+import net.spartanb312.everett.utils.event.listener
+import net.spartanb312.everett.utils.language.Languages
 import net.spartanb312.everett.utils.language.MultiText
 import net.spartanb312.everett.utils.math.MathUtils.d2vFOV
 import net.spartanb312.everett.utils.math.MathUtils.h2vFOV
@@ -16,6 +20,7 @@ import net.spartanb312.everett.utils.math.MathUtils.v2dFOV
 import net.spartanb312.everett.utils.math.MathUtils.v2hFOV
 import net.spartanb312.everett.utils.misc.AliasNameable
 import net.spartanb312.everett.utils.misc.DisplayEnum
+import org.lwjgl.glfw.GLFW
 
 object VideoOption : Option("Video") {
 
@@ -23,6 +28,17 @@ object VideoOption : Option("Video") {
         .lang("全屏", "全屏")
         .valueListen { prev, input ->
             if (input != prev) GLHelper.fullScreen = input
+        }
+    val fullScreenMode by setting("Resolution", Resolution.Dummy1)
+        .lang("分辨率", "解析度")
+        .valueListen { prev, input ->
+            if (input != prev) {
+                when (prev) {
+                    Resolution.Dummy1 -> if (input == Resolution.Dummy2) nextMode() else prevMode()
+                    Resolution.Dummy2 -> if (input == Resolution.Dummy3) nextMode() else prevMode()
+                    Resolution.Dummy3 -> if (input == Resolution.Dummy1) nextMode() else prevMode()
+                }
+            }
         }
     val useFramebuffer = setting("Use Framebuffer", true)
         .lang("使用帧缓冲", "使用幀緩衝")
@@ -69,7 +85,7 @@ object VideoOption : Option("Video") {
     val particle by setting("Particle Background", true)
         .lang("粒子效果", "粒子特效")
         .atMode(backgroundMode, Background.Mode.Default)
-    val sandbox by setting("Sandbox", Background.ShaderMode.Nebula)
+    val sandbox by setting("Sandbox", Background.ShaderMode.BlackHole)
         .lang("沙盒渲染", "沙盒渲染")
         .atMode(backgroundMode, Background.Mode.Sandbox)
 
@@ -109,6 +125,51 @@ object VideoOption : Option("Video") {
         FlexSync("Flex Sync".lang("Flex同步", "Flex同步"));
 
         override val displayName by multiText
+    }
+
+    init {
+        listener<EngineLoopEvent.Loop.Pre> {
+            if (fullScreen && shouldUpdate) {
+                shouldUpdate = false
+                val mode = resolutions[index]
+                GLFW.glfwSetWindowMonitor(RS.window, monitor, 0, 0, mode.first, mode.second, mode.third)
+            }
+        }
+        subscribe()
+    }
+
+    private val resStr = MultiText("")
+    private val monitor = GLFW.glfwGetPrimaryMonitor()
+    private val resolutions = kotlin.run {
+        val modes = GLFW.glfwGetVideoModes(monitor)
+        modes!!.map { Triple(it.width(), it.height(), it.refreshRate()) }
+    }
+    private var index = resolutions.size - 1
+    private var shouldUpdate = false
+
+    private fun updateMode(triple: Triple<Int, Int, Int>) {
+        val str = "${triple.first}x${triple.second}@${triple.third}Hz"
+        resStr.addLang(Languages.English, str)
+        Logger.info("Fullscreen mode: $str")
+        shouldUpdate = true
+    }
+
+    private fun nextMode() {
+        if (index == resolutions.size - 1) index = 0 else index++
+        updateMode(resolutions[index])
+    }
+
+    private fun prevMode() {
+        if (index == 0) index = resolutions.size - 1 else index--
+        updateMode(resolutions[index])
+    }
+
+    enum class Resolution : DisplayEnum {
+        Dummy1,
+        Dummy2,
+        Dummy3;
+
+        override val displayName by resStr
     }
 
 }

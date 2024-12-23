@@ -1,16 +1,17 @@
 package net.spartanb312.everett.graphics.texture
 
-import net.spartanb312.everett.graphics.OpenGL.*
-import net.spartanb312.everett.graphics.RenderSystem
+import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.misc.createDirectByteBuffer
 import net.spartanb312.everett.utils.timing.Timer
+import org.lwjgl.opengl.GL11
+import org.lwjgl.opengl.GL46.*
 import java.awt.image.BufferedImage
 import java.nio.IntBuffer
 
 object ImageUtils {
 
-    private const val DEFAULT_BUFFER_SIZE = 0x800000
-    private var byteBuffer = createDirectByteBuffer(DEFAULT_BUFFER_SIZE) // Max 8 MB
+    private const val DEFAULT_BUFFER_SIZE = 0x6400000
+    private var byteBuffer = createDirectByteBuffer(DEFAULT_BUFFER_SIZE) // Max 64 MB
     private val reallocateTimer = Timer()
 
     /**
@@ -43,7 +44,10 @@ object ImageUtils {
         bufferedImage.getRGB(0, 0, width, height, array, 0, width)
 
         // Upload image
-        if (!RenderSystem.compat.intelGraphics) {
+        GL11.glPixelStorei(GL_UNPACK_ROW_LENGTH, 0)
+        GL11.glPixelStorei(GL_UNPACK_SKIP_ROWS, 0)
+        GL11.glPixelStorei(GL_UNPACK_SKIP_PIXELS, 0)
+        if (!RS.compat.intelGraphics) {
             glTexImage2D(
                 GL_TEXTURE_2D,
                 0,

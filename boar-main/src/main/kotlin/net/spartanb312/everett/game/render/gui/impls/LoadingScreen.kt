@@ -17,7 +17,7 @@ object LoadingScreen : GuiScreen() {
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         if (TextureManager.loadedCount == TextureManager.totalCount) {
-            Render2DManager.displayScreen(MainMenuScreen)
+            Render2DManager.displayScreen(PrepareScreen)
             AimTrainer.isReady = true
         }
         bg.drawBackground(mouseX, mouseY, 0f)

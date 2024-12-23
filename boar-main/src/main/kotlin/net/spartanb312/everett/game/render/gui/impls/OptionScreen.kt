@@ -48,6 +48,7 @@ object OptionScreen : GuiScreen() {
     }
 
     override fun onRender(mouseX: Double, mouseY: Double) {
+        Background.update()
         Background.renderBackground(mouseX, mouseY)
         val scale = min(RS.widthScale, RS.heightScale)
         updater.invoke()
@@ -143,45 +144,74 @@ object OptionScreen : GuiScreen() {
         }
         CrosshairRenderer.onRender(false, centerX, centerY, VideoOption.dfov, ColorRGB.WHITE.alpha(alpha.toInt()))
 
+        fun drawRatedRamUsage(rate: Float, string: String, offset: Float, used: Number, total: Number) {
+            val vStartX = rightStartX + scale * 15f
+            val vEndX = rightEndX - scale * 15f
+            var vStartY = rightEndY - (2.5f + offset) * scale
+            val barStartX = vStartX + 75f * scale
+            RenderUtils.drawRect(
+                vStartX,
+                vStartY - 35f * scale,
+                rightEndX - scale * 15f,
+                vStartY - 7.5f * scale,
+                ColorRGB.WHITE.alpha((0.2f * alpha).toInt())
+            )
+            RenderUtils.drawRect(
+                barStartX,
+                vStartY - 35f * scale,
+                rightEndX - scale * 15f,
+                vStartY - 7.5f * scale,
+                ColorRGB.WHITE.alpha((0.1f * alpha).toInt())
+            )
+            val color = if (rate <= 0.7f) ColorRGB.WHITE else if (rate <= 0.9f) ColorRGB.YELLOW else ColorRGB.RED
+            RenderUtils.drawRect(
+                barStartX,
+                vStartY - 35f * scale,
+                barStartX + (vEndX - barStartX) * rate.coerceIn(0f, 1f),
+                vStartY - 7.5f * scale,
+                color.alpha((0.6f * alpha).toInt())
+            )
+            vStartY -= FontRendererMain.getHeight(scale)
+            FontRendererMain.drawString(
+                string,
+                vStartX + scale * 5f,
+                vStartY,
+                scale = scale * 0.8f,
+                color = ColorRGB.WHITE.alpha((alpha * 0.6f).toInt())
+            )
+            val str =
+                if (total.toFloat() < 1024) "${format.format(used.toFloat())} MB / ${format.format(total.toFloat())} MB"
+                else "${format.format(used.toFloat() / 1024f)} GB / ${format.format(total.toFloat() / 1024f)} GB"
+            FontRendererMain.drawString(
+                str,
+                vEndX - FontRendererMain.getWidth(str, scale * 0.8f) - scale * 5f,
+                vStartY,
+                scale = scale * 0.8f,
+                color = ColorRGB.WHITE.alpha((alpha * 0.8f).toInt())
+            )
+        }
+
+        // RAM
+        val totalRam = Runtime.getRuntime().maxMemory() / 1048576
+        val usedRam = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576
+        drawRatedRamUsage(
+            (usedRam.toDouble() / totalRam.toDouble()).toFloat(),
+            "DRAM",
+            35f,
+            usedRam, totalRam
+        )
+
         // V-RAM
         val framebufferScale = (RS.widthF * RS.heightF) / (1920 * 1080) // 128MB
         val displayScale = (RS.displayWidthF * RS.displayHeightF) / (1920 * 1080) // 512MB
         val estimatedVRAMmb = framebufferScale * 128L + displayScale * 256L
-        val vStartX = rightStartX + scale * 15f
-        val vEndX = rightEndX - scale * 15f
-        var vStartY = rightEndY - 35f * scale
-        val rate = estimatedVRAMmb / RS.totalVRam.toFloat()
-        RenderUtils.drawRect(
-            vStartX,
-            rightEndY - 35f * scale,
-            rightEndX - scale * 15f,
-            rightEndY - 15f * scale,
-            ColorRGB.WHITE.alpha((0.4f * alpha).toInt())
+        drawRatedRamUsage(
+            estimatedVRAMmb / RS.totalVRam.toFloat(),
+            "VRAM",
+            0f,
+            estimatedVRAMmb, RS.totalVRam
         )
-        val color = if (rate <= 0.7f) ColorRGB.WHITE else if (rate <= 0.9f) ColorRGB.YELLOW else ColorRGB.RED
-        RenderUtils.drawRect(
-            vStartX,
-            rightEndY - 35f * scale,
-            vStartX + (vEndX - vStartX) * rate.coerceIn(0f, 1f),
-            rightEndY - 15f * scale,
-            color.alpha((0.8f * alpha).toInt())
-        )
-        vStartY -= FontRendererMain.getHeight(scale)
-        FontRendererMain.drawString(
-            "Estimated VRAM",
-            vStartX,
-            vStartY,
-            scale = scale * 0.8f,
-            color = ColorRGB.WHITE.alpha((alpha * 0.8f).toInt())
-        )
-        val str = "${format.format(estimatedVRAMmb / 1024f)} GB / ${format.format(RS.totalVRam / 1024f)} GB"
-        FontRendererMain.drawString(
-            str,
-            vEndX - FontRendererMain.getWidth(str, scale * 0.8f),
-            vStartY,
-            scale = scale * 0.8f,
-            color = ColorRGB.WHITE.alpha((alpha * 0.8f).toInt())
-        )
+
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {

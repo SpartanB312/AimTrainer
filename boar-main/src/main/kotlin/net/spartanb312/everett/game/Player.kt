@@ -149,9 +149,8 @@ object Player : EntityPlayer(), Controller {
 
     private fun aimAssist(sensitivity: Double) {
         aaTPSCounter.invoke()
-        if (AimAssistOption.mcEnabled) {
-            MagnetismAA.compensate(sensitivity)
-        } else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
+        if (AimAssistOption.mcEnabled) MagnetismAA.compensate(sensitivity)
+        else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
     }
 
     fun project(

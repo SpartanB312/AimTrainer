@@ -9,6 +9,7 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
 
     private val body = Sphere(this, size)
     private var vec = Vec3f(0f, 0f, 0f)
+    private val oneShot = hp == 1
 
     var isAlive = true
 
@@ -16,7 +17,7 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
         origin: Vec3f,
         ray: Vec3f,
         errorAngle: Float // DistanceToCenter, Radius
-    ): Boolean = body.raytrace(origin, ray, errorAngle)
+    ): Boolean = body.raytrace(origin, ray, if (!oneShot && hp == 1) errorAngle / 4f else errorAngle)
 
     fun move(vec: Vec3f, reverse: Boolean) {
         this.pos = if (reverse) this.pos - vec
@@ -31,9 +32,7 @@ class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
             return if (temp.absoluteValue <= 3 * scale) (temp / temp.absoluteValue) * 3 * scale else temp
         }
         vec = Vec3f(vec.x.correct(), vec.y.correct(), vec.z.correct())
-        if (reverse) {
-            vec -= (vec * 2f)
-        }
+        if (reverse) vec -= (vec * 2f)
         val range = -50f..50f
         pos += vec
         var notInRange = 0

@@ -1,29 +1,16 @@
 package net.spartanb312.everett.graphics.drawing.pmvbo
 
-import dev.luna5ama.kmogus.Arr
-import dev.luna5ama.kmogus.asMutable
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.drawing.VertexAttribute
-import org.lwjgl.opengl.*
-import java.nio.ByteBuffer
+import org.lwjgl.opengl.GL15
+import org.lwjgl.opengl.GL30
+import org.lwjgl.opengl.GL32
+import org.lwjgl.opengl.GL32C
 
-object PersistentMappedVBO  {
-
-    private val vbo = GL45.glCreateBuffers().apply {
-        GL45.glNamedBufferStorage(
-            this,
-            64L * 1024L * 1024L,
-            GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT
-        )
-    }
-    val arr = Arr.wrap(
-        GL45.glMapNamedBufferRange(
-            vbo,
-            0,
-            64L * 1024L * 1024L,
-            GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT or GL45.GL_MAP_UNSYNCHRONIZED_BIT
-        ) as ByteBuffer
-    ).asMutable()
+/**
+ * Requires OpenGL 4.4
+ */
+object PersistentMappedVBO : PersistentMappedBuffer() {
 
     var drawOffset = 0
     private var sync = 0L

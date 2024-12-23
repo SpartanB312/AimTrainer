@@ -34,6 +34,7 @@ object CustomGameScreen : GuiScreen() {
     }
 
     override fun onRender(mouseX: Double, mouseY: Double) {
+        Background.update(1f)
         Background.renderBackground(mouseX, mouseY)
         val scale = max(RS.widthF / 2560f, RS.heightF / 1369f)
         RenderUtils.drawRect(0f, 0f, RS.widthF, RS.heightF, ColorRGB.BLACK.alpha(128))

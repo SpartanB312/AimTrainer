@@ -3,6 +3,8 @@ package net.spartanb312.everett.game.render
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
+import net.spartanb312.everett.graphics.AnimationFlag
+import net.spartanb312.everett.graphics.Easing
 import net.spartanb312.everett.graphics.ParticleSystem
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.scope
@@ -25,6 +27,14 @@ object Background {
     )
     private val initTime = System.currentTimeMillis()
 
+    private var progress = 1f
+    private val flag = AnimationFlag(Easing.OUT_CUBIC, 1500f).also { it.forceUpdate(1f) }
+
+    fun update(target: Float = progress) {
+        if (target == progress) flag.forceUpdate(target) else flag.update(target)
+        progress = flag.get()
+    }
+
     fun renderBackground(mouseX: Double, mouseY: Double) {
         if (SceneManager.currentScene != DummyScene) return
         when (VideoOption.backgroundMode.value) {
@@ -34,7 +44,11 @@ object Background {
             }
 
             Mode.Sandbox -> RS.matrixLayer.scope {
-                VideoOption.sandbox.shader.render(RS.widthF, RS.heightF, mouseX.toFloat(), mouseY.toFloat(), initTime)
+                val mx = if (VideoOption.sandbox != ShaderMode.BlackHole) mouseX.toFloat()
+                else (2000f * progress) * RS.widthF / 1920f
+                val my = if (VideoOption.sandbox != ShaderMode.BlackHole) mouseY.toFloat()
+                else (850f + 200f * progress) * RS.heightF / 1080f
+                VideoOption.sandbox.shader.render(RS.widthF, RS.heightF, mx, my, initTime)
             }
         }
     }
@@ -77,6 +91,7 @@ object Background {
 
     enum class ShaderMode(override val displayName: CharSequence, fsh: String) : DisplayEnum {
         BlackHole("BlackHole", "assets/shader/sandbox/BlackHole.fsh"),
+        Starfield("Starfield", "assets/shader/sandbox/Starfield.fsh"),
         Galaxy("Galaxy", "assets/shader/sandbox/Galaxy.fsh"),
         Nebula("Nebula", "assets/shader/sandbox/Nebula.fsh"),
         Planet("Planet", "assets/shader/sandbox/Planet.fsh");

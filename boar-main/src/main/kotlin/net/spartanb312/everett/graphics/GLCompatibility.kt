@@ -44,13 +44,11 @@ class GLCompatibility(context: GLCapabilities) {
     val openGL46 = context.OpenGL46 || (openGL45 && intelGraphics) //傻逼Intel 草泥马
 
     // ARB
-    val arbShaders: Boolean = !context.OpenGL21
-    val arbVbo: Boolean = !context.OpenGL15 && context.GL_ARB_vertex_buffer_object
-    val arbMultiTexture: Boolean = context.GL_ARB_multitexture && !context.OpenGL13
+    val arbDirectAccess = !context.OpenGL45 && context.GL_ARB_direct_state_access
+    val arbBufferStorage = !context.OpenGL45 && context.GL_ARB_buffer_storage
 
     // EXT
-    val extBlendFuncSeparate = context.GL_EXT_blend_func_separate && !context.OpenGL14
-    val extFramebufferObject = context.GL_EXT_framebuffer_object && !context.OpenGL30
+    val extDirectAccess = !context.OpenGL45 && !arbDirectAccess && context.GL_EXT_direct_state_access
 
     val openGLVersion = run {
         when {
@@ -75,5 +73,8 @@ class GLCompatibility(context: GLCapabilities) {
             else -> throw Exception("Unsupported graphics card")
         }
     }
+
+    val majorVersion get() = openGLVersion.substringBefore(".").toInt()
+    val minorVersion get() = openGLVersion.substringAfter(".").toInt()
 
 }

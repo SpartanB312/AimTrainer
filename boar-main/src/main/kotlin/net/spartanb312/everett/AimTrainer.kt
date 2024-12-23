@@ -35,8 +35,9 @@ import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 
 /**
- * Requires OpenGL 4.5 Core Profile
- * OpenGL 2.1 is no longer supported
+ * Based on OpenGL 4.5 Core Profile
+ * Minimum requirements:
+ * CPU: Pentium 4
  */
 @Module(
     name = "Aim Trainer",
@@ -46,7 +47,7 @@ import org.lwjgl.glfw.GLFW
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.241002"
+    const val AIM_TRAINER_VERSION = "1.0.0.241217"
 
     var isReady = false
     private val tickTimer = Timer()

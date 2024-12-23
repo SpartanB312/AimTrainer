@@ -12,11 +12,12 @@ import net.spartanb312.everett.graphics.framebuffer.Framebuffer
 import net.spartanb312.everett.graphics.matrix.getFloatArray
 import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.graphics.shader.useShader
+import net.spartanb312.everett.graphics.texture.Texture
+import net.spartanb312.everett.graphics.texture.useTexture
 import org.joml.Matrix4f
 import org.lwjgl.opengl.GL11.*
 import org.lwjgl.opengl.GL12.GL_CLAMP_TO_EDGE
 import org.lwjgl.opengl.GL20
-import org.lwjgl.opengl.GL45.glTextureParameteri
 
 object BlurRenderer {
 
@@ -33,15 +34,15 @@ object BlurRenderer {
         fbo2 = FixedFramebuffer(width, height, false)
         passH.updateResolution(width.toFloat(), height.toFloat())
         passV.updateResolution(width.toFloat(), height.toFloat())
-        setTextureParam(fbo1.texture.id)
-        setTextureParam(fbo2.texture.id)
+        setTextureParam(fbo1.texture)
+        setTextureParam(fbo2.texture)
     }
 
     fun render(startX: Float, startY: Float, endX: Float, endY: Float, pass: Int) {
         if (pass == 0) return
 
         //RenderUtils.drawRect(startX,startY,endX,endY, ColorRGB.RED)
-        setTextureParam(AimTrainer.framebuffer.texture.id)
+        setTextureParam(AimTrainer.framebuffer.texture)
         putVertex(startX, startY, endX, endY)
         GLHelper.blend = false
         GLHelper.depth = false
@@ -72,11 +73,11 @@ object BlurRenderer {
         //GLHelper.bindVertexArray(0)
     }
 
-    private fun setTextureParam(textureID: Int) {
-        glTextureParameteri(textureID, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
-        glTextureParameteri(textureID, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
-        glTextureParameteri(textureID, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
-        glTextureParameteri(textureID, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
+    private fun setTextureParam(texture: Texture) = texture.useTexture {
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE)
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE)
     }
 
     private fun putVertex(x1: Float, y1: Float, x2: Float, y2: Float) {

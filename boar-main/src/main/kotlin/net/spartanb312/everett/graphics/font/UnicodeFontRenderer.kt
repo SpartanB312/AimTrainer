@@ -49,7 +49,7 @@ class UnicodeFontRenderer(
     override var absoluteHeight = 0
 
     private val chunkAmount = 65536 / chunkSize
-    val textures = arrayOfNulls<Texture>(chunkAmount)
+    private val textures = arrayOfNulls<Texture>(chunkAmount)
     private val badChunks = Array(chunkAmount) { 0 }
     private val loadedChunk = arrayOfNulls<BufferedImage>(chunkAmount)
     override val loadedChunks = mutableSetOf<Int>()
@@ -127,20 +127,16 @@ class UnicodeFontRenderer(
                         val char = (chunk * chunkSize + index).toChar()
                         val charWidth = metrics.charWidth(char)
                         val charHeight = metrics.height
-
                         val imgWidth = charWidth + scaledOffset * 2
-
                         if (posX + imgWidth > imgSize) {
                             posX = 0
                             posY += rowHeight
                             rowHeight = 0
                         }
-
                         if (rowHeight < charHeight) {
                             rowHeight = charHeight
                             absoluteHeight = max(absoluteHeight, rowHeight)
                         }
-
                         val charData = CharData(charWidth, charHeight)
                         charData.u = (posX + scaledOffset) / imgSize.toFloat()
                         charData.v = posY / imgSize.toFloat()
@@ -164,6 +160,7 @@ class UnicodeFontRenderer(
                     asyncJob
                 ).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                    else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR)
                 }
                 textureLoader!!.add(texture)
                 texture
@@ -171,6 +168,7 @@ class UnicodeFontRenderer(
                 val img = asyncJob.invoke()
                 MipmapTexture(img, GL_RGBA, 3, useMipmap, qualityLevel).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                    else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR)
                 }
             }
             textures[chunk] = texture
@@ -186,6 +184,7 @@ class UnicodeFontRenderer(
                     img
                 }.useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                    else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR)
                 }
                 textureLoader!!.add(texture)
                 texture
@@ -194,6 +193,7 @@ class UnicodeFontRenderer(
                 loadedChunk[chunk] = img
                 MipmapTexture(img, GL_RGBA, 3, useMipmap, qualityLevel).useTexture {
                     if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                    else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR)
                 }
             }
             textures[chunk] = texture

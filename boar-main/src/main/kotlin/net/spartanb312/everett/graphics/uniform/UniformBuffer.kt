@@ -1,7 +1,6 @@
 package net.spartanb312.everett.graphics.uniform
 
 import net.spartanb312.everett.graphics.GLObject
-import net.spartanb312.everett.graphics.OpenGL
 import org.lwjgl.opengl.GL15
 import org.lwjgl.opengl.GL31
 import java.nio.ByteBuffer
@@ -13,7 +12,7 @@ class UniformBuffer(private val uboBlock: UniformBlock, private val bindPos: Int
     init {
         GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, id)
         GL31.glBindBufferBase(GL31.GL_UNIFORM_BUFFER, bindPos, id)
-        GL15.glBufferData(id, 32, OpenGL.GL_DYNAMIC_DRAW)
+        GL15.glBufferData(id, 32, GL15.GL_DYNAMIC_DRAW)
         GL15.glBindBuffer(GL31.GL_UNIFORM_BUFFER, 0)
     }
 

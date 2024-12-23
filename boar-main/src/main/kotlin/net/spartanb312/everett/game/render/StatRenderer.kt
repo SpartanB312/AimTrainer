@@ -10,6 +10,8 @@ import net.spartanb312.everett.game.option.impls.AccessibilityOption.pingSimulat
 import net.spartanb312.everett.game.option.impls.AccessibilityOption.pktLossRate
 import net.spartanb312.everett.game.option.impls.AccessibilityOption.pktLossSimulate
 import net.spartanb312.everett.game.option.impls.VideoOption
+import net.spartanb312.everett.game.render.gui.Render2DManager
+import net.spartanb312.everett.game.render.gui.impls.PrepareScreen
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
@@ -25,6 +27,7 @@ object StatRenderer {
 
     fun onRender() {
         if (!AimTrainer.isReady) return
+        if (Render2DManager.currentScreen == PrepareScreen) return
         val scale = RS.generalScale
         var startX = if (SceneManager.inTraining) RS.widthF else RS.widthF * 0.96f
         val startY = if (SceneManager.inTraining) 0f else RS.heightF * 0.02f

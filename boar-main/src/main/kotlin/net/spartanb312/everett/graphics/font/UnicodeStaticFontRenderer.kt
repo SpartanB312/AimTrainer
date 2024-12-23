@@ -138,6 +138,7 @@ class UnicodeStaticFontRenderer(
                 asyncJob
             ).useTexture {
                 if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR)
             }
             textureLoader!!.add(texture)
             texture
@@ -145,6 +146,7 @@ class UnicodeStaticFontRenderer(
             val img = asyncJob.invoke()
             MipmapTexture(img, GL_RGBA, 3, useMipmap, qualityLevel).useTexture {
                 if (!linearMag) glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                else glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR_MIPMAP_LINEAR)
             }
         }
         texture0 = texture

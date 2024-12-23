@@ -37,6 +37,7 @@ object ModuleScreen : GuiScreen() {
     private val width3 = FontRendererMain.getWidth("Author: ", 1.25f)
 
     override fun onRender(mouseX: Double, mouseY: Double) {
+        Background.update(1f)
         Background.renderBackground(mouseX, mouseY)
         val scale = max(RS.widthF / 2560f, RS.heightF / 1369f)
         FontRendererROG.drawCenteredStringWithShadow("Modules", RS.width / 2f, RS.heightF * 0.05f, scale = scale)

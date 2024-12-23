@@ -42,6 +42,7 @@ object MainMenuScreen : GuiScreen() {
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         val scale = min(RS.widthScale, RS.heightScale)
+        Background.update(0f)
         Background.renderBackground(mouseX, mouseY)
 
         val leftX = 0.07f * RS.widthF

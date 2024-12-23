@@ -187,10 +187,18 @@ object RenderSystem : Thread() {
             if (result == JOptionPane.NO_OPTION) exitProcess(0)
         }
 
-        glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API)
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, if (compat.openGL46) 6 else 5)
+
+        if (compat.openGL45) {
+            glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API)
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4)
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, if (compat.openGL46) 6 else 5)
+        } else if (compat.majorVersion >= 3 && compat.minorVersion >= 2) {
+            glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API)
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, compat.majorVersion)
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, compat.minorVersion)
+        }
 
         window = glfwCreateWindow(initWidth, initHeight, title, NULL, NULL)
         if (window == NULL) throw RuntimeException("Failed to create the GLFW window")

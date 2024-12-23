@@ -3,6 +3,7 @@ package net.spartanb312.everett.graphics.shader
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.GLObject
 import net.spartanb312.everett.graphics.OpenGL.*
+import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.getFloatArray
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.ResourceHelper
@@ -52,7 +53,11 @@ open class Shader(
         val srcString = bytes.decodeToString()
         val shaderId = GL20.glCreateShader(shaderType)
 
-        GL20.glShaderSource(shaderId, srcString)
+        GL20.glShaderSource(
+            shaderId,
+            if (RS.compat.openGL45) srcString
+            else srcString.replace("#version 450 core", "#version 330")
+        )
         GL20.glCompileShader(shaderId)
 
         if (GL20.glGetShaderi(shaderId, GL_COMPILE_STATUS) == 0) {

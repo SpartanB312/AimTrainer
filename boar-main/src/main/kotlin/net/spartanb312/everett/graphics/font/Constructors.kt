@@ -14,7 +14,7 @@ fun LocalFontRenderer(
     fractionalMetrics: Boolean = false,
     imgSize: Int = 512,
     chunkSize: Int = 64,
-    linearMag: Boolean = false,
+    linearMag: Boolean = true,
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
@@ -44,7 +44,7 @@ fun FontRenderer(
     fractionalMetrics: Boolean = false,
     imgSize: Int = 512,
     chunkSize: Int = 64,
-    linearMag: Boolean = false,
+    linearMag: Boolean = true,
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
@@ -76,7 +76,7 @@ fun RTOFontRenderer(
     fractionalMetrics: Boolean = false,
     imgSize: Int = 512,
     chunkSize: Int = 64,
-    linearMag: Boolean = false,
+    linearMag: Boolean = true,
     useMipmap: Boolean = false, // Avoid glitching
     qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
@@ -108,7 +108,7 @@ fun LazyFontRenderer(
     fractionalMetrics: Boolean = false,
     imgSize: Int = 512,
     chunkSize: Int = 64,
-    linearMag: Boolean = false,
+    linearMag: Boolean = true,
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     scaleFactor: Float = 1f,
@@ -142,7 +142,7 @@ fun LocalStaticFontRenderer(
     fractionalMetrics: Boolean = false,
     imgWidth: Int = 1024,
     imgHeight: Int = 64,
-    linearMag: Boolean = false,
+    linearMag: Boolean = true,
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     offsetPixel: Int = 0,
@@ -175,7 +175,7 @@ fun StaticFontRenderer(
     fractionalMetrics: Boolean = false,
     imgWidth: Int = 1024,
     imgHeight: Int = 64,
-    linearMag: Boolean = false,
+    linearMag: Boolean = true,
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     offsetPixel: Int = 0,
@@ -210,7 +210,7 @@ fun LazyStaticFontRenderer(
     fractionalMetrics: Boolean = false,
     imgWidth: Int = 1024,
     imgHeight: Int = 64,
-    linearMag: Boolean = false,
+    linearMag: Boolean = true,
     useMipmap: Boolean = true,
     qualityLevel: Int = 3,
     offsetPixel: Int = 0,
@@ -250,19 +250,20 @@ fun FontRenderer.drawColoredString(
     timeGap: Int = 5000,
     shadowDepth: Float = 0f,
     saturation: Float = 1f,
-    brightness: Float = 1f
+    brightness: Float = 1f,
+    alpha: Float = 1f
 ): Float {
     val colors = mutableListOf<ColorRGB>()
     var currentX = x
     str.forEach {
         val offset = (currentX - startX) % circleWidth / circleWidth
         val hue = ((System.currentTimeMillis() - startTime) % timeGap) / timeGap.toFloat()
-        colors.add(ColorHSB(hue - offset, saturation, brightness).toRGB())
+        colors.add(ColorHSB(hue - offset, saturation, brightness).toRGB().alpha((alpha * 255).toInt()))
         currentX += getWidth(it.toString(), scale)
     }
     val offset = (currentX - startX) % circleWidth / circleWidth
     val hue = ((System.currentTimeMillis() - startTime) % timeGap) / timeGap.toFloat()
-    colors.add(ColorHSB(hue - offset, saturation, brightness).toRGB())
+    colors.add(ColorHSB(hue - offset, saturation, brightness).toRGB().alpha((alpha * 255).toInt()))
     if (shadowDepth != 0f) {
         drawGradientStringWithShadow(str, x, y, colors.toTypedArray(), scale, sliceMode = true)
     } else drawGradientString(str, x, y, colors.toTypedArray(), scale, sliceMode = true)

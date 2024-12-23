@@ -42,7 +42,6 @@ object BallRenderer {
             var count = 0
             GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
                 vertices.forEach {
-                    // TODO: GL_TRIANGLE_STRIP
                     universal(it.x, it.y, it.z, color)
                     count++
                 }

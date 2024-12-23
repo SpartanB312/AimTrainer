@@ -1,7 +1,5 @@
 package net.spartanb312.everett.graphics.drawing.pmvbo
 
-import dev.luna5ama.kmogus.Arr
-import dev.luna5ama.kmogus.asMutable
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.VertexAttribute
@@ -10,10 +8,9 @@ import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.opengl.*
-import java.nio.ByteBuffer
 
 /**
- * Requires OpenGL 4.5
+ * Requires OpenGL 4.4
  */
 object PersistentMappedVertexBuffer {
 
@@ -21,7 +18,8 @@ object PersistentMappedVertexBuffer {
         VertexMode.values.forEach { it.onSync() }
     }
 
-    open class VertexMode(val format: VertexAttribute, val shader: Shader) {
+    open class VertexMode(val format: VertexAttribute, val shader: Shader) : PersistentMappedBuffer() {
+
         companion object {
             val values = listOf(Pos2fColor, Pos3fColor, Pos2fColorTex, Pos3fColorTex, Universal)
             var lastUpdatedShader: VertexMode? = null
@@ -89,22 +87,6 @@ object PersistentMappedVertexBuffer {
                 GL20.glUniformMatrix4fv(matrixUniform, false, stack.matrixArray)
             }
         }
-
-        private val vbo = GL45.glCreateBuffers().apply {
-            GL45.glNamedBufferStorage(
-                this,
-                64L * 1024L * 1024L,
-                GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT
-            )
-        }
-        private val arr = Arr.wrap(
-            GL45.glMapNamedBufferRange(
-                vbo,
-                0,
-                64L * 1024L * 1024L,
-                GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT or GL45.GL_MAP_UNSYNCHRONIZED_BIT
-            ) as ByteBuffer
-        ).asMutable()
 
         private var drawOffset = 0
         private var sync = 0L
