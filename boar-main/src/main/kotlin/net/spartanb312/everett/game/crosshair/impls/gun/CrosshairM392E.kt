@@ -37,13 +37,13 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 2.715f, 0.5f, 1.0f) {
         .alias("Firing Rate").lang("开火速率", "開火速率")
     private val outerCircle = setting("M392E-Outer Circle", OuterCircle.SpecifiedAngle)
         .alias("Outer Circle").lang("准星外圈", "準星外圈")
-    private val specifiedAngle by setting("M392E-Specified Render Angle", 1.25f, 0f..10f, 0.05f).format("0.00")
+    private val specifiedAngle by setting("M392E-Specified Render Angle", 1.25f, 0f..20f, 0.05f).format("0.00")
         .alias("Render Angle").lang("渲染角", "渲染角")
         .atMode(outerCircle, OuterCircle.SpecifiedAngle)
 
     private val useSpecifiedAngle = setting("M392E-Specified Adsorption Angle", true)
         .alias("Specified Adsorption Angle").lang("指定吸附角", "指定吸附角")
-    private val errorAngle2 by setting("M392E-Adsorption Angle", errorAngle, 0f..10f, 0.05f).format("0.00")
+    private val errorAngle2 by setting("M392E-Adsorption Angle", errorAngle, 0f..20f, 0.05f).format("0.00")
         .alias("Adsorption Angle").lang("吸附角", "吸附角")
         .whenTrue(useSpecifiedAngle)
 
@@ -144,7 +144,7 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 2.715f, 0.5f, 1.0f) {
         colorRGB: ColorRGB
     ) {
         calcRecoilAngle()
-        var scale = max(RS.widthF / 2560f, RS.heightF / 1369f)
+        var scale = max(RS.displayWidthF / 2560f, RS.displayHeightF / 1369f)
         val progress =
             if (animation) ((System.currentTimeMillis() - clickTime) / resetTime.toFloat()).coerceIn(0f..1f)
             else 0f
@@ -180,14 +180,14 @@ object CrosshairM392E : GunCrosshair, Crosshair(1000f / 2.715f, 0.5f, 1.0f) {
         translatef(centerX, centerY, 0f)
 
         rotatef(45f, Vec3f(0f, 0f, 1f))
-        HitEffectsRenderer.acceptCount(outerRadius, scale, 500)
+        HitEffectsRenderer.acceptCount(outerRadius, scale * RS.renderScale, 500)
         if (!shadow) HitEffectsRenderer.onRender(layer, color)
 
         rotatef(angle, Vec3f(0f, 0f, 1f))
         scalef(scale2, scale2, scale2)
 
         // Inner circle
-        val innerRadius = 6.5f * scale
+        val innerRadius = 6.5f * scale * RS.renderScale
         val gap = 8.5f
         RenderUtils.drawArcOutline(0f, 0f, innerRadius, gap..90f - gap, 0, 2.5f * scale, color)
         RenderUtils.drawArcOutline(0f, 0f, innerRadius, 90f + gap..180f - gap, 0, 2.5f * scale, color)

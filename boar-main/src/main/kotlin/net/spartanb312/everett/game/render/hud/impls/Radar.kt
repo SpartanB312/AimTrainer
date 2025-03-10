@@ -5,6 +5,7 @@ import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
 import net.spartanb312.everett.game.entity.EntityPlayer
 import net.spartanb312.everett.game.option.impls.VideoOption
+import net.spartanb312.everett.game.render.FontRendererMain
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
@@ -12,6 +13,7 @@ import net.spartanb312.everett.graphics.matrix.rotatef
 import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.matrix.translatef
+import net.spartanb312.everett.utils.color.ColorHSB
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.config.Configurable
 import net.spartanb312.everett.utils.config.setting.alias
@@ -25,10 +27,11 @@ import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.math.vector.distanceTo
 import org.joml.Matrix4f
 import kotlin.math.abs
+import kotlin.math.tan
 
 object Radar : Configurable("Radar", Language) {
 
-    private var generalScale by setting("Radar-Scale", 1f, 0.1f..5.0f, 0.1f).alias("Radar Scale")
+    private var generalScale by setting("Radar-Scale", 1f, 0.1f..5.0f, 0.01f).alias("Radar Scale")
         .lang("雷达大小", "雷達尺寸")
         .whenTrue(VideoOption.radar)
     private var radarRange by setting("Radar-Range", 75, 1..200, 1).alias("Radar Range")
@@ -44,14 +47,38 @@ object Radar : Configurable("Radar", Language) {
 
     fun render2D() {
         RS.matrixLayer.scope {
-            val scale = generalScale * RS.generalScale * 2f
-            val h = RS.heightF - 70f * scale
-            translatef(70f * scale, h, 0f)
+            val scale = generalScale * RS.generalScale * 2.2f
+            val h = RS.heightF - 65f * scale
+            translatef(80f * scale, h, 0f)
             scalef(scale, scale, scale)
+            layer.mul(
+                114, Matrix4f(
+                    1f, tan((-1f).toRadian()), 0f, 0f,
+                    0f, 1f, 0f, 0f,
+                    0f, 0f, 1f, 0f,
+                    0f, 0f, 0f, 1f,
+                )
+            )
+            FontRendererMain.drawStringWithShadow(
+                "TRAINING",
+                40f,
+                30f,
+                ColorHSB(132,128,255,224).toRGB(),
+                scale = 0.4f
+            )
+            layer.mul(
+                114, Matrix4f(
+                    1f, tan((-6f).toRadian()), 0f, 0f,
+                    0f, 1f, 0f, 0f,
+                    0f, 0f, 1f, 0f,
+                    0f, 0f, 0f, 1f,
+                )
+            )
+            scalef(1f, 0.9f, 1f)
 
             RenderUtils.drawTriangleFan(0.0, 0.0, arc1Vertices, generalColor.alpha(64))
-            RenderUtils.drawArcOutline(arc1Vertices,  scale, lightColor.alpha(128))
-            RenderUtils.drawArcOutline(arc2Vertices, scale, lightColor.alpha(128))
+            RenderUtils.drawArcOutline(arc1Vertices, scale / RS.renderScale, lightColor.alpha(128))
+            RenderUtils.drawArcOutline(arc2Vertices, scale / RS.renderScale, lightColor.alpha(128))
 
             // pulse
             val time = System.currentTimeMillis() % 3000
@@ -72,15 +99,15 @@ object Radar : Configurable("Radar", Language) {
                 Vec2f.ZERO,
                 pulseRadius,
                 0f..360f,
-                lineWidth = 2f * scale,
+                lineWidth = 2f * scale / RS.renderScale,
                 color = generalColor.alpha(alpha)
             )
 
             // cross
             val angle = (Player.yaw + 360 + 90) % 360
             rotatef(-angle, Vec3f(0f, 0f, 1f))
-            RenderUtils.drawLine(Vec2f(0f, 50f), Vec2f(0f, -50f), scale, lightColor.alpha(96))
-            RenderUtils.drawLine(Vec2f(50f, 0f), Vec2f(-50f, 0f), scale, lightColor.alpha(96))
+            RenderUtils.drawLine(Vec2f(0f, 50f), Vec2f(0f, -50f), scale / RS.renderScale, lightColor.alpha(96))
+            RenderUtils.drawLine(Vec2f(50f, 0f), Vec2f(-50f, 0f), scale / RS.renderScale, lightColor.alpha(96))
             rotatef(angle, Vec3f(0f, 0f, 1f))
 
             // fov
@@ -89,7 +116,7 @@ object Radar : Configurable("Radar", Language) {
 
             // center
             RenderUtils.drawTriangleFan(0.0, 0.0, centerVertices, lightColor, generalColor)
-            RenderUtils.drawArcOutline(centerVertices, 2f * scale, generalColor)
+            RenderUtils.drawArcOutline(centerVertices, 2f * scale / RS.renderScale, generalColor)
 
             // entities
             val playerVec = Vec2f(Player.pos.x, Player.pos.z)
@@ -121,26 +148,26 @@ object Radar : Configurable("Radar", Language) {
                     RenderUtils.drawLine(
                         renderPos.x, renderPos.y - vOffset * 2f,
                         renderPos.x - hOffset * 1f, renderPos.y - vOffset * 1f,
-                        1f * scale,
+                        1f * scale / RS.renderScale,
                         renderColor
                     )
                     RenderUtils.drawLine(
                         renderPos.x, renderPos.y - vOffset * 2f,
                         renderPos.x + hOffset * 1f, renderPos.y - vOffset * 1f,
-                        1f * scale,
+                        1f * scale / RS.renderScale,
                         renderColor
                     )
                 } else {
                     RenderUtils.drawLine(
                         renderPos.x, renderPos.y + vOffset * 2f,
                         renderPos.x - hOffset * 1f, renderPos.y + vOffset * 1f,
-                        1f * scale,
+                        1f * scale / RS.renderScale,
                         renderColor
                     )
                     RenderUtils.drawLine(
                         renderPos.x, renderPos.y + vOffset * 2f,
                         renderPos.x + hOffset * 1f, renderPos.y + vOffset * 1f,
-                        1f * scale,
+                        1f * scale / RS.renderScale,
                         renderColor
                     )
                 }

@@ -41,7 +41,7 @@ object CrosshairCross : Crosshair(0f) {
             centerY,
             centerX + scaledSize,
             centerY,
-            scaledSize / 5f,
+            scaledSize / 5f  / RS.renderScale,
             color
         )
         RenderUtils.drawLine(
@@ -49,7 +49,7 @@ object CrosshairCross : Crosshair(0f) {
             centerY - scaledSize,
             centerX,
             centerY + scaledSize,
-            scaledSize / 5f,
+            scaledSize / 5f / RS.renderScale,
             color
         )
     }

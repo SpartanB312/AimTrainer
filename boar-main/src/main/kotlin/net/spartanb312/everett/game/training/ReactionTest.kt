@@ -37,6 +37,18 @@ open class ReactionTest(
         // Nothing
     }
 
+    private var pauseTime = System.nanoTime()
+    private var isPaused = false
+
+    override fun pause() {
+        pauseTime = System.nanoTime()
+        isPaused = true
+    }
+
+    override fun resume() {
+        isPaused = false
+    }
+
     enum class States {
         Waiting,
         Click,
@@ -57,6 +69,11 @@ open class ReactionTest(
 
     override fun render2D() {
         if (round == rounds + 1) state = States.Finished
+        if (isPaused) {
+            val current = System.nanoTime()
+            nextTime += (current - pauseTime)
+            pauseTime = current
+        }
         if (state == States.Waiting && System.nanoTime() >= nextTime) state = States.Click
         when (state) {
             States.Waiting -> {
@@ -67,7 +84,12 @@ open class ReactionTest(
                     RS.height,
                     ColorRGB.DARK_RED.mix(ColorRGB.BLACK)
                 )
-                FontRendererBig.drawCenteredStringWithShadow("Waiting for green($round/$rounds).", RS.centerX, RS.centerY)
+                FontRendererBig.drawCenteredStringWithShadow(
+                    "Waiting for green($round/$rounds).",
+                    RS.centerX,
+                    RS.centerY,
+                    scale = RS.renderScale
+                )
             }
 
             States.Click -> {
@@ -78,7 +100,12 @@ open class ReactionTest(
                     RS.height,
                     ColorRGB.GREEN
                 )
-                FontRendererBig.drawCenteredStringWithShadow("Click now!!!", RS.centerX, RS.centerY)
+                FontRendererBig.drawCenteredStringWithShadow(
+                    "Click now!!!",
+                    RS.centerX,
+                    RS.centerY,
+                    scale = RS.renderScale
+                )
             }
 
             States.TooFast -> {
@@ -92,7 +119,8 @@ open class ReactionTest(
                 FontRendererBig.drawCenteredStringWithShadow(
                     "Too early! Please wait for green.",
                     RS.centerX,
-                    RS.centerY
+                    RS.centerY,
+                    scale = RS.renderScale
                 )
             }
 
@@ -106,7 +134,9 @@ open class ReactionTest(
                 )
                 FontRendererBig.drawCenteredStringWithShadow(
                     "Reaction Time ${String.format("%.3f", lastReactionTime / 1000000f)}",
-                    RS.centerX, RS.centerY
+                    RS.centerX,
+                    RS.centerY,
+                    scale = RS.renderScale
                 )
             }
 

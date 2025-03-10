@@ -6,7 +6,7 @@ import net.spartanb312.everett.graphics.RS
 import org.lwjgl.opengl.*
 import java.nio.ByteBuffer
 
-open class PersistentMappedBuffer {
+open class PersistentMappedBuffer(size: Long =64L * 1024L * 1024L)  {
 
     val vbo = run {
         val buffer = when {
@@ -17,13 +17,13 @@ open class PersistentMappedBuffer {
         when {
             RS.compat.openGL45 -> GL45.glNamedBufferStorage(
                 buffer,
-                64L * 1024L * 1024L,
+                size,
                 GL44.GL_MAP_WRITE_BIT or GL44.GL_MAP_PERSISTENT_BIT or GL44.GL_MAP_COHERENT_BIT
             )
 
             RS.compat.arbBufferStorage -> ARBBufferStorage.glNamedBufferStorageEXT(
                 buffer,
-                64L * 1024L * 1024L,
+                size,
                 GL44.GL_MAP_WRITE_BIT or GL44.GL_MAP_PERSISTENT_BIT or GL44.GL_MAP_COHERENT_BIT
             )
 
@@ -37,21 +37,21 @@ open class PersistentMappedBuffer {
             RS.compat.openGL45 -> GL45.glMapNamedBufferRange(
                 vbo,
                 0,
-                64L * 1024L * 1024L,
+                size,
                 GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT or GL45.GL_MAP_UNSYNCHRONIZED_BIT
             )
 
             RS.compat.arbDirectAccess -> ARBDirectStateAccess.glMapNamedBufferRange(
                 vbo,
                 0,
-                64L * 1024L * 1024L,
+                size,
                 GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT or GL45.GL_MAP_UNSYNCHRONIZED_BIT
             )
 
             RS.compat.extDirectAccess -> EXTDirectStateAccess.glMapNamedBufferRangeEXT(
                 vbo,
                 0,
-                64L * 1024L * 1024L,
+                size,
                 GL45.GL_MAP_WRITE_BIT or GL45.GL_MAP_PERSISTENT_BIT or GL45.GL_MAP_COHERENT_BIT or GL45.GL_MAP_UNSYNCHRONIZED_BIT
             )
 

@@ -13,6 +13,8 @@ import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.option.OptionsRenderer
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
+import net.spartanb312.everett.graphics.AnimationFlag
+import net.spartanb312.everett.graphics.Easing
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
@@ -38,7 +40,6 @@ object OptionScreen : GuiScreen() {
         else alpha -= 50
         if (alpha < 0) alpha = 0f
     }
-    private val slideTimer = Timer()
     private val format = DecimalFormat("0.0")
 
     override fun onInit() {
@@ -46,6 +47,9 @@ object OptionScreen : GuiScreen() {
         enabled = true
         if (alpha == 1f) alpha++
     }
+
+    private val leftFlag = AnimationFlag(Easing.OUT_QUINT, 400f)
+    private val rightFlag = AnimationFlag(Easing.OUT_QUINT, 400f)
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         Background.update()
@@ -66,19 +70,13 @@ object OptionScreen : GuiScreen() {
                 onRender2D(mouseX, mouseY, alpha)
             }
         }
-        slideTimer.passedAndReset(17) {
-            val targetLeft = currentSelected.x
-            val targetRight = currentSelected.x + currentSelected.width
-            if (targetLeft < leftSideX) {
-                //On the left side
-                leftSideX = leftSideX.converge(targetLeft, 0.3f)
-                rightSideX = rightSideX.converge(targetRight, 0.15f)
-            } else if (targetRight > rightSideX) {
-                //On the right side
-                rightSideX = rightSideX.converge(targetRight, 0.3f)
-                leftSideX = leftSideX.converge(targetLeft, 0.15f)
-            }
-        }
+        val targetLeft = currentSelected.x
+        val targetRight = currentSelected.x + currentSelected.width
+        leftFlag.update(targetLeft)
+        rightFlag.update(targetRight)
+        leftSideX = leftFlag.get()
+        rightSideX = rightFlag.get()
+
         val lineStartY = startY + FontRendererBig.getHeight(scale) * 1.05f
         val lineEndY = lineStartY + 8f * scale
         RenderUtils.drawRect(leftSideX, lineStartY, rightSideX, lineEndY, ColorRGB.WHITE.alpha(alpha.toInt()))
@@ -130,7 +128,7 @@ object OptionScreen : GuiScreen() {
                 RS.heightF * 0.685f,
                 centerX,
                 RS.heightF * 0.9f,
-                2f * scale,
+                2f * scale / RS.renderScale,
                 ColorRGB.RED.alpha(alpha.toInt())
             )
             RenderUtils.drawLine(
@@ -138,13 +136,20 @@ object OptionScreen : GuiScreen() {
                 centerY,
                 RS.widthF * 0.93f,
                 centerY,
-                2f * scale,
+                2f * scale / RS.renderScale,
                 ColorRGB.RED.alpha(alpha.toInt())
             )
         }
         CrosshairRenderer.onRender(false, centerX, centerY, VideoOption.dfov, ColorRGB.WHITE.alpha(alpha.toInt()))
 
-        fun drawRatedRamUsage(rate: Float, string: String, offset: Float, used: Number, total: Number) {
+        fun drawRatedRamUsage(
+            rate: Float,
+            string: String,
+            offset: Float,
+            used: Number,
+            total: Number,
+            allocated: Number = total
+        ) {
             val vStartX = rightStartX + scale * 15f
             val vEndX = rightEndX - scale * 15f
             var vStartY = rightEndY - (2.5f + offset) * scale
@@ -164,6 +169,14 @@ object OptionScreen : GuiScreen() {
                 ColorRGB.WHITE.alpha((0.1f * alpha).toInt())
             )
             val color = if (rate <= 0.7f) ColorRGB.WHITE else if (rate <= 0.9f) ColorRGB.YELLOW else ColorRGB.RED
+            if (total != allocated) RenderUtils.drawRect(
+                barStartX,
+                vStartY - 35f * scale,
+                barStartX + (vEndX - barStartX) * (allocated.toFloat() / total.toFloat()).coerceIn(0f, 1f),
+                vStartY - 7.5f * scale,
+                ColorRGB.RED.alpha((0.1f * alpha).toInt())
+            )
+
             RenderUtils.drawRect(
                 barStartX,
                 vStartY - 35f * scale,
@@ -193,12 +206,13 @@ object OptionScreen : GuiScreen() {
 
         // RAM
         val totalRam = Runtime.getRuntime().maxMemory() / 1048576
-        val usedRam = (Runtime.getRuntime().totalMemory() - Runtime.getRuntime().freeMemory()) / 1048576
+        val allocatedRam = Runtime.getRuntime().totalMemory()
+        val usedRam = (allocatedRam - Runtime.getRuntime().freeMemory()) / 1048576
         drawRatedRamUsage(
             (usedRam.toDouble() / totalRam.toDouble()).toFloat(),
             "DRAM",
             35f,
-            usedRam, totalRam
+            usedRam, totalRam, allocatedRam
         )
 
         // V-RAM

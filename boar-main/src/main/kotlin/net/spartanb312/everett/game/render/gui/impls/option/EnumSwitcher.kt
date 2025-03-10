@@ -1,17 +1,17 @@
 package net.spartanb312.everett.game.render.gui.impls.option
 
 import net.spartanb312.everett.game.render.FontRendererBig
+import net.spartanb312.everett.graphics.AnimationFlag
+import net.spartanb312.everett.graphics.Easing
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.config.setting.primitive.EnumSetting
-import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.misc.DisplayEnum
-import net.spartanb312.everett.utils.timing.Timer
 
 class EnumSwitcher<T : Enum<T>>(setting: EnumSetting<T>) : AbstractSettingComponent<T>(setting) {
 
     private var progress = 0f // 0-100 %
-    private val animationTimer = Timer()
+    private val animationFlag = AnimationFlag(Easing.OUT_CUBIC, 450f)
 
     override fun onRender2D(mouseX: Double, mouseY: Double, scale: Float, alpha: Float) {
         val isHoovered = isHoovered(mouseX, mouseY)
@@ -31,10 +31,8 @@ class EnumSwitcher<T : Enum<T>>(setting: EnumSetting<T>) : AbstractSettingCompon
             scale * 0.8f
         )
 
-        animationTimer.passedAndReset(10) {
-            progress = progress.converge(if (isHoovered) 100f else 0f, 0.1f)
-        }
-
+        animationFlag.update(if (isHoovered) 100f else 0f)
+        progress = animationFlag.get()
         //0.45 -> 0.85
         val moveProgress = (progress / 70f).coerceIn(0f, 1f)
         val switcherAlphaRate = ((progress - 70f) / 30f).coerceIn(0f, 1f)

@@ -42,7 +42,7 @@ object LoadingScreen : GuiScreen() {
             RS.heightF * 0.7f,
             RS.widthF * 0.7f,
             RS.heightF * 0.7f + 40f * scale,
-            2f * scale,
+            2f * scale / RS.renderScale,
             ColorRGB.WHITE
         )
         FontRendererASCII.drawCenteredString(

@@ -5,6 +5,7 @@ import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
 import net.spartanb312.everett.game.option.impls.AccessibilityOption
 import net.spartanb312.everett.game.option.impls.AimAssistOption
+import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.game.render.BallRenderer
 import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.HitEffectsRenderer
@@ -17,6 +18,7 @@ import net.spartanb312.everett.game.training.BallHitTraining
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.misc.asRange
+import net.spartanb312.everett.utils.timing.Timer
 
 abstract class DMRTraining(
     scene: Scene,
@@ -75,6 +77,7 @@ abstract class DMRTraining(
 
     override fun render() {
         AimTrainingScene.skybox.onRender3D()
+        vecTimer.passedAndReset(30) { entities.forEach { if (it is Ball) it.updateVec(false, moveSpeed) } }
         entities.forEach {
             if (it is Ball) {
                 BallRenderer.render(
@@ -98,6 +101,8 @@ abstract class DMRTraining(
             ) else fadeBalls.remove(it)
         }
     }
+
+    private val vecTimer = Timer()
 
     override fun onClick() {
         if (stage != Stage.Training || Render2DManager.displaying) return
@@ -149,13 +154,13 @@ abstract class DMRTraining(
             AimTrainer.taskManager.runLater(AccessibilityOption.ping) {
                 RS.addRenderThreadJob { solve() }
             }
-        } else { solve() }
+        } else solve()
     }
 
     override fun onTick() {
         super.onTick()
-        entities.forEach {
-            if (it is Ball) it.randomMove(false, moveSpeed)
+        if (!isPaused) entities.forEach {
+            if (it is Ball) it.randomMove((60f / ControlOption.physicsTPS).coerceAtLeast(1f))
         }
     }
 

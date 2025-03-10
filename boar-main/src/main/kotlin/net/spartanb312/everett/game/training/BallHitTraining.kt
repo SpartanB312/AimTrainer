@@ -17,8 +17,10 @@ import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.math.vector.Vec3f
+import net.spartanb312.everett.utils.math.vector.distanceTo
 import net.spartanb312.everett.utils.misc.asRange
 import net.spartanb312.everett.utils.misc.random
+import kotlin.math.asin
 import kotlin.math.roundToInt
 import kotlin.random.Random
 
@@ -63,6 +65,18 @@ abstract class BallHitTraining(
         }
     }
 
+    private var pauseTime = System.currentTimeMillis()
+    var isPaused = false; private set
+
+    override fun pause() {
+        pauseTime = System.currentTimeMillis()
+        isPaused = true
+    }
+
+    override fun resume() {
+        isPaused = false
+    }
+
     override fun reset(): Training {
         super.reset()
         medalCounter.reset()
@@ -76,9 +90,35 @@ abstract class BallHitTraining(
     }
 
     override fun render() {
+        if (isPaused) {
+            val current = System.currentTimeMillis()
+            startTime += (current - pauseTime)
+            pauseTime = current
+        }
         AimTrainingScene.skybox.onRender3D()
+        val closest = entities.minByOrNull {
+            val distance = Player.offsetPos.distanceTo(it.pos)
+            val angle = asin((it as Ball).size / distance)
+            it.raytraceAngle(Player.offsetPos, Player.camera.front) - angle
+        }
         entities.forEach {
-            if (it is Ball) BallRenderer.render(it.pos.x, it.pos.y, it.pos.z, it.size, color, true, outlineC)
+            if (it is Ball) BallRenderer.render(
+                it.pos.x,
+                it.pos.y,
+                it.pos.z,
+                it.size,
+                when {
+                    AccessibilityOption.raytracedTarget && it.isRaytraced -> ColorRGB.GREEN
+                    AccessibilityOption.closestTarget && it == closest -> ColorRGB.YELLOW
+                    else -> color
+                },
+                true,
+                when {
+                    AccessibilityOption.raytracedTarget && it.isRaytraced -> ColorRGB.GREEN
+                    AccessibilityOption.closestTarget && it == closest -> ColorRGB.YELLOW
+                    else -> outlineC
+                }
+            )
         }
         fadeBalls.toList().forEach { (it, time) ->
             val alphaRate = 1f - ((System.currentTimeMillis() - time) / fadeTime.toFloat())
@@ -148,7 +188,7 @@ abstract class BallHitTraining(
                     RS.centerYF * 1.75f - scale * 15f,
                     RS.centerXF + scale * 150f,
                     RS.centerYF * 1.75f + scale * 15f,
-                    1f * scale,
+                    1f * scale / RS.renderScale,
                     lightColor.alpha(192)
                 )
                 FontRendererMain.drawCenteredStringWithShadow(

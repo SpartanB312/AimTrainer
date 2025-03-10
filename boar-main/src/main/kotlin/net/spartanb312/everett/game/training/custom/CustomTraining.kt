@@ -78,7 +78,7 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
         val distance by setting("Distance", 50f, 10f..150f, 0.5f)
             .lang("生成距离", "生成距離")
             .limit(Modes.Normal, Modes.DMR, Modes.Following)
-        val moveSpeed by setting("Move Speed", if (mode == Modes.DMR) 2f else 2.5f, 0f..5f, 0.1f)
+        val moveSpeed by setting("Move Speed", if (mode == Modes.DMR) 2f else 2.5f, 0f..10f, 0.1f)
             .lang("移动速度", "移動速度")
             .limit(Modes.DMR, Modes.Following)
         val killResetTime by setting("Continuous Kill Reset", if (mode == Modes.Normal) 300 else 2500, 0..10000, 50)

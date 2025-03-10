@@ -92,7 +92,7 @@ fun <E : Event> concurrentListener(
 private fun getEventBus(eventClass: Class<out Event>): EventBus {
     return try {
         eventClass.instance!!
-    } catch (e: NoSuchFieldException) {
+    } catch (e: Exception) {
         eventClass.getDeclaredField("Companion")[null] as EventPosting
     }.eventBus
 }

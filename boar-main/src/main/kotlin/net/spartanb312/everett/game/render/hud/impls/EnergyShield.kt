@@ -64,7 +64,7 @@ object EnergyShield {
                 }
             }
         }
-        RenderUtils.drawLinesLoop(shieldOutline, 0.5f * scale, generalColor.alpha(192))
+        RenderUtils.drawLinesLoop(shieldOutline, 0.5f * scale / RS.renderScale, generalColor.alpha(192))
     }
 
     private fun renderCompass(scale: Float) {
@@ -83,7 +83,7 @@ object EnergyShield {
                     RenderUtils.drawLine(
                         Vec2f(renderX, -5f + offsetY),
                         Vec2f(renderX, -2f + offsetY),
-                        scale * 0.5f,
+                        scale * 0.5f / RS.renderScale,
                         generalLightColor.alpha(alpha)
                     )
                 } else FontRendererMain.drawCenteredString(
@@ -99,7 +99,7 @@ object EnergyShield {
 
     private fun renderOutline() {
         // left outline
-        val lineWidth = 1.5f * RS.generalScale
+        val lineWidth = 1.5f * RS.generalScale / RS.renderScale
         RenderUtils.drawLine(
             Vec2f(95f, 7.5f),
             Vec2f(140f, 5.5f),

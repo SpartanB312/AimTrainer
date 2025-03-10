@@ -1,6 +1,8 @@
 package net.spartanb312.everett.graphics
 
 import net.spartanb312.everett.graphics.OpenGL.*
+import net.spartanb312.everett.graphics.antialias.RenderScaling
+import net.spartanb312.everett.graphics.antialias.ScreenAntiAlias
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVBO
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
 import net.spartanb312.everett.graphics.event.EngineLoopEvent
@@ -9,7 +11,6 @@ import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.launch.Platform
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.*
-import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW.*
@@ -20,7 +21,6 @@ import org.lwjgl.opengl.NVXGPUMemoryInfo
 import org.lwjgl.opengl.WGLAMDGPUAssociation
 import java.util.concurrent.LinkedBlockingQueue
 import javax.swing.JOptionPane
-import kotlin.math.E
 import kotlin.math.max
 import kotlin.math.sqrt
 import kotlin.system.exitProcess
@@ -35,7 +35,7 @@ typealias RS = RenderSystem
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.2.3"
+    const val ENGINE_VERSION = "1.3.1"
 
     init {
         name = "RenderThread"
@@ -45,15 +45,24 @@ object RenderSystem : Thread() {
     val averageFPS get() = fpsCounter.averageCPS
     var lastJobTime = 0L; private set
 
+    val scaling by lazy { RenderScaling() }
+    val antiAlias by lazy { ScreenAntiAlias() }
+
     var window = 0L; private set
     var monitor = 0L; private set
-    var width = 0; private set
-    var height = 0; private set
-    inline val widthF get() = width.toFloat()
-    inline val heightF get() = height.toFloat()
+    inline val width get() = scaling.scaledWidth
+    inline val height get() = scaling.scaledHeight
+    inline val widthF get() = scaling.scaledWidthF
+    inline val heightF get() = scaling.scaledHeightF
+    inline val widthD get() = scaling.scaledWidthD
+    inline val heightD get() = scaling.scaledWidthD
+    inline val scaledWidth get() = scaling.scaledWidth
+    inline val scaledHeight get() = scaling.scaledHeight
+    inline val scaledWidthF get() = scaling.scaledWidthF
+    inline val scaledHeightF get() = scaling.scaledHeightF
+    inline val scaledWidthD get() = scaling.scaledWidthD
+    inline val scaledHeightD get() = scaling.scaledHeightD
     inline val diagonalF get() = sqrt(widthF * widthF + heightF * heightF)
-    inline val widthD get() = width.toDouble()
-    inline val heightD get() = height.toDouble()
     inline val diagonalD get() = sqrt(widthD * widthD + heightD * heightD)
     inline val aspect get() = widthF / heightF
     inline val aspectD get() = widthD / heightD
@@ -65,13 +74,14 @@ object RenderSystem : Thread() {
     inline val centerYD get() = heightD / 2.0
     inline val maxThreads get() = Runtime.getRuntime().availableProcessors()
 
+    inline val renderScale get() = scaling.scale
+
     var displayWidth = 0; private set
     var displayHeight = 0; private set
     inline val displayWidthF get() = displayWidth.toFloat()
     inline val displayHeightF get() = displayHeight.toFloat()
     inline val displayWidthD get() = displayWidth.toDouble()
     inline val displayHeightD get() = displayHeight.toDouble()
-    var refreshRate = 0; private set
 
     const val initialMouseValue = Int.MIN_VALUE.toDouble()
     var mouseXD = initialMouseValue; private set
@@ -80,12 +90,8 @@ object RenderSystem : Thread() {
     inline val mouseYF get() = mouseYD.toFloat()
     inline val mouseX get() = mouseXD.toInt()
     inline val mouseY get() = mouseYD.toInt()
-    var originMouseXD = initialMouseValue; private set
-    var originMouseYD = initialMouseValue; private set
-    inline val originMouseXF get() = originMouseXD.toFloat()
-    inline val originMouseYF get() = originMouseYD.toFloat()
-    inline val originMouseX get() = originMouseXD.toInt()
-    inline val originMouseY get() = originMouseYD.toInt()
+    var originMouseX = 0.0; private set
+    var originMouseY = 0.0; private set
 
     val widthScale get() = widthF / 1920f
     val heightScale get() = heightF / 1080f
@@ -95,13 +101,6 @@ object RenderSystem : Thread() {
     var rto = true
     const val rtoTime = 5
     val matrixLayer = MatrixLayerStack()
-
-    private val flexTimer = Timer()
-    var flexSync = false
-        set(value) {
-            if (value) flexTimer.reset()
-            field = value
-        }
 
     private val renderThreadJob = LinkedBlockingQueue<Runnable>()
     fun addRenderThreadJob(runnable: Runnable) = renderThreadJob.add(runnable)
@@ -134,7 +133,7 @@ object RenderSystem : Thread() {
     var freeMemory = 0L; private set
     var totalVRam = 0; private set
     val usedMemory get() = totalMemory - freeMemory
-    private var renderScale = 1f
+    var dpiRate = 1f; private set
 
     fun <T : GameGraphics> launch(
         graphics: Class<T>,
@@ -158,23 +157,15 @@ object RenderSystem : Thread() {
     }
 
     private val limitTimer = Timer()
-    private val cps = Counter(1000)
-    private val mps = Counter(1000)
 
-    override fun run() {
-        actualRenderThread = currentThread()
-        GLFWErrorCallback.createPrint(System.err).set()
-        check(glfwInit()) { "Unable to initialize GLFW" }
+    fun createWindow(borderless: Boolean): Pair<Long, Long> {
         glfwDefaultWindowHints()
         glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE)
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE)
-
         // check GL compat
         val checkWindow = glfwCreateWindow(initWidth, initHeight, title, NULL, NULL)
         glfwMakeContextCurrent(checkWindow)
-
         compat = GLCompatibility(createCapabilities())
-
         if (!compat.openGL45) {
             val result = JOptionPane.showConfirmDialog(
                 null,
@@ -186,8 +177,6 @@ object RenderSystem : Thread() {
             )
             if (result == JOptionPane.NO_OPTION) exitProcess(0)
         }
-
-
         if (compat.openGL45) {
             glfwWindowHint(GLFW_CONTEXT_CREATION_API, GLFW_NATIVE_CONTEXT_API)
             glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE)
@@ -199,18 +188,14 @@ object RenderSystem : Thread() {
             glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, compat.majorVersion)
             glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, compat.minorVersion)
         }
-
         window = glfwCreateWindow(initWidth, initHeight, title, NULL, NULL)
         if (window == NULL) throw RuntimeException("Failed to create the GLFW window")
-
         monitor = glfwGetPrimaryMonitor()
         if (monitor == NULL) throw RuntimeException("Can't find current monitor")
-
         if (centered) {
             val widthBuffer = mallocInt(1)
             val heightBuffer = mallocInt(1)
             glfwGetWindowSize(window, widthBuffer, heightBuffer)
-
             glfwGetVideoMode(monitor)?.let { videoMode ->
                 glfwSetWindowPos(
                     window,
@@ -219,10 +204,16 @@ object RenderSystem : Thread() {
                 )
             }
         }
-
         glfwMakeContextCurrent(window)
         glfwDestroyWindow(checkWindow)
+        return window to monitor
+    }
 
+    override fun run() {
+        actualRenderThread = currentThread()
+        GLFWErrorCallback.createPrint(System.err).set()
+        check(glfwInit()) { "Unable to initialize GLFW" }
+        createWindow(true)
         gameGraphics = graphics!!.instance!!
         if (gameGraphics == DummyGraphics) throw Exception("This GFX is not supported")
 
@@ -233,10 +224,10 @@ object RenderSystem : Thread() {
 
         // Mouse callback
         glfwSetCursorPosCallback(window) { _: Long, x: Double, y: Double ->
-            originMouseXD = x
-            originMouseYD = y
-            mouseXD = x * renderScale
-            mouseYD = y * renderScale
+            mouseXD = x * scaling.scale
+            mouseYD = y * scaling.scale
+            originMouseX = x
+            originMouseY = y
         }
 
         glfwSetScrollCallback(window) { _: Long, _: Double, y: Double ->
@@ -273,13 +264,14 @@ object RenderSystem : Thread() {
         glFrontFace(GL11.GL_CCW)
 
         glClearColor(0f, 0f, 0f, 1f)
-        updateResolution(false)
+        updateWindowSize()
 
         gameGraphics.onInit()
 
         glfwShowWindow(window)
 
         while (!glfwWindowShouldClose(window)) {
+            updateWindowSize()
             val frameStartTime = System.nanoTime()
             frames++
             generalScale = max(widthScale, heightScale)
@@ -297,7 +289,6 @@ object RenderSystem : Thread() {
 
             // Pre-render
             fpsCounter.invoke()
-            updateResolution()
             updateMemory()
             EngineLoopEvent.Task.Pre.post()
             matrixLayer.resetID()
@@ -322,10 +313,8 @@ object RenderSystem : Thread() {
 
             EngineLoopEvent.SwapBuffer.Pre.post()
             val gpuStartTime = System.nanoTime()
-            if (flexSync) flexSync() else {
-                gameGraphics.onFramebufferDrawing()
-                glfwSwapBuffers(window)
-            }
+            gameGraphics.onFramebufferDrawing()
+            glfwSwapBuffers(window)
             gpuTime = System.nanoTime() - gpuStartTime
             EngineLoopEvent.SwapBuffer.Post.post()
             profiler.profiler("Swap Buffer")
@@ -347,32 +336,31 @@ object RenderSystem : Thread() {
         glfwSetWindowTitle(window, title)
     }
 
-    private val widthArray = IntArray(1)
-    private val heightArray = IntArray(1)
+    private val xScale = FloatArray(1)
+    private val yScale = FloatArray(1)
 
-    private fun updateResolution(updateBlock: Boolean = true) {
-        glfwGetFramebufferSize(window, widthArray, heightArray)
-        val displayWidth = widthArray[0]
-        val displayHeight = heightArray[0]
+    private val resultBuffer = arrayOf(
+        mallocInt(1), // width
+        mallocInt(1), // height
+        mallocInt(1), // x
+        mallocInt(1), // y
+    )
 
-        val newWidth = (displayWidth * renderScale).toInt()
-        val newHeight = (displayHeight * renderScale).toInt()
-
-        if (updateBlock && (width != newWidth || height != newHeight)) gameGraphics.onResolutionUpdate(
-            width,
-            height,
-            newWidth,
-            newHeight
-        )
-
-        val monitor = glfwGetPrimaryMonitor()
-        val mode = glfwGetVideoModes(monitor)!!.last()
-        refreshRate = mode.refreshRate()
-
-        this.displayWidth = displayWidth
-        this.displayHeight = displayHeight
-        width = newWidth
-        height = newHeight
+    private fun updateWindowSize() {
+        glfwGetWindowSize(window, resultBuffer[0], resultBuffer[1])
+        val width = resultBuffer[0][0]
+        val height = resultBuffer[1][0]
+        val oldWidth = this.displayWidth
+        val oldHeight = this.displayHeight
+        val oldDpiRate = this.dpiRate
+        glfwGetWindowContentScale(window, xScale, yScale)
+        val newDpiRate = (xScale[0] + yScale[0]) / 2f
+        this.displayWidth = width
+        this.displayHeight = height
+        this.dpiRate = newDpiRate
+        if (oldWidth != width || oldHeight != height || newDpiRate != oldDpiRate) {
+            gameGraphics.onResolutionUpdate(oldWidth, oldHeight, width, height, newDpiRate)
+        }
     }
 
     private fun updateMemory() {
@@ -383,27 +371,7 @@ object RenderSystem : Thread() {
     }
 
     fun setRenderScale(scale: Float) {
-        if (renderScale != scale) {
-            renderScale = scale
-            updateResolution()
-            mouseXD = originMouseXD * renderScale
-            mouseYD = originMouseYD * renderScale
-        }
-    }
-
-    private fun flexSync() {
-        var flag = false
-        limitTimer.tps((refreshRate * E).toInt()) {
-            limitTimer.reset()
-            flag = true
-        }
-        if (flag) {
-            gameGraphics.onFramebufferDrawing()
-            glfwSwapBuffers(window)
-        } else Sync.sync(
-            if (!flexTimer.passed(1000)) Int.MAX_VALUE
-            else refreshRate + (averageFPS * 1.2f).toInt()
-        )
+        scaling.setScale(scale)
     }
 
 }

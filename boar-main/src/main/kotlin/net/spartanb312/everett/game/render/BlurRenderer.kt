@@ -1,6 +1,5 @@
 package net.spartanb312.everett.game.render
 
-import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.graphics.GLDataType
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
@@ -26,12 +25,12 @@ object BlurRenderer {
 
     private val passH = Pass("assets/shader/general/BlurH.vsh")
     private val passV = Pass("assets/shader/general/BlurV.vsh")
-    private var fbo1 = FixedFramebuffer(RS.width, RS.height, false)
-    private var fbo2 = FixedFramebuffer(RS.width, RS.height, false)
+    private var fbo1 = FixedFramebuffer(RS.width, RS.height, true).also { it.generateColorLayer() }
+    private var fbo2 = FixedFramebuffer(RS.width, RS.height, true).also { it.generateColorLayer() }
 
     fun updateResolution(width: Int, height: Int) {
-        fbo1 = FixedFramebuffer(width, height, false)
-        fbo2 = FixedFramebuffer(width, height, false)
+        fbo1 = FixedFramebuffer(width, height, true).also { it.generateColorLayer() }
+        fbo2 = FixedFramebuffer(width, height, true).also { it.generateColorLayer() }
         passH.updateResolution(width.toFloat(), height.toFloat())
         passV.updateResolution(width.toFloat(), height.toFloat())
         setTextureParam(fbo1.texture)
@@ -42,7 +41,7 @@ object BlurRenderer {
         if (pass == 0) return
 
         //RenderUtils.drawRect(startX,startY,endX,endY, ColorRGB.RED)
-        setTextureParam(AimTrainer.framebuffer.texture)
+       // setTextureParam(AimTrainer.framebuffer.texture)
         putVertex(startX, startY, endX, endY)
         GLHelper.blend = false
         GLHelper.depth = false
@@ -52,19 +51,19 @@ object BlurRenderer {
         GLHelper.bindVertexArray(vao)
 
         var extend = pass - 1f
-        bindFbo(AimTrainer.framebuffer, fbo1)
+        //bindFbo(AimTrainer.framebuffer, fbo1.fbo)
         drawPass(passH, extend, extend + 1.0f)
 
         while (extend > 0) {
-            bindFbo(fbo1, fbo2)
+            bindFbo(fbo1, fbo2.fbo)
             drawPass(passV, extend, extend)
 
-            bindFbo(fbo2, fbo1)
+            bindFbo(fbo2, fbo1.fbo)
             drawPass(passH, extend - 1.0f, extend)
             extend--
         }
 
-        bindFbo(fbo1, AimTrainer.framebuffer)
+        bindFbo(fbo1, 0)
         drawPass(passV, 0.0f, 0.0f)
 
         fbo1.texture.unbindTexture()
@@ -123,9 +122,9 @@ object BlurRenderer {
         glDrawArrays(GL_TRIANGLES, PersistentMappedVBO.drawOffset, 6)
     }
 
-    private fun bindFbo(from: Framebuffer, to: Framebuffer) {
+    private fun bindFbo(from: Framebuffer, to: Int) {
         from.texture.bindTexture()
-        to.bindFramebuffer(false)
+        GLHelper.bindFramebuffer(to, true)
     }
 
     private class Pass(vsh: String) : Shader(vsh, "assets/shader/general/Blur.fsh") {

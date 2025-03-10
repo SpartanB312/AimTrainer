@@ -6,13 +6,29 @@ import net.spartanb312.everett.game.render.FontRendererBig
 import net.spartanb312.everett.game.render.gui.GuiScreen
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.scene.Scene
+import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
+import net.spartanb312.everett.graphics.event.EngineLoopEvent
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.event.IListenerOwner
+import net.spartanb312.everett.utils.event.Listener
+import net.spartanb312.everett.utils.event.ParallelListener
+import net.spartanb312.everett.utils.event.listener
 import net.spartanb312.everett.utils.language.MultiText
 import org.lwjgl.glfw.GLFW
 
-class PauseScreen(val scene: Scene) : GuiScreen() {
+class PauseScreen(val scene: Scene) : GuiScreen(), IListenerOwner {
+
+    override val listeners = ArrayList<Listener>()
+    override val parallelListeners = ArrayList<ParallelListener>()
+
+    init {
+        listener<EngineLoopEvent.Loop.Post> {
+            if (scene is AimTrainingScene && Render2DManager.currentScreen == null) scene.currentTraining?.resume()
+        }
+        subscribe()
+    }
 
     val buttons = mutableListOf<Button>()
     private val paused by "Paused".lang("暂停", "暫停")
@@ -47,6 +63,7 @@ class PauseScreen(val scene: Scene) : GuiScreen() {
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             Render2DManager.popScreen()
+            //if (scene is AimTrainingScene) scene.currentTraining?.resume()
             return true
         }
         return false

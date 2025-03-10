@@ -15,4 +15,8 @@ open class EntityPlayer : Entity(Vec3f.ZERO) {
         return 0f
     }
 
+    override fun raytraceAngle(origin: Vec3f, ray: Vec3f): Float {
+        return 0f
+    }
+
 }

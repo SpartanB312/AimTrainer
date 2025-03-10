@@ -33,12 +33,12 @@ object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { Acc
     val flawlessVictory = lazyTexture("assets/texture/medals/flawless_victory.png", qualityLevel = 1)
 
     // Skybox
-    val down = lazyTexture("assets/texture/skybox/1.png")
-    val up = lazyTexture("assets/texture/skybox/2.png")
-    val left = lazyTexture("assets/texture/skybox/3.png")
-    val front = lazyTexture("assets/texture/skybox/4.png")
-    val right = lazyTexture("assets/texture/skybox/5.png")
-    val back = lazyTexture("assets/texture/skybox/6.png")
+    val down = lazyTexture("assets/texture/skybox/1.png", useMipmap = false, qualityLevel = 1)
+    val up = lazyTexture("assets/texture/skybox/2.png", useMipmap = false, qualityLevel = 1)
+    val left = lazyTexture("assets/texture/skybox/3.png", useMipmap = false, qualityLevel = 1)
+    val front = lazyTexture("assets/texture/skybox/4.png", useMipmap = false, qualityLevel = 1)
+    val right = lazyTexture("assets/texture/skybox/5.png", useMipmap = false, qualityLevel = 1)
+    val back = lazyTexture("assets/texture/skybox/6.png", useMipmap = false, qualityLevel = 1)
 
     // Menu
     val bg = lazyTexture("assets/texture/menu/halo_infinite_background.png")

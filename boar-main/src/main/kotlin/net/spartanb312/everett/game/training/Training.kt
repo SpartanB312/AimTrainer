@@ -28,6 +28,8 @@ abstract class Training : SubscribedRenderer, TrainingInfoContainer {
     abstract val errorAngle: Float
     abstract fun render()
     abstract fun onClick()
+    abstract fun pause()
+    abstract fun resume()
 
     open fun onTick() {
         stage = if (timeLapsed <= waitTime * 1000) Stage.Prepare

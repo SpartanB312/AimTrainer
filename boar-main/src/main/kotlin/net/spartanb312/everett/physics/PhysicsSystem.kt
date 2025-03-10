@@ -1,5 +1,6 @@
 package net.spartanb312.everett.physics
 
+import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.AverageCounter
 import net.spartanb312.everett.utils.timing.Timer
@@ -34,10 +35,11 @@ object PhysicsSystem {
     fun update() {
         if (!mainThread.isAlive) updateThread.interrupt()
         if (Thread.currentThread() == updateThread) { // Make sure on update thread
-             tpsLimiter.tps(tps){
+            tpsLimiter.tps(tps) {
                 tpsCounter.invoke()
                 // obj Updates
                 controller?.update()
+                SceneManager.onTick()
             }
         } else {
             Logger.info("Physics system should be handled by physics thread")

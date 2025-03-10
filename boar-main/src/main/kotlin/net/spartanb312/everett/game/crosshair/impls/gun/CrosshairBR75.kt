@@ -48,7 +48,7 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1550f / 4f, errorAngle = 1f) {
         shadow: Boolean,
         colorRGB: ColorRGB
     ) {
-        var scale = max(RS.widthF / 2560f, RS.heightF / 1369f)
+        var scale = max(RS.displayWidthF / 2560f, RS.displayHeightF / 1369f)
         colorTimer.passedAndReset(10) {
             colorRate = colorRate.converge(if (CrosshairRenderer.raytraced) 100f else 0f, 0.25f)
         }
@@ -104,8 +104,8 @@ object CrosshairBR75 : GunCrosshair, Crosshair(1550f / 4f, errorAngle = 1f) {
         )
 
         // Cross
-        val fromRadius = 7.35f * scale
-        val length = 20f * scale//20f * scale + (108 - actualFOV) * scale * 0.1f
+        val fromRadius = 7.35f * scale * RS.renderScale
+        val length = 20f * scale * RS.renderScale//20f * scale + (108 - actualFOV) * scale * 0.1f
         RenderUtils.drawLine(
             centerX,
             centerY - fromRadius,

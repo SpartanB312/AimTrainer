@@ -15,6 +15,7 @@ import net.spartanb312.everett.utils.math.vector.Vec3f
 import org.lwjgl.opengl.GL13
 
 var lightPosition = Vec3f(45f, 45f, 45f)
+var lightPosition2 = Vec3f(-45f, 45f, -45f)
 
 class MeshDNSH(meshData: MeshData) : Mesh(
     meshData.vertices,
@@ -35,22 +36,29 @@ class MeshDNSH(meshData: MeshData) : Mesh(
         private val height = shader.getUniformLocation("heightTex")
         private val viewPos = shader.getUniformLocation("viewPos")
         private val lightColor = shader.getUniformLocation("lightColor")
+        private val lightColor2 = shader.getUniformLocation("lightColor2")
         private val lightPos = shader.getUniformLocation("lightPos")
+        private val lightPos2 = shader.getUniformLocation("lightPos2")
 
         override fun MatrixLayerStack.MatrixScope.draw(mesh: Mesh) {
             if (mesh.textures.isEmpty()) return
 
-            val c = ColorRGB.GOLD.mix(ColorRGB.WHITE, 0.7f)
+            val c = ColorRGB.LIGHT_PURPLE.mix(ColorRGB.WHITE, 0.2f)
+            val c2 = ColorRGB.GOLD.mix(ColorRGB.WHITE, 0.2f)
             val color = Vec3f(c.rFloat, c.gFloat, c.bFloat)
-            val pitch = (((System.currentTimeMillis() - 114514) % 5000) / 5000f * 360f).toRadian()
-            lightPosition = Vec3f(pitch, 10f.toRadian()) * 10f
+            val color2 = Vec3f(c2.rFloat, c2.gFloat, c2.bFloat)
+            val yaw = (((System.currentTimeMillis() - 114514) % 5000) / 5000f * 360f).toRadian()
+            lightPosition = Vec3f(yaw, 10f.toRadian()) * 10f
+            lightPosition2 = Vec3f(yaw + 180f.toRadian(), 10f.toRadian()) * 10f
 
             shader.bind()
             layer.matrixArray.glUniform(matrixUniform)
 
             // upload Lights
             color.glUniform(lightColor)
+            color2.glUniform(lightColor2)
             lightPosition.glUniform(lightPos)
+            lightPosition2.glUniform(lightPos2)
 
             Player.camera.cameraPos.glUniform(viewPos)
 

@@ -39,6 +39,12 @@ object ImageUtils {
         }
     }
 
+    fun BufferedImage.getRGBArray(): IntArray {
+        val array = IntArray(width * height)
+        getRGB(0, 0, width, height, array, 0, width)
+        return array
+    }
+
     fun uploadImage(bufferedImage: BufferedImage, format: Int, width: Int, height: Int) {
         val array = IntArray(width * height)
         bufferedImage.getRGB(0, 0, width, height, array, 0, width)

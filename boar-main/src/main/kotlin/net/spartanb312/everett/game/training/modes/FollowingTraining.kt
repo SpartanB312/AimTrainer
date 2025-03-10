@@ -3,6 +3,7 @@ package net.spartanb312.everett.game.training.modes
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.entity.Ball
 import net.spartanb312.everett.game.option.impls.AimAssistOption
+import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.game.render.BallRenderer
 import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
@@ -65,6 +66,7 @@ abstract class FollowingTraining(
     }
 
     private val reverseTimer = Timer()
+    private val vecTimer = Timer()
 
     private fun click() {
         if (stage != Stage.Training || Render2DManager.displaying) return
@@ -100,6 +102,11 @@ abstract class FollowingTraining(
 
     override fun render() {
         AimTrainingScene.skybox.onRender3D()
+        var reverse = false
+        reverseTimer.passedAndReset(1000) {
+            reverse = 0.3 >= Random.nextDouble(0.0, 1.0)
+        }
+        vecTimer.passedAndReset(30) { entities.forEach { if (it is Ball) it.updateVec(reverse, moveSpeed) } }
         entities.forEach {
             if (it is Ball) BallRenderer.render(it.pos.x, it.pos.y, it.pos.z, it.size, ColorRGB.GREEN, false, outlineC)
         }
@@ -119,13 +126,9 @@ abstract class FollowingTraining(
 
     override fun onTick() {
         super.onTick()
-        var reverse = false
-        reverseTimer.passedAndReset(1000) {
-            reverse = 0.3 >= Random.nextDouble(0.0, 1.0)
-        }
         click()
-        entities.forEach {
-            if (it is Ball) it.randomMove(reverse, moveSpeed)
+        if (!isPaused) entities.forEach {
+            if (it is Ball) it.randomMove((60f / ControlOption.physicsTPS).coerceAtLeast(1f))
         }
     }
 

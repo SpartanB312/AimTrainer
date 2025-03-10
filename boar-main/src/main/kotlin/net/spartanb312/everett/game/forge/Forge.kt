@@ -12,11 +12,13 @@ import net.spartanb312.everett.game.render.gui.impls.PauseScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.game.render.scene.impls.DummyScene
+import net.spartanb312.everett.game.render.scene.impls.SkyboxScene
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.scalef
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.matrix.translatef
 import net.spartanb312.everett.graphics.model.mesh.lightPosition
+import net.spartanb312.everett.graphics.model.mesh.lightPosition2
 import net.spartanb312.everett.graphics.scene.Scene3D
 import net.spartanb312.everett.utils.color.ColorRGB
 import org.lwjgl.glfw.GLFW
@@ -45,6 +47,7 @@ object Forge : Scene3D() {
     //private val shader = Shader("assets/shader/lighting/test.vsh", "assets/shader/lighting/test.fsh")
 
     override fun onRender() {
+        SkyboxScene.render3D()
         RS.matrixLayer.scope {
             scalef(10f, 10f, 10f)
             translatef(0f,-0.55f,0f)
@@ -76,6 +79,13 @@ object Forge : Scene3D() {
                 lightPosition.x,
                 lightPosition.y,
                 lightPosition.z,
+                0.5f,
+                ColorRGB.LIGHT_PURPLE.mix(ColorRGB.WHITE, 0.5f)
+            )
+            BallRenderer.render(
+                lightPosition2.x,
+                lightPosition2.y,
+                lightPosition2.z,
                 0.5f,
                 ColorRGB.GOLD.mix(ColorRGB.WHITE, 0.5f)
             )

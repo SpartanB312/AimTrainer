@@ -62,7 +62,7 @@ class WaveData(
                 channels == 2 && sampleSize == 8 -> AL10.AL_FORMAT_STEREO8
                 channels == 2 && sampleSize == 16 -> AL10.AL_FORMAT_STEREO16
                 else -> {
-                    Logger.error("Only mono or stereo is supported")
+                    Logger.error("Only mono or stereo is supported, [channels=$channels, sample size=$sampleSize]")
                     return null
                 }
             }

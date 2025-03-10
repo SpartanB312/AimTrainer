@@ -21,12 +21,12 @@ object AimTrainingScene : Scene() {
 
     private val tickTimer = Timer()
     val skybox = Skybox(
-        -200f,
-        -200f,
-        -200f,
-        200f,
-        200f,
-        200f,
+        -20000f,
+        -20000f,
+        -20000f,
+        20000f,
+        20000f,
+        20000f,
         TextureManager.down,
         TextureManager.up,
         TextureManager.left,
@@ -43,6 +43,7 @@ object AimTrainingScene : Scene() {
         })
         buttons.add(PauseScreen.Button("Restart".lang("重置", "重置")) {
             currentTraining?.reset()
+            Render2DManager.popScreen()
         })
         buttons.add(PauseScreen.Button("Options".lang("设置", "設定")) {
             Render2DManager.closeAll()
@@ -67,7 +68,6 @@ object AimTrainingScene : Scene() {
     }
 
     override fun render2D() {
-        tickTimer.passedAndReset(10) { currentTraining?.onTick() }
         currentTraining?.render2D()
     }
 
@@ -79,11 +79,13 @@ object AimTrainingScene : Scene() {
 
     override fun onTick() {
         // HaloInfiniteAA
+        tickTimer.passedAndReset(10) { currentTraining?.onTick() }
     }
 
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
         if (keyCode == GLFW.GLFW_KEY_ESCAPE) {
             Render2DManager.displayScreen(pauseScreen)
+            currentTraining?.pause()
             return true
         }
         return false

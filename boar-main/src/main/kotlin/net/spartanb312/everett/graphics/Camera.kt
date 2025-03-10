@@ -11,7 +11,7 @@ import kotlin.math.sin
 
 abstract class Camera(
     open var fov: Float = 70f,
-    open var zRange: ClosedFloatingPointRange<Float> = 0.01f..1000f,
+    open var zRange: ClosedFloatingPointRange<Float> = 0.01f..50000f,
     yaw: Float = 0f,
     pitch: Float = 0f,
     open var cameraPos: Vec3f = Vec3f()

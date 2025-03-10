@@ -35,7 +35,19 @@ object Background {
         progress = flag.get()
     }
 
+    private var shouldRender = false
+    private var mouseX = 0.0
+    private var mouseY = 0.0
+
     fun renderBackground(mouseX: Double, mouseY: Double) {
+        shouldRender = true
+        this.mouseX = mouseX
+        this.mouseY = mouseY
+    }
+
+    fun bgHook() {
+        if (!shouldRender) return
+        shouldRender = false
         if (SceneManager.currentScene != DummyScene) return
         when (VideoOption.backgroundMode.value) {
             Mode.Default -> {

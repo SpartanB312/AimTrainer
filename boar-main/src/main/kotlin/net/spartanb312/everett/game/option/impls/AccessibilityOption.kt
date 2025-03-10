@@ -43,6 +43,12 @@ object AccessibilityOption : Option("Accessibility") {
     val waitTime by setting("Wait Time", 5, 0..10)
         .lang("等待时间", "等待時間")
 
+    val closestTarget by setting("Closest Indication", true)
+        .lang("最近目标指示", "最近目標提示")
+
+    val raytracedTarget by setting("Raytraced Indication", true)
+        .lang("锁定目标指示", "鎖定目標提示")
+
     val pingSimulate = setting("Ping Simulate", false)
         .lang("延迟模拟", "延遲模擬")
     val simulatedPing by setting("Simulated Ping", 0, 0..500, 5)

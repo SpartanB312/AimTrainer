@@ -2,6 +2,7 @@ package net.spartanb312.everett.game.crosshair.impls
 
 import net.spartanb312.everett.game.crosshair.Crosshair
 import net.spartanb312.everett.game.render.CrosshairRenderer
+import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.utils.color.ColorRGB
@@ -36,7 +37,7 @@ object CrosshairCircle : Crosshair(0f) {
         else colorRGB.mix(ColorRGB(255, 20, 20), colorRate / 100f)
 
         val size = if (shadow) size * 1.03f else size
-        RenderUtils.drawArcOutline(centerX, centerY, size, 0f..360f, 0, lineWidth, color)
+        RenderUtils.drawArcOutline(centerX, centerY, size * RS.renderScale, 0f..360f, 0, lineWidth, color)
     }
 
 }

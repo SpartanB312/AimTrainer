@@ -6,6 +6,7 @@ import net.spartanb312.everett.game.render.Background
 import net.spartanb312.everett.game.render.hud.impls.Radar
 import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.RS
+import net.spartanb312.everett.graphics.antialias.ScreenAntiAlias
 import net.spartanb312.everett.graphics.event.EngineLoopEvent
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.config.setting.atMode
@@ -24,11 +25,12 @@ import org.lwjgl.glfw.GLFW
 
 object VideoOption : Option("Video") {
 
-    var fullScreen by setting("Full Screen", false)
-        .lang("全屏", "全屏")
+    var displayMode by setting("Display Mode", DisplayMode.Windowed)
+        .lang("显示模式", "顯示模式")
         .valueListen { prev, input ->
-            if (input != prev) GLHelper.fullScreen = input
+            if (input != prev) GLHelper.setDisplayMode(input)
         }
+
     val fullScreenMode by setting("Resolution", Resolution.Dummy1)
         .lang("分辨率", "解析度")
         .valueListen { prev, input ->
@@ -40,13 +42,17 @@ object VideoOption : Option("Video") {
                 }
             }
         }
-    val useFramebuffer = setting("Use Framebuffer", true)
+
+    val useFramebuffer = setting("Use Framebuffer", false)
         .lang("使用帧缓冲", "使用幀緩衝")
         .valueListen { _, input -> if (!input) RS.setRenderScale(1f) }
-    val renderRate = setting("Render Scale", 100, 50..400)
+    val renderRate = setting("Render Scale", 100, 25..400, 1)
         .lang("渲染比例", "渲染比率")
         .whenTrue(useFramebuffer)
-    val videoMode = setting("Video Mode", VideoMode.VSync)
+    val antiAlias by setting("Anti Alias", ScreenAntiAlias.Mode.MSAA4X)
+        .lang("抗锯齿", "反走樣")
+        .whenTrue(useFramebuffer) // Not finished yet
+    val videoMode = setting("Video Mode", VideoMode.Unlimited)
         .lang("视频模式", "視訊模式")
     val fpsLimit by setting("FPS Limit", 120, 30..2000, 10)
         .lang("帧数限制", "幀數上限")
@@ -63,6 +69,9 @@ object VideoOption : Option("Video") {
     private val vFOV by setting("Vertical FOV", 78f, 60f..150f, 0.5f)
         .lang("垂直FOV", "垂直FOV")
         .atMode(fovMode, FOVMode.VFOV)
+
+    val lighting by setting("Lightning", true)
+        .lang("光照", "光照")
 
     val ping by setting("Ping", true)
         .lang("延迟信息", "延遲顯示")
@@ -82,7 +91,7 @@ object VideoOption : Option("Video") {
 
     val backgroundMode = setting("Background Mode", Background.Mode.Sandbox)
         .lang("背景模式", "背景模式")
-    val particle by setting("Particle Background", true)
+    val particle by setting("Particle Background", false)
         .lang("粒子效果", "粒子特效")
         .atMode(backgroundMode, Background.Mode.Default)
     val sandbox by setting("Sandbox", Background.ShaderMode.BlackHole)
@@ -121,15 +130,14 @@ object VideoOption : Option("Video") {
     enum class VideoMode(multiText: MultiText) : DisplayEnum {
         VSync("Vertical Sync".lang("垂直同步", "垂直同步")),
         Custom("Custom".lang("自定义", "自訂")),
-        Unlimited("Unlimited".lang("解锁", "無上限")),
-        FlexSync("Flex Sync".lang("Flex同步", "Flex同步"));
+        Unlimited("Unlimited".lang("解锁", "無上限"));
 
         override val displayName by multiText
     }
 
     init {
         listener<EngineLoopEvent.Loop.Pre> {
-            if (fullScreen && shouldUpdate) {
+            if (displayMode == DisplayMode.FullScreen && shouldUpdate) {
                 shouldUpdate = false
                 val mode = resolutions[index]
                 GLFW.glfwSetWindowMonitor(RS.window, monitor, 0, 0, mode.first, mode.second, mode.third)
@@ -170,6 +178,15 @@ object VideoOption : Option("Video") {
         Dummy3;
 
         override val displayName by resStr
+    }
+
+    enum class DisplayMode(multiText: MultiText) : DisplayEnum {
+        Windowed("Windowed".lang("窗口化", "窗口化")),
+
+        //Borderless("Borderless".lang("无边框", "無邊框"));
+        FullScreen("FullScreen".lang("全屏", "全屏"));
+
+        override val displayName by multiText
     }
 
 }

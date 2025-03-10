@@ -17,5 +17,5 @@ interface GameGraphics {
 
     fun onSync() {}
 
-    fun onResolutionUpdate(oldWith: Int, oldHeight: Int, newWidth: Int, newHeight: Int) {}
+    fun onResolutionUpdate(oldWidth: Int, oldHeight: Int, newWidth: Int, newHeight: Int, newDpiRate: Float) {}
 }

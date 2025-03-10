@@ -7,6 +7,7 @@ import net.spartanb312.everett.graphics.drawing.VertexFormat
 import net.spartanb312.everett.graphics.matrix.MatrixLayerStack
 import net.spartanb312.everett.graphics.shader.Shader
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.math.vector.Vec3f
 import org.lwjgl.opengl.*
 
 /**
@@ -18,10 +19,14 @@ object PersistentMappedVertexBuffer {
         VertexMode.values.forEach { it.onSync() }
     }
 
-    open class VertexMode(val format: VertexAttribute, val shader: Shader) : PersistentMappedBuffer() {
+    open class VertexMode(
+        val format: VertexAttribute,
+        val shader: Shader,
+        size: Long = 64L * 1024L * 1024L
+    ) : PersistentMappedBuffer(size) {
 
         companion object {
-            val values = listOf(Pos2fColor, Pos3fColor, Pos2fColorTex, Pos3fColorTex, Universal)
+            val values = mutableListOf<VertexMode>()
             var lastUpdatedShader: VertexMode? = null
         }
 
@@ -29,52 +34,79 @@ object PersistentMappedVertexBuffer {
             VertexFormat.Pos2fColor.attribute, Shader(
                 "assets/shader/general/Pos2fColor.vsh",
                 "assets/shader/general/Pos2fColor.fsh"
-            )
-        )
+            ), 1024 * 1024
+        ) {
+            init {
+                values.add(this)
+            }
+        }
 
         data object Pos3fColor : VertexMode(
             VertexFormat.Pos3fColor.attribute, Shader(
                 "assets/shader/general/Pos3fColor.vsh",
                 "assets/shader/general/Pos3fColor.fsh"
-            )
-        )
+            ), 1024 * 1024
+        ) {
+            init {
+                values.add(this)
+            }
+        }
 
         data object Pos2fColorTex : VertexMode(
             VertexFormat.Pos2fColorTex.attribute, Shader(
                 "assets/shader/general/Pos2fColorTex.vsh",
                 "assets/shader/general/Pos2fColorTex.fsh"
             ).apply {
+                bind()
                 GL20.glUniform1i(getUniformLocation("texture"), 0)
+            }, 1024 * 1024
+        ) {
+            init {
+                values.add(this)
             }
-        )
+        }
 
         data object Pos3fColorTex : VertexMode(
             VertexFormat.Pos3fColorTex.attribute, Shader(
                 "assets/shader/general/Pos3fColorTex.vsh",
                 "assets/shader/general/Pos3fColorTex.fsh"
-            ).apply
-            {
+            ).apply {
+                bind()
                 GL20.glUniform1i(getUniformLocation("texture"), 0)
+            }, 1024 * 1024
+        ) {
+            init {
+                values.add(this)
             }
-        )
+        }
 
         data object Pos3fTex : VertexMode(
             VertexFormat.Pos3fTex.attribute, Shader(
                 "assets/shader/general/Pos3fTex.vsh",
                 "assets/shader/general/Pos3fTex.fsh"
             ).apply {
+                bind()
                 GL20.glUniform1i(getUniformLocation("texture"), 0)
+            }, 1024 * 1024
+        ) {
+            init {
+                values.add(this)
             }
-        )
+        }
 
         data object Universal : VertexMode(
             VertexFormat.Pos3fColorTex.attribute, Shader(
                 "assets/shader/general/UniversalDraw.vsh",
                 "assets/shader/general/UniversalDraw.fsh"
             ).apply {
+                bind()
                 GL20.glUniform1i(getUniformLocation("texture"), 0)
+            }, 1024 * 1024 * 16
+        ) {
+            init {
+                values.add(this)
             }
-        )
+        }
 
         private val matrixUniform = shader.getUniformLocation("matrix")
         private var currentCheckID = 0L
@@ -86,6 +118,25 @@ object PersistentMappedVertexBuffer {
                 currentCheckID = checkID
                 GL20.glUniformMatrix4fv(matrixUniform, false, stack.matrixArray)
             }
+        }
+
+        fun multiDrawPoint(offsets: MutableList<Int>, counts: MutableList<Int>) {
+            offsets.add(drawOffset)
+            counts.add(vertexSize)
+            end(stride)
+            vertexSize = 0
+        }
+
+        fun multiDraw(
+            mode: Int,
+            offsets: MutableList<Int>,
+            counts: MutableList<Int>,
+            program: Shader,
+        ) {
+            program.bind()
+            updateMatrix(RS.matrixLayer)
+            GLHelper.bindVertexArray(vao)
+            GL14.glMultiDrawArrays(mode, offsets.toIntArray(), counts.toIntArray())
         }
 
         private var drawOffset = 0
@@ -116,7 +167,7 @@ object PersistentMappedVertexBuffer {
             }
         }
 
-        private var vertexSize = 0
+        var vertexSize = 0
         private val vao = createVao(format, vbo)
         private val stride = format.stride
 
@@ -143,6 +194,9 @@ object PersistentMappedVertexBuffer {
             arr += 24
             vertexSize++
         }
+
+        fun universal(vec3f: Vec3f, u: Float, v: Float, color: ColorRGB) =
+            universal(vec3f.x, vec3f.y, vec3f.z, u, v, color)
 
         fun universal(posX: Float, posY: Float, posZ: Float, color: ColorRGB) {
             val pointer = arr.ptr
@@ -221,13 +275,13 @@ object PersistentMappedVertexBuffer {
             vertexSize++
         }
 
-        fun draw(vertexMode: VertexMode, shader: Shader, mode: Int) {
+        fun draw(mode: Int, shader: Shader = this.shader) {
             if (vertexSize == 0) return
             shader.bind()
-            vertexMode.updateMatrix(RS.matrixLayer)
-            GLHelper.bindVertexArray(vertexMode.vao)
+            updateMatrix(RS.matrixLayer)
+            GLHelper.bindVertexArray(vao)
             GL11C.glDrawArrays(mode, drawOffset, vertexSize)
-            end(vertexMode.stride)
+            end(stride)
             vertexSize = 0
         }
     }
@@ -242,9 +296,9 @@ object PersistentMappedVertexBuffer {
         return vaoID
     }
 
-    fun Int.draw(vertexMode: VertexMode, shader: Shader = vertexMode.shader, block: VertexMode.() -> Unit) {
+    inline fun Int.draw(vertexMode: VertexMode, shader: Shader = vertexMode.shader, block: VertexMode.() -> Unit) {
         vertexMode.block()
-        vertexMode.draw(vertexMode, shader, this)
+        vertexMode.draw(this, shader)
     }
 
 }

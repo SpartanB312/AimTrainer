@@ -19,20 +19,23 @@ import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.GameGraphics
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.RS
-import net.spartanb312.everett.graphics.framebuffer.ResizableFramebuffer
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
+import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer.draw
+import net.spartanb312.everett.graphics.font.UnicodeSparseFontRenderer
 import net.spartanb312.everett.graphics.matrix.applyOrtho
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.model.impls.ExternalModel
 import net.spartanb312.everett.graphics.model.mesh.MeshDNSH
-import net.spartanb312.everett.graphics.texture.drawTexture
 import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.Logger
+import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.misc.Profiler
 import net.spartanb312.everett.utils.thread.ConcurrentTaskManager
 import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
+import org.lwjgl.opengl.GL11
 
 /**
  * Based on OpenGL 4.5 Core Profile
@@ -47,15 +50,14 @@ import org.lwjgl.glfw.GLFW
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.241217"
+    const val AIM_TRAINER_VERSION = "1.0.0.250308"
 
     var isReady = false
     private val tickTimer = Timer()
 
-    val model = ExternalModel("assets/everett/everett.obj", TextureManager) { MeshDNSH(it) }
+    val model = ExternalModel("assets/spartan/spartan.obj", TextureManager) { MeshDNSH(it) }
+    val sparseFontRenderers = mutableListOf<UnicodeSparseFontRenderer>()
 
-    lateinit var framebuffer: ResizableFramebuffer
-    lateinit var renderLayer: ResizableFramebuffer.ResizableColorLayer
     val taskManager = ConcurrentTaskManager("AimTrainer TaskManager")
     var useFramebuffer = false; private set
 
@@ -80,22 +82,20 @@ object AimTrainer : GameGraphics {
         AudioSystem.start()
         GunfireAudio
         model.loadModel()
-        framebuffer = ResizableFramebuffer(RS.width, RS.height, true)
-        renderLayer = framebuffer.generateColorLayer()
     }
 
     override fun Profiler.onLoop() {
         useFramebuffer = VideoOption.framebuffer
+        RS.antiAlias.setMode(VideoOption.antiAlias)
         TextureManager.renderThreadHook(5)
+        UnicodeSparseFontRenderer.renderThreadHook(sparseFontRenderers, 5)
         Language.update()
 
         // Start rendering
         profiler("Render Hook")
         if (useFramebuffer) {
-            framebuffer.bindFramebuffer()
-            renderLayer.bindLayer()
-            glClear(GL_COLOR_BUFFER_BIT or GL_DEPTH_BUFFER_BIT or GL_STENCIL_BUFFER_BIT)
-            glBlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ONE_MINUS_SRC_ALPHA)
+            RS.antiAlias.startRendering()
+            glViewport(0, 0, RS.scaledWidth, RS.scaledHeight)
         } else {
             RS.setRenderScale(1f)
             GLHelper.bindFramebuffer(0)
@@ -128,20 +128,14 @@ object AimTrainer : GameGraphics {
         RS.matrixLayer.scope {
             GLHelper.blend = true
             applyOrtho(0.0f, RS.widthF, RS.heightF, 0.0f, -1.0f, 1.0f)
-            MedalRenderer.onRender()
-            Render2DManager.onRender(RS.mouseXD, RS.mouseYD)
-            NotificationRenderer.onRender()
-            CrosshairRenderer.onRender(VideoOption.dfov)
-            DebugInfoRenderer.onRender()
-            StatRenderer.onRender()
+            Background.bgHook()
+            if (!useFramebuffer) renderUI()
         }
-        if (useFramebuffer) framebuffer.unbindFramebuffer()
         profiler("Render 2D")
 
         // Tick (60TPS)
         tickTimer.tps(60) {
             TickEvent.Pre.post()
-            SceneManager.onTick()
             Render2DManager.onTick()
             BGMPlayer.onTick()
             GunfireAudio.onTick()
@@ -154,26 +148,48 @@ object AimTrainer : GameGraphics {
         profiler("Physics")
     }
 
+    fun drawTexture(
+        texture: Int,
+        startX: Float,
+        startY: Float,
+        endX: Float,
+        endY: Float,
+        u: Float,
+        v: Float,
+        u1: Float,
+        v1: Float,
+        colorRGB: ColorRGB = ColorRGB.WHITE
+    ) {
+        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture)
+        GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            universal(endX, startY, u1, v, colorRGB)
+            universal(startX, startY, u, v, colorRGB)
+            universal(endX, endY, u1, v1, colorRGB)
+            universal(startX, endY, u, v1, colorRGB)
+        }
+    }
+
+    private fun renderUI() {
+        MedalRenderer.onRender()
+        Render2DManager.onRender(RS.mouseXD, RS.mouseYD)
+        NotificationRenderer.onRender()
+        CrosshairRenderer.onRender(VideoOption.dfov)
+        DebugInfoRenderer.onRender()
+        StatRenderer.onRender()
+    }
+
     override fun onFramebufferDrawing() {
         // Framebuffer
         if (useFramebuffer) {
-            glClear(GL_COLOR_BUFFER_BIT)
             RS.matrixLayer.scope {
+                //RS.setRenderScale(1f)
                 GLHelper.blend = true
                 glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA)
                 glClearColor(0f, 0f, 0f, 1f)
+                RS.antiAlias.endRendering()
                 glViewport(0, 0, RS.displayWidth, RS.displayHeight)
-                applyOrtho(0.0f, RS.displayWidthF, RS.displayHeightF, 0.0f, -1.0f, 1.0f)
-                renderLayer.drawTexture(
-                    0f,
-                    0f,
-                    RS.displayWidthF,
-                    RS.displayHeightF,
-                    0,
-                    framebuffer.height,
-                    framebuffer.width,
-                    0
-                )
+                applyOrtho(0.0f, RS.widthF, RS.heightF, 0.0f, -1.0f, 1.0f)
+                renderUI()
             }
         }
     }
@@ -213,13 +229,21 @@ object AimTrainer : GameGraphics {
         val vSync = VideoOption.videoMode.value == VideoOption.VideoMode.VSync
         GLHelper.vSync = vSync
         if (!vSync && VideoOption.videoMode.value == VideoOption.VideoMode.Custom) Sync.sync(VideoOption.fpsLimit)
-        RS.flexSync = VideoOption.videoMode.value == VideoOption.VideoMode.FlexSync
     }
 
-    override fun onResolutionUpdate(oldWith: Int, oldHeight: Int, newWidth: Int, newHeight: Int) {
-        Logger.info("Resolution updated to $newWidth x $newHeight")
-        framebuffer.resize(newWidth, newHeight)
-        ResolutionUpdateEvent.post(ResolutionUpdateEvent(oldWith, oldHeight, newWidth, newHeight))
+    override fun onResolutionUpdate(oldWidth: Int, oldHeight: Int, newWidth: Int, newHeight: Int, newDpiRate: Float) {
+        Logger.info("Resolution updated to $newWidth x $newHeight, DPI: $newDpiRate")
+        val oldScaledWidth = RS.scaling.scaledWidth
+        val oldScaledHeight = RS.scaling.scaledHeight
+        RS.scaling.update(newWidth, newHeight)
+        val newScaledWidth = RS.scaling.scaledWidth
+        val newScaledHeight = RS.scaling.scaledHeight
+        ResolutionUpdateEvent(
+            oldWidth, oldHeight,
+            newWidth, newHeight,
+            oldScaledWidth, oldScaledHeight,
+            newScaledWidth, newScaledHeight
+        ).post()
     }
 
 }

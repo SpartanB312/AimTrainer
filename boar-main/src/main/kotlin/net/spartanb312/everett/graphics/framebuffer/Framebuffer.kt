@@ -22,7 +22,7 @@ interface Framebuffer : GLObject {
     override val id get() = fbo
 
     fun bindFramebuffer(viewPort: Boolean = true) {
-        GLHelper.bindFramebuffer(fbo)
+        GLHelper.bindFramebuffer(fbo, true)
         if (viewPort) GL11.glViewport(0, 0, width, height)
         GL11.glClearColor(clearColor.rFloat, clearColor.gFloat, clearColor.bFloat, clearColor.aFloat)
     }

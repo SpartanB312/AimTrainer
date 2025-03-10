@@ -104,9 +104,14 @@ object MainMenuScreen : GuiScreen() {
         )
 
         // Version
-        val width = FontRendererMain.getWidth("Version: $AIM_TRAINER_VERSION") + 10
-        val height = FontRendererMain.getHeight()
-        FontRendererMain.drawString("Version: $AIM_TRAINER_VERSION", RS.widthF - width, RS.heightF - height)
+        val width = (FontRendererMain.getWidth("Version: $AIM_TRAINER_VERSION") + 10) * RS.renderScale
+        val height = FontRendererMain.getHeight(RS.renderScale)
+        FontRendererMain.drawString(
+            "Version: $AIM_TRAINER_VERSION",
+            RS.widthF - width,
+            RS.heightF - height,
+            scale = RS.renderScale
+        )
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {
@@ -141,7 +146,7 @@ object MainMenuScreen : GuiScreen() {
             this.y = y
             this.generalScale = generalScale
             timer.passedAndReset(17) {
-                scale = (scale * 100f).converge(if (isHoovered(mouseX, mouseY)) 250f else 200f, 0.2f) / 100f
+                scale = (scale * 100f).converge(if (isHovered(mouseX, mouseY)) 250f else 200f, 0.2f) / 100f
             }
             //RenderUtils.drawRect(x, y, x + width, y + height, ColorRGB.BLUE)
             val offset = ((System.currentTimeMillis() - startTime) % 5000) / 5000f
@@ -160,14 +165,14 @@ object MainMenuScreen : GuiScreen() {
         }
 
         fun onMouseClicked(mouseX: Double, mouseY: Double, button: Int): Boolean {
-            if (button == GLFW.GLFW_MOUSE_BUTTON_1 && isHoovered(mouseX, mouseY)) {
+            if (button == GLFW.GLFW_MOUSE_BUTTON_1 && isHovered(mouseX, mouseY)) {
                 action.invoke()
                 return true
             }
             return false
         }
 
-        fun isHoovered(mouseX: Double, mouseY: Double): Boolean {
+        fun isHovered(mouseX: Double, mouseY: Double): Boolean {
             return mouseX in x..(x + width) && mouseY in y..(y + height)
         }
     }
@@ -194,7 +199,14 @@ object MainMenuScreen : GuiScreen() {
             val width = width * generalScale
             val height = height * generalScale
             RenderUtils.drawRect(x, y, x + width, y + height, generalColor.alpha(if (isHoovered) 128 else 64))
-            RenderUtils.drawRectOutline(x, y, x + width, y + height, 2f * generalScale, lightColor.alpha(64))
+            RenderUtils.drawRectOutline(
+                x,
+                y,
+                x + width,
+                y + height,
+                2f * generalScale / RS.renderScale,
+                lightColor.alpha(64)
+            )
             FontRendererIcon.drawCenteredString(
                 text,
                 x + width / 2f,

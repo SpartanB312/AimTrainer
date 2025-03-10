@@ -5,6 +5,8 @@ import net.spartanb312.everett.game.input.interfaces.MouseClickListener
 import net.spartanb312.everett.game.input.interfaces.MouseReleaseListener
 import net.spartanb312.everett.game.option.Option
 import net.spartanb312.everett.game.render.FontRendererBig
+import net.spartanb312.everett.graphics.AnimationFlag
+import net.spartanb312.everett.graphics.Easing
 import net.spartanb312.everett.graphics.GLHelper.scissor
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.config.setting.number.NumberSetting
@@ -53,21 +55,26 @@ class OptionsRenderer(private val options: Option) : MouseClickListener, MouseRe
     var scrollOffset = 0
     var scrollAccumulation = 0
 
-    private fun updateScrollBar(scale: Float) = scrollUpdateTimer.passedAndReset(10) {
-        val addition = InputManager.getScroll()
-        scrollAccumulation += (addition * 25 * scale).toInt()
-        val renderHeight = RS.heightF * 0.68f
-        val fontHeight = FontRendererBig.getHeight(scale)
-        val visibleButtons = buttons.count { it.setting.isVisible }
-        val maxHeight = fontHeight * (visibleButtons + (visibleButtons - 1).coerceAtLeast(0) * 0.1f)
-        if (addition == 0) {
-            if (scrollOffset > 0 || renderHeight > maxHeight) {
-                scrollAccumulation = (scrollAccumulation.toFloat().converge(0.0f, 0.1f)).toInt()
-            } else if (renderHeight < maxHeight && scrollOffset < 0 && renderHeight - maxHeight > scrollOffset) {
-                scrollAccumulation = (scrollAccumulation.toFloat().converge(renderHeight - maxHeight, 0.1f)).toInt()
+    private val scrollFlag = AnimationFlag(Easing.OUT_QUINT, 300f)
+
+    private fun updateScrollBar(scale: Float) {
+        scrollUpdateTimer.passedAndReset(10) {
+            val addition = InputManager.getScroll()
+            scrollAccumulation += (addition * 25 * scale).toInt()
+            val renderHeight = RS.heightF * 0.68f
+            val fontHeight = FontRendererBig.getHeight(scale)
+            val visibleButtons = buttons.count { it.setting.isVisible }
+            val maxHeight = fontHeight * (visibleButtons + (visibleButtons - 1).coerceAtLeast(0) * 0.1f)
+            if (addition == 0) {
+                if (scrollOffset > 0 || renderHeight > maxHeight) {
+                    scrollAccumulation = (scrollAccumulation.toFloat().converge(0.0f, 0.1f)).toInt()
+                } else if (renderHeight < maxHeight && scrollOffset < 0 && renderHeight - maxHeight > scrollOffset) {
+                    scrollAccumulation = (scrollAccumulation.toFloat().converge(renderHeight - maxHeight, 0.1f)).toInt()
+                }
             }
         }
-        scrollOffset = scrollOffset.toFloat().converge(scrollAccumulation.toFloat(), 0.2f).toInt()
+        scrollFlag.update(scrollAccumulation.toFloat())
+        scrollOffset = scrollFlag.get().toInt()
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {

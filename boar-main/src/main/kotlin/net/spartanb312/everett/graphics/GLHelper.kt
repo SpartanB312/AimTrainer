@@ -1,8 +1,11 @@
 package net.spartanb312.everett.graphics
 
+import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.graphics.OpenGL.*
+import net.spartanb312.everett.utils.math.ceilToInt
+import net.spartanb312.everett.utils.math.floorToInt
 import net.spartanb312.everett.utils.misc.NULL
-import org.lwjgl.glfw.GLFW
+import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.opengl.GL30
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
@@ -14,29 +17,53 @@ object GLHelper {
     var depth by GLState(false) { if (it) glEnable(GL_DEPTH_TEST) else glDisable(GL_DEPTH_TEST) }
     var cull by GLState(false) { if (it) glEnable(GL_CULL_FACE) else glDisable(GL_CULL_FACE) }
     var lineSmooth by GLState(false) { if (it) glEnable(GL_LINE_SMOOTH) else glDisable(GL_LINE_SMOOTH) }
-    var vSync by GLState(true) { if (it) GLFW.glfwSwapInterval(1) else GLFW.glfwSwapInterval(0) }
-    var fullScreen by GLState(false) {
-        if (it) {
-            val xArray = IntArray(1)
-            val yArray = IntArray(1)
-            GLFW.glfwGetWindowPos(RS.window, xArray, yArray)
-            windowedXPos = xArray[0]
-            windowedYPos = yArray[0]
-            GLFW.glfwGetWindowSize(RS.window, xArray, yArray)
-            windowedWidth = xArray[0]
-            windowedHeight = yArray[0]
-            val monitor = GLFW.glfwGetPrimaryMonitor()
-            val mode = GLFW.glfwGetVideoModes(monitor)!!.last()
-            GLFW.glfwSetWindowMonitor(RS.window, monitor, 0, 0, mode.width(), mode.height(), mode.refreshRate())
-        } else GLFW.glfwSetWindowMonitor(
-            RS.window,
-            NULL,
-            windowedXPos,
-            windowedYPos,
-            windowedWidth,
-            windowedHeight,
-            GLFW.GLFW_DONT_CARE
-        )
+    var vSync by GLState(true) { if (it) glfwSwapInterval(1) else glfwSwapInterval(0) }
+
+    fun setDisplayMode(dMode: VideoOption.DisplayMode) {
+        when (dMode) {
+            VideoOption.DisplayMode.Windowed -> {
+                glfwSetWindowMonitor(
+                    RS.window,
+                    NULL,
+                    windowedXPos,
+                    windowedYPos,
+                    windowedWidth,
+                    windowedHeight,
+                    GLFW_DONT_CARE
+                )
+            }
+
+            //VideoOption.DisplayMode.Borderless -> {
+            //    val xArray = IntArray(1)
+            //    val yArray = IntArray(1)
+            //    glfwGetWindowPos(RS.window, xArray, yArray)
+            //    windowedXPos = xArray[0]
+            //    windowedYPos = yArray[0]
+            //    glfwGetWindowSize(RS.window, xArray, yArray)
+            //    windowedWidth = xArray[0]
+            //    windowedHeight = yArray[0]
+            //    val monitor = glfwGetPrimaryMonitor()
+            //    val mode = glfwGetVideoMode(monitor)!!
+            //    glfwDestroyWindow(RS.window)
+            //    RS.createWindow(true)
+            //    glfwSetWindowSize(RS.window, mode.width(), mode.height())
+            //    glfwSetWindowPos(RS.window, 0, 0)
+            //}
+
+            VideoOption.DisplayMode.FullScreen -> {
+                val xArray = IntArray(1)
+                val yArray = IntArray(1)
+                glfwGetWindowPos(RS.window, xArray, yArray)
+                windowedXPos = xArray[0]
+                windowedYPos = yArray[0]
+                glfwGetWindowSize(RS.window, xArray, yArray)
+                windowedWidth = xArray[0]
+                windowedHeight = yArray[0]
+                val monitor = glfwGetPrimaryMonitor()
+                val mode = glfwGetVideoMode(monitor)!!
+                glfwSetWindowMonitor(RS.window, monitor, 0, 0, mode.width(), mode.height(), mode.refreshRate())
+            }
+        }
     }
 
     private var windowedXPos = 0
@@ -46,7 +73,7 @@ object GLHelper {
     var bindProgram = -1; private set
     var bindFBO = -1; private set
     var bindVAO = -1; private set
-    var mouseMode = GLFW.GLFW_CURSOR_NORMAL; private set
+    var mouseMode = GLFW_CURSOR_NORMAL; private set
 
     fun bindVertexArray(vao: Int, force: Boolean = false) {
         if (force || vao != bindVAO) {
@@ -72,8 +99,8 @@ object GLHelper {
     fun mouseMode(mode: Int) {
         if (mode != mouseMode) {
             mouseMode = mode
-            GLFW.glfwSetInputMode(RenderSystem.window, GLFW.GLFW_CURSOR, mode)
-            if (mode == GLFW.GLFW_CURSOR_NORMAL) GLFW.glfwSetCursorPos(
+            glfwSetInputMode(RenderSystem.window, GLFW_CURSOR, mode)
+            if (mode == GLFW_CURSOR_NORMAL) glfwSetCursorPos(
                 RenderSystem.window,
                 RenderSystem.displayWidthD / 2.0,
                 RenderSystem.displayHeightD / 2.0
@@ -90,7 +117,11 @@ object GLHelper {
         y1: Int,
         block: () -> Unit,
     ) {
-        glScissor(x, RS.height - y1, x1 - x, y1 - y)
+        val scaledX = (x / RS.scaling.scale).floorToInt()
+        val scaledY = (y / RS.scaling.scale).floorToInt()
+        val scaledX1 = (x1 / RS.scaling.scale).ceilToInt()
+        val scaledY1 = (y1 / RS.scaling.scale).ceilToInt()
+        glScissor(scaledX, RS.displayHeight - scaledY1, scaledX1 - scaledX, scaledY1 - scaledY)
         glEnable(GL_SCISSOR_TEST)
         block()
         glDisable(GL_SCISSOR_TEST)

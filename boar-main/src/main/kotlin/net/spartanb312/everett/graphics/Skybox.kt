@@ -1,7 +1,7 @@
 package net.spartanb312.everett.graphics
 
+import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
-import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer.draw
 import net.spartanb312.everett.graphics.texture.Texture
 import net.spartanb312.everett.graphics.texture.useTexture
 import net.spartanb312.everett.utils.color.ColorRGB
@@ -21,66 +21,58 @@ class Skybox(
     private val right: Texture,
     private val back: Texture
 ) {
+    init {
+        listOf(up, down, left, front, right, back).forEach {
+            it.useTexture {
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_LOD, 0)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LOD, 0)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_BASE_LEVEL, 0)
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, 0)
+            }
+        }
+    }
 
     fun onRender3D() {
-        val offset = 0.01f
-        GL11.glCullFace(GL11.GL_FRONT)
-
-        front.useTexture {
-            GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
-                universal(maxX - offset, maxY - offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
-                universal(minX + offset, maxY - offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
-                universal(maxX - offset, minY + offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
-                universal(minX + offset, minY + offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
-            }
+        with(PersistentMappedVertexBuffer.VertexMode.Universal) {
+            front.bindTexture()
+            universal(maxX, maxY, minZ, 0.999f, 0.001f, ColorRGB.WHITE)
+            universal(minX, maxY, minZ, 0.001f, 0.001f, ColorRGB.WHITE)
+            universal(maxX, minY, minZ, 0.999f, 0.999f, ColorRGB.WHITE)
+            universal(minX, minY, minZ, 0.001f, 0.999f, ColorRGB.WHITE)
+            draw(GL11.GL_TRIANGLE_STRIP)
+            right.bindTexture()
+            universal(maxX, maxY, maxZ, 0.999f, 0.001f, ColorRGB.WHITE)
+            universal(maxX, maxY, minZ, 0.001f, 0.001f, ColorRGB.WHITE)
+            universal(maxX, minY, maxZ, 0.999f, 0.999f, ColorRGB.WHITE)
+            universal(maxX, minY, minZ, 0.001f, 0.999f, ColorRGB.WHITE)
+            draw(GL11.GL_TRIANGLE_STRIP)
+            back.bindTexture()
+            universal(minX, maxY, maxZ, 0.999f, 0.001f, ColorRGB.WHITE)
+            universal(maxX, maxY, maxZ, 0.001f, 0.001f, ColorRGB.WHITE)
+            universal(minX, minY, maxZ, 0.999f, 0.999f, ColorRGB.WHITE)
+            universal(maxX, minY, maxZ, 0.001f, 0.999f, ColorRGB.WHITE)
+            draw(GL11.GL_TRIANGLE_STRIP)
+            left.bindTexture()
+            universal(minX, maxY, minZ, 0.999f, 0.001f, ColorRGB.WHITE)
+            universal(minX, maxY, maxZ, 0.001f, 0.001f, ColorRGB.WHITE)
+            universal(minX, minY, minZ, 0.999f, 0.999f, ColorRGB.WHITE)
+            universal(minX, minY, maxZ, 0.001f, 0.999f, ColorRGB.WHITE)
+            draw(GL11.GL_TRIANGLE_STRIP)
+            up.bindTexture()
+            universal(maxX, maxY, maxZ, 0.999f, 0.001f, ColorRGB.WHITE)
+            universal(minX, maxY, maxZ, 0.001f, 0.001f, ColorRGB.WHITE)
+            universal(maxX, maxY, minZ, 0.999f, 0.999f, ColorRGB.WHITE)
+            universal(minX, maxY, minZ, 0.001f, 0.999f, ColorRGB.WHITE)
+            draw(GL11.GL_TRIANGLE_STRIP)
+            down.bindTexture()
+            universal(maxX, minY, minZ, 0.999f, 0.001f, ColorRGB.WHITE)
+            universal(minX, minY, minZ, 0.001f, 0.001f, ColorRGB.WHITE)
+            universal(maxX, minY, maxZ, 0.999f, 0.999f, ColorRGB.WHITE)
+            universal(minX, minY, maxZ, 0.001f, 0.999f, ColorRGB.WHITE)
+            draw(GL11.GL_TRIANGLE_STRIP)
         }
-
-        right.useTexture {
-            GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
-                universal(maxX - offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
-                universal(maxX - offset, maxY - offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
-                universal(maxX - offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
-                universal(maxX - offset, minY + offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
-            }
-        }
-
-        back.useTexture {
-            GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
-                universal(minX + offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
-                universal(maxX - offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
-                universal(minX + offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
-                universal(maxX - offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
-            }
-        }
-
-        left.useTexture {
-            GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
-                universal(minX + offset, maxY - offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
-                universal(minX + offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
-                universal(minX + offset, minY + offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
-                universal(minX + offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
-            }
-        }
-
-        up.useTexture {
-            GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
-                universal(maxX - offset, maxY - offset, minZ + offset, 1f, 0f, ColorRGB.WHITE)
-                universal(minX + offset, maxY - offset, minZ + offset, 0f, 0f, ColorRGB.WHITE)
-                universal(maxX - offset, maxY - offset, maxZ - offset, 1f, 1f, ColorRGB.WHITE)
-                universal(minX + offset, maxY - offset, maxZ - offset, 0f, 1f, ColorRGB.WHITE)
-            }
-        }
-
-        down.useTexture {
-            GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
-                universal(maxX - offset, minY + offset, maxZ - offset, 1f, 0f, ColorRGB.WHITE)
-                universal(minX + offset, minY + offset, maxZ - offset, 0f, 0f, ColorRGB.WHITE)
-                universal(maxX - offset, minY + offset, minZ + offset, 1f, 1f, ColorRGB.WHITE)
-                universal(minX + offset, minY + offset, minZ + offset, 0f, 1f, ColorRGB.WHITE)
-            }
-        }
-
-        GL11.glCullFace(GL11.GL_BACK)
     }
 
 }

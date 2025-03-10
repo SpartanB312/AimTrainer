@@ -46,6 +46,7 @@ class GLCompatibility(context: GLCapabilities) {
     // ARB
     val arbDirectAccess = !context.OpenGL45 && context.GL_ARB_direct_state_access
     val arbBufferStorage = !context.OpenGL45 && context.GL_ARB_buffer_storage
+    val arbSparseTexture = context.GL_ARB_sparse_texture
 
     // EXT
     val extDirectAccess = !context.OpenGL45 && !arbDirectAccess && context.GL_EXT_direct_state_access

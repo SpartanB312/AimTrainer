@@ -1,21 +1,24 @@
 package net.spartanb312.everett.game.render.gui.impls.option
 
 import net.spartanb312.everett.game.render.FontRendererBig
+import net.spartanb312.everett.graphics.AnimationFlag
+import net.spartanb312.everett.graphics.Easing
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.config.setting.number.NumberSetting
-import net.spartanb312.everett.utils.math.ConvergeUtil.converge
 import net.spartanb312.everett.utils.timing.Timer
 
 class NumberSlider<T>(
     setting: NumberSetting<T>
 ) : AbstractSettingComponent<T>(setting) where T : Number, T : Comparable<T> {
 
-    private val animationTimer = Timer()
     private val slideTimer = Timer()
     private var sliding = false
     private var currentRate = 0f
     private var animatedAlphaRate = 0f
+
+    private val animationFlag = AnimationFlag(Easing.OUT_QUINT, 400f)
+    private val animationFlag2 = AnimationFlag(Easing.OUT_CUBIC, 400f)
 
     override fun onRender2D(mouseX: Double, mouseY: Double, scale: Float, alpha: Float) {
         val isHoovered = isHoovered(mouseX, mouseY)
@@ -43,11 +46,11 @@ class NumberSlider<T>(
 
         if (sliding) setting.setByPercent(((mouseX.toFloat() - sliderStartX) / sliderWidth).coerceIn(0.0f..1.0f))
 
-        animationTimer.passedAndReset(10) {
-            val percent = setting.getPercentBar()
-            currentRate = (currentRate * 100f).converge(percent * 100f, 0.2f) / 100f
-            animatedAlphaRate = (animatedAlphaRate * 100f).converge(if (isHoovered) 100f else 0f, 0.1f) / 100f
-        }
+        val percent = setting.getPercentBar()
+        animationFlag.update(percent * 100f)
+        currentRate = animationFlag.get() / 100f
+        animationFlag2.update(if (isHoovered) 100f else 0f)
+        animatedAlphaRate = animationFlag2.get() / 100f
 
         if (sliding && slideTimer.passed(150)) currentRate = setting.getPercentBar()
 
@@ -140,7 +143,6 @@ class NumberSlider<T>(
     }
 
     override fun reset() {
-        animationTimer.reset()
         currentRate = 0f
         sliding = false
     }

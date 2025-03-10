@@ -51,12 +51,12 @@ object DebugInfoRenderer {
             RenderUtils.drawRect(
                 0f,
                 startY,
-                FontRendererMain.getWidth(str),
-                startY + FontRendererMain.getHeight().toInt() - 3,
+                FontRendererMain.getWidth(str,RS.renderScale),
+                startY + (FontRendererMain.getHeight().toInt() - 3) * RS.renderScale,
                 backgroundColor
             )
-            FontRendererMain.drawString(str, 0f, startY, ColorRGB.WHITE)
-            startY += FontRendererMain.getHeight().toInt() - 3
+            FontRendererMain.drawString(str, 0f, startY, ColorRGB.WHITE, scale = RS.renderScale)
+            startY += (FontRendererMain.getHeight().toInt() - 3) * RS.renderScale
         }
     }
 

@@ -7,6 +7,7 @@ import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.OptionScreen
 import net.spartanb312.everett.game.training.SchulteGrid
+import net.spartanb312.everett.utils.misc.next
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import java.util.concurrent.CopyOnWriteArrayList
@@ -26,7 +27,7 @@ object InputManager {
         if (key == GLFW.GLFW_KEY_F2) Render2DManager.displayScreen(OptionScreen)
         if (key == GLFW.GLFW_KEY_F4) Render2DManager.displayScreen(SchulteGrid(5))
         if (key == GLFW.GLFW_KEY_F5) BGMPlayer.changeSound(BGMPlayer.nextBGM())
-        if (key == GLFW.GLFW_KEY_F11) VideoOption.fullScreen = !VideoOption.fullScreen
+        if (key == GLFW.GLFW_KEY_F11) VideoOption.displayMode = VideoOption.displayMode.next()
     }
 
     fun onKeyRepeating(key: Int, modifier: Int) {

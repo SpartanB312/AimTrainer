@@ -5,7 +5,6 @@ import net.spartanb312.everett.game.entity.Entity
 import net.spartanb312.everett.game.input.interfaces.*
 import net.spartanb312.everett.game.render.gui.SubscribedRenderer
 import net.spartanb312.everett.utils.math.vector.Vec3f
-import net.spartanb312.everett.utils.math.vector.distanceTo
 
 abstract class Scene :
     KeyReleaseListener,
@@ -31,14 +30,17 @@ abstract class Scene :
     ): List<Entity> {
         val results = mutableListOf<Pair<Entity, Float>>()
         entities.forEach {
+            it.isRaytraced = false
             if (it.raytrace(origin, ray, errorAngle)) {
-                results.add(Pair(it, it.raytraceRate(origin, ray, errorAngle)))
+                results.add(Pair(it, it.raytraceAngle(origin, ray)))
             }
         }
-        results.sortBy { origin.distanceTo(it.first.pos) }
+        results.sortBy { it.second }
+        //results.sortBy { origin.distanceTo(it.first.pos) }
+        //val result = results.firstOrNull()
         val result = results.firstOrNull()
         Player.lastRayTracedTarget = result?.first
-        Player.rayTracedRate = result?.second ?: 0f
+        result?.first?.isRaytraced = true
 
         return results.map { it.first }
     }

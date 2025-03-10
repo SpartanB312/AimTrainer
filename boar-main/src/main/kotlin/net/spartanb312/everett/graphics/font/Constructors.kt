@@ -67,6 +67,28 @@ fun FontRenderer(
     asyncLoad
 )
 
+fun SparseFontRenderer(
+    path: String,
+    size: Float,
+    type: Int = Font.TRUETYPE_FONT,
+    style: Int = Font.PLAIN,
+    scaleFactor: Float = 1f,
+    imgSize: Int = 2048,
+    defMaxCount: Int = 4,
+    textureSlice: Int = 16,
+    padding: Int = 1,
+    antiAlias: Boolean = true,
+    fractionalMetrics: Boolean = false,
+    useMipmap: Boolean = false,
+    italicAngleDegree: Float = 10f
+): FontRenderer = UnicodeSparseFontRenderer(
+    scaleFactor,
+    Font.createFont(type, ResourceHelper.getResourceStream(path)!!)!!
+        .deriveFont(size)
+        .deriveFont(style),
+    imgSize, defMaxCount, textureSlice, padding, antiAlias, fractionalMetrics, useMipmap, italicAngleDegree
+)
+
 fun RTOFontRenderer(
     path: String,
     size: Float,

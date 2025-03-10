@@ -4,7 +4,7 @@ uniform vec2 mouse;
 
 #define iResolution resolution
 #define iTime time
-#define iMouse mouse
+#define data mouse
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord);
 
@@ -37,6 +37,24 @@ float value(vec2 p, float f)//value noise
     float b = mix(bl, br, fr.x);
     float t = mix(tl, tr, fr.x);
     return mix(b, t, fr.y);
+}
+
+vec4 background(vec3 ray)
+{
+    vec2 uv = ray.xy;
+
+    if(abs(ray.x) > 0.5) uv.x = ray.z;
+    else if(abs(ray.y) > 0.5) uv.y = ray.z;
+
+    float brightness = value(uv*3.0, 100.0);
+    float color = value(uv*2.0, 20.0);
+
+    brightness = pow(brightness, 256.0);
+    brightness = brightness * 100.0;
+    brightness = clamp(brightness, 0.0, 1.0);
+    vec3 stars = brightness * mix(vec3(1.0, 0.6, 0.2), vec3(0.2, 0.6, 1.0), color);
+
+	return vec4(stars,1.0);
 }
 
 vec4 raymarchDisk(vec3 ray, vec3 zeroPos)
@@ -128,13 +146,17 @@ void mainImage(out vec4 colOut, in vec2 fragCoord)
     colOut = vec4(0.0);;
 
     vec2 fragCoordRot;
-    fragCoordRot.x = fragCoord.x * 0.985 + fragCoord.y * 0.174;
-    fragCoordRot.y = fragCoord.y * 0.985 - fragCoord.x * 0.174;
+    float angle_r = data.y;
+    fragCoordRot.x = fragCoord.x * cos(angle_r) + fragCoord.y * sin(angle_r);
+    fragCoordRot.y = fragCoord.y * cos(angle_r) - fragCoord.x * sin(angle_r);
     fragCoordRot += vec2(-0.06, 0.12) * iResolution.xy;
 
     //setting up camera
     vec3 ray = normalize(vec3((fragCoordRot - iResolution.xy*.5)/iResolution.x, 1));
-    vec3 pos = vec3(0.25, 0.2, -6.5);
+    float zP = 6.5 - data.x * 2.5;
+    float yP = 0.2 - data.x * 0.5;
+    float xP = 0.3 + data.x * 0.2;
+    vec3 pos = vec3(xP, yP, -zP);
     vec2 angle = vec2(iTime * 0.1, .2);
     angle.y = 2.0 * 3.14 + 0.1 + 3.14;
     float dist = length(pos);
@@ -177,8 +199,12 @@ void mainImage(out vec4 colOut, in vec2 fragCoord)
 
         else if (dist2 > _Size * 1000.0)//ray escaped BH
         {
-            outCol = vec4(col.rgb * col.a+ glow.rgb *(1.0 - col.a), 1.0);
+
+            vec4 bg = background (ray);
+            outCol = vec4(col.rgb*col.a + bg.rgb*(1.0-col.a)  + glow.rgb *(1.0-col.a), 1.0);
             break;
+            //outCol = vec4(col.rgb * col.a+ glow.rgb *(1.0 - col.a), 1.0);
+            //break;
         }
 
         else if (abs(pos.y) <= _Size * 0.002)//ray hit accretion disk

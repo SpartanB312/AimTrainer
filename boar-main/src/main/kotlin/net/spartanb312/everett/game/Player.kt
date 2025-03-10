@@ -26,7 +26,6 @@ object Player : EntityPlayer(), Controller {
 
     val camera: Camera = CameraImpl
     var lastRayTracedTarget: Entity? = null
-    var rayTracedRate: Float = 0f
     val offsetPos get() = pos.plus(0.001f, 0.001f, 0.001f)
 
     var sensK = -1.0
@@ -48,7 +47,7 @@ object Player : EntityPlayer(), Controller {
         val facing = Vec3f(cos(yaw.toRadian()), 0, sin(yaw.toRadian()))
         val rightV = Vec3f(0, 1, 0) cross facing
 
-        val moveSpeed = ControlOption.moveSpeed
+        val moveSpeed = ControlOption.moveSpeed * 60f / ControlOption.physicsTPS
         val ySpeed = ControlOption.ySpeed
 
         var xDiff = 0.0

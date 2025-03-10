@@ -34,4 +34,9 @@ class Sphere(val entity: Entity, var radius: Float) : RayTraceable {
         } else 0f
     }
 
+    override fun raytraceAngle(origin: Vec3f, ray: Vec3f): Float {
+        val direct = pos - origin
+        return direct.angle(ray)
+    }
+
 }

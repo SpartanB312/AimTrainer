@@ -7,8 +7,8 @@ import net.spartanb312.everett.graphics.RenderSystem.initialMouseValue
 
 object CameraImpl : Camera() {
 
-    private var lastMouseX = RenderSystem.originMouseXD
-    private var lastMouseY = RenderSystem.originMouseYD
+    private var lastMouseX = RenderSystem.originMouseX
+    private var lastMouseY = RenderSystem.originMouseY
     override fun onUpdate(
         sensitivity: Double,
         dpiModifier: Double,
@@ -16,18 +16,18 @@ object CameraImpl : Camera() {
         hRate: Float,
         updateCamera: Boolean
     ) {
-        val mouseX = RenderSystem.originMouseXD
-        val mouseY = RenderSystem.originMouseYD
+        val mouseX = RenderSystem.originMouseX
+        val mouseY = RenderSystem.originMouseY
         if (updateCamera) {
             if (lastMouseX == initialMouseValue || lastMouseY == initialMouseValue) {
                 lastMouseX = mouseX
                 lastMouseY = mouseY
             }
             if (mouseX != lastMouseX || mouseY != lastMouseY) {
-                val diffX = RenderSystem.originMouseXD - lastMouseX
-                val diffY = RenderSystem.originMouseYD - lastMouseY
-                lastMouseX = RenderSystem.originMouseXD
-                lastMouseY = RenderSystem.originMouseYD
+                val diffX = RenderSystem.originMouseX - lastMouseX
+                val diffY = RenderSystem.originMouseY - lastMouseY
+                lastMouseX = RenderSystem.originMouseX
+                lastMouseY = RenderSystem.originMouseY
                 yaw += (diffX * ControlOption.game.multiplier * sensitivity * hRate * dpiModifier).toFloat()
                 pitch -= (diffY * ControlOption.game.multiplier * sensitivity * vRate * dpiModifier).toFloat()
                 while (true) {
