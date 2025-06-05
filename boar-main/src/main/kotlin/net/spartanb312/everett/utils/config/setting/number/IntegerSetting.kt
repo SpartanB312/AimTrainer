@@ -33,6 +33,7 @@ class IntegerSetting(
         return (value - range.start) / (range.endInclusive - range.start).toFloat()
     }
 
-    override val defaultPercentBar: Float = (defaultValue - range.first) / (range.last - range.first).toFloat()
+    override val defaultPercentBar: Float get() =
+        (defaultValue - range.start) / (range.endInclusive - range.start).toFloat()
 
 }

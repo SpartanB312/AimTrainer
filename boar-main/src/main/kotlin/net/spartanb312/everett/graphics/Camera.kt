@@ -45,14 +45,8 @@ abstract class Camera(
         fov: Float = this@Camera.fov,
         zNear: Float = this@Camera.zRange.start,
         zFar: Float = this@Camera.zRange.endInclusive,
-        sensitivity: Double = 2.2,
-        dpiModifier: Double = 1.0,
-        vRate: Float = 1.0f,
-        hRate: Float = 1.0f,
-        updateCamera: Boolean = true,
         block: Camera.() -> Unit
     ) {
-        onUpdate(sensitivity, dpiModifier, vRate, hRate, updateCamera)
         perspectivef(fov, RenderSystem.widthF / RenderSystem.heightF, zNear, zFar)
         cameraProject(yaw, pitch, position)
         block.invoke(this@Camera)

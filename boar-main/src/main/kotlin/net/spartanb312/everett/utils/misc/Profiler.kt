@@ -1,9 +1,9 @@
 package net.spartanb312.everett.utils.misc
 
-class Profiler {
+class Profiler(val capacity: Int = 100) {
 
-    private val durations = Array(100) { 0L }
-    private val names = Array(100) { "" }
+    private val durations = Array(capacity) { 0L }
+    private val names = Array(capacity) { "" }
     private var currentIndex = 0
     private var startTime = 0L
 

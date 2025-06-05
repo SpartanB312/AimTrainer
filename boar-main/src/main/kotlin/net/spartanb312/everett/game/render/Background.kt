@@ -65,7 +65,7 @@ object Background {
         }
     }
 
-    fun Texture.drawBackground(mouseX: Double, mouseY: Double, offsetRate: Float = 0.01f) {
+    fun Texture.drawBackground(mouseX: Double, mouseY: Double, offsetRate: Float = 0.02f) {
         RS.matrixLayer.scope {
             val aspect = width / height.toFloat()
             val maxOffset = max(RS.widthF * offsetRate, RS.heightF * offsetRate)
@@ -77,8 +77,8 @@ object Background {
                 else (mouseY - RS.centerYF) / RS.centerYF).coerceIn(-1.0..1.0) * 100
                 offsetYRate = offsetYRate.converge(yOffsetRate, 0.05)
             }
-            val offsetX = (maxOffset * offsetXRate).toFloat() / 100f
-            val offsetY = (maxOffset * offsetYRate).toFloat() / 100f
+            val offsetX = -(maxOffset * offsetXRate).toFloat() / 100f
+            val offsetY = -(maxOffset * offsetYRate).toFloat() / 100f
             var startX = 0f - maxOffset + offsetX
             var startY = 0f - maxOffset + offsetY
             var endX = RS.widthF + maxOffset + offsetX

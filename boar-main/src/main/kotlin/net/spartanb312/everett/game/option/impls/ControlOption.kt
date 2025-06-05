@@ -15,9 +15,14 @@ object ControlOption : Option("Control") {
     // Aiming
     val game by setting("Game", SensBase.HaloInfinite)
         .lang("游戏", "游戲")
+        .valueListen { _, input ->
+            sensitivityRough.defaultValue = input.defaultSens.toFloat()
+        }
+    val hpUpdate by setting("High Precision Update", true)
+        .lang("高精度视角更新", "精確視角更新")
     private val preciseSensitivity = setting("Precise Sensitivity", false)
         .lang("精准灵敏度", "精確靈敏度")
-    private val sensitivityRough by setting("Sensitivity", 2.2f, 0.1f..10.0f, 0.1f)
+    private val sensitivityRough = setting("Sensitivity", 2.2f, 0.1f..10.0f, 0.1f)
         .lang("灵敏度", "靈敏度")
     private val sensitivityDecimal by setting("Sensitivity Decimal", 0.000, 0.000..0.1, 0.001)
         .lang("灵敏度小数位", "靈敏度小數位")
@@ -66,7 +71,7 @@ object ControlOption : Option("Control") {
     }
 
     var defaultTraining by setting("DefaultTraining", 0).at { false }
-    val sensitivity get() = (if (preciseSensitivity.value) sensitivityRough + sensitivityDecimal else sensitivityRough.toDouble())
+    val sensitivity get() = (if (preciseSensitivity.value) sensitivityRough.value + sensitivityDecimal else sensitivityRough.value.toDouble())
     val dpiModifyRate get() = 1.0 / RS.dpiRate
     val vRate get() = if (VHSeparate.value) verticalRate else 1f
     val hRate get() = if (VHSeparate.value) horizontalRate else 1f
@@ -78,10 +83,12 @@ object ControlOption : Option("Control") {
         override val displayName by multiText
     }
 
-    enum class SensBase(val multiplier: Double, multiText: MultiText) : DisplayEnum {
-        HaloInfinite(0.0371248537, "Halo Infinite".lang("光环无限", "光暈無限")),
-        ApexLegends(0.0371248537 * 0.9777777777777779, "Apex Legends".lang("Apex英雄", "Apex英雄")),
-        Valorant(0.0371248537 * 3.110777550058213, "Valorant".lang("无畏契约", "特戰英豪"));
+    enum class SensBase(val multiplier: Double, val defaultSens: Double, multiText: MultiText) : DisplayEnum {
+        HaloInfinite(0.0371248537, 2.2, "Halo Infinite".lang("光环无限", "光暈無限")),
+        ApexLegends(0.0371248537 * 0.9777777777777779, 5.0, "Apex Legends".lang("Apex英雄", "Apex英雄")),
+        Valorant(0.0371248537 * 3.110777550058213, 1.0, "Valorant".lang("无畏契约", "特戰英豪")),
+        DeltaForce(0.0371248537 * 0.4444444444444444, 5.0, "Delta Force".lang("三角洲行动", "三角洲行動")),
+        CounterStrike2(0.0371248537 * 0.9777777777777779, 5.0, "Counter Strike 2".lang("反恐精英2", "絕對武力2"));
 
         override val displayName by multiText
     }

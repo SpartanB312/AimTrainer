@@ -5,6 +5,7 @@ import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.launch.Platform
 import net.spartanb312.everett.utils.collection.CircularArray
+import net.spartanb312.everett.utils.collection.sumOfFloat
 import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.opengl.GL11.glGetString
@@ -51,13 +52,60 @@ object DebugInfoRenderer {
             RenderUtils.drawRect(
                 0f,
                 startY,
-                FontRendererMain.getWidth(str,RS.renderScale),
+                FontRendererMain.getWidth(str, RS.renderScale),
                 startY + (FontRendererMain.getHeight().toInt() - 3) * RS.renderScale,
                 backgroundColor
             )
             FontRendererMain.drawString(str, 0f, startY, ColorRGB.WHITE, scale = RS.renderScale)
             startY += (FontRendererMain.getHeight().toInt() - 3) * RS.renderScale
         }
+
+        // Profiler pan
+        startY = RS.heightF - (FontRendererMain.getHeight().toInt() - 3) * RS.renderScale * RS.lastProfilingResults.size
+        val panCenterX = RS.widthF * 0.2f
+        val panCenterY = (RS.heightF + startY) / 2f
+        val panRadius = (RS.heightF - panCenterY) * 0.8f
+        val totalLen = RS.lastProfilingResults.values.sumOf { it }
+        var colorIndex = 0
+        var startRate = 0.0f
+
+        RenderUtils.drawRect(
+            0f,
+            startY,
+            panCenterX + panRadius * 1.5f,
+            RS.heightF,
+            backgroundColor
+        )
+        RS.lastProfilingResults.forEach { (item, time) ->
+            val color = colorPan[colorIndex % 9]
+            val rate = (time / totalLen.toDouble()).toFloat()
+            FontRendererMain.drawString(
+                "$item ${format.format(rate * 100)}%",
+                0f,
+                startY,
+                color,
+                scale = RS.renderScale
+            )
+            startY += (FontRendererMain.getHeight().toInt() - 3) * RS.renderScale
+            colorIndex++
+            val endRate = startRate + rate
+            val segments = (rate * 360).toInt().coerceIn(3..360)
+            RenderUtils.drawArc(panCenterX, panCenterY, panRadius, (360 * startRate..360 * endRate), segments, color)
+            startRate = endRate
+        }
     }
+
+    private val colorPan = arrayOf(
+        ColorRGB(255, 0, 0),
+        ColorRGB(255, 127, 0),
+        ColorRGB(255, 255, 0),
+        ColorRGB(0, 255, 0),
+        ColorRGB(0, 255, 127),
+        ColorRGB(0, 255, 255),
+        ColorRGB(0, 0, 255),
+        ColorRGB(127, 0, 255),
+        ColorRGB(255, 0, 255),
+    )
+
 
 }

@@ -1,6 +1,7 @@
 package net.spartanb312.everett
 
 import net.spartanb312.everett.audio.AudioSystem
+import net.spartanb312.everett.game.CameraImpl
 import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Player
@@ -19,6 +20,9 @@ import net.spartanb312.everett.graphics.GLHelper
 import net.spartanb312.everett.graphics.GameGraphics
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.RS
+import net.spartanb312.everett.graphics.RenderSystem
+import net.spartanb312.everett.graphics.RenderSystem.scaling
+import net.spartanb312.everett.graphics.RenderSystem.window
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer
 import net.spartanb312.everett.graphics.drawing.pmvbo.PersistentMappedVertexBuffer.draw
 import net.spartanb312.everett.graphics.font.UnicodeSparseFontRenderer
@@ -35,6 +39,7 @@ import net.spartanb312.everett.utils.thread.ConcurrentTaskManager
 import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
+import org.lwjgl.glfw.GLFW.glfwGetCursorPos
 import org.lwjgl.opengl.GL11
 
 /**
@@ -50,7 +55,7 @@ import org.lwjgl.opengl.GL11
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.250308"
+    const val AIM_TRAINER_VERSION = "1.0.0.250604"
 
     var isReady = false
     private val tickTimer = Timer()
@@ -59,7 +64,35 @@ object AimTrainer : GameGraphics {
     val sparseFontRenderers = mutableListOf<UnicodeSparseFontRenderer>()
 
     val taskManager = ConcurrentTaskManager("AimTrainer TaskManager")
+    val sync = Sync()
     var useFramebuffer = false; private set
+
+    // insure camera update accuracy in low fps
+    object CameraUpdateThread : Thread("CameraUpdateThread") {
+        override fun run() {
+            while (RenderSystem.isAlive) {
+                if (RS.averageFPS <= 500 && ControlOption.hpUpdate && Render2DManager.updateCamera) {
+                    val posX = DoubleArray(1)
+                    val posY = DoubleArray(1)
+                    glfwGetCursorPos(window, posX, posY)
+                    val x = posX[0]
+                    val y = posY[0]
+                    RS.mouseXD = x * scaling.scale
+                    RS.mouseYD = y * scaling.scale
+                    RS.originMouseX = x
+                    RS.originMouseY = y
+                    Player.updateCamera(
+                        updateCamera = Render2DManager.updateCamera,
+                        sensitivity = ControlOption.sensitivity,
+                        dpiModifier = ControlOption.dpiModifyRate,
+                        hRate = ControlOption.hRate,
+                        vRate = ControlOption.vRate
+                    )
+                }
+                sleep(1)
+            }
+        }
+    }
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
@@ -82,6 +115,7 @@ object AimTrainer : GameGraphics {
         AudioSystem.start()
         GunfireAudio
         model.loadModel()
+        CameraUpdateThread.start()
     }
 
     override fun Profiler.onLoop() {
@@ -109,14 +143,14 @@ object AimTrainer : GameGraphics {
             GLHelper.blend = true
             GLHelper.depth = true
             GLHelper.cull = true
-            Player.project(
-                fov = VideoOption.fov,
+            Player.updateCamera(
                 updateCamera = Render2DManager.updateCamera,
                 sensitivity = ControlOption.sensitivity,
                 dpiModifier = ControlOption.dpiModifyRate,
                 hRate = ControlOption.hRate,
                 vRate = ControlOption.vRate
-            ) {
+            )
+            Player.project(VideoOption.fov) {
                 SceneManager.onRender()
             }
             GLHelper.cull = false
@@ -228,7 +262,7 @@ object AimTrainer : GameGraphics {
         }
         val vSync = VideoOption.videoMode.value == VideoOption.VideoMode.VSync
         GLHelper.vSync = vSync
-        if (!vSync && VideoOption.videoMode.value == VideoOption.VideoMode.Custom) Sync.sync(VideoOption.fpsLimit)
+        if (!vSync && VideoOption.videoMode.value == VideoOption.VideoMode.Custom) sync.sync(VideoOption.fpsLimit)
     }
 
     override fun onResolutionUpdate(oldWidth: Int, oldHeight: Int, newWidth: Int, newHeight: Int, newDpiRate: Float) {

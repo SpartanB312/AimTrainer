@@ -154,19 +154,8 @@ object Player : EntityPlayer(), Controller {
 
     fun project(
         fov: Float = camera.fov,
-        sensitivity: Double = 2.2,
-        dpiModifier: Double = 1.0,
-        vRate: Float = 1.0f,
-        hRate: Float = 1.0f,
-        updateCamera: Boolean = true,
         block: Camera.() -> Unit
     ) {
-        if (AimAssistOption.aimAssist.value) {
-            if (AimAssistOption.noAATickLimit.value) aimAssist(sensitivity)
-            else aaTickTimer.tps(AimAssistOption.aaTPS) {
-                aimAssist(sensitivity)
-            }
-        } else sensK = sensitivity * 1000.0
         with(camera) {
             RS.matrixLayer.newScope.project(
                 yaw + renderYawOffset,
@@ -175,14 +164,25 @@ object Player : EntityPlayer(), Controller {
                 fov,
                 camera.zRange.start,
                 camera.zRange.endInclusive,
-                sens,
-                dpiModifier,
-                vRate,
-                hRate,
-                updateCamera,
                 block
             )
         }
+    }
+
+    fun updateCamera(
+        sensitivity: Double = 2.2,
+        dpiModifier: Double = 1.0,
+        vRate: Float = 1.0f,
+        hRate: Float = 1.0f,
+        updateCamera: Boolean = true,
+    ) {
+        if (AimAssistOption.aimAssist.value) {
+            if (AimAssistOption.noAATickLimit.value) aimAssist(sensitivity)
+            else aaTickTimer.tps(AimAssistOption.aaTPS) {
+                aimAssist(sensitivity)
+            }
+        } else sensK = sensitivity * 1000.0
+        CameraImpl.onUpdate(sensitivity, dpiModifier, vRate, hRate, updateCamera)
     }
 
     fun reset() {

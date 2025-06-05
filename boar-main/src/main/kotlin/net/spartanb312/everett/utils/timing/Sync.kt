@@ -1,10 +1,10 @@
 package net.spartanb312.everett.utils.timing
 
-object Sync {
+class Sync {
     /**
      * number of nano seconds in a second
      */
-    private const val NANOS_IN_SECOND = 1000L * 1000L * 1000L
+    private val NANOS_IN_SECOND = 1000L * 1000L * 1000L
 
     /**
      * The time to sleep/yield until the next frame

@@ -16,7 +16,7 @@ abstract class MutableSetting<T : Any>(
     final override val multiText = MultiText(nameString)
     override val displayName by multiText
     override var aliasName = nameString
-    override val defaultValue = valueIn
+    override var defaultValue = valueIn
     override var value = valueIn
         set(value) {
             if (value != field) {

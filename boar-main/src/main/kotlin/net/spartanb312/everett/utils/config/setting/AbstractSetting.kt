@@ -11,7 +11,7 @@ import kotlin.reflect.KProperty
 abstract class AbstractSetting<T> : Nameable, AliasNameable, ReadWriteProperty<Any?, T> {
 
     abstract override val nameString: String
-    abstract val defaultValue: T
+    abstract var defaultValue: T
     abstract var description: String
     abstract var value: T
     abstract val multiText: MultiText

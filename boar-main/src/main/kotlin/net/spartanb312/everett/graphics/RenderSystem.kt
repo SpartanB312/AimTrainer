@@ -11,8 +11,10 @@ import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.launch.Platform
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.*
+import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.Callbacks
+import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL.createCapabilities
@@ -84,14 +86,14 @@ object RenderSystem : Thread() {
     inline val displayHeightD get() = displayHeight.toDouble()
 
     const val initialMouseValue = Int.MIN_VALUE.toDouble()
-    var mouseXD = initialMouseValue; private set
-    var mouseYD = initialMouseValue; private set
+    var mouseXD = initialMouseValue;
+    var mouseYD = initialMouseValue;
     inline val mouseXF get() = mouseXD.toFloat()
     inline val mouseYF get() = mouseYD.toFloat()
     inline val mouseX get() = mouseXD.toInt()
     inline val mouseY get() = mouseYD.toInt()
-    var originMouseX = 0.0; private set
-    var originMouseY = 0.0; private set
+    var originMouseX = 0.0;
+    var originMouseY = 0.0;
 
     val widthScale get() = widthF / 1920f
     val heightScale get() = heightF / 1080f
@@ -239,7 +241,7 @@ object RenderSystem : Thread() {
         }
 
         totalVRam =
-            if (compat.nvidiaGraphics) GL11.glGetInteger(NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX) / 1024
+            if (compat.nvidiaGraphics) glGetInteger(NVXGPUMemoryInfo.GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX) / 1024
             else if (compat.amdGraphics) {
                 if (Platform.getPlatform().os == Platform.OS.Windows) {
                     val array = IntArray(8)
@@ -314,6 +316,7 @@ object RenderSystem : Thread() {
             EngineLoopEvent.SwapBuffer.Pre.post()
             val gpuStartTime = System.nanoTime()
             gameGraphics.onFramebufferDrawing()
+            profiler.profiler("Post Render")
             glfwSwapBuffers(window)
             gpuTime = System.nanoTime() - gpuStartTime
             EngineLoopEvent.SwapBuffer.Post.post()
@@ -372,6 +375,8 @@ object RenderSystem : Thread() {
 
     fun setRenderScale(scale: Float) {
         scaling.setScale(scale)
+        mouseXD = originMouseX * scaling.scale
+        mouseYD = originMouseY * scaling.scale
     }
 
 }

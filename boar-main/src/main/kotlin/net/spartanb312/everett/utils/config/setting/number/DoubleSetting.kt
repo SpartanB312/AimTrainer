@@ -36,7 +36,7 @@ class DoubleSetting(
         return ((value - range.start) / (range.endInclusive - range.start)).toFloat()
     }
 
-    override val defaultPercentBar: Float =
+    override val defaultPercentBar: Float get() =
         ((defaultValue - range.start) / (range.endInclusive - range.start)).toFloat()
 
 }
