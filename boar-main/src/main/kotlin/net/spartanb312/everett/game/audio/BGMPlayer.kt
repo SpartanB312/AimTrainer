@@ -11,6 +11,7 @@ object BGMPlayer {
 
     private val bgmList = mutableListOf(
         Sound("assets/sound/background/overture.wav"),
+        Sound("assets/sound/background/industrial_hero.wav"),
     )
 
     var currentBGM = nextBGM(); private set

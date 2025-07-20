@@ -12,7 +12,7 @@ val library: Configuration by configurations.creating
 val projectModule: Configuration by configurations.creating
 
 val lwjglVersion = "3.3.3"
-val kmogusVersion= "1.0-SNAPSHOT"
+val kmogusVersion = "1.0-SNAPSHOT"
 
 val platforms = arrayOf(
     "natives-windows-x86", // Windows 32bit

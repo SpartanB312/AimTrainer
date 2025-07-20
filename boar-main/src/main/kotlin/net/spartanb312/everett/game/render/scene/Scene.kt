@@ -5,6 +5,7 @@ import net.spartanb312.everett.game.entity.Entity
 import net.spartanb312.everett.game.input.interfaces.*
 import net.spartanb312.everett.game.render.gui.SubscribedRenderer
 import net.spartanb312.everett.utils.math.vector.Vec3f
+import net.spartanb312.everett.utils.math.vector.distanceTo
 
 abstract class Scene :
     KeyReleaseListener,
