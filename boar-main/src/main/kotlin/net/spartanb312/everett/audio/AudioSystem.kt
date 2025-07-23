@@ -59,17 +59,17 @@ object AudioSystem : Thread("AudioThread"), CoroutineScope by newCoroutineScope(
 
     private fun loop() {
         while (true) {
-            val task = threadTask.poll()
-            if (task != null) task.run()
-            else break
-        }
-        while (true) {
             val init = initialQueue.poll()
             if (init != null) {
                 if (!init.available) {
                     init.init()
                 }
             } else break
+        }
+        while (true) {
+            val task = threadTask.poll()
+            if (task != null) task.run()
+            else break
         }
         while (true) {
             val play = playQueue.poll()

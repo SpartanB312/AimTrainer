@@ -35,7 +35,7 @@ dependencies {
     library("it.unimi.dsi:fastutil:8.5.9")
     library("org.joml:joml:1.10.4")
     library("com.google.code.gson:gson:2.10")
-    library("com.google.guava:guava:32.0.0-android")
+    library("com.google.guava:guava:32.0.1-android")
 
     // Audio System
     library("com.googlecode.soundlibs:mp3spi:1.9.5.4")

@@ -1,6 +1,9 @@
 package net.spartanb312.everett.game.input
 
+import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.game.audio.BGMPlayer
+import net.spartanb312.everett.game.audio.DeltaForceMeme
+import net.spartanb312.everett.game.audio.noteplayer.MidiPlayer
 import net.spartanb312.everett.game.input.interfaces.*
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.CrosshairRenderer
@@ -28,6 +31,7 @@ object InputManager {
         if (key == GLFW.GLFW_KEY_F4) Render2DManager.displayScreen(SchulteGrid(5))
         if (key == GLFW.GLFW_KEY_F5) BGMPlayer.changeSound(BGMPlayer.nextBGM())
         if (key == GLFW.GLFW_KEY_F11) VideoOption.displayMode = VideoOption.displayMode.next()
+        if (key == GLFW.GLFW_KEY_F8) MidiPlayer.playSong(AimTrainer.song)
     }
 
     fun onKeyRepeating(key: Int, modifier: Int) {

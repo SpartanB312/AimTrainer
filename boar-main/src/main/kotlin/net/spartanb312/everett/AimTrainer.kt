@@ -1,12 +1,14 @@
 package net.spartanb312.everett
 
 import net.spartanb312.everett.audio.AudioSystem
-import net.spartanb312.everett.game.CameraImpl
 import net.spartanb312.everett.game.Configs
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.BGMPlayer
 import net.spartanb312.everett.game.audio.GunfireAudio
+import net.spartanb312.everett.game.audio.notebox.Harp
+import net.spartanb312.everett.game.audio.notebox.Piano
+import net.spartanb312.everett.game.audio.noteplayer.MidiPlayer
 import net.spartanb312.everett.game.event.ResolutionUpdateEvent
 import net.spartanb312.everett.game.event.TickEvent
 import net.spartanb312.everett.game.input.InputManager
@@ -67,6 +69,8 @@ object AimTrainer : GameGraphics {
     val sync = Sync()
     var useFramebuffer = false; private set
 
+    val song = MidiPlayer.readSong("assets/sound/pirate.mid")
+
     // insure camera update accuracy in low fps
     object CameraUpdateThread : Thread("CameraUpdateThread") {
         override fun run() {
@@ -103,6 +107,8 @@ object AimTrainer : GameGraphics {
             Configs.saveConfig("configs.json", false)
             //ignore.printStackTrace()
         }
+        Piano
+        Harp
         GLHelper.vSync = false
         TextureManager.resume()
         FontCacheManager.readCache()

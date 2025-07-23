@@ -1,6 +1,8 @@
 package net.spartanb312.everett.game.render.gui.impls
 
 import net.spartanb312.everett.AimTrainer
+import net.spartanb312.everett.game.audio.DeltaForceMeme
+import net.spartanb312.everett.game.option.impls.ControlOption
 import net.spartanb312.everett.game.render.Background.drawBackground
 import net.spartanb312.everett.game.render.FontRendererASCII
 import net.spartanb312.everett.game.render.TextureManager
@@ -13,7 +15,16 @@ import net.spartanb312.everett.utils.color.ColorRGB
 
 object LoadingScreen : GuiScreen() {
 
-    private val bg = MipmapTexture("assets/texture/loading_bg.jpg")
+    private val bg = MipmapTexture(
+        when(ControlOption.game){
+            ControlOption.SensBase.DeltaForce -> "assets/texture/haavk_bg.png"
+            else -> "assets/texture/halo_bg.jpg"
+        }
+    )
+
+    override fun onInit() {
+        if (ControlOption.game == ControlOption.SensBase.DeltaForce) DeltaForceMeme.play()
+    }
 
     override fun onRender(mouseX: Double, mouseY: Double) {
         if (TextureManager.loadedCount == TextureManager.totalCount) {

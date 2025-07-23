@@ -9,11 +9,15 @@ import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.ResourceHelper
 import org.lwjgl.openal.AL10.*
 
-class Sound(private val soundDataGetter: () -> SoundData?, val name: String) {
+class Sound(
+    private val soundDataGetter: () -> SoundData?,
+    val name: String,
+    private val afterInit: ((Sound) -> Unit)? = null
+) {
 
     constructor() : this({ null }, "dummy")
 
-    constructor(path: String) : this(
+    constructor(path: String, afterInit: ((Sound) -> Unit)? = null) : this(
         {
             when (val format = path.lowercase().substringAfterLast(".")) {
                 "wav" -> WaveData.create(ResourceHelper.getResourceStream(path)!!)
@@ -25,7 +29,8 @@ class Sound(private val soundDataGetter: () -> SoundData?, val name: String) {
                 }
             }
         },
-        path//.substringAfterLast("/").substringAfterLast("\\").substringBeforeLast(".")
+        path,//.substringAfterLast("/").substringAfterLast("\\").substringBeforeLast(".")
+        afterInit
     )
 
     var sourceID = 0
@@ -58,39 +63,52 @@ class Sound(private val soundDataGetter: () -> SoundData?, val name: String) {
                     alBufferData(bufferID, it.format, it.data, it.sampleRate)
                     alSourcei(sourceID, AL_BUFFER, bufferID)
                     available = true
+                    afterInit?.invoke(this@Sound)
                 }
             }
         }
     }
 
-    fun play(force: Boolean = false) {
+    fun play(force: Boolean = false): Sound {
         if (force || Thread.currentThread() == AudioSystem) {
             if (available) {
                 if (alGetSourcei(sourceID, AL_SOURCE_STATE) != AL_PLAYING) alSourcePlay(sourceID)
             } else Logger.error("[AudioSystem] Unable to to play $name")
         } else AudioSystem.runOnAudioThread { play(true) }
+        return this
     }
 
-    fun pause(force: Boolean = false) {
+    fun pause(force: Boolean = false): Sound {
         if (force || Thread.currentThread() == AudioSystem) {
             if (available) {
                 if (alGetSourcei(sourceID, AL_SOURCE_STATE) == AL_PLAYING) alSourcePause(sourceID)
             } else Logger.error("[AudioSystem] Unable to pause $name")
         } else AudioSystem.runOnAudioThread { pause(true) }
+        return this
     }
 
-    fun stop(force: Boolean = false) {
+    fun stop(force: Boolean = false): Sound {
         if (force || Thread.currentThread() == AudioSystem) {
             if (available) alSourceStop(sourceID)
             else Logger.error("[AudioSystem] Unable to stop $name")
         } else AudioSystem.runOnAudioThread { stop(true) }
+        return this
     }
 
-    fun setVolume(volume: Float, force: Boolean = false) {
+    fun setVolume(volume: Float, force: Boolean = false): Sound {
         if (force || Thread.currentThread() == AudioSystem) {
             if (available) alSourcef(sourceID, AL_GAIN, volume.coerceIn(0f..1f))
             else Logger.error("[AudioSystem] Unable to set volume to $volume for $name")
         } else AudioSystem.runOnAudioThread { setVolume(volume, true) }
+        return this
+    }
+
+    fun setPitch(pitch: Float, force: Boolean = false) :Sound{
+        if (force || Thread.currentThread() == AudioSystem) {
+            if (available) alSourcef(sourceID, AL_PITCH, pitch.coerceAtLeast(0f))
+            else Logger.error("[AudioSystem] Unable to set pitch to $pitch for $name")
+        } else AudioSystem.runOnAudioThread { setPitch(pitch, true) }
+        return this
     }
 
     fun clone(): Sound? {
