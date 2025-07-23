@@ -57,7 +57,7 @@ object RenderSystem : Thread() {
     inline val widthF get() = scaling.scaledWidthF
     inline val heightF get() = scaling.scaledHeightF
     inline val widthD get() = scaling.scaledWidthD
-    inline val heightD get() = scaling.scaledWidthD
+    inline val heightD get() = scaling.scaledHeightD
     inline val scaledWidth get() = scaling.scaledWidth
     inline val scaledHeight get() = scaling.scaledHeight
     inline val scaledWidthF get() = scaling.scaledWidthF

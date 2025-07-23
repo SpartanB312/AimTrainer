@@ -3,10 +3,12 @@ package net.spartanb312.everett.game.render
 import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.crosshair.Crosshairs
 import net.spartanb312.everett.game.option.impls.CrosshairOption
+import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.math.MathUtils.horizontalFOVToVerticalFOV
 
 object CrosshairRenderer {
 
