@@ -32,12 +32,12 @@ typealias RS = RenderSystem
 @Module(
     name = "Everett's Sight",
     version = RenderSystem.ENGINE_VERSION,
-    description = "Core game engine based on OpenGL 4.6 Core Profile",
+    description = "Core game engine based on OpenGL 4.5 Core Profile",
     author = "B_312"
 )
 object RenderSystem : Thread() {
 
-    const val ENGINE_VERSION = "1.3.1"
+    const val ENGINE_VERSION = "1.3.2"
 
     init {
         name = "RenderThread"

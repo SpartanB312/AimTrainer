@@ -46,12 +46,23 @@ object VideoOption : Option("Video") {
     val useFramebuffer = setting("Use Framebuffer", false)
         .lang("使用帧缓冲", "使用幀緩衝")
         .valueListen { _, input -> if (!input) RS.setRenderScale(1f) }
-    val renderRate = setting("Render Scale", 100, 25..400, 1)
+    val renderRate = setting("Render Scale", 100, 10..400, 1)
         .lang("渲染比例", "渲染比率")
         .whenTrue(useFramebuffer)
     val antiAlias by setting("Anti Alias", ScreenAntiAlias.Mode.MSAA4X)
         .lang("抗锯齿", "反走樣")
-        .whenTrue(useFramebuffer) // Not finished yet
+        .whenTrue(useFramebuffer)
+    val ffxCAS = setting("AMD FidelityFX CAS", true)
+        .lang("AMD FFX CAS 锐化", "AMD FFX CAS 銳化")
+        .whenTrue(useFramebuffer)
+    val casMode by setting("CAS Mode", CASMode.RCAS)
+        .lang("CAS 模式", "CAS 模式")
+        .whenTrue(useFramebuffer)
+        .whenTrue(ffxCAS)
+    val sharpness by setting("CAS Sharpness", 1f, 0f..5f, 0.1f)
+        .lang("CAS 锐度", "CAS 銳度")
+        .whenTrue(useFramebuffer)
+        .whenTrue(ffxCAS)
     val videoMode = setting("Video Mode", VideoMode.Unlimited)
         .lang("视频模式", "視訊模式")
     val fpsLimit by setting("FPS Limit", 120, 30..2000, 10)
@@ -118,6 +129,11 @@ object VideoOption : Option("Video") {
     inline val dfov get() = fov.v2dFOV(RS.aspectD)
     inline val hfov get() = fov.v2hFOV(RS.aspectD)
     inline val vfov get() = fov
+
+    enum class CASMode(override val displayName: CharSequence) : DisplayEnum {
+        FAST("Fast"),
+        RCAS("RCAS")
+    }
 
     enum class FOVMode(multiText: MultiText, override var aliasName: String) : DisplayEnum, AliasNameable {
         DFOV("D-FOV".lang("对角FOV", "對角FOV"), "Diagonal"),

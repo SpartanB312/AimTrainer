@@ -42,7 +42,7 @@ object InputManager {
 
     fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int) {
         if (Render2DManager.onMouseClicked(mouseX, mouseY, button)) return
-        if (button == 0) CrosshairRenderer.onClick()
+        if (button == 0 && !Render2DManager.displaying) CrosshairRenderer.onClick()
         mouseClickListener.forEach { if (it.onMouseClicked(mouseX, mouseY, button)) return }
     }
 

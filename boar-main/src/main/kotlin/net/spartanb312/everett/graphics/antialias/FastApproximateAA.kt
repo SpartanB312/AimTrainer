@@ -67,14 +67,14 @@ class FastApproximateAA(
     }
 
     override fun endRendering() = RS.matrixLayer.scope {
-        GLHelper.bindFramebuffer(0)
+        GLHelper.bindFramebuffer(RS.scaling.fbo)
         glClear(GL_COLOR_BUFFER_BIT)
-        glViewport(0, 0, RS.displayWidth, RS.displayHeight)
-        applyOrtho(0.0f, RS.displayWidthF, RS.displayHeightF, 0.0f, -1.0f, 1.0f)
+        glViewport(0, 0, RS.scaledWidth, RS.scaledHeight)
+        applyOrtho(0.0f, RS.scaledWidthF, RS.scaledHeightF, 0.0f, -1.0f, 1.0f)
         GLHelper.useProgram(program.id, true)
         glActiveTexture(GL_TEXTURE0)
         glBindTexture(GL_TEXTURE_2D, currentFBO.colorTex)
-        glUniform2f(invResU, 1f / RS.displayWidthF, 1f / RS.displayHeightF)
+        glUniform2f(invResU, 1f / RS.scaledWidthF, 1f / RS.scaledHeightF)
         with(PersistentMappedVertexBuffer.VertexMode.Universal) {
             universal(-1f, -1f, 0f, 0f, ColorRGB.WHITE)
             universal(1f, -1f, 1f, 0f, ColorRGB.WHITE)
@@ -82,6 +82,7 @@ class FastApproximateAA(
             universal(1f, 1f, 1f, 1f, ColorRGB.WHITE)
             draw(GL_TRIANGLE_STRIP, this@FastApproximateAA.program)
         }
+        RS.scaling.drawScaledFramebuffer()
     }
 
     inner class AAFrameBuffer(width: Int, height: Int) {
