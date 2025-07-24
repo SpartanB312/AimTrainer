@@ -69,7 +69,7 @@ object AimTrainer : GameGraphics {
     val sync = Sync()
     var useFramebuffer = false; private set
 
-    val song = MidiPlayer.readSong("assets/sound/touhou.mid")
+    val song = MidiPlayer.readSong("assets/sound/beyonce-halo.mid")
 
     // insure camera update accuracy in low fps
     object CameraUpdateThread : Thread("CameraUpdateThread") {

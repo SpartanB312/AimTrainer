@@ -17,7 +17,7 @@ object MidiPlayer : ListenerOwner() {
 
     init {
         listener<EngineLoopEvent.Loop.Pre> {
-            tickTimer.tps(200) {
+            tickTimer.tps(100) {
                 onTick()
             }
         }
@@ -32,15 +32,17 @@ object MidiPlayer : ListenerOwner() {
         this.song = song
         timer = -10
         for (i in 0..107) PianoHUD.release(i)
+        PianoHUD.generateTilesForSong(song)
     }
 
     fun stop() {
         song = null
         timer = -10
+        PianoHUD.stop()
     }
 
     private var song: Song? = null
-    private var timer = -10
+    var timer = -10
 
     private fun onTick() {
         // Loop
@@ -57,8 +59,7 @@ object MidiPlayer : ListenerOwner() {
         if (curNotes.isNotEmpty()) for (note in curNotes) {
             val index = note.octave * 12 + note.note
             Harp.sounds[index].stop().play()
-            val color = colors[note.track % 11]
-            PianoHUD.press(index, color)
+            PianoHUD.press(index, note.color)
         }
         if (curOff.isNotEmpty()) for (note in curOff) {
             val index = note.octave * 12 + note.note
@@ -66,20 +67,5 @@ object MidiPlayer : ListenerOwner() {
             PianoHUD.release(index)
         }
     }
-
-    private val colors = arrayOf(
-        ColorRGB.DARK_AQUA,
-        ColorRGB.RED,
-        ColorRGB.YELLOW,
-        ColorRGB.GREEN,
-        ColorRGB.AQUA,
-        ColorRGB.LIGHT_PURPLE,
-        ColorRGB.DARK_RED,
-        ColorRGB.GOLD,
-        ColorRGB.DARK_GREEN,
-        ColorRGB.BLUE,
-        ColorRGB.DARK_BLUE,
-        ColorRGB.DARK_PURPLE,
-    )
 
 }

@@ -1,5 +1,8 @@
 package net.spartanb312.everett.game.render.hud
 
+import net.spartanb312.everett.game.audio.noteplayer.MidiPlayer
+import net.spartanb312.everett.game.audio.noteplayer.Note
+import net.spartanb312.everett.game.audio.noteplayer.Song
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.event.EngineLoopEvent
@@ -14,6 +17,8 @@ object PianoHUD : ListenerOwner() {
 
     private val keys = mutableListOf<Key>()
     private val tickTimer = Timer()
+
+    val playTick get() = MidiPlayer.timer
 
     init {
         listener<EngineLoopEvent.Loop.Pre> {
@@ -50,6 +55,21 @@ object PianoHUD : ListenerOwner() {
         val unitWidth = RS.widthF / 70f
         val unitHeight = unitWidth * 5f
         val lineWidth = 1f
+        // tiles
+        val tileRenderRegionHeight = RS.heightF - unitHeight
+        val tickRange = 500
+        val heightPerTick = tileRenderRegionHeight / tickRange.toFloat()
+        for (tile in tiles) {
+            // skip invisible tiles
+            if (tile.startTick > playTick + tickRange || tile.endTick < playTick) continue
+            val tileWidth = if (keys[tile.note.index].isBlack) 0.9f * unitWidth else unitWidth * 0.95f
+            val startX = unitWidth * tile.xUnitOffset
+            val startY = (playTick + 500 - tile.endTick) * heightPerTick
+            val endX = startX + tileWidth
+            val endY = (playTick + 500 - tile.startTick) * heightPerTick
+            RenderUtils.drawRect(startX, startY, endX, endY, tile.note.color)
+        }
+        // stroke
         RS.matrixLayer.scope {
             translatef(0f, RS.heightF - unitHeight, 0f)
             RenderUtils.drawRect(0f, 0f, unitWidth * 70f, unitHeight, ColorRGB.WHITE)
@@ -107,6 +127,25 @@ object PianoHUD : ListenerOwner() {
 
     fun release(keyIndex: Int) {
         keys[keyIndex].pressed = false
+    }
+
+    // tiles
+    private val tiles = mutableListOf<Tile>()
+
+    fun generateTilesForSong(song: Song) {
+        tiles.clear()
+        song.notes.values().forEach { tiles.add(Tile(it, keys[it.index].xUnitOffset, it.end - it.start)) }
+    }
+
+    fun stop() = tiles.clear()
+
+    class Tile(
+        val note: Note,
+        val xUnitOffset: Float,
+        val tickElapse: Int,
+    ) {
+        val startTick = note.start
+        val endTick = note.end
     }
 
 }
