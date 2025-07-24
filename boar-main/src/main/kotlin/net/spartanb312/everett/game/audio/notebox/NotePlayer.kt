@@ -5,7 +5,7 @@ import net.spartanb312.everett.audio.decoder.WaveData
 import net.spartanb312.everett.utils.ResourceHelper
 import kotlin.math.pow
 
-// C4 -> [C1, C7)
+// C4 -> [C0, B8]
 open class NotePlayer(
     val name: String,
     soundPath: String,
@@ -20,7 +20,7 @@ open class NotePlayer(
 
     init {
         // positive
-        val positiveCount = 72 - standardPitchIndex
+        val positiveCount = 108 - standardPitchIndex
         val positive = mutableListOf<Float>()
         var r = 1f
         repeat(positiveCount) {

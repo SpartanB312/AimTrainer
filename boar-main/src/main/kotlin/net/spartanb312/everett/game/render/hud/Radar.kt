@@ -1,4 +1,4 @@
-package net.spartanb312.everett.game.render.hud.impls
+package net.spartanb312.everett.game.render.hud
 
 import net.spartanb312.everett.game.Language
 import net.spartanb312.everett.game.Player

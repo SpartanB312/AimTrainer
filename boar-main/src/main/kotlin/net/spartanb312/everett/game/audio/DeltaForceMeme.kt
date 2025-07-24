@@ -11,8 +11,8 @@ object DeltaForceMeme {
     fun play() {
         indices.forEachIndexed { index, i ->
             AimTrainer.taskManager.runLater(500 + index * 300) {
-                Piano.sounds[35 + i].stop().play()
-                Harp.sounds[35 + i].stop().play()
+                Piano.sounds[47 + i].stop().play()
+                Harp.sounds[47 + i].stop().play()
             }
         }
 

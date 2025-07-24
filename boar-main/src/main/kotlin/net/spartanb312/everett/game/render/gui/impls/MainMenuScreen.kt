@@ -7,6 +7,7 @@ import net.spartanb312.everett.game.forge.Forge
 import net.spartanb312.everett.game.render.*
 import net.spartanb312.everett.game.render.gui.GuiScreen
 import net.spartanb312.everett.game.render.gui.Render2DManager
+import net.spartanb312.everett.game.render.hud.PianoHUD
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
 import net.spartanb312.everett.graphics.font.drawColoredString
@@ -112,6 +113,8 @@ object MainMenuScreen : GuiScreen() {
             RS.heightF - height,
             scale = RS.renderScale
         )
+
+        PianoHUD.render()
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {

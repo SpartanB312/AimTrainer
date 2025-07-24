@@ -101,7 +101,7 @@ object PersistentMappedVertexBuffer {
             ).apply {
                 bind()
                 GL20.glUniform1i(getUniformLocation("texture"), 0)
-            }, 1024 * 1024 * 16
+            }, 1024 * 1024 * 64
         ) {
             init {
                 values.add(this)

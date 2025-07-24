@@ -2,6 +2,8 @@ package net.spartanb312.everett.game.audio.noteplayer
 
 import com.google.common.collect.Multimap
 import com.google.common.collect.MultimapBuilder
+import net.spartanb312.everett.utils.math.ceilToInt
+import net.spartanb312.everett.utils.math.floorToInt
 import java.io.InputStream
 import javax.sound.midi.MetaMessage
 import javax.sound.midi.MidiSystem
@@ -11,6 +13,7 @@ object MidiParser {
 
     fun parseMidi(path: String, inputStream: InputStream): Song {
         val notes: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
+        val noteOff: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
         var bpm = 120
         try {
             val seq = MidiSystem.getSequence(inputStream)
@@ -31,21 +34,26 @@ object MidiParser {
                     }
                     val ticksPerSecond = (res * (bpm / 60.0)).toInt()
                     time = ((1000.0 / ticksPerSecond) * event.tick).toLong()
-                    if (message is ShortMessage) {
-                        if (message.command == 0x90 || message.command == 0x80) {
-                            val key = message.getData1()
-                            val octave = (key / 12) - 1
-                            val note = key % 12
-                            val velocity = message.getData2()
-                            notes.put(Math.round(time / 10.0).toInt(), Note(trackCount, octave, note, velocity, 0))
-                        }
+                    if (message is ShortMessage && (message.command == ShortMessage.NOTE_ON || message.command == ShortMessage.NOTE_OFF)) {
+                        val key = message.getData1()
+                        val octave = (key / 12) - 1
+                        val note = key % 12
+                        val velocity = message.getData2()
+                        if (message.command == ShortMessage.NOTE_ON) notes.put(
+                            (time / 10.0).floorToInt(),
+                            Note(trackCount, octave, note, velocity, 0)
+                        )
+                        else if (message.command == ShortMessage.NOTE_OFF) noteOff.put(
+                            (time / 10.0).ceilToInt() + 1,
+                            Note(trackCount, octave, note, velocity, 0)
+                        )
                     }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return Song(path, notes)
+        return Song(path, notes, noteOff)
     }
 
 }
