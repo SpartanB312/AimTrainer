@@ -1,12 +1,11 @@
 package net.spartanb312.everett.game.audio.noteplayer
 
-import net.spartanb312.everett.game.audio.notebox.Harp
-import net.spartanb312.everett.game.audio.notebox.Piano
+import net.spartanb312.everett.game.audio.notebox.pianos
+import net.spartanb312.everett.game.audio.noteplayer.Song.Command
 import net.spartanb312.everett.game.render.hud.PianoHUD
 import net.spartanb312.everett.graphics.event.EngineLoopEvent
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.ResourceHelper
-import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.event.ListenerOwner
 import net.spartanb312.everett.utils.event.listener
 import net.spartanb312.everett.utils.timing.Timer
@@ -17,7 +16,7 @@ object MidiPlayer : ListenerOwner() {
 
     init {
         listener<EngineLoopEvent.Loop.Pre> {
-            tickTimer.tps(100) {
+            tickTimer.tps(200) {
                 onTick()
             }
         }
@@ -29,6 +28,7 @@ object MidiPlayer : ListenerOwner() {
     }
 
     fun playSong(song: Song) {
+        stop()
         this.song = song
         timer = -10
         for (i in 0..107) PianoHUD.release(i)
@@ -39,9 +39,14 @@ object MidiPlayer : ListenerOwner() {
         song = null
         timer = -10
         PianoHUD.stop()
+        noteOffTime = Array(10) { IntArray(108) { 0 } }
+        delayedCommand.clear()
+        println("Stopped")
     }
 
     private var song: Song? = null
+    private var noteOffTime = Array(10) { IntArray(108) { 0 } }
+    private val delayedCommand = mutableListOf<Triple<Int, Int, Int>>() // time, note, track
     var timer = -10
 
     private fun onTick() {
@@ -53,18 +58,37 @@ object MidiPlayer : ListenerOwner() {
             return
         }
         if (timer == -10) Logger.info("Now playing: ${song.filename}")
+
         timer++
-        val curNotes = song.notes[timer]
-        val curOff = song.noteOff[timer]
-        if (curNotes.isNotEmpty()) for (note in curNotes) {
-            val index = note.octave * 12 + note.note
-            Harp.sounds[index].stop().play()
-            PianoHUD.press(index, note.color)
+        song.tracks.forEachIndexed { trIndex, track ->
+            val instrument = pianos[trIndex % 3]
+            val current = track.notes[timer]
+            if (current.isNotEmpty()) for (note in current) {
+                if (note.track == trIndex && note.end > noteOffTime[trIndex][note.index]) {
+                    noteOffTime[trIndex][note.index] = note.end
+                    delayedCommand.add(Triple(note.end, note.index, note.track))
+                }
+            }
+            track.commandQueue.forEach { (time, note, command) ->
+                if (time == timer) {
+                    if (command == Command.On) {
+                        instrument.sounds[note].stop().play()
+                        PianoHUD.press(note, Note.colors[trIndex % 11])
+                    } else if (command == Command.Off && timer >= noteOffTime[trIndex][note]) {
+                        instrument.sounds[note].stop()
+                        PianoHUD.release(note)
+                    }
+                }
+            }
         }
-        if (curOff.isNotEmpty()) for (note in curOff) {
-            val index = note.octave * 12 + note.note
-            //Harp.sounds[index].stop()
-            PianoHUD.release(index)
+        delayedCommand.removeIf { (time, note, trIndex) ->
+            val instrument = pianos[trIndex % 3]
+            if (time == timer && timer >= noteOffTime[trIndex][note]) {
+                instrument.sounds[note].stop()
+                PianoHUD.release(note)
+                true
+            }
+            false
         }
     }
 

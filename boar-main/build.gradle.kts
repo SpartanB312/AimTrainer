@@ -111,6 +111,7 @@ tasks {
     }
 
     jar {
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         exclude("assets/**")
         manifest {
             attributes(

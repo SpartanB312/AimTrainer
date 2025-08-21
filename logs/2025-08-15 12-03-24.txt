@@ -1,0 +1,10 @@
+[08-15 12:03:24][RenderThread/INFO][Boar] Resolution updated to 1920 x 1080, DPI: 1.0
+[08-15 12:03:27][AudioThread/INFO][Boar] Initializing audio system
+[08-15 12:03:27][RenderThread/INFO][Boar] Loading model assets/spartan/spartan.obj
+[08-15 12:03:27][RenderThread/ERROR][Boar] Failed to load model: assets/spartan/spartan.obj
+[08-15 12:03:27][AudioThread/INFO][Boar] ALC_FREQUENCY     : 44800Hz
+[08-15 12:03:27][AudioThread/INFO][Boar] ALC_REFRESH       : 50Hz
+[08-15 12:03:27][AudioThread/INFO][Boar] ALC_SYNC          : false
+[08-15 12:03:27][AudioThread/INFO][Boar] ALC_MONO_SOURCES  : 1024
+[08-15 12:03:27][AudioThread/INFO][Boar] ALC_STEREO_SOURCES: 1
+[08-15 12:03:27][RenderThread/INFO][Boar] Start playing BGM assets/sound/background/overture.wav

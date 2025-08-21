@@ -97,7 +97,7 @@ class Sound(
 
     fun setVolume(volume: Float, force: Boolean = false): Sound {
         if (force || Thread.currentThread() == AudioSystem) {
-            if (available) alSourcef(sourceID, AL_GAIN, volume.coerceIn(0f..1f))
+                if (available) alSourcef(sourceID, AL_GAIN, volume.coerceIn(0f..1f))
             else Logger.error("[AudioSystem] Unable to set volume to $volume for $name")
         } else AudioSystem.runOnAudioThread { setVolume(volume, true) }
         return this

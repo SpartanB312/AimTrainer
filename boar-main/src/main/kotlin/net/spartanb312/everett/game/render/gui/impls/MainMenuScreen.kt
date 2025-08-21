@@ -113,8 +113,6 @@ object MainMenuScreen : GuiScreen() {
             RS.heightF - height,
             scale = RS.renderScale
         )
-
-        PianoHUD.render()
     }
 
     override fun onMouseClicked(mouseX: Int, mouseY: Int, button: Int): Boolean {

@@ -4,6 +4,7 @@ import kotlinx.coroutines.CoroutineScope
 import net.spartanb312.everett.graphics.RenderSystem
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.NULL
+import net.spartanb312.everett.utils.misc.mallocInt
 import net.spartanb312.everett.utils.thread.newCoroutineScope
 import org.lwjgl.openal.AL
 import org.lwjgl.openal.ALC
@@ -35,6 +36,7 @@ object AudioSystem : Thread("AudioThread"), CoroutineScope by newCoroutineScope(
     }
 
     private fun init() {
+        Logger.info("Initializing audio system")
         alcDevice = alcOpenDevice(null as String?)
         val capabilities = ALC.createCapabilities(alcDevice)
         if (!capabilities.OpenALC10) throw Exception("Unsupported device")
@@ -46,15 +48,25 @@ object AudioSystem : Thread("AudioThread"), CoroutineScope by newCoroutineScope(
             }
         }
 
-        val context = alcCreateContext(alcDevice, null as IntBuffer?)
+        val attributes = mallocInt(7).apply {
+            put(ALC_FREQUENCY)
+            put(44800)
+            put(ALC_REFRESH)
+            put(100)
+            put(ALC_MONO_SOURCES)
+            put(1024)
+            put(0)
+            flip()
+        }
+        val context = alcCreateContext(alcDevice, attributes)
         val useTLC = capabilities.ALC_EXT_thread_local_context && alcSetThreadContext(context)
         if (!useTLC && !alcMakeContextCurrent(context)) throw IllegalStateException()
         AL.createCapabilities(capabilities) { MemoryUtil.memCallocPointer(it) }
-        Logger.debug("ALC_FREQUENCY     : " + alcGetInteger(alcDevice, ALC_FREQUENCY) + "Hz")
-        Logger.debug("ALC_REFRESH       : " + alcGetInteger(alcDevice, ALC_REFRESH) + "Hz")
-        Logger.debug("ALC_SYNC          : " + (alcGetInteger(alcDevice, ALC_SYNC) == ALC_TRUE))
-        Logger.debug("ALC_MONO_SOURCES  : " + alcGetInteger(alcDevice, ALC_MONO_SOURCES))
-        Logger.debug("ALC_STEREO_SOURCES: " + alcGetInteger(alcDevice, ALC_STEREO_SOURCES))
+        Logger.info("ALC_FREQUENCY     : " + alcGetInteger(alcDevice, ALC_FREQUENCY) + "Hz")
+        Logger.info("ALC_REFRESH       : " + alcGetInteger(alcDevice, ALC_REFRESH) + "Hz")
+        Logger.info("ALC_SYNC          : " + (alcGetInteger(alcDevice, ALC_SYNC) == ALC_TRUE))
+        Logger.info("ALC_MONO_SOURCES  : " + alcGetInteger(alcDevice, ALC_MONO_SOURCES))
+        Logger.info("ALC_STEREO_SOURCES: " + alcGetInteger(alcDevice, ALC_STEREO_SOURCES))
     }
 
     private fun loop() {

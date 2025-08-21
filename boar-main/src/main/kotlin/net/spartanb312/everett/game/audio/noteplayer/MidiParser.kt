@@ -8,19 +8,22 @@ import java.io.InputStream
 import javax.sound.midi.MetaMessage
 import javax.sound.midi.MidiSystem
 import javax.sound.midi.ShortMessage
+import kotlin.math.roundToInt
 
 object MidiParser {
 
     const val TPS = 100.0
 
     fun parseMidi(path: String, inputStream: InputStream): Song {
-        val notes: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
-        val noteOff: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
         var bpm = 120
+        val tracks = mutableListOf<Song.Track>()
         try {
             val seq = MidiSystem.getSequence(inputStream)
             val res = seq.resolution
             for ((trackCount, track) in seq.tracks.withIndex()) {
+                val notes: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
+                val noteOff: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
+                val commandQueue = mutableListOf<Triple<Int, Int, Song.Command>>()
                 var time: Long
                 val pressed = mutableListOf<Note>()
                 for (i in 0 until track.size()) {
@@ -41,38 +44,45 @@ object MidiParser {
                         val key = message.getData1()
                         val octave = (key / 12) - 1
                         val note = key % 12
+                        val noteIndex = octave * 12 + note
                         val velocity = message.getData2()
                         if (message.command == ShortMessage.NOTE_ON) {
+                            commandQueue.add(Triple((time / (1000.0 / TPS)).roundToInt(), noteIndex, Song.Command.On))
                             val noteInstance = Note(trackCount, octave, note, velocity, 0)
-                            noteInstance.start = (time / (1000.0 / TPS)).floorToInt()
+                            noteInstance.start = (time / (1000.0 / TPS)).roundToInt()
                             notes.put(noteInstance.start, noteInstance)
                             pressed.add(noteInstance)
                         } else if (message.command == ShortMessage.NOTE_OFF) {
-                            val index = octave * 12 + note
-                            val noteInstance = pressed.find { it.index == index }
+                            commandQueue.add(Triple((time / (1000.0 / TPS)).roundToInt(), noteIndex, Song.Command.Off))
+                            val noteInstance = pressed.find { it.index == noteIndex }
                             if (noteInstance != null) {
-                                noteInstance.end = (time / 10.0).ceilToInt() + 1
+                                noteInstance.end = (time / 10.0).roundToInt()
                                 noteOff.put(noteInstance.end, noteInstance)
                                 pressed.remove(noteInstance)
                             } else { // broken midi
                                 val noteInstance2 = Note(trackCount, octave, note, velocity, 0)
-                                noteInstance2.end = (time / 10.0).ceilToInt() + 1
+                                noteInstance2.end = (time / 10.0).roundToInt()
                                 noteOff.put(noteInstance2.end, noteInstance2)
                             }
                         }
                     }
                 }
+                tracks.add(Song.Track(notes, noteOff, commandQueue))
             }
-            notes.values().forEach {
-                if (it.end == -11) { // fix broken note
-                    it.end = it.start + (250.0 / (1000.0 / TPS)).ceilToInt()
-                    noteOff.put(it.end, it)
+            tracks.forEach { tr ->
+                tr.notes.values().forEach {
+                    if (it.end == -11) { // fix broken note
+                        val time = it.start + (250.0 / (1000.0 / TPS)).roundToInt()
+                        tr.commandQueue.add(Triple(time, it.index, Song.Command.Off))
+                        it.end = time
+                        tr.noteOff.put(it.end, it)
+                    }
                 }
             }
         } catch (e: Exception) {
             e.printStackTrace()
         }
-        return Song(path, notes, noteOff)
+        return Song(path, tracks)
     }
 
 }

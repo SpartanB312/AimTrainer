@@ -1,7 +1,6 @@
 package net.spartanb312.everett.game.audio
 
 import net.spartanb312.everett.AimTrainer
-import net.spartanb312.everett.game.audio.notebox.Harp
 import net.spartanb312.everett.game.audio.notebox.Piano
 
 object DeltaForceMeme {
@@ -12,10 +11,9 @@ object DeltaForceMeme {
         indices.forEachIndexed { index, i ->
             AimTrainer.taskManager.runLater(500 + index * 300) {
                 Piano.sounds[47 + i].stop().play()
-                Harp.sounds[47 + i].stop().play()
+                //Harp.sounds[47 + i].stop().play()
             }
         }
-
     }
 
 }

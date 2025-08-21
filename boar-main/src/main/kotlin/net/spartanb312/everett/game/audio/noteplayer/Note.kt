@@ -17,7 +17,7 @@ data class Note(
     val color = colors[track % 11]
 
     companion object {
-        private val colors = arrayOf(
+        val colors = arrayOf(
             ColorRGB.DARK_AQUA,
             ColorRGB.RED,
             ColorRGB.YELLOW,

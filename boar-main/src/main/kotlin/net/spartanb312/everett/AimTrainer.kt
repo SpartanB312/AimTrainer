@@ -8,6 +8,8 @@ import net.spartanb312.everett.game.audio.BGMPlayer
 import net.spartanb312.everett.game.audio.GunfireAudio
 import net.spartanb312.everett.game.audio.notebox.Harp
 import net.spartanb312.everett.game.audio.notebox.Piano
+import net.spartanb312.everett.game.audio.notebox.Piano2
+import net.spartanb312.everett.game.audio.notebox.pianos
 import net.spartanb312.everett.game.audio.noteplayer.MidiPlayer
 import net.spartanb312.everett.game.event.ResolutionUpdateEvent
 import net.spartanb312.everett.game.event.TickEvent
@@ -69,7 +71,9 @@ object AimTrainer : GameGraphics {
     val sync = Sync()
     var useFramebuffer = false; private set
 
-    val song = MidiPlayer.readSong("assets/sound/beyonce-halo.mid")
+    val song = MidiPlayer.readSong("assets/sound/touhou.mid")
+    val song2 = MidiPlayer.readSong("assets/sound/国旗歌.mid")
+    val song3 = MidiPlayer.readSong("assets/sound/Old habits - Alan walker.mid")
 
     // insure camera update accuracy in low fps
     object CameraUpdateThread : Thread("CameraUpdateThread") {
@@ -107,6 +111,7 @@ object AimTrainer : GameGraphics {
             Configs.saveConfig("configs.json", false)
             //ignore.printStackTrace()
         }
+        pianos
         Piano
         Harp
         GLHelper.vSync = false
