@@ -11,7 +11,10 @@ class OneBallDMR(scene: Scene) : DMRTraining(
     1,
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("1-Ball DMR", "") {
+    companion object : TrainingInfo(
+        "1-Ball DMR",
+        "DMR mode with only one target. 5 shots to eliminate the moving target."
+    ) {
         override fun new(scene: Scene): Training {
             return OneBallDMR(scene)
         }

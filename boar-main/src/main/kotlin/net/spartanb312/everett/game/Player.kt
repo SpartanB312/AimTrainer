@@ -1,11 +1,13 @@
 package net.spartanb312.everett.game
 
+import net.spartanb312.everett.game.aimassist.AutoTriggerAA
 import net.spartanb312.everett.game.aimassist.FrictionAA
 import net.spartanb312.everett.game.aimassist.MagnetismAA
 import net.spartanb312.everett.game.entity.Entity
 import net.spartanb312.everett.game.entity.EntityPlayer
 import net.spartanb312.everett.game.option.impls.AimAssistOption
 import net.spartanb312.everett.game.option.impls.ControlOption
+import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.graphics.Camera
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.matrix.newScope
@@ -150,6 +152,7 @@ object Player : EntityPlayer(), Controller {
         aaTPSCounter.invoke()
         if (AimAssistOption.mcEnabled) MagnetismAA.compensate(sensitivity)
         else if (AimAssistOption.frEnabled) FrictionAA.compensate(sensitivity)
+        if (AimAssistOption.autoTrigger) AutoTriggerAA.compensate(sensitivity)
     }
 
     fun project(

@@ -11,7 +11,10 @@ class OneShotSphere(scene: Scene) : SphereShotTraining(
     1
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("1-Shot Sphere", "") {
+    companion object : TrainingInfo(
+        "1-Shot Sphere",
+        "Hit all targets precisely in the sphere around you."
+    ) {
         override fun new(scene: Scene): Training {
             return OneShotSphere(scene)
         }

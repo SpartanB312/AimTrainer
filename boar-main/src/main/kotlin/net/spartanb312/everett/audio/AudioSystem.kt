@@ -1,6 +1,7 @@
 package net.spartanb312.everett.audio
 
 import kotlinx.coroutines.CoroutineScope
+import net.spartanb312.everett.game.event.TickEvent
 import net.spartanb312.everett.graphics.RenderSystem
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.NULL
@@ -70,6 +71,7 @@ object AudioSystem : Thread("AudioThread"), CoroutineScope by newCoroutineScope(
     }
 
     private fun loop() {
+        TickEvent.Audio.post()
         while (true) {
             val init = initialQueue.poll()
             if (init != null) {

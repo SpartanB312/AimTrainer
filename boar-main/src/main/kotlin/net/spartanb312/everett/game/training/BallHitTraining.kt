@@ -9,6 +9,7 @@ import net.spartanb312.everett.game.option.impls.AimAssistOption.bulletAdsorptio
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.*
 import net.spartanb312.everett.game.render.gui.Render2DManager
+import net.spartanb312.everett.game.render.gui.impls.PauseScreen
 import net.spartanb312.everett.game.render.gui.impls.ScoreboardScreen
 import net.spartanb312.everett.game.render.gui.impls.TrainingScreen
 import net.spartanb312.everett.game.render.scene.Scene
@@ -156,6 +157,7 @@ abstract class BallHitTraining(
                 displayed = false
                 val scale = RS.generalScale
                 val seconds = ((waitTime * 1000 - timeLapsed) / 1000f).roundToInt()
+                if (!Render2DManager.displaying) PauseScreen.drawTitle(scale)
                 FontRendererBig.drawCenteredStringWithShadow(
                     if (seconds < 10) "0: 0$seconds" else "0: $seconds",
                     RS.centerXF,

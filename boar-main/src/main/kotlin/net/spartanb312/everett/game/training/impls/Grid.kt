@@ -16,7 +16,10 @@ class Grid(scene: Scene) : GridTraining(
     5,
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("Grid", "") {
+    companion object : TrainingInfo(
+        "Grid",
+        "Grid training mode. Hit every target accurately and as quickly as possible!"
+    ) {
         override fun new(scene: Scene): Training {
             return Grid(scene)
         }

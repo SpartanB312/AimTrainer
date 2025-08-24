@@ -59,7 +59,7 @@ import org.lwjgl.opengl.GL11
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.250723"
+    const val AIM_TRAINER_VERSION = "1.0.0.250825"
 
     var isReady = false
     private val tickTimer = Timer()
@@ -112,7 +112,6 @@ object AimTrainer : GameGraphics {
             //ignore.printStackTrace()
         }
         pianos
-        Piano
         Harp
         GLHelper.vSync = false
         TextureManager.resume()

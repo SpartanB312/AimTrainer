@@ -51,12 +51,14 @@ object AimTrainingScene : Scene() {
         })
         buttons.add(PauseScreen.Button("Trainings".lang("重选", "重選")) {
             SceneManager.switchScene(DummyScene)
+            currentTraining = null
             Render2DManager.closeAll()
             Render2DManager.displayScreen(jumBack)
             CrosshairRenderer.disable()
         })
         buttons.add(PauseScreen.Button("Menu".lang("菜单", "菜單")) {
             SceneManager.switchScene(DummyScene)
+            currentTraining = null
             Render2DManager.closeAll()
             Render2DManager.displayScreen(MainMenuScreen)
             CrosshairRenderer.disable()

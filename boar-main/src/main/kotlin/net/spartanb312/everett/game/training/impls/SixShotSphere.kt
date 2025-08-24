@@ -11,7 +11,10 @@ class SixShotSphere(scene: Scene) : SphereShotTraining(
     6,
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("6-Shot Sphere", "") {
+    companion object : TrainingInfo(
+        "6-Shot Sphere",
+        "Hit all targets precisely in the sphere around you."
+    ) {
         override fun new(scene: Scene): Training {
             return SixShotSphere(scene)
         }

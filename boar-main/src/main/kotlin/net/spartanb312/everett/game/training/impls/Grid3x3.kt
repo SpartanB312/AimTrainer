@@ -16,7 +16,10 @@ class Grid3x3(scene: Scene) : GridTraining(
     3,
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("Grid 3x3", "") {
+    companion object : TrainingInfo(
+        "Grid 3x3",
+        "Grid training mode. Hit every target accurately and as quickly as possible!"
+    ) {
         override fun new(scene: Scene): Training {
             return Grid3x3(scene)
         }

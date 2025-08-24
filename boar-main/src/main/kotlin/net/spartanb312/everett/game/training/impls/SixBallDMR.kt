@@ -11,7 +11,10 @@ class SixBallDMR(scene: Scene) : DMRTraining(
     6,
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("6-Ball DMR", "") {
+    companion object : TrainingInfo(
+        "6-Ball DMR",
+        "DMR mode with six target. 5 shots to eliminate the moving target."
+    ) {
         override fun new(scene: Scene): Training {
             return SixBallDMR(scene)
         }

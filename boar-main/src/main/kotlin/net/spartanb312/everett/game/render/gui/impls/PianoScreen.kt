@@ -5,6 +5,7 @@ import net.spartanb312.everett.game.audio.noteplayer.MidiPlayer
 import net.spartanb312.everett.game.render.Background
 import net.spartanb312.everett.game.render.FontRendererROG
 import net.spartanb312.everett.game.render.gui.GuiScreen
+import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.hud.PianoHUD
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.font.drawColoredString
@@ -32,19 +33,29 @@ object PianoScreen : GuiScreen() {
     }
 
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
-        if (keyCode == GLFW.GLFW_KEY_F8) {
-            MidiPlayer.playSong(AimTrainer.song)
-            return true
+        when (keyCode) {
+            GLFW.GLFW_KEY_F8 -> {
+                MidiPlayer.playSong(AimTrainer.song)
+                return true
+            }
+
+            GLFW.GLFW_KEY_F9 -> {
+                MidiPlayer.playSong(AimTrainer.song2)
+                return true
+            }
+
+            GLFW.GLFW_KEY_F10 -> {
+                MidiPlayer.playSong(AimTrainer.song3)
+                return true
+            }
+
+            GLFW.GLFW_KEY_ESCAPE -> {
+                Render2DManager.popScreen()
+                return true
+            }
+
+            else -> return false
         }
-        if (keyCode == GLFW.GLFW_KEY_F9) {
-            MidiPlayer.playSong(AimTrainer.song2)
-            return true
-        }
-        if (keyCode == GLFW.GLFW_KEY_F10) {
-            MidiPlayer.playSong(AimTrainer.song3)
-            return true
-        }
-        return false
     }
 
     override fun onClosed() {

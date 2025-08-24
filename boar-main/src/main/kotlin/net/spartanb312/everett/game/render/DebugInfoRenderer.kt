@@ -1,5 +1,6 @@
 package net.spartanb312.everett.game.render
 
+import net.spartanb312.everett.game.render.InfoRenderer.cpuName
 import net.spartanb312.everett.graphics.OpenGL
 import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.graphics.drawing.RenderUtils
@@ -32,6 +33,7 @@ object DebugInfoRenderer {
 
     private val debugInfos: MutableList<() -> String> = mutableListOf(
         { "OpenGL: $glContextVersion" },
+        { "CPU:&f $cpuName" },
         { "GPU: $gpuName" },
         { "System: $system" },
         { "Java: $jreVersion" },

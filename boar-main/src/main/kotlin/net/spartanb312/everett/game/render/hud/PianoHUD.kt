@@ -158,7 +158,10 @@ object PianoHUD : ListenerOwner() {
         }
     }
 
-    fun stop() = tiles.clear()
+    fun stop() {
+        tiles.clear()
+        for (i in 0..107) release(i)
+    }
 
     class Tile(
         val note: Note,

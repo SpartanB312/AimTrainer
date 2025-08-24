@@ -58,6 +58,10 @@ object AimAssistOption : Option("AimAssist") {
         .at { aaType.value == AAType.Friction || zeroAngleFriction }
         .whenTrue(aimAssist)
 
+    // Auto trigger
+    val autoTrigger by setting("Auto Trigger", false)
+        .lang("自动扳机", "自動開火")
+
     val actualErrorAngle
         get() = if (CrosshairRenderer.overrideErrorAngle != -1f) CrosshairRenderer.overrideErrorAngle
         else SceneManager.errorAngle

@@ -7,6 +7,7 @@ import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.graphics.RenderSystem
 import net.spartanb312.everett.launch.Platform
 import net.spartanb312.everett.utils.color.ColorRGB
+import oshi.SystemInfo
 import java.util.*
 
 object InfoRenderer {
@@ -42,6 +43,7 @@ object InfoRenderer {
 
     private val rightUpInfo = mutableListOf(
         { "GPU:&f ${RenderSystem.compat.gpuName}" },
+        { "CPU:&f ${Runtime.getRuntime().availableProcessors()}x$cpuName" },
         { "Platform:&f ${Platform.getPlatform().platformName}" },
         { "Memory:&f ${RenderSystem.usedMemory}/${RenderSystem.totalMemory} MB" },
         { "TextureQueue:&f ${TextureManager.activeThread}/${TextureManager.totalThread}" },
@@ -94,5 +96,28 @@ object InfoRenderer {
             FontRendererMain.drawString("Thank you RED Maynard",10,1040)
             tex.drawTexture(100f, 600f,400f,900f)
      */
+
+    fun getCpuName(isWindows: Boolean = true): String {
+        return try {
+            val process = if (isWindows) Runtime.getRuntime().exec("wmic cpu get name")
+            else Runtime.getRuntime().exec("sysctl machdep.cpu.brand_string")
+            process.outputStream.close()
+            val scanner = Scanner(process.inputStream)
+            var cpuName = ""
+            while (scanner.hasNext()) {
+                cpuName += scanner.next() + " "
+            }
+            cpuName.removeSuffix(" ").removePrefix("Name ")
+        } catch (_: Exception) {
+            "Unknown processor"
+        }
+    }
+
+    val cpuName = try {
+        val aprocessor = SystemInfo().hardware.processors
+        String.format("%dx %s", aprocessor.size, aprocessor[0]).replace("\\s+".toRegex(), " ")
+    } catch (_: Exception) {
+        getCpuName(System.getProperty("os.name").startsWith("Windows"))
+    }
 
 }

@@ -11,7 +11,10 @@ class SixShotWall(scene: Scene) : WallShotTraining(
     6,
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("6-Shot", "") {
+    companion object : TrainingInfo(
+        "6-Shot",
+        "Hit all targets precisely arranged on the wall."
+    ) {
         override fun new(scene: Scene): Training {
             return SixShotWall(scene)
         }

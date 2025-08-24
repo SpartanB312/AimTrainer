@@ -1,9 +1,12 @@
 package net.spartanb312.everett.game.audio.noteplayer
 
+import net.spartanb312.everett.audio.Sound
+import net.spartanb312.everett.game.audio.notebox.Harp
 import net.spartanb312.everett.game.audio.notebox.pianos
 import net.spartanb312.everett.game.audio.noteplayer.Song.Command
+import net.spartanb312.everett.game.event.TickEvent
+import net.spartanb312.everett.game.option.impls.AudioOption
 import net.spartanb312.everett.game.render.hud.PianoHUD
-import net.spartanb312.everett.graphics.event.EngineLoopEvent
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.ResourceHelper
 import net.spartanb312.everett.utils.event.ListenerOwner
@@ -13,11 +16,19 @@ import net.spartanb312.everett.utils.timing.Timer
 object MidiPlayer : ListenerOwner() {
 
     private val tickTimer = Timer()
+    private val sources = mutableListOf<Sound>()
 
     init {
-        listener<EngineLoopEvent.Loop.Pre> {
-            tickTimer.tps(200) {
+        sources.addAll(pianos.flatMap { it.sounds })
+        sources.addAll(Harp.sounds)
+        listener<TickEvent.Audio> {
+            tickTimer.tps(AudioOption.tps) {
                 onTick()
+            }
+        }
+        listener<TickEvent.Post> {
+            sources.forEach {
+                if (it.name != "dummy") it.setVolume(AudioOption.noteBox)
             }
         }
         subscribe()
@@ -41,7 +52,6 @@ object MidiPlayer : ListenerOwner() {
         PianoHUD.stop()
         noteOffTime = Array(10) { IntArray(108) { 0 } }
         delayedCommand.clear()
-        println("Stopped")
     }
 
     private var song: Song? = null

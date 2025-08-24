@@ -6,6 +6,8 @@ plugins {
 repositories {
     mavenCentral()
     maven("https://maven.luna5ama.dev/")
+    maven("https://mvnrepository.com/artifact/")
+    maven("https://repo.spongepowered.org/maven/")
 }
 
 val library: Configuration by configurations.creating
@@ -36,6 +38,7 @@ dependencies {
     library("org.joml:joml:1.10.4")
     library("com.google.code.gson:gson:2.10")
     library("com.google.guava:guava:32.0.1-android")
+    library("oshi-project:oshi-core:1.1")
 
     // Audio System
     library("com.googlecode.soundlibs:mp3spi:1.9.5.4")

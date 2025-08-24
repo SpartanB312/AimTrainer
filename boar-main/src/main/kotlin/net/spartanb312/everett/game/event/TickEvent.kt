@@ -7,4 +7,5 @@ import net.spartanb312.everett.utils.event.EventPosting
 sealed class TickEvent : Event {
     object Pre : TickEvent(), EventPosting by EventBus()
     object Post : TickEvent(), EventPosting by EventBus()
+    object Audio : TickEvent(), EventPosting by EventBus()
 }

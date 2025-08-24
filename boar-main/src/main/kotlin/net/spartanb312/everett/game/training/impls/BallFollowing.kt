@@ -19,7 +19,10 @@ class BallFollowing(scene: Scene) : FollowingTraining(
     0.5f
 ), TrainingInfoContainer by Companion {
 
-    companion object : TrainingInfo("Following", "") {
+    companion object : TrainingInfo(
+        "Following",
+        "Following training mode. Keep your cursor locked on the target for as long as possible!"
+    ) {
         override fun new(scene: Scene): Training {
             return BallFollowing(scene)
         }
