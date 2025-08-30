@@ -65,16 +65,16 @@ object PianoHUD : ListenerOwner() {
         } else releaseCheck()
         // tiles
         val tileRenderRegionHeight = RS.heightF - unitHeight
-        val tickRange = 500
+        val tickRange = 300
         val heightPerTick = tileRenderRegionHeight / tickRange.toFloat()
         for (tile in tiles) {
             // skip invisible tiles
             if (tile.startTick > playTick + tickRange || tile.endTick < playTick) continue
             val tileWidth = if (keys[tile.note.index].isBlack) 0.8f * unitWidth else unitWidth * 0.95f
             val startX = unitWidth * tile.xUnitOffset
-            val startY = (playTick + 500 - tile.endTick) * heightPerTick
+            val startY = (playTick + tickRange - tile.endTick) * heightPerTick
             val endX = startX + tileWidth
-            val endY = (playTick + 500 - tile.startTick) * heightPerTick
+            val endY = (playTick + tickRange - tile.startTick) * heightPerTick
             RenderUtils.drawRect(startX, startY, endX, endY, tile.note.color.alpha(192))
         }
         // stroke
@@ -159,8 +159,8 @@ object PianoHUD : ListenerOwner() {
     }
 
     fun stop() {
-        tiles.clear()
         for (i in 0..107) release(i)
+        tiles.clear()
     }
 
     class Tile(

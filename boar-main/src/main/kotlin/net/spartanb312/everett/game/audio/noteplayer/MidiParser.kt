@@ -8,6 +8,7 @@ import java.io.InputStream
 import javax.sound.midi.MetaMessage
 import javax.sound.midi.MidiSystem
 import javax.sound.midi.ShortMessage
+import javax.sound.midi.Track
 import kotlin.math.roundToInt
 
 object MidiParser {
@@ -15,18 +16,14 @@ object MidiParser {
     const val TPS = 100.0
 
     fun parseMidi(path: String, inputStream: InputStream): Song {
-        var bpm = 120
         val tracks = mutableListOf<Song.Track>()
         try {
             val seq = MidiSystem.getSequence(inputStream)
             val res = seq.resolution
-            for ((trackCount, track) in seq.tracks.withIndex()) {
-                val notes: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
-                val noteOff: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
-                val commandQueue = mutableListOf<Triple<Int, Int, Song.Command>>()
-                var time: Long
-                val pressed = mutableListOf<Note>()
-                for (i in 0 until track.size()) {
+            var currentBPM = 100
+            val bpmMap = IntArray(seq.tracks.size) { 0 }
+            for ((trackIndex, track) in seq.tracks.withIndex()) {
+                inner@ for (i in 0 until track.size()) {
                     val event = track[i]
                     val message = event.message
                     if (message is MetaMessage) {
@@ -35,10 +32,24 @@ object MidiParser {
                             val tempo = ((data[0].toInt() and 0xFF) shl 16) or
                                     ((data[1].toInt() and 0xFF) shl 8) or
                                     (data[2].toInt() and 0xFF)
-                            bpm = 60_000_000 / tempo
+                            currentBPM = 60_000_000 / tempo
+                            println("$path $currentBPM")
+                            break@inner
                         }
                     }
-                    val ticksPerSecond = (res * (bpm / 60.0)).toInt()
+                }
+                bpmMap[trackIndex] = currentBPM
+            }
+            for ((trackIndex, track) in seq.tracks.withIndex()) {
+                val notes: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
+                val noteOff: Multimap<Int, Note> = MultimapBuilder.linkedHashKeys().arrayListValues().build()
+                val commandQueue = mutableListOf<Triple<Int, Int, Song.Command>>()
+                var time: Long
+                val pressed = mutableListOf<Note>()
+                for (i in 0 until track.size()) {
+                    val event = track[i]
+                    val message = event.message
+                    val ticksPerSecond = (res * (bpmMap[trackIndex] / 60.0)).toInt()
                     time = ((1000.0 / ticksPerSecond) * event.tick).toLong()
                     if (message is ShortMessage && (message.command == ShortMessage.NOTE_ON || message.command == ShortMessage.NOTE_OFF)) {
                         val key = message.getData1()
@@ -48,7 +59,7 @@ object MidiParser {
                         val velocity = message.getData2()
                         if (message.command == ShortMessage.NOTE_ON) {
                             commandQueue.add(Triple((time / (1000.0 / TPS)).roundToInt(), noteIndex, Song.Command.On))
-                            val noteInstance = Note(trackCount, octave, note, velocity, 0)
+                            val noteInstance = Note(trackIndex, octave, note, velocity, 0)
                             noteInstance.start = (time / (1000.0 / TPS)).roundToInt()
                             notes.put(noteInstance.start, noteInstance)
                             pressed.add(noteInstance)
@@ -60,7 +71,7 @@ object MidiParser {
                                 noteOff.put(noteInstance.end, noteInstance)
                                 pressed.remove(noteInstance)
                             } else { // broken midi
-                                val noteInstance2 = Note(trackCount, octave, note, velocity, 0)
+                                val noteInstance2 = Note(trackIndex, octave, note, velocity, 0)
                                 noteInstance2.end = (time / 10.0).roundToInt()
                                 noteOff.put(noteInstance2.end, noteInstance2)
                             }

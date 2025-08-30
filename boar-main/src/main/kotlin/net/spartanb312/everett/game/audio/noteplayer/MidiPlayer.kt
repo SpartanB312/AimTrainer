@@ -1,5 +1,7 @@
 package net.spartanb312.everett.game.audio.noteplayer
 
+import com.soywiz.kds.iterators.fastForEachWithIndex
+import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.spartanb312.everett.audio.Sound
 import net.spartanb312.everett.game.audio.notebox.Harp
 import net.spartanb312.everett.game.audio.notebox.pianos
@@ -7,6 +9,7 @@ import net.spartanb312.everett.game.audio.noteplayer.Song.Command
 import net.spartanb312.everett.game.event.TickEvent
 import net.spartanb312.everett.game.option.impls.AudioOption
 import net.spartanb312.everett.game.render.hud.PianoHUD
+import net.spartanb312.everett.graphics.RS
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.ResourceHelper
 import net.spartanb312.everett.utils.event.ListenerOwner
@@ -50,12 +53,12 @@ object MidiPlayer : ListenerOwner() {
         song = null
         timer = -10
         PianoHUD.stop()
-        noteOffTime = Array(10) { IntArray(108) { 0 } }
+        noteOffTime = Array(100) { IntArray(108) { 0 } }
         delayedCommand.clear()
     }
 
     private var song: Song? = null
-    private var noteOffTime = Array(10) { IntArray(108) { 0 } }
+    private var noteOffTime = Array(100) { IntArray(108) { 0 } }
     private val delayedCommand = mutableListOf<Triple<Int, Int, Int>>() // time, note, track
     var timer = -10
 
@@ -64,11 +67,10 @@ object MidiPlayer : ListenerOwner() {
         val song = song ?: return
         if (timer - 10 > song.length) {
             Logger.info("Finished playing ${song.filename}")
-            stop()
+            RS.addRenderThreadJob { stop() }
             return
         }
         if (timer == -10) Logger.info("Now playing: ${song.filename}")
-
         timer++
         song.tracks.forEachIndexed { trIndex, track ->
             val instrument = pianos[trIndex % 3]

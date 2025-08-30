@@ -104,7 +104,7 @@ class FastApproximateAA(
 
         fun delete() {
             glDeleteFramebuffers(fbo)
-            GL11.glDeleteTextures(colorTex)
+            glDeleteTextures(colorTex)
             glDeleteRenderbuffers(rboDepth)
         }
     }

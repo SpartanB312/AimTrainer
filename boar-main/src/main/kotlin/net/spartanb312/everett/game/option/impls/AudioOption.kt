@@ -17,7 +17,7 @@ object AudioOption : Option("AudioOption") {
         .lang("命中音效", "命中音效")
     val bgmInGame by setting("In Game BGM", false)
         .lang("游戏内音乐", "游戲内音樂")
-    val tps by setting("Note Player TPS", 100, 1..200, 1)
+    val tps by setting("Note Player TPS", 100, 1..500, 1)
         .lang("合成音符TPS", "合成音符TPS")
 
     val music get() = volume * musicVolume / 10000f

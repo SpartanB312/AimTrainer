@@ -34,6 +34,7 @@ import net.spartanb312.everett.graphics.matrix.applyOrtho
 import net.spartanb312.everett.graphics.matrix.scope
 import net.spartanb312.everett.graphics.model.impls.ExternalModel
 import net.spartanb312.everett.graphics.model.mesh.MeshDNSH
+import net.spartanb312.everett.launch.LaunchScreen
 import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.physics.PhysicsSystem
 import net.spartanb312.everett.utils.Logger
@@ -61,6 +62,7 @@ object AimTrainer : GameGraphics {
 
     const val AIM_TRAINER_VERSION = "1.0.0.250825"
 
+    val splash = LaunchScreen()
     var isReady = false
     private val tickTimer = Timer()
 
@@ -72,8 +74,8 @@ object AimTrainer : GameGraphics {
     var useFramebuffer = false; private set
 
     val song = MidiPlayer.readSong("assets/sound/touhou.mid")
-    val song2 = MidiPlayer.readSong("assets/sound/国旗歌.mid")
-    val song3 = MidiPlayer.readSong("assets/sound/Old habits - Alan walker.mid")
+    val song2 = MidiPlayer.readSong("assets/sound/Night Of Knights.mid")
+    val song3 = MidiPlayer.readSong("assets/sound/Night Of Knights2.mid")
 
     // insure camera update accuracy in low fps
     object CameraUpdateThread : Thread("CameraUpdateThread") {
@@ -126,6 +128,7 @@ object AimTrainer : GameGraphics {
         GunfireAudio
         model.loadModel()
         CameraUpdateThread.start()
+        splash.isVisible = false
     }
 
     override fun Profiler.onLoop() {

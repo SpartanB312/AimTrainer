@@ -20,6 +20,9 @@ public class Main {
 
         // Launch Engine
         if (!devMode) {
+            LaunchLogger.info("Loading engine files...");
+            LaunchClassLoader.loadJarFile("engine/boar-main.jar");
+            URL manifest = LaunchClassLoader.INSTANCE.findResource("META-INF/MANIFEST.MF");
             LaunchLogger.info("Loading dependencies...");
             readFiles("libs/", ".jar", true, file -> {
                 if (file.getName().startsWith("lwjgl") && file.getName().contains("natives")) {
@@ -32,8 +35,6 @@ public class Main {
                     LaunchClassLoader.loadJarFile(file);
                 }
             });
-            LaunchClassLoader.loadJarFile("engine/boar-main.jar");
-            URL manifest = LaunchClassLoader.INSTANCE.findResource("META-INF/MANIFEST.MF");
             LaunchClassLoader.INSTANCE.initKotlinObject(findEntry(manifest));
         } else {
             URL manifest = Main.class.getResource("/META-INF/MANIFEST.MF");
