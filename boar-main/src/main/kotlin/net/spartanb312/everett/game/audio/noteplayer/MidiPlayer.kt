@@ -1,7 +1,5 @@
 package net.spartanb312.everett.game.audio.noteplayer
 
-import com.soywiz.kds.iterators.fastForEachWithIndex
-import it.unimi.dsi.fastutil.objects.ObjectArrayList
 import net.spartanb312.everett.audio.Sound
 import net.spartanb312.everett.game.audio.notebox.Harp
 import net.spartanb312.everett.game.audio.notebox.pianos

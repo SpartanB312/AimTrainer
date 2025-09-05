@@ -28,9 +28,9 @@ object ModuleScreen : GuiScreen() {
         Button("Back", 340f, 0f, 490f, 40f) { Render2DManager.popScreen() })
 
     init {
-        modules.add(Main::class.java.getAnnotation(Module::class.java))
-        modules.add(RenderSystem.javaClass.getAnnotation(Module::class.java))
-        modules.add(AimTrainer.javaClass.getAnnotation(Module::class.java))
+        modules.add(Main::class.java.getAnnotation(Module::class.java)!!)
+        modules.add(RenderSystem.javaClass.getAnnotation(Module::class.java)!!)
+        modules.add(AimTrainer.javaClass.getAnnotation(Module::class.java)!!)
     }
 
     private val width2 = FontRendererMain.getWidth("Description: ", 1.25f)

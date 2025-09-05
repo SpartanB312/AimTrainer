@@ -50,7 +50,8 @@ import org.lwjgl.opengl.GL11
 /**
  * Based on OpenGL 4.5 Core Profile
  * Minimum requirements:
- * CPU: Pentium 4
+ * CPU: Pentium D or better
+ * GPU: 512MB V-RAM with OpenGL 4.5 support
  */
 @Module(
     name = "Aim Trainer",
@@ -60,7 +61,7 @@ import org.lwjgl.opengl.GL11
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.250825"
+    const val AIM_TRAINER_VERSION = "1.0.0.250905"
 
     val splash = LaunchScreen()
     var isReady = false
@@ -73,9 +74,8 @@ object AimTrainer : GameGraphics {
     val sync = Sync()
     var useFramebuffer = false; private set
 
-    val song = MidiPlayer.readSong("assets/sound/touhou.mid")
-    val song2 = MidiPlayer.readSong("assets/sound/Night Of Knights.mid")
-    val song3 = MidiPlayer.readSong("assets/sound/Night Of Knights2.mid")
+    // Gloomy everyday...
+    val midi = MidiPlayer.readSong("assets/sound/Gloomy_Sunday.mid")
 
     // insure camera update accuracy in low fps
     object CameraUpdateThread : Thread("CameraUpdateThread") {
@@ -106,6 +106,7 @@ object AimTrainer : GameGraphics {
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
+        splash.updateSplash(0.1f, "Reading configs...")
         try {
             Configs.loadConfig("configs.json")
             Configs.saveConfig("configs.json", false)
@@ -113,22 +114,26 @@ object AimTrainer : GameGraphics {
             Configs.saveConfig("configs.json", false)
             //ignore.printStackTrace()
         }
+        splash.updateSplash(0.3f, "Initializing audio system...")
         pianos
         Harp
         GLHelper.vSync = false
+        splash.updateSplash(0.5f, "Initializing texture manager...")
         TextureManager.resume()
         FontCacheManager.readCache()
         FontCacheManager.initChunks()
         Runtime.getRuntime().addShutdownHook(Thread {
             FontCacheManager.saveCache()
         })
+        splash.updateSplash(0.6f, "Initializing render manager...")
         Render2DManager.displayScreen(LoadingScreen)
         PhysicsSystem.launch(Player, 60, true)
         AudioSystem.start()
+        splash.updateSplash(0.9f, "Loading game assets...")
         GunfireAudio
         model.loadModel()
         CameraUpdateThread.start()
-        splash.isVisible = false
+        splash.stop()
     }
 
     override fun Profiler.onLoop() {
@@ -207,8 +212,8 @@ object AimTrainer : GameGraphics {
         v1: Float,
         colorRGB: ColorRGB = ColorRGB.WHITE
     ) {
-        GL11.glBindTexture(GL11.GL_TEXTURE_2D, texture)
-        GL11.GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
+        glBindTexture(GL_TEXTURE_2D, texture)
+        GL_TRIANGLE_STRIP.draw(PersistentMappedVertexBuffer.VertexMode.Universal) {
             universal(endX, startY, u1, v, colorRGB)
             universal(startX, startY, u, v, colorRGB)
             universal(endX, endY, u1, v1, colorRGB)

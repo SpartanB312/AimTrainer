@@ -35,17 +35,7 @@ object PianoScreen : GuiScreen() {
     override fun onKeyTyped(keyCode: Int, modifier: Int): Boolean {
         when (keyCode) {
             GLFW.GLFW_KEY_F8 -> {
-                MidiPlayer.playSong(AimTrainer.song)
-                return true
-            }
-
-            GLFW.GLFW_KEY_F9 -> {
-                MidiPlayer.playSong(AimTrainer.song2)
-                return true
-            }
-
-            GLFW.GLFW_KEY_F10 -> {
-                MidiPlayer.playSong(AimTrainer.song3)
+                MidiPlayer.playSong(AimTrainer.midi)
                 return true
             }
 

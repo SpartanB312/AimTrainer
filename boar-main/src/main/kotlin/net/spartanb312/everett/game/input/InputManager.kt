@@ -1,21 +1,13 @@
 package net.spartanb312.everett.game.input
 
-import net.spartanb312.everett.AimTrainer
 import net.spartanb312.everett.game.audio.BGMPlayer
-import net.spartanb312.everett.game.audio.DeltaForceMeme
-import net.spartanb312.everett.game.audio.notebox.Piano
-import net.spartanb312.everett.game.audio.notebox.Piano2
-import net.spartanb312.everett.game.audio.notebox.Piano3
-import net.spartanb312.everett.game.audio.noteplayer.MidiPlayer
 import net.spartanb312.everett.game.input.interfaces.*
 import net.spartanb312.everett.game.option.impls.VideoOption
 import net.spartanb312.everett.game.render.CrosshairRenderer
 import net.spartanb312.everett.game.render.gui.Render2DManager
 import net.spartanb312.everett.game.render.gui.impls.OptionScreen
 import net.spartanb312.everett.game.render.gui.impls.PianoScreen
-import net.spartanb312.everett.game.render.hud.PianoHUD
 import net.spartanb312.everett.game.training.SchulteGrid
-import net.spartanb312.everett.utils.color.ColorRGB
 import net.spartanb312.everett.utils.misc.next
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
