@@ -74,8 +74,7 @@ object AimTrainer : GameGraphics {
     val sync = Sync()
     var useFramebuffer = false; private set
 
-    // Gloomy everyday...
-    val midi = MidiPlayer.readSong("assets/sound/Gloomy_Sunday.mid")
+    val midi = MidiPlayer.readSong("assets/sound/Never Forget from Halo 3 for Piano.mid")
 
     // insure camera update accuracy in low fps
     object CameraUpdateThread : Thread("CameraUpdateThread") {
@@ -106,7 +105,8 @@ object AimTrainer : GameGraphics {
 
     override fun onInit() {
         RS.setTitle("Aim Trainer $AIM_TRAINER_VERSION")
-        splash.updateSplash(0.1f, "Reading configs...")
+        Logger.info("ARB_sparse_texture: ${RS.compat.arbSparseTexture}")
+        splash.updateSplash(0.4f, "Reading configs...")
         try {
             Configs.loadConfig("configs.json")
             Configs.saveConfig("configs.json", false)
@@ -114,18 +114,18 @@ object AimTrainer : GameGraphics {
             Configs.saveConfig("configs.json", false)
             //ignore.printStackTrace()
         }
-        splash.updateSplash(0.3f, "Initializing audio system...")
+        splash.updateSplash(0.5f, "Initializing audio system...")
         pianos
         Harp
         GLHelper.vSync = false
-        splash.updateSplash(0.5f, "Initializing texture manager...")
+        splash.updateSplash(0.6f, "Initializing texture manager...")
         TextureManager.resume()
         FontCacheManager.readCache()
         FontCacheManager.initChunks()
         Runtime.getRuntime().addShutdownHook(Thread {
             FontCacheManager.saveCache()
         })
-        splash.updateSplash(0.6f, "Initializing render manager...")
+        splash.updateSplash(0.7f, "Initializing render manager...")
         Render2DManager.displayScreen(LoadingScreen)
         PhysicsSystem.launch(Player, 60, true)
         AudioSystem.start()

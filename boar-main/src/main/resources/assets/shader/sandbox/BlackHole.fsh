@@ -13,12 +13,10 @@ void main(void) {
     mainImage(col, gl_FragCoord.xy);
     gl_FragColor = col;
 }
-    // END: shadertoy porting template
 
-    #define _Speed 2.0//disk rotation speed
-
-    #define _Steps 5.0//disk texture layers
-    #define _Size 0.3//size of BH
+#define _Speed 2.0//disk rotation speed
+#define _Steps 5.0//disk texture layers
+#define _Size 0.3//size of BH
 
 
 
@@ -43,8 +41,8 @@ vec4 background(vec3 ray)
 {
     vec2 uv = ray.xy;
 
-    if(abs(ray.x) > 0.5) uv.x = ray.z;
-    else if(abs(ray.y) > 0.5) uv.y = ray.z;
+    if (abs(ray.x) > 0.5) uv.x = ray.z;
+    else if (abs(ray.y) > 0.5) uv.y = ray.z;
 
     float brightness = value(uv*3.0, 100.0);
     float color = value(uv*2.0, 20.0);
@@ -54,7 +52,7 @@ vec4 background(vec3 ray)
     brightness = clamp(brightness, 0.0, 1.0);
     vec3 stars = brightness * mix(vec3(1.0, 0.6, 0.2), vec3(0.2, 0.6, 1.0), color);
 
-	return vec4(stars,1.0);
+    return vec4(stars, 1.0);
 }
 
 vec4 raymarchDisk(vec3 ray, vec3 zeroPos)

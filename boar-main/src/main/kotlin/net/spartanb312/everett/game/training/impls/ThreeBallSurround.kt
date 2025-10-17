@@ -5,18 +5,19 @@ import net.spartanb312.everett.game.training.Training
 import net.spartanb312.everett.game.training.TrainingInfo
 import net.spartanb312.everett.game.training.TrainingInfoContainer
 import net.spartanb312.everett.game.training.modes.DMRTraining
+import net.spartanb312.everett.game.training.modes.SurroundTraining
 
-class SixBallDMR(scene: Scene) : DMRTraining(
+class ThreeBallSurround(scene: Scene) : SurroundTraining(
     scene,
-    6,
+    3,
 ), TrainingInfoContainer by Companion {
 
     companion object : TrainingInfo(
-        "6-Ball DMR",
-        "DMR mode with six targets. 5 shots to eliminate the moving target."
+        "3-Ball Surround",
+        "Surround mode with three targets. One shot to eliminate the moving target."
     ) {
         override fun new(scene: Scene): Training {
-            return SixBallDMR(scene)
+            return ThreeBallSurround(scene)
         }
     }
 

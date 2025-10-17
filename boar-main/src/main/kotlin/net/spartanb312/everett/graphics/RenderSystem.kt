@@ -1,5 +1,7 @@
 package net.spartanb312.everett.graphics
 
+import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap
+import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.antialias.RenderScaling
 import net.spartanb312.everett.graphics.antialias.ScreenAntiAlias

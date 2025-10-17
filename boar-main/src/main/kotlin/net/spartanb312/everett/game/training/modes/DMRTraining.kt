@@ -36,10 +36,11 @@ abstract class DMRTraining(
     yOffset: Float = 0f,
     zOffset: Float = 0f,
     killResetTime: Int = 2500,
-    private val moveSpeed: Float = 2f,
-    private val scoreBase: Float = 1f,
-    private val minKillTime: Int = 50,
-    private val maxKillTime: Int = 2000
+    protected val moveSpeed: Float = 2f,
+    protected val scoreBase: Float = 1f,
+    protected val minKillTime: Int = 50,
+    protected val maxKillTime: Int = 2000,
+    specifiedBallHP: Int = 5,
 ) : BallHitTraining(
     scene,
     amount,
@@ -54,7 +55,7 @@ abstract class DMRTraining(
     horizontalOffset,
     verticalOffset,
     distanceRange,
-    5,
+    specifiedBallHP,
     fadeTime,
     killResetTime
 ) {
@@ -102,7 +103,7 @@ abstract class DMRTraining(
         }
     }
 
-    private val vecTimer = Timer()
+    protected val vecTimer = Timer()
 
     override fun onClick() {
         if (stage != Stage.Training || Render2DManager.displaying) return
