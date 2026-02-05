@@ -1,3 +1,0 @@
-[08-15 12:03:23][main/INFO][Launch] Initializing launch wrapper...
-[08-15 12:03:23][main/INFO][Launch] Running on platform: Windows 64 Bit
-[08-15 12:03:23][main/INFO][Launch] Using Entry: net.spartanb312.everett.launch.Entry

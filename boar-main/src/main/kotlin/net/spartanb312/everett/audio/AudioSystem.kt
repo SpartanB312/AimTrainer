@@ -98,7 +98,7 @@ object AudioSystem : Thread("AudioThread"), CoroutineScope by newCoroutineScope(
             if (flag) it.second.play()
             flag
         }
-        //sleep(1)
+        yield()
     }
 
     fun init(sound: Sound) {

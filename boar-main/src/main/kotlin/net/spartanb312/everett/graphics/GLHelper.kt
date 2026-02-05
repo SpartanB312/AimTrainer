@@ -19,7 +19,19 @@ object GLHelper {
     var lineSmooth by GLState(false) { if (it) glEnable(GL_LINE_SMOOTH) else glDisable(GL_LINE_SMOOTH) }
     var vSync by GLState(true) { if (it) glfwSwapInterval(1) else glfwSwapInterval(0) }
 
-    fun setDisplayMode(dMode: VideoOption.DisplayMode) {
+    fun setDisplayMode(prev: VideoOption.DisplayMode, dMode: VideoOption.DisplayMode) {
+        if (prev == VideoOption.DisplayMode.Windowed) {
+            val xArray = IntArray(1)
+            val yArray = IntArray(1)
+            glfwGetWindowPos(RS.window, xArray, yArray)
+            windowedXPos = xArray[0]
+            windowedYPos = yArray[0]
+            glfwGetWindowSize(RS.window, xArray, yArray)
+            windowedWidth = xArray[0]
+            windowedHeight = yArray[0]
+        } else if (prev == VideoOption.DisplayMode.Borderless) {
+            glfwSetWindowAttrib(RS.window, GLFW_DECORATED, GLFW_TRUE)
+        }
         when (dMode) {
             VideoOption.DisplayMode.Windowed -> {
                 glfwSetWindowMonitor(
@@ -33,32 +45,16 @@ object GLHelper {
                 )
             }
 
-            //VideoOption.DisplayMode.Borderless -> {
-            //    val xArray = IntArray(1)
-            //    val yArray = IntArray(1)
-            //    glfwGetWindowPos(RS.window, xArray, yArray)
-            //    windowedXPos = xArray[0]
-            //    windowedYPos = yArray[0]
-            //    glfwGetWindowSize(RS.window, xArray, yArray)
-            //    windowedWidth = xArray[0]
-            //    windowedHeight = yArray[0]
-            //    val monitor = glfwGetPrimaryMonitor()
-            //    val mode = glfwGetVideoMode(monitor)!!
-            //    glfwDestroyWindow(RS.window)
-            //    RS.createWindow(true)
-            //    glfwSetWindowSize(RS.window, mode.width(), mode.height())
-            //    glfwSetWindowPos(RS.window, 0, 0)
-            //}
+            VideoOption.DisplayMode.Borderless -> {
+                val monitor = glfwGetPrimaryMonitor()
+                val mode = glfwGetVideoMode(monitor)!!
+                glfwSetWindowMonitor(RS.window, 0L, 0, 0, mode.width(), mode.height(), GLFW_DONT_CARE)
+                glfwSetWindowAttrib(RS.window, GLFW_DECORATED, GLFW_FALSE)
+                glfwSetWindowPos(RS.window, 0, 0)
+                glfwSetWindowSize(RS.window, mode.width(), mode.height())
+            }
 
             VideoOption.DisplayMode.FullScreen -> {
-                val xArray = IntArray(1)
-                val yArray = IntArray(1)
-                glfwGetWindowPos(RS.window, xArray, yArray)
-                windowedXPos = xArray[0]
-                windowedYPos = yArray[0]
-                glfwGetWindowSize(RS.window, xArray, yArray)
-                windowedWidth = xArray[0]
-                windowedHeight = yArray[0]
                 val monitor = glfwGetPrimaryMonitor()
                 val mode = glfwGetVideoMode(monitor)!!
                 glfwSetWindowMonitor(RS.window, monitor, 0, 0, mode.width(), mode.height(), mode.refreshRate())

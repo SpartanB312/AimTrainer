@@ -21,6 +21,7 @@ import net.spartanb312.everett.graphics.model.mesh.lightPosition
 import net.spartanb312.everett.graphics.model.mesh.lightPosition2
 import net.spartanb312.everett.graphics.scene.Scene3D
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.math.vector.Vec3f
 import org.lwjgl.glfw.GLFW
 
 object Forge : Scene3D() {
@@ -37,20 +38,11 @@ object Forge : Scene3D() {
         CrosshairRenderer.disable()
     }
 
-    //private val attribute = buildAttribute(24) {
-    //    float(0, 3, GLDataType.GL_FLOAT, false) // Pos
-    //    float(1, 4, GLDataType.GL_UNSIGNED_BYTE, true) // Color
-    //    float(2, 2, GLDataType.GL_FLOAT, false) // UV
-    //    float(3,)
-    //}
-    //private val vao = PersistentMappedVBO.createVao(attribute)
-    //private val shader = Shader("assets/shader/lighting/test.vsh", "assets/shader/lighting/test.fsh")
-
     override fun onRender() {
         SkyboxScene.render3D()
         RS.matrixLayer.scope {
             scalef(10f, 10f, 10f)
-            translatef(0f,-0.55f,0f)
+            translatef(0f, -0.55f, 0f)
             AimTrainer.model.drawModel(this)
         }
     }
@@ -73,6 +65,38 @@ object Forge : Scene3D() {
         override fun render2D() {
 
         }
+
+        // Physics tick
+        override fun onTick() {
+        }
+
+        private fun lagrangeInterpolation3D(
+            x0: Vec3f, t0: Double,
+            x1: Vec3f, t1: Double,
+            x2: Vec3f, t2: Double,
+            t3: Double
+        ): Vec3f {
+            val l0 = ((t3 - t1) * (t3 - t2)) / ((t0 - t1) * (t0 - t2))
+            val l1 = ((t3 - t0) * (t3 - t2)) / ((t1 - t0) * (t1 - t2))
+            val l2 = ((t3 - t0) * (t3 - t1)) / ((t2 - t0) * (t2 - t1))
+            val interpolatedX = x0.x * l0 + x1.x * l1 + x2.x * l2
+            val interpolatedY = x0.y * l0 + x1.y * l1 + x2.y * l2
+            val interpolatedZ = x0.z * l0 + x1.z * l1 + x2.z * l2
+            return Vec3f(interpolatedX, interpolatedY, interpolatedZ)
+        }
+
+        private fun linearInterpolation3D(
+            x0: Vec3f, t0: Double,
+            x1: Vec3f, t1: Double,
+            t2: Double
+        ): Vec3f {
+            val alpha = (t2 - t0) / (t1 - t0)
+            val interpolatedX = x0.x + alpha * (x1.x - x0.x)
+            val interpolatedY = x0.y + alpha * (x1.y - x0.y)
+            val interpolatedZ = x0.z + alpha * (x1.z - x0.z)
+            return Vec3f(interpolatedX, interpolatedY, interpolatedZ)
+        }
+
 
         override fun render3D() {
             BallRenderer.render(

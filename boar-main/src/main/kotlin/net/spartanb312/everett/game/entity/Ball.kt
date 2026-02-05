@@ -7,7 +7,7 @@ import net.spartanb312.everett.utils.math.vector.distanceTo
 import net.spartanb312.everett.utils.misc.random
 import kotlin.math.absoluteValue
 
-class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
+open class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
 
     private val body = Sphere(this, size)
     private var vec = Vec3f(0f, 0f, 0f)

@@ -28,7 +28,7 @@ object VideoOption : Option("Video") {
     var displayMode by setting("Display Mode", DisplayMode.Windowed)
         .lang("显示模式", "顯示模式")
         .valueListen { prev, input ->
-            if (input != prev) GLHelper.setDisplayMode(input)
+            if (input != prev) GLHelper.setDisplayMode(prev, input)
         }
 
     val fullScreenMode by setting("Resolution", Resolution.Dummy1)
@@ -199,7 +199,7 @@ object VideoOption : Option("Video") {
     enum class DisplayMode(multiText: MultiText) : DisplayEnum {
         Windowed("Windowed".lang("窗口化", "窗口化")),
 
-        //Borderless("Borderless".lang("无边框", "無邊框"));
+        Borderless("Borderless".lang("无边框", "無邊框")),
         FullScreen("FullScreen".lang("全屏", "全屏"));
 
         override val displayName by multiText

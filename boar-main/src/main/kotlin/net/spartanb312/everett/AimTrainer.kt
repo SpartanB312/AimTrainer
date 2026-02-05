@@ -61,7 +61,7 @@ import org.lwjgl.opengl.GL11
 )
 object AimTrainer : GameGraphics {
 
-    const val AIM_TRAINER_VERSION = "1.0.0.250905"
+    const val AIM_TRAINER_VERSION = "1.0.0.260206"
 
     val splash = LaunchScreen()
     var isReady = false

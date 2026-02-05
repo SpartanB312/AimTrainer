@@ -1,8 +1,8 @@
 package net.spartanb312.everett.graphics
 
-class AnimationFlag(private val interpolation: (Long, Float, Float) -> Float) {
+class AnimationFlag(private val length: Float, private val interpolation: (Long, Float, Float) -> Float) {
 
-    constructor(easing: Easing, length: Float) : this({ time, prev, current ->
+    constructor(easing: Easing, length: Float) : this(length, { time, prev, current ->
         easing.incOrDec(Easing.toDelta(time, length), prev, current)
     })
 
@@ -43,7 +43,8 @@ class AnimationFlag(private val interpolation: (Long, Float, Float) -> Float) {
     }
 
     fun get(): Float {
-        return interpolation.invoke(time, prev, current)
+        return if (System.currentTimeMillis() - time >= length) current
+        else interpolation.invoke(time, prev, current)
     }
 
     fun forceCurrent() {

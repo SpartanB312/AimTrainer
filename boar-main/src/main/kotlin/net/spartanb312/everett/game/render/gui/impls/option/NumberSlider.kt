@@ -47,10 +47,10 @@ class NumberSlider<T>(
         if (sliding) setting.setByPercent(((mouseX.toFloat() - sliderStartX) / sliderWidth).coerceIn(0.0f..1.0f))
 
         val percent = setting.getPercentBar()
-        animationFlag.update(percent * 100f)
-        currentRate = animationFlag.get() / 100f
-        animationFlag2.update(if (isHoovered) 100f else 0f)
-        animatedAlphaRate = animationFlag2.get() / 100f
+        animationFlag.update(percent)
+        currentRate = animationFlag.get()
+        animationFlag2.update(if (isHoovered) 1f else 0f)
+        animatedAlphaRate = animationFlag2.get()
 
         if (sliding && slideTimer.passed(150)) currentRate = setting.getPercentBar()
 
@@ -114,7 +114,10 @@ class NumberSlider<T>(
         }
 
         //display value
-        val str = setting.getDisplay(currentRate)
+        val str = if (currentRate == percent) setting.displayValue else {
+            // println("Setting=${setting.nameString}, value=${setting.displayValue}, currentRate=$currentRate, percent=$percent")
+            setting.getDisplay(currentRate)
+        }
         FontRendererBig.drawString(
             str,
             x + this.width - scale * 20 - FontRendererBig.getWidth(str, scale * 0.8f),

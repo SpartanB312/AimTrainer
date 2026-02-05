@@ -1,7 +1,7 @@
 package net.spartanb312.everett.graphics
 
-import it.unimi.dsi.fastutil.longs.Long2ObjectAVLTreeMap
-import it.unimi.dsi.fastutil.longs.Long2ObjectLinkedOpenHashMap
+import net.spartanb312.everett.AimTrainer
+import net.spartanb312.everett.game.render.TextureManager
 import net.spartanb312.everett.graphics.OpenGL.*
 import net.spartanb312.everett.graphics.antialias.RenderScaling
 import net.spartanb312.everett.graphics.antialias.ScreenAntiAlias
@@ -13,10 +13,8 @@ import net.spartanb312.everett.launch.Module
 import net.spartanb312.everett.launch.Platform
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.*
-import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.Callbacks
-import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFW.*
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL.createCapabilities
@@ -329,11 +327,13 @@ object RenderSystem : Thread() {
             }
             frameTime = System.nanoTime() - frameStartTime
         }
-
+        AimTrainer.taskManager.shutdown()
+        TextureManager.stop()
         Callbacks.glfwFreeCallbacks(window)
         glfwDestroyWindow(window)
         glfwTerminate()
         glfwSetErrorCallback(null)!!.free()
+        exitProcess(0)
     }
 
     fun setTitle(title: String, debug: Boolean = false) {

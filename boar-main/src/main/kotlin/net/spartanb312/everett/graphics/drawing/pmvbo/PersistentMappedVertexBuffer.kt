@@ -34,13 +34,14 @@ object PersistentMappedVertexBuffer {
             VertexFormat.Pos2fColor.attribute, Shader(
                 "assets/shader/general/Pos2fColor.vsh",
                 "assets/shader/general/Pos2fColor.fsh"
-            ), 1024 * 1024
+            ), 1024 * 1024 * 8
         ) {
             init {
                 values.add(this)
             }
         }
 
+        /*
         data object Pos3fColor : VertexMode(
             VertexFormat.Pos3fColor.attribute, Shader(
                 "assets/shader/general/Pos3fColor.vsh",
@@ -93,6 +94,7 @@ object PersistentMappedVertexBuffer {
                 values.add(this)
             }
         }
+         */
 
         data object Universal : VertexMode(
             VertexFormat.Pos3fColorTex.attribute, Shader(
@@ -149,7 +151,7 @@ object PersistentMappedVertexBuffer {
 
         fun onSync() {
             if (sync == 0L) {
-                if (arr.pos >= arr.len / 2) {
+                if (arr.pos >= arr.len / 2.7) {
                     sync = GL32C.glFenceSync(GL32.GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
                 }
             } else if (IntArray(1).apply {

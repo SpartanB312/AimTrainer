@@ -12,7 +12,7 @@ data class Note(
     // Tick
     var start = -11
     var end = -11
-    val index = octave * 12 + note
+    val index = (octave * 12 + note).coerceIn(0, 107)
 
     val color = colors[track % 11]
 

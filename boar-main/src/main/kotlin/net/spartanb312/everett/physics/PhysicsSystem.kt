@@ -1,5 +1,6 @@
 package net.spartanb312.everett.physics
 
+import kotlinx.coroutines.yield
 import net.spartanb312.everett.game.render.scene.SceneManager
 import net.spartanb312.everett.utils.Logger
 import net.spartanb312.everett.utils.misc.AverageCounter
@@ -12,6 +13,7 @@ object PhysicsSystem {
     private var controller: Controller? = null
     private var updateThread = Thread.currentThread()
     private var mainThread = Thread.currentThread()
+    val tickLength = 1000.0 / tps
 
     fun launch(
         controller: Controller,
@@ -41,6 +43,7 @@ object PhysicsSystem {
                 controller?.update()
                 SceneManager.onTick()
             }
+            Thread.yield()
         } else {
             Logger.info("Physics system should be handled by physics thread")
             throw Exception("Physics system handled by non-PhysicsThread")
