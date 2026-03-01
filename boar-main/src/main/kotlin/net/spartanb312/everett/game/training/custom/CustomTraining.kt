@@ -2,17 +2,10 @@ package net.spartanb312.everett.game.training.custom
 
 import com.google.common.primitives.Ints.min
 import net.spartanb312.everett.game.Language
-import net.spartanb312.everett.game.render.Background
 import net.spartanb312.everett.game.render.gui.impls.CustomGameScreen
 import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.training.Training
-import net.spartanb312.everett.game.training.custom.CustomTraining.Modes
-import net.spartanb312.everett.game.training.custom.impls.CustomDMR
-import net.spartanb312.everett.game.training.custom.impls.CustomFollowing
-import net.spartanb312.everett.game.training.custom.impls.CustomNormal
-import net.spartanb312.everett.game.training.custom.impls.CustomReaction
-import net.spartanb312.everett.game.training.custom.impls.CustomSurround
-import net.spartanb312.everett.game.training.modes.SurroundTraining
+import net.spartanb312.everett.game.training.custom.impls.*
 import net.spartanb312.everett.utils.config.Configurable
 import net.spartanb312.everett.utils.config.setting.AbstractSetting
 import net.spartanb312.everett.utils.config.setting.at
@@ -29,6 +22,7 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
         SettingGroup(Modes.Normal, "Custom-Normal"),
         SettingGroup(Modes.DMR, "Custom-DMR"),
         SettingGroup(Modes.Following, "Custom-Following"),
+        SettingGroup(Modes.Strafe, "Custom-Strafe"),
         SettingGroup(Modes.Surround, "Custom-Surround"),
         SettingGroup(Modes.ReactionTest, "Custom-Reaction")
     )
@@ -52,7 +46,7 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
             .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
         val size by setting("Size", 1f, 0.1f..5f, 0.1f)
             .lang("目标大小", "目標大小")
-            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
         val gap by setting("Gap", 5f, 1f..20f, 0.5f)
             .lang("间隔距离", "間隔距離")
             .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
@@ -64,37 +58,49 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
             .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
         val offset = setting("Generate Offset", false)
             .lang("生成偏移", "生成偏移")
-            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
         val xOffsetS by setting("Depth Offset", 0f, 0f..10f, 0.1f)
             .lang("生成深度偏移", "生成深度偏移")
-            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
             .whenTrue(offset)
         val yOffsetS by setting("Vertical Offset", 0f, 0f..10f, 0.1f)
             .lang("生成垂直偏移", "生成垂直偏移")
-            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
             .whenTrue(offset)
         val zOffsetS by setting("Horizontal Offset", 0f, 0f..10f, 0.1f)
             .lang("生成水平偏移", "生成水平偏移")
-            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
             .whenTrue(offset)
         val defaultErrorAngle by setting("Default Error Angle", 1f, 0f..10f, 0.1f)
             .lang("默认吸附角", "默認吸附角")
-            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
         val distance by setting("Distance", 50f, 10f..150f, 0.5f)
             .lang("生成距离", "生成距離")
-            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
+        val boundary by setting("Boundary", 50f, 10f..200f, 1f)
+            .lang("移动边界", "運作邊界")
+            .limit(Modes.Strafe)
         val moveSpeed by setting("Move Speed", if (mode == Modes.DMR) 2f else 2.5f, 0f..10f, 0.1f)
             .lang("移动速度", "移動速度")
-            .limit(Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
+        val revAttempt by setting("Reverse Attempt Frequency", 500, 100..3000, 50)
+            .lang("反转尝试间隔", "反轉嘗試間隔")
+            .limit(Modes.Strafe)
+        val revCooldown by setting("Reverse Cooldown", 1000, 100..5000, 50)
+            .lang("反转冷却", "反轉冷卻")
+            .limit(Modes.Strafe)
+        val revChance by setting("Reverse Chance", 0.2, 0.1..0.9, 0.05)
+            .lang("反转概率", "反轉機率")
+            .limit(Modes.Strafe)
         val killResetTime by setting("Continuous Kill Reset", if (mode == Modes.Normal) 300 else 2500, 0..10000, 50)
             .lang("连杀重置时间", "最大連殺間隔")
             .limit(Modes.Normal, Modes.DMR, Modes.Surround)
         val scoreBase by setting("Score Base", 1f, 0.1f..10f, 0.1f)
             .lang("得分倍率", "得分基準")
-            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following)
+            .limit(Modes.Normal, Modes.DMR, Modes.Surround, Modes.Following, Modes.Strafe)
         val punishmentBase by setting("Punishment Base", 1f, 0.1f..10f, 0.1f)
             .lang("惩罚倍率", "懲罰基準")
-            .limit(Modes.Normal, Modes.Following)
+            .limit(Modes.Normal, Modes.Following, Modes.Strafe)
         val minKillTime by setting("Min Kill Time", 50, 50..500, 10)
             .lang("最短击杀时间", "最短擊殺時間")
             .limit(Modes.Normal, Modes.DMR)
@@ -178,6 +184,23 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
                     punishmentBase
                 )
 
+                Modes.Strafe -> CustomStrafe(
+                    scene,
+                    size,
+                    xOffset,
+                    yOffset,
+                    zOffset,
+                    defaultErrorAngle,
+                    distance,
+                    boundary,
+                    moveSpeed,
+                    revAttempt,
+                    revCooldown,
+                    revChance.toFloat(),
+                    scoreBase,
+                    punishmentBase
+                )
+
                 Modes.Surround -> CustomSurround(
                     scene,
                     maxAmount,
@@ -211,8 +234,9 @@ object CustomTraining : AbstractCustomTraining("Custom Game", "Customized Traini
         Normal(0),
         DMR(1),
         Following(2),
-        Surround(3),
-        ReactionTest(4);
+        Strafe(3),
+        Surround(4),
+        ReactionTest(5);
 
         val settingGroup: SettingGroup get() = settingGroups[settingGroupIndex]
     }

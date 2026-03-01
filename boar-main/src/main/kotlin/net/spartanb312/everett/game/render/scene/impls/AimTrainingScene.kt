@@ -27,12 +27,12 @@ object AimTrainingScene : Scene() {
         20000f,
         20000f,
         20000f,
-        TextureManager.down,
-        TextureManager.up,
-        TextureManager.left,
-        TextureManager.front,
-        TextureManager.right,
-        TextureManager.back
+        TextureManager.sea_down,
+        TextureManager.sea_up,
+        TextureManager.sea_left,
+        TextureManager.sea_front,
+        TextureManager.sea_right,
+        TextureManager.sea_back
     )
     var currentTraining: Training? = null
     var jumBack: GuiScreen = TrainingScreen

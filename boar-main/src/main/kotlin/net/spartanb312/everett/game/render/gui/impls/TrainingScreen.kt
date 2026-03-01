@@ -29,6 +29,8 @@ object TrainingScreen : GuiScreen() {
         Grid,
         Grid3x3,
         BallFollowing,
+        Strafe,
+        FastStrafe,
         ThreeBallSurround,
         SixBallSurround,
         SixShotWall,

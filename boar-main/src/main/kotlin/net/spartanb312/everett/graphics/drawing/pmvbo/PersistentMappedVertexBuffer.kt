@@ -103,7 +103,7 @@ object PersistentMappedVertexBuffer {
             ).apply {
                 bind()
                 GL20.glUniform1i(getUniformLocation("texture"), 0)
-            }, 1024 * 1024 * 64
+            }, 1024 * 1024 * 8
         ) {
             init {
                 values.add(this)
@@ -151,7 +151,7 @@ object PersistentMappedVertexBuffer {
 
         fun onSync() {
             if (sync == 0L) {
-                if (arr.pos >= arr.len / 2.7) {
+                if (arr.pos >= arr.len / 3) {
                     sync = GL32C.glFenceSync(GL32.GL_SYNC_GPU_COMMANDS_COMPLETE, 0)
                 }
             } else if (IntArray(1).apply {

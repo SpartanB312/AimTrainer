@@ -36,25 +36,25 @@ class Skybox(
 
     fun onRender3D() {
         with(PersistentMappedVertexBuffer.VertexMode.Universal) {
-            front.bindTexture()
+            left.bindTexture() // front -> left
             universal(maxX, maxY, minZ, 0.999f, 0.001f, ColorRGB.WHITE)
             universal(minX, maxY, minZ, 0.001f, 0.001f, ColorRGB.WHITE)
             universal(maxX, minY, minZ, 0.999f, 0.999f, ColorRGB.WHITE)
             universal(minX, minY, minZ, 0.001f, 0.999f, ColorRGB.WHITE)
             draw(GL_TRIANGLE_STRIP)
-            right.bindTexture()
+            front.bindTexture() // right -> front
             universal(maxX, maxY, maxZ, 0.999f, 0.001f, ColorRGB.WHITE)
             universal(maxX, maxY, minZ, 0.001f, 0.001f, ColorRGB.WHITE)
             universal(maxX, minY, maxZ, 0.999f, 0.999f, ColorRGB.WHITE)
             universal(maxX, minY, minZ, 0.001f, 0.999f, ColorRGB.WHITE)
             draw(GL_TRIANGLE_STRIP)
-            back.bindTexture()
+            right.bindTexture() // back -> right
             universal(minX, maxY, maxZ, 0.999f, 0.001f, ColorRGB.WHITE)
             universal(maxX, maxY, maxZ, 0.001f, 0.001f, ColorRGB.WHITE)
             universal(minX, minY, maxZ, 0.999f, 0.999f, ColorRGB.WHITE)
             universal(maxX, minY, maxZ, 0.001f, 0.999f, ColorRGB.WHITE)
             draw(GL_TRIANGLE_STRIP)
-            left.bindTexture()
+            back.bindTexture() // left -> back
             universal(minX, maxY, minZ, 0.999f, 0.001f, ColorRGB.WHITE)
             universal(minX, maxY, maxZ, 0.001f, 0.001f, ColorRGB.WHITE)
             universal(minX, minY, minZ, 0.999f, 0.999f, ColorRGB.WHITE)

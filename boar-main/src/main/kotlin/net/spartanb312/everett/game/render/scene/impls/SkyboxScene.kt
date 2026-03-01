@@ -7,18 +7,18 @@ import net.spartanb312.everett.graphics.Skybox
 object SkyboxScene : Scene() {
 
     private val skybox = Skybox(
-        -200f,
-        -200f,
-        -200f,
-        200f,
-        200f,
-        200f,
-        TextureManager.down,
-        TextureManager.up,
-        TextureManager.left,
-        TextureManager.front,
-        TextureManager.right,
-        TextureManager.back
+        -20000f,
+        -20000f,
+        -20000f,
+        20000f,
+        20000f,
+        20000f,
+        TextureManager.universe_down,
+        TextureManager.universe_up,
+        TextureManager.universe_left,
+        TextureManager.universe_front,
+        TextureManager.universe_right,
+        TextureManager.universe_back
     )
 
     override fun render3D() = skybox.onRender3D()

@@ -33,12 +33,21 @@ object TextureManager : TextureLoader by AsyncTextureLoader(RS.maxThreads, { Acc
     val flawlessVictory = lazyTexture("assets/texture/medals/flawless_victory.png", qualityLevel = 1)
 
     // Skybox
-    val down = lazyTexture("assets/texture/skybox/1.png", useMipmap = false, qualityLevel = 1)
-    val up = lazyTexture("assets/texture/skybox/2.png", useMipmap = false, qualityLevel = 1)
-    val left = lazyTexture("assets/texture/skybox/3.png", useMipmap = false, qualityLevel = 1)
-    val front = lazyTexture("assets/texture/skybox/4.png", useMipmap = false, qualityLevel = 1)
-    val right = lazyTexture("assets/texture/skybox/5.png", useMipmap = false, qualityLevel = 1)
-    val back = lazyTexture("assets/texture/skybox/6.png", useMipmap = false, qualityLevel = 1)
+    val sea_down = lazyTexture("assets/texture/skybox/sea/sky_neg_y.png", useMipmap = false, qualityLevel = 1)
+    val sea_up = lazyTexture("assets/texture/skybox/sea/sky_pos_y.png", useMipmap = false, qualityLevel = 1)
+    val sea_left = lazyTexture("assets/texture/skybox/sea/sky_pos_z.png", useMipmap = false, qualityLevel = 1)
+    val sea_front = lazyTexture("assets/texture/skybox/sea/sky_pos_x.png", useMipmap = false, qualityLevel = 1)
+    val sea_right = lazyTexture("assets/texture/skybox/sea/sky_neg_z.png", useMipmap = false, qualityLevel = 1)
+    val sea_back = lazyTexture("assets/texture/skybox/sea/sky_neg_x.png", useMipmap = false, qualityLevel = 1)
+
+    val universe_down = lazyTexture("assets/texture/skybox/universe/sky_neg_y.jpg", useMipmap = false, qualityLevel = 1)
+    val universe_up = lazyTexture("assets/texture/skybox/universe/sky_pos_y.jpg", useMipmap = false, qualityLevel = 1)
+    val universe_left = lazyTexture("assets/texture/skybox/universe/sky_pos_z.jpg", useMipmap = false, qualityLevel = 1)
+    val universe_front = lazyTexture("assets/texture/skybox/universe/sky_pos_x.jpg", useMipmap = false, qualityLevel = 1)
+    val universe_right = lazyTexture("assets/texture/skybox/universe/sky_neg_z.jpg", useMipmap = false, qualityLevel = 1)
+    val universe_back = lazyTexture("assets/texture/skybox/universe/sky_neg_x.jpg", useMipmap = false, qualityLevel = 1)
+
+
 
     // Menu
     val bg = lazyTexture("assets/texture/menu/halo_infinite_background.png")

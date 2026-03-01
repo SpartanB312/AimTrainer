@@ -7,8 +7,6 @@ import net.spartanb312.everett.game.Player
 import net.spartanb312.everett.game.audio.BGMPlayer
 import net.spartanb312.everett.game.audio.GunfireAudio
 import net.spartanb312.everett.game.audio.notebox.Harp
-import net.spartanb312.everett.game.audio.notebox.Piano
-import net.spartanb312.everett.game.audio.notebox.Piano2
 import net.spartanb312.everett.game.audio.notebox.pianos
 import net.spartanb312.everett.game.audio.noteplayer.MidiPlayer
 import net.spartanb312.everett.game.event.ResolutionUpdateEvent
@@ -45,7 +43,6 @@ import net.spartanb312.everett.utils.timing.Sync
 import net.spartanb312.everett.utils.timing.Timer
 import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFW.glfwGetCursorPos
-import org.lwjgl.opengl.GL11
 
 /**
  * Based on OpenGL 4.5 Core Profile

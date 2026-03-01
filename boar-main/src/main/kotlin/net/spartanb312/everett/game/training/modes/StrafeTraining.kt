@@ -12,41 +12,42 @@ import net.spartanb312.everett.game.render.scene.Scene
 import net.spartanb312.everett.game.render.scene.impls.AimTrainingScene
 import net.spartanb312.everett.game.training.BallHitTraining
 import net.spartanb312.everett.utils.color.ColorRGB
+import net.spartanb312.everett.utils.math.vector.Vec3f
 import net.spartanb312.everett.utils.misc.asRange
 import net.spartanb312.everett.utils.timing.Timer
 import kotlin.random.Random
 
-abstract class FollowingTraining(
+abstract class StrafeTraining(
     scene: Scene,
-    amount: Int,
-    sizeRange: ClosedFloatingPointRange<Float> = 1f.asRange,
-    gap: Float = 5f,
-    width: Int = 5,
-    height: Int = 5,
+    size: Float,
     errorAngle: Float = 1f,
     horizontalOffset: Float = 0f,
-    verticalOffset: Float = 0.5f,
-    distanceRange: ClosedFloatingPointRange<Float> = 50f.asRange,
+    verticalOffset: Float = 0f,
+    distance:Float = 100f,
     xOffset: Float = 0f,
     yOffset: Float = 0f,
     zOffset: Float = 0f,
+    private val boundary: Float = 100f,
     private val moveSpeed: Float = 2f,
+    private val reverseAttemptFreq: Int = 500,
+    private val reverseCooldown: Int = 1000,
+    private val reverseChance: Float = 0.2f,
     private val scoreBase: Float = 1f,
     private val punishmentBase: Float = 1f
 ) : BallHitTraining(
     scene,
-    amount,
-    sizeRange,
-    gap,
-    width,
-    height,
+    1,
+    size.asRange,
+    5f,
+    1,
+    1,
     xOffset,
     yOffset,
     zOffset,
     errorAngle,
     horizontalOffset,
     verticalOffset,
-    distanceRange
+    distance.asRange
 ) {
 
     override fun displayScoreboard() {
@@ -66,7 +67,7 @@ abstract class FollowingTraining(
     }
 
     private val reverseTimer = Timer()
-    private val vecTimer = Timer()
+    private val cooldownTimer = Timer()
 
     private fun click() {
         if (stage != Stage.Training || Render2DManager.displaying) return
@@ -102,13 +103,25 @@ abstract class FollowingTraining(
 
     override fun render() {
         AimTrainingScene.skybox.onRender3D()
-        var reverse = false
-        reverseTimer.passedAndReset(1000) {
-            reverse = 0.3 >= Random.nextDouble(0.0, 1.0)
+        reverseTimer.passedAndReset(reverseAttemptFreq) {
+            entities.forEach {
+                if (it is Ball) {
+                    if (it.vec == Vec3f.ZERO) it.vec = Vec3f(0f, 0f, moveSpeed * 0.2f)
+                    if (reverseChance >= Random.nextDouble(0.0, 1.0) && cooldownTimer.passed(reverseCooldown)) {
+                        cooldownTimer.reset()
+                        it.reverseVec()
+                    }
+                }
+            }
         }
-        vecTimer.passedAndReset(30) { entities.forEach { if (it is Ball) it.updateVec(reverse, moveSpeed) } }
         entities.forEach {
-            if (it is Ball) BallRenderer.render(it.pos.x, it.pos.y, it.pos.z, it.size, ColorRGB.GREEN, false, outlineC)
+            if (it is Ball) {
+                // check boundary
+                if ((it.pos.z > boundary && it.vec.z > 0) || (it.pos.z < -boundary && it.vec.z < 0)) {
+                    it.reverseVec()
+                }
+                BallRenderer.render(it.pos.x, it.pos.y, it.pos.z, it.size, ColorRGB.GREEN, false, outlineC)
+            }
         }
         fadeBalls.toList().forEach { (it, time) ->
             val alphaRate = 1f - ((System.currentTimeMillis() - time) / fadeTime.toFloat())

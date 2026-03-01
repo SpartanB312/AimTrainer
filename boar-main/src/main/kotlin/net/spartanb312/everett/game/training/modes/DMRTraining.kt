@@ -161,7 +161,7 @@ abstract class DMRTraining(
     override fun onTick() {
         super.onTick()
         if (!isPaused) entities.forEach {
-            if (it is Ball) it.randomMove((60f / ControlOption.physicsTPS).coerceAtLeast(1f))
+            if (it is Ball) it.applyMovement((60f / ControlOption.physicsTPS).coerceAtLeast(1f))
         }
     }
 

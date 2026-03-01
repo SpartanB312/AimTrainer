@@ -10,8 +10,8 @@ import kotlin.math.absoluteValue
 open class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
 
     private val body = Sphere(this, size)
-    private var vec = Vec3f(0f, 0f, 0f)
     private val oneShot = hp == 1
+    var vec = Vec3f.ZERO
 
     var isAlive = true
 
@@ -26,8 +26,12 @@ open class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
         else this.pos + vec
     }
 
-    fun randomMove(ratio: Float) {
+    fun applyMovement(ratio: Float) {
         pos += vec.times(ratio)
+    }
+
+    fun reverseVec() {
+        vec = vec.times(-1f)
     }
 
     fun updateVec(reverse: Boolean, moveSpeed: Float) {
@@ -46,7 +50,7 @@ open class Ball(pos: Vec3f, var size: Float, var hp: Int) : Entity(pos) {
         if (pos.y !in range) notInRange++
         if (pos.z !in range) notInRange++
         if (notInRange >= 2 && !reverse) {
-            randomMove(-1f)
+            applyMovement(-1f)
             updateVec(true, moveSpeed)
         } else pos = Vec3f(pos.x.coerceIn(range), pos.y.coerceIn(range), pos.z.coerceIn(range))
         if (pos.distanceTo(Player.pos) <= 10f) {
